@@ -1,0 +1,86 @@
+This are short installation notes for ORSEE 2.0.2
+
+The manual will contains a longer version.
+
+When you upgrade from an older version of ORSEE, please read the UPGRADE.howto
+
+PREREQUISITES
+
+- a webserver (Apache preferred)
+- PHP >=4.2.2 as cgi and on commandline (might also run on older versions)
+    with GD module (php-gd), MySQL module (php-mysql), Session module (php-session)
+- MySQL >=4.02
+- cronjob access
+
+BASIC INSTALLATION
+
+1. Unpack ORSEE's tgz file in your webservers path. (Oh, you already did?)
+
+2. Wanna rename the directory?
+   % mv orsee-2.0.2 yourdirname
+
+3. Cd to the 'install' directory.
+
+4. Create the mysql database.
+
+5. Import the 'install.sql' file in the install dir
+   to your database:
+
+   % mysql databasename -uusername -ppassword < install.sql
+
+6. Install the crontab named 'crontab-for-orsee'. Edit the settings
+   in this file to match your needs.
+   % crontab crontab-for-orsee
+
+7. Browse to the 'config' dir. Edit the few settings in 'settings.php'.
+
+8. Make sure that the 'usage' directory is writable for the user the
+   cronjob is running under.
+
+9. Browse to your ORSEE installation: 'http://yourorseewebpath/admin'.
+
+10. Login with username 'orsee_install' and password 'install'.
+
+11. Done.
+
+
+POST-INSTALLATION
+
+Just some notes:
+
+- CHANGE THE DEFAULT PASSWORD.
+
+- Edit the settings in Options/General Settings and Options/Default Values
+
+- Create your own style
+  ->Copy the 'orsee' directory from the 'style' dir.
+  % cp -r orsee mystyle
+  -> Edit the files in the directory.
+  -> Select the style in Options/General Settings
+
+- Enable the Options/Regular Tasks (the Cronjobs)
+
+- Edit the Options/Administrator Types and their Rights
+
+- Create Administrators.
+
+- Create Options/Laboratories.
+
+- Create Options/Subjectpools.
+
+- Edit Options/external Experiment Types.
+
+- Create Options/Experiment Classes.
+
+- Select your Options/public Languages.
+
+- Edit Public Content, FAQs, Fields of Studies, Professions, default Mails, 
+  default Texts.
+
+- You might want to edit the file 'webalizer.template' in the 'usage' dir.
+
+Ready to start.
+
+ORSEE. The ease of recruitment. ;-)
+
+

@@ -1,0 +1,76 @@
+<set-var menu::area=my_registrations>
+<include header.mhtml>
+
+<unset-var expadmindata::username>
+<session-import expadmindata expadmindata>
+<set-var posted::participant_id=-1>
+
+;;; skip the next stuff if this is an admin testing
+<when <not <and <get-var posted::ostest> <get-var expadmindata::username>>>>
+
+<if <not <get-var posted::p>> <redirect <get-var settings::root-directory>/public/>>
+
+
+<set-var posted::participant_id=<url-decode <get-var posted::p>>>
+
+<if <not <get-var posted::participant_id>> <redirect <get-var settings::root-directory>/public/>>
+
+<sql::with-open-database db dsn=<site::dsn> nolock=true>
+  <set-var loaded?=<sql::database-load-record db <get-var posted::participant_id> TABLE=participants KEYNAME=participant_id PACKAGE=participant>>
+</sql::with-open-database>
+
+<if <not <get-var participant::email>> <redirect <get-var settings::root-directory>/public/>>
+
+<if <string-eq <get-var participant::excluded> "y">
+		<prog
+		<message <lang::error_sorry_you_are_excluded>
+			<lang::if_you_have_questions_write_to>
+			<support-mail-link>>
+		<redirect <get-var settings::root-directory>/public/>
+		>>
+
+<if <string-eq <get-var participant::deleted> "y">
+                <prog
+                <message <lang::error_sorry_you_are_deleted>
+                        <lang::if_you_have_questions_write_to>
+                        <support-mail-link>>
+                <redirect <get-var settings::root-directory>/public/>
+                >>
+
+;;; end skipping
+</when>
+
+
+<center>
+<BR><BR>
+<H4><lang::internet_experiments></H4>
+<BR><BR>
+<lang::click_on_interesting_experiment>
+
+<TABLE width=80%>
+<TR><TD colspan=3 bgcolor=lightblue>
+<lang::experiments_you_are_invited_for>
+</TD>
+</TR>
+<if <and <get-var posted::ostest> <get-var expadmindata::username>>
+<expregister::list-os-invited ostest=true>
+<expregister::list-os-invited participant_id=<get-var posted::participant_id>>
+>
+<TR><TD colspan=3>&nbsp;</TD></TR>
+<TR><TD colspan=3 bgcolor=lightblue>
+<lang::experiments_you_participated>
+</TD></TR>
+<expregister::list-os-history participant_id=<get-var posted::participant_id>>
+</TABLE>
+
+<BR><BR>
+
+<A HREF="participant_edit.mhtml?p=<url-encode <get-var posted::participant_id>>">
+<lang::edit_your_profile>
+</A>
+
+
+</center>
+
+<include footer.mhtml>
+

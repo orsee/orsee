@@ -1,0 +1,99 @@
+<include header.mhtml>
+
+<unset-var expadmindata::username>
+<session-import expadmindata expadmindata>
+
+;;; skip the next stuff if this is an admin testing
+<when <not <and <get-var posted::ostest> <get-var expadmindata::username>>>>
+
+<if <not <get-var posted::e>> <redirect <get-var settings::root-directory>/public/>>
+
+
+<sql::with-open-database db dsn=<site::dsn> nolock=true>
+  <set-var loaded?=<sql::database-load-record db <get-var posted::e> TABLE=experiments KEYNAME=experiment_id PACKAGE=experiment>>
+</sql::with-open-database>
+
+<if <not <string-eq <get-var experiment::experiment_type> "online-survey">> <redirect <get-var settings::root-directory>/public/>>
+
+<sql::with-open-database db dsn=<site::dsn> nolock=true>
+  <set-var loaded?=<sql::database-load-record db <get-var experiment::experiment_id> TABLE=os_properties KEYNAME=experiment_id PACKAGE=os>>
+</sql::with-open-database>
+
+<when <not <string-eq <get-var os::free_registration> "y">>>
+
+<if <not <get-var posted::p>> <redirect <get-var settings::root-directory>/public/>>
+<set-var posted::participant_id=<url-decode <get-var posted::p>>>
+
+<if <not <get-var posted::participant_id>> <redirect <get-var settings::root-directory>/public/>>
+
+<sql::with-open-database db dsn=<site::dsn> nolock=true>
+  <set-var loaded?=<sql::database-load-record db <get-var posted::participant_id> TABLE=participants KEYNAME=participant_id PACKAGE=participant>>
+</sql::with-open-database>
+
+<if <not <get-var participant::email>> <redirect <get-var settings::root-directory>/public/>>
+
+
+<if <string-eq <get-var participant::excluded> "y">
+		<prog
+		<message <lang::error_sorry_you_are_excluded>
+			<lang::if_you_have_questions_write_to>
+			<support-mail-link>>
+		<redirect <get-var settings::root-directory>/public/>
+		>>
+
+<if <string-eq <get-var participant::deleted> "y">
+                <prog
+                <message <lang::error_sorry_you_are_deleted>
+                        <lang::if_you_have_questions_write_to>
+                        <support-mail-link>>
+                <redirect <get-var settings::root-directory>/public/>
+                >>
+</when>
+
+
+<set-session-var experiment::experiment_id=<get-var experiment::experiment_id>>
+<set-session-var participant::participant_id=<or <get-var posted::participant_id> <url-decode <get-var posted::p>>>>
+
+;;; end of admin testing skip
+</when>
+
+
+;;; well, prepare for admin testing
+<when <and <get-var posted::ostest> <get-var expadmindata::username>>>
+<set-session-var experiment::experiment_id=<get-var posted::e>>
+<set-session-var ostest::ostest=true>
+<session-destroy-package exp playerdata>
+<sql::with-open-database db dsn=<site::dsn> nolock=true>
+ <set-var loaded?=<sql::database-load-record db <get-var posted::e> TABLE=experiments KEYNAME=experiment_id PACKAGE=experiment>>
+</sql::with-open-database>
+
+
+<sql::with-open-database db dsn=<site::dsn> nolock=true>
+<set-var loaded?=<sql::database-load-record db <get-var experiment::experiment_id> TABLE=os_properties KEYNAME=experiment_id PACKAGE=os>>
+</sql::with-open-database>
+
+</when> 
+
+<include ../scripts/open_os_js.mhtml>
+<center>
+<BR><BR>
+<H4><lang::internet_experiments></H4>
+<BR><BR>
+<TABLE width=80% border=0>
+<TR><tD>
+<get-var-once os::long_description>
+</TD></TR>
+<TR><td align=center>
+<h4>
+<A HREF="javascript:open_os();">
+<lang::start_experiment>
+</A>
+</h4>
+</TD></TR>
+
+</TABLE>
+
+</center>
+
+<include footer.mhtml>
+

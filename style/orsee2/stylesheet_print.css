@@ -1,0 +1,55 @@
+<style type="text/css">
+
+<!--
+
+body {
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 2px;
+        font-family: Tahoma, Arial, Helvetica, sans-serif;
+        font-size: 8pt;
+        color: black;
+      }
+
+td    { font-family: Tahoma, Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	font-size: 8pt;
+	}
+
+.small    { font-family: Arial;
+	    font-size: 7pt; }
+
+.signature { font-family: Arial;
+		font-size: 7pt;
+		text-decoration: none;
+            }
+
+a, A     { font-family: Tahoma, Arial, Helvetica, sans-serif;
+        font-weight: bold;
+	font-size: 8pt;
+      }
+
+
+.title1     { font-family: Tahoma, Arial, helvetica, sans-serif;	
+		font-size: 12pt;
+        	text-decoration: none; 
+		font-weight: bold;
+	  }
+
+
+.menu_title {
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	color: white;
+	font-weight: bold;
+	font-size: 8pt;
+	}
+
+.menu_item {
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	color: lightgrey;
+	font-weight: bold;
+	font-size: 8pt;
+	}
+
+//-->

@@ -1,0 +1,73 @@
+This are upgrade instructions for ORSEE 2.0.2
+from older versions.
+
+
+[2.0 beta/2.0.0/2.0.1]
+
+The nice thing is: the database structure is the same as before: thus you just
+have to update the program files.
+
+Generally, there are three ways to upgrade, depending on what you did with your
+current installation. We assume that your old version is in directory "old_orsee"
+
+1. The first simple way: Installing a new ORSEE and importing old configuration
+   (Assumption: you havn't changed the program at all, and just customized)
+
+   - Unpack your new ORSEE distribution to a new directory, lets say "new_orsee"
+
+   - Stop your public site in Options/General Options
+
+   - Copy the settings from your old version to your new version:
+   cp old_orsee/tagsets/settings.php new_orsee/tagsets/settings.php
+
+   - Copy your style(s) to the new version
+   cp -r old_orsee/styles/mystyle new_orsee/styles/
+
+   - Edit the styles' colors.php file, check with the new default style's colors.php
+
+   - Check it out by browsing to the new admin area
+
+   - Swap old and new distibution
+   mv old_orsee veryold_orsee
+   mv new_orsee old_orsee
+
+   - That's it.
+
+2. The second simple way: Copying new files over the old files
+   (Assumption: you havn't changed the program at all, and just customized)
+
+   - Unpack your new ORSEE distribution to a new directory, lets say "new_orsee"
+
+   - Stop your public site in Options/General Options
+
+   - Make a backup of your old ORSEE installation
+
+   - Now, copy the following files over to your old installation:
+
+   admin/*
+   tagsets/*
+   public/*
+   config/system.php
+   config/requires.php
+
+   - Edit your styles' colors.php file, check with the new default style's colors.php
+
+   - That's it.
+
+3. The complicated way: read the CHANGELOG
+   (Assumption: you have hacked your ORSEE version, and you want to keep the changes)
+
+   - Well: read the CHANGELOG. For every update made, the files which are updated are listed.
+
+   - If you did not changed a file: just copy it.
+
+   - If you changed a file: run a 'diff' to see what changed, and add the changes by hand.
+
+   - That's it.
+
+##########################################################
+[1.1/1.1.1]
+
+Since there should be no institution out there which still uses the old 1.x version, 
+we do not provide upgrade information anymore. If I'm wrong, please contact me for support.
+

@@ -1,0 +1,33 @@
+<include header.mhtml>
+
+<center>
+<BR><BR>
+<H4><lang::internet_experiments></H4>
+<BR><BR>
+
+<TABLE width=80%>
+<if <survey::actual-survey?> 
+<group
+<TR><TD colspan=3><lang::click_on_interesting_experiment></TD></TR>
+<expregister::list-os-invited free_reg=true>
+>
+<group
+<TR><TD colspan=3><lang::no_current_internet_experiment></TD></TR>
+>>
+
+<if <survey::old-survey?>
+<group
+<TR><TD colspan=3>&nbsp;</TD></TR>
+<TR><TD colspan=3 bgcolor=lightblue>
+<lang::old_internet_experiments>
+</TD></TR>
+<expregister::list-os-history free_reg=true>
+>>
+</TABLE>
+
+<BR><BR>
+
+</center>
+
+<include footer.mhtml>
+

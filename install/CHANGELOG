@@ -1,0 +1,110 @@
+
+[11.11.2004] Bug fixing: wrong variable name $nr_of_months, should be $number_of_months,
+                         result: for some languages, calendar is sent only for current month
+             Changed file: tagsets/experimentmail.php, line 899
+
+[11.11.2004] Bug fixing: Changed tagsets/stats.php, line 327 again (see below): some users
+			 reported error messages due to the non-standard SQL CONVERT(). We
+                         now use CAST(), which is supported in MySQL >= 4.0.2
+	     Changed files: tagsets/stats.php, line 327
+
+[08.11.2004] Bug fixing: Replaced $lang['experimenter_list'] on line 26 in admin/admin_show.php
+                         with $lang['is_experimenter'] (This was simply the wrong lang symbol.)
+			
+
+ORSEE 2.0.1:
+
+[06.11.2004] New Feature: New general option "Emailed PDF Calendar: Number of months included?"
+             Files: tagsets/experimentmail.php, lines 867-869,879,899; 
+                    config/system.php, line 153; admin/option_edit.php, lines 348-359;
+
+[06.11.2004] New Feature: New general option "Participant calendar: Hide public experiment name?"
+	     Files: tagsets/calendar.php, lines 170-181; config/system.php, line 151; 
+                    admin/option_edit.php, lines 332-346;
+
+[06.11.2004] New Feature: Added verifier function for general and default options. This
+			  eases software updated in conjunction with newly added options.
+			  Functions: check_options_exist, create_new_option
+			  For performance reasons the verifier will be called only 
+			  on admin login page.
+             Files: config/system.php, lines 115ff; tagsets/site.php, lines 25-59;
+		    admin/admin_login.php, line 39 
+
+[04.11.2004] Bug fixing: session state "not_enough_reserve" was not presented properly in
+                         public and internal calendar
+	     Files: tagsets/calendar.php, line 183
+	     See Request-ID 1032758 "wrong color in calendar" in bug tracker on sourceforge.net
+
+[28.10.2004] Bug fixing: months in system statistics/participant actions where ordered 
+			 as strings, not as numbers, function stats__array_participant_actions
+	     Files: tagsets/stats.php, line 327
+
+[20.09.2004] New feature: different colors for public/internal calendar possible. 
+	     Files: tagsets/calendar.php, lines 66-72; style/.../colors.php, lines 27-28 
+	     (new color vars: calendar_admin_experiment_sessions, calendar_public_experiment_sessions)
+
+[09.09.2004] Bug fixing: experimenters could not change password in admin/admin_pw.php
+             Files: admin/admin_pw.php, lines 11-13
+
+[04.09.2004] Bug fixing: statistics on admin/participants_edit.php page showed wrong session date
+             Files: tagsets/participant.php, line 564
+
+[03.09.2004] Changed config: Experiment calendar per E-Mail is now for 2 months instead on one
+	     Files: tagsets/experimentmail.php, lines 875 and 895
+
+[24.08.2004] Bug fixing: is_experimenter? column in admin/admin_show.php did not show real state
+	     Files: admin/admin_show.php, lines 26,52,55
+
+ORSEE 2.0.0 final:
+
+[06.06.2004] New feature: allow to register a participant at an existing session when
+                          creating him
+
+[05.06.2004] Bug fixing:  Link to help image on help pages in the default styles was broken
+
+[02.06.2004] New feature: Confirmation page for experiment registration
+
+[02.06.2004] Bug fixing:  language import did not create new items
+
+[26.05.2004] Bug fixing:  still link to internet experiments in public navigation, pointing to nowhere
+
+
+ORSEE 2.0-beta:
+- translated completely to PHP (!), and by the way improvement of nearly all internal
+  functions, programming style and source readability
+- may be installed on user accounts at an institutions server, only services
+  needed: apache home directory with php, mysql database access, cron jobs
+- automatic pdf generation via php, latex ist not required anymore nor any
+  additional php packages
+- statistic plots as png images
+- improved participant querys
+- improved logs of participant actions
+- logs of experimenter actions
+- improved server log support
+- colored calendar (by experiment)
+- laboratory reservation for maintenance times/software tests
+- complete reorganization of items which need settings in different languages
+- better language support/ language edit functions
+- more settings
+- options for reminder sending
+- improved upload/download section
+- definition of experiment types/subscription options possible
+- 'rules signed' editable at session participant list
+- database improvements, indexing
+- mail sent via mail queue, therefore improving performance
+- session duration shown in public area, admin area and mails
+- delete options for up/downloads
+- cron functions run via php and are configurable via web interface
+- check of session and lab reserve overlay
+- automatic warning for no-shows
+- automatic exclusion and notifying of subjects when excluded
+- bulk mail support
+- random bulk mail for invitations
+- sophisticated experimenter rights management
+- language import, upgrade and export
+- all colors editable via web interface
+- experiments may be organized by topic in experiment classes
+
+to do's (in that order):
+- programming of the online survey module
+- integration of self-programmed internet experiments

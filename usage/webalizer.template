@@ -1,0 +1,50 @@
+LogFile         #log_file#
+OutputDir       #output_dir#
+Incremental	yes
+ReportTitle    #report_title#
+HostName       #host_name#
+GroupURL       #public_area_url#* Public Area
+GroupURL       #admin_area_url#* Admin Area
+HideReferrer   #include_url#*
+IncludeURL     #include_url#*
+IgnoreURL       *
+HTMLExtension  php
+PageType        php
+HTMLPre <?php ob_start(); $title="usage statistics"; $menu__area="statistics";
+HTMLPre include("../admin/header.php");
+HTMLPre $allow=check_allow('statistics_server_usage_show','statistics_main.php'); /*
+HTMLBody */ ?><BR><BR><center><table width=90%><TR><TD align=center>
+HTMLEnd </td></tr></table><BR><BR><A href="../admin/statistics_main.php">
+HTMLEnd	<?php echo icon('back').' '.$lang['back']; ?></A></center><BR>
+HTMLEnd <?php include("../admin/footer.php"); ?>
+#Quiet          yes
+#ReallyQuiet    no
+CountryGraph    yes
+HourlyGraph     yes
+HourlyStats     yes
+TopSites        40
+TopKSites       10
+TopURLs         30
+TopKURLs        10
+TopReferrers    30
+TopAgents       15
+TopCountries    50
+TopEntry        10
+TopExit         10
+TopSearch       20
+IndexAlias     index.php
+HideSite        localhost
+HideURL         *.gif
+HideURL         *.GIF
+HideURL         *.jpg
+HideURL         *.JPG
+HideURL         *.png
+HideURL		*.PNG
+HideURL		*.css
+HideURL		*.CSS
+GroupReferrer   yahoo.com/      Yahoo
+GroupReferrer   excite.com/     Excite
+GroupReferrer   infoseek.com/   InfoSeek
+GroupReferrer   webcrawler.com/ WebCrawler
+GroupReferrer	google	Google
+MangleAgents    5
