@@ -1,13 +1,13 @@
 <?php
-// language functions. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 function load_language($language) {
 	$query="SELECT content_name, ".$language." as content_value FROM ".table('lang')." WHERE content_type='lang'";
-	$result=mysql_query($query);
-	while ($line = mysql_fetch_assoc($result)) {
-        	$lang[$line['content_name']]=htmlentities(stripslashes($line['content_value']));
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line = mysqli_fetch_assoc($result)) {
+		$lang[$line['content_name']]=stripslashes($line['content_value']);
             	}
-	mysql_free_result($result);
+	mysqli_free_result($result);
 	return $lang;
 }
 
@@ -20,17 +20,72 @@ function load_language_symbol($symbol,$language) {
 	return stripslashes($line['content_value']);
 }
 
+function language__get_item($content_type,$content_name,$language="") {
+    if (!$language){
+		global $lang;
+		$language=$lang['lang'];
+	}
+	$query="SELECT * from ".table('lang')." WHERE content_type='".$content_type."' AND content_name='".$content_name."'";
+	$line=orsee_query($query);
+	if (isset($line[$language])) return stripslashes($line[$language]);
+	else return false;
+}
+
+function language__selectfield_item($content_type,$varname,$selected,$incnone=false,$language="",$existing=false,$where='',$show_count=false) {
+	if (!$language){
+		global $lang;
+		$language=$lang['lang'];
+	}
+	if (!$selected) $preval=0;
+	$items=array();
+    $query="SELECT *, ".$lang['lang']." AS item
+            FROM ".table('lang')."
+			WHERE content_type='".$content_type."'
+            ORDER BY ".$language;
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+    while ($line = mysqli_fetch_assoc($result)) {
+		$items[$line['content_name']]=stripslashes($line['item']);
+	}
+
+	$out='';
+    $out.='<SELECT name="'.$varname.'">';
+    if (!$existing) {
+	    if ($incnone) { $out.='<OPTION value="0"'; if ($selected==0) $out.=' SELECTED';	$out.='>-</OPTION>'; }
+	    foreach ($items as $k=>$v) {
+		$out.='<OPTION value="'.$k.'"';
+		if ($selected==$k) $out.=' SELECTED';
+		$out.='>'.$v.'</OPTION>';
+		}
+	} else {
+		$query="SELECT count(*) as tf_count, ".$varname." as tf_value
+				FROM ".table('participants')."
+				WHERE ".table('participants').".participant_id IS NOT NULL ";
+		if($where) $query.=" AND ".$where." ";
+		$query.=" GROUP BY ".$varname."
+				ORDER BY ".$varname;
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+		while ($line = mysqli_fetch_assoc($result)) {
+			$out.='<option value="'.$line['tf_value'].'"'; if ($line['tf_value'] == $selected) $out.=' SELECTED'; $out.='>';
+			if (isset($items[$line['tf_value']])) $out.=$items[$line['tf_value']];
+			elseif ($line['tf_value']==0)  $out.='-';
+			else $out.=$line['tf_value'];
+			if ($show_count) $out.=' ('.$line['tf_count'].')';
+			$out.='</option>';
+		}
+	}
+    $out.='</SELECT>';
+    return $out;
+}
+
 
 function get_languages() {
-	global $site__database_database;
-        $languages=array();
-        $fields = mysql_list_fields($site__database_database,table('lang'));
-        $column_count = mysql_num_fields($fields);
-        for ($i = 0; $i < $column_count; $i++) {
-                $columnname=mysql_field_name($fields, $i);
-                if (!preg_match("(lang_id|content_name|content_type|enabled)",$columnname))
-                        $languages[]=$columnname;
-                }
+	$languages=array();
+	$query="SELECT * FROM ".table('lang')." LIMIT 1";
+	$line=orsee_query($query);
+	foreach($line as $columnname=>$v) {
+		if (!preg_match("(lang_id|content_name|content_type|enabled)",$columnname))
+		$languages[]=$columnname;
+	}
 	asort($languages);
 	return $languages;
 }
@@ -53,24 +108,27 @@ function lang__get_language_names() {
 }
 
 
-function lang__select_lang($varname,$selected,$type="all") {
+function lang__select_lang($varname,$selected="",$type="all") {
+	global $lang;
 	switch ($type) {
 		case "public": $sel_langs=lang__get_public_langs(); break;
 		case "part": $sel_langs=lang__get_part_langs(); break;
 		default: $sel_langs=get_languages();
 		}
+	if(!$selected) $selected=$lang['lang'];
 	$lang_names=lang__get_language_names();
-
-	echo '<SELECT name="'.$varname.'">';
+	$out='';
+	$out.='<SELECT name="'.$varname.'">';
 	foreach ($sel_langs as $olang) {
-		echo '<OPTION value="'.$olang.'"';
-		if ($olang==$selected) echo ' SELECTED';
-		echo '>'.$lang_names[$olang].'</OPTION>';
+		$out.='<OPTION value="'.$olang.'"';
+		if ($olang==$selected) $out.=' SELECTED';
+		$out.='>'.$lang_names[$olang].'</OPTION>';
 		}
-
-	echo '</SELECT>';
-
+	$out.='</SELECT>';
+    return $out;
 }
+
+
 
 function lang__insert_to_lang($item) {
 
@@ -123,7 +181,7 @@ function lang__reorganize_lang_table($steps=10000) {
 
 	// copy stuff
         $query="UPDATE ".table('lang')." SET lang_id=lang_id+".$move;
-        $done=mysql_query($query);
+        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 
 	// insert new ordered stuff
@@ -131,9 +189,9 @@ function lang__reorganize_lang_table($steps=10000) {
 
 	// first all not-lang stuff
 	$query="SELECT lang_id, content_type FROM ".table('lang')." ORDER BY content_type, content_name";
-	$result=mysql_query($query);
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	$ids=array();
-	while ($line = mysql_fetch_assoc($result)) {
+	while ($line = mysqli_fetch_assoc($result)) {
 		$ids[]=$line;
 		}
 
@@ -144,71 +202,29 @@ function lang__reorganize_lang_table($steps=10000) {
 			$i=($current_step + 1) * $steps;
 			}
 		$query="UPDATE ".table('lang')." SET lang_id='".$i."' WHERE lang_id='".$item['lang_id']."'";
-		$result=mysql_query($query);
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		$i++;	
                 }
-	mysql_free_result($result);
+	mysqli_free_result($result);
 
 	return true;
 }
 
 
-function lang__load_studies($language="",$enabled=false) {
-	global $lang;
+function lang__load_lang_cat($content_type,$language="") {
+	global $lang; $cat=array();
 
 	if (!$language) $language=$lang['lang'];
+	$query="SELECT content_name, ".$language." as content_value
+	FROM ".table('lang')." WHERE content_type='".$content_type."'";
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-	$query="SELECT content_name, ".$language." as content_value FROM ".table('lang')." WHERE content_type='field_of_studies'";
-
-	if ($enabled) $query.=" AND enabled='y'";
-
-	$result=mysql_query($query);
-
-	while ($line = mysql_fetch_assoc($result)) {
-            	$studies[$line['content_name']]=stripslashes($line['content_value']);
-            	}
-	mysql_free_result($result);
-
-	return $studies;
+	while ($line = mysqli_fetch_assoc($result)) {
+        $cat[$line['content_name']]=stripslashes($line['content_value']);
+    }
+	return $cat;
 }
 
-function lang__load_professions($language="",$enabled=false) {
-        global $lang;
-
-        if (!$language) $language=$lang['lang'];
-
-	$query="SELECT content_name, ".$language." as content_value FROM ".table('lang')." WHERE content_type='profession'";
-
-	if ($enabled) $query.=" AND enabled='y'";
-
-	$result=mysql_query($query);
-
-	while ($line = mysql_fetch_assoc($result)) {
-            	$professions[$line['content_name']]=stripslashes($line['content_value']);
-            	}
-	mysql_free_result($result);
-
-	return $professions;
-}
-
-function lang__load_genders($language="") {
-        global $lang;
-
-        if (!$language) $language=$lang['lang'];
-
-        $query="SELECT content_name, ".$language." as content_value FROM ".table('lang')." 
-		WHERE content_type='lang'
-		AND (content_name='gender_f' OR content_name='gender_m' OR content_name='gender_?')";
-
-        $result=mysql_query($query);
-
-        while ($line = mysql_fetch_assoc($result)) {
-                $genders[substr($line['content_name'],7)]=stripslashes($line['content_value']);
-                }
-        mysql_free_result($result);
-
-        return $genders;
-}
 
 /* this is a list of used, but not explicit programmed language items 
 	just to not forget and delete them

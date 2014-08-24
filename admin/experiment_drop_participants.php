@@ -1,12 +1,12 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="experiments";
 $title="drop participants";
-$query_modules=array("field","noshowups","nr_participations","subjectpool","gender",
-			"study_start","field_of_studies","profession",
-			"experiment_participated_or","experiment_participated_and",
-			"experiment_assigned_or");
+$query_modules=array("field","noshowups","nr_participations","subjectpool",
+			"participant_form_fields",
+			"experiment_participated_or","experiment_participated_and","experiment_assigned_or");
 
 include ("header.php");
 
@@ -16,8 +16,11 @@ include ("header.php");
 	$allow=check_allow('experiment_assign_participants','experiment_show.php?experiment_id='.$experiment_id);
 
 	$experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
+
 	if (!check_allow('experiment_restriction_override'))
 		check_experiment_allowed($experiment,"admin/experiment_show.php?experiment_id=".$experiment_id);
+
+	$query_modules=query__get_participant_form_modules($query_modules,$experiment_id);
 
 	echo '	<center>
 		<BR><BR>
@@ -25,24 +28,27 @@ include ("header.php");
 			<h4>'.$lang['remove_participants_from_exp'].'</h4>
 		';
 
-	if ($_REQUEST['dropselected'] || $_REQUEST['dropall']) {
+	if(!isset($_REQUEST['use'])) $_REQUEST['use']=array();
+	if(!isset($_REQUEST['con'])) $_REQUEST['con']=array();
+	if(!isset($_REQUEST['new'])) $_REQUEST['new']="";
+	if ((isset($_REQUEST['dropselected']) && $_REQUEST['dropselected']) || (isset($_REQUEST['dropall']) && $_REQUEST['dropall'])) {
 
 		// data base queries for assign ...
 
 		$assign_ids=$_SESSION['assign_ids'];
 
-		if ($_REQUEST['dropall']) {
+		if (isset($_REQUEST['dropall']) && $_REQUEST['dropall']) {
 
 		$assigned_count=count($assign_ids);
 		$instring=implode("','",$assign_ids);
 
 			}
-		elseif ($_REQUEST['dropselected']) {
+		elseif (isset($_REQUEST['dropselected']) && $_REQUEST['dropselected']) {
 			$selected_ids=array();
 			$i=0;
 			foreach ($assign_ids as $id) {
 				$i++;
-				if ($_REQUEST['p'.$i]==$id) $selected_ids[]=$id;
+				if (isset($_REQUEST['p'.$i]) && $_REQUEST['p'.$i]==$id) $selected_ids[]=$id;
 				}
                 	$assigned_count=count($selected_ids);
                 	$instring=implode("','",$selected_ids);
@@ -52,7 +58,7 @@ include ("header.php");
                         WHERE experiment_id='".$experiment_id."' 
                         AND shownup='n' AND registered = 'n' AND participated='n'
 			AND participant_id IN ('".$instring."') ";
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		$_SESSION['assign_ids']=array();
 		message($assigned_count.' '.$lang['xxx_participants_removed']);
@@ -61,15 +67,15 @@ include ("header.php");
 
 		}
 
-	elseif ($_REQUEST['show']) {
+	elseif (isset($_REQUEST['show']) && $_REQUEST['show']) {
 
-		$sort = ($_REQUEST['sort']) ? $_REQUEST['sort']:"lname,fname,email";
+		$sort = (isset($_REQUEST['sort']) && $_REQUEST['sort']) ? $_REQUEST['sort']:"lname,fname,email";
 
-		if ($_REQUEST['new_query'] || !$_SESSION['assign_select_query']) {
+		if ((isset($_REQUEST['new_query']) && $_REQUEST['new_query']) || (!isset($_REQUEST['assign_select_query']) || !$_SESSION['assign_select_query'])) {
 			unset($_REQUEST['new_query']);
 	       		$where_clause=query__where_clause($query_modules,
 							  $_REQUEST['use'],
-							  $_REQUEST['con']);
+							  $_REQUEST['con'],$experiment_id);
 
 			if (!$where_clause) $where_clause=query__where_clause_module("all");
 
@@ -132,7 +138,7 @@ include ("header.php");
 
 	else 	{
 
-		if ($_REQUEST['new']) $_SESSION['assign_request']=array();
+		if (!isset($_SESSION['assign_request'])) $_SESSION['assign_request']=array();
 			else {
 				$new_req=array_merge($_SESSION['assign_request'],$_REQUEST);
 				$_REQUEST=$new_req;

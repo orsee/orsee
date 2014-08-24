@@ -1,7 +1,6 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
-error_reporting(E_ERROR | E_PARSE);
-//error_reporting(0);
 
 include ("nonoutputheader.php");
 
@@ -28,14 +27,15 @@ $plot_defaults=array(
 		'reverse_data'=>true,
 		'background_color'=>$color['stats_graph_background']
 		);
-	if (!isset($_REQUEST['stype']) || 
-		!$_REQUEST['stype'] || 
-		!function_exists('stats__array_'.$_REQUEST['stype'])) 
-		$stat['data']=array(array('no data',0));
-	else {
-		$fname='stats__array_'.$_REQUEST['stype'];
-		$stat=$fname();
-		}
+        if(isset($_REQUEST['stype']) && substr($_REQUEST['stype'],0,6)=="pform:") {
+		$stat=stats__array_pform_field(substr($_REQUEST['stype'],6));
+        } elseif (isset($_REQUEST['stype']) && function_exists('stats__array_'.$_REQUEST['stype'])) {
+            $fname='stats__array_'.$_REQUEST['stype'];
+            $stat=$fname();
+        } else {
+            $stat['data']=array(array('no data',0));
+        }
+
 
 if (count($stat['data'])==0) $stat['data']=array(array(NULL,NULL));
 elseif (count($stat['data'][0])==1) $stat['data'][0][]=0;
@@ -48,13 +48,16 @@ $graph = new PHPlot($stat['xsize'],$stat['ysize']);
 $graph->SetDataType($stat['data_type']);
 $graph->SetFileFormat($stat['file_format']);
 $graph->SetPlotType($stat['graphtype']);
-//$graph->SetUseTTF(1);
 
-/* if (count($stat['legend'])>6 || $stat['graphtype']=='pie') */
-	 $graph->SetFont('legend', 1);
 
-$graph->SetPlotBorderType('full'); // plotleft, plotright, both, full, none
+$graph->SetDefaultTTFont('../tagsets/fonts/FreeSerif.ttf');
+
+$graph->SetPlotBorderType('none'); // plotleft, plotright, both, full, none
 $graph->SetBackgroundColor($stat['background_color']);
+if($stat['graphtype']=='bars') {
+	$graph->SetShading(0);
+	$graph->SetPlotAreaWorld(NULL, 0);
+}
 
 if (count($stat['legend'])>0) {
 	foreach ($stat['legend'] as $key=>$val) {
@@ -75,7 +78,11 @@ if ($stat['xtitle']) $graph->SetXTitle($stat['xtitle'],'plotdown'); // plotup, p
 if ($stat['ytitle']) $graph->SetYTitle($stat['ytitle'], 'plotleft');// plotleft, plotright, both, plotin, none
 
 // Please remember that angles other than 90 are taken as 0 when working fith fixed fonts.
-$graph->SetXLabelAngle(0);
+if(isset($stat['x_label_angle'])) {
+	$graph->SetXLabelAngle($stat['x_label_angle']);
+} else {
+	$graph->SetXLabelAngle(0);
+}
 $graph->SetYLabelAngle(0);
 
 if (!(isset($stat['tick_increment_y']) && $stat['tick_increment_y']))
@@ -92,6 +99,9 @@ if ($stat['reverse_data'])
 	$data=array_reverse($stat['data']);
    else $data=$stat['data'];
 $graph->SetDataValues($data);
+
+$graph->SetXTickLabelPos('none');
+$graph->SetXTickPos('none');
 
 //echo '<pre>';
 //var_dump($stat);

@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="my_data";
@@ -8,13 +9,13 @@ include("header.php");
 
 	$form=true;
 
-	if ($_REQUEST['reallydelete']=="12345" && isset($_REQUEST['doit'])) {
+	if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']=="12345" && isset($_REQUEST['doit'])) {
  
 
                 $query="UPDATE ".table('participants')." 
 		 	SET deleted='y'
-                 	WHERE participant_id='".$participant_id."'";
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
+			WHERE participant_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$participant_id)."'";
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		log__participant("delete",$participant_id);
 		$form=false;
 		message ($lang['removed_from_invitation_list']);

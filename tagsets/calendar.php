@@ -1,5 +1,5 @@
 <?php
-// calendar functions. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 
 function date__skip_months($count,$time=0) {
@@ -81,8 +81,8 @@ function calendar__month_table_inner($time=0,$admin=false,$print=false) {
 	$query.=" AND session_start_year='".$year."'
                  AND session_start_month='".$date['mon']."'
                  ORDER BY session_start_day, session_start_hour, session_start_minute";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
-	while ($line=mysql_fetch_assoc($result)) {
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line=mysqli_fetch_assoc($result)) {
 			$days[$line['session_start_day']][]=$line;
 			if (!isset($expcolors[$line['experiment_id']])) {
 				$expcolors[$line['experiment_id']]=$expcolors_poss[$expcolor_count];
@@ -104,8 +104,8 @@ function calendar__month_table_inner($time=0,$admin=false,$print=false) {
                 HAVING space_start<='".$monthstring."'
                 	AND space_stop>='".$monthstring."'
                 ORDER BY space_start_day, space_start_hour, space_start_minute";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
-        while ($line=mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        while ($line=mysqli_fetch_assoc($result)) {
 		$maintstart = ($line['space_start']==$monthstring) ? $line['space_start_day'] : 1;
 		$maintstop = ($line['space_stop']==$monthstring) ? $line['space_stop_day'] : $limit;
 		if (!isset($lscolors[$line['space_id']])) {
@@ -181,7 +181,7 @@ function calendar__month_table_inner($time=0,$admin=false,$print=false) {
 				}
 
 
-        			if ($admin) echo '<BR><FONT class="small">'.$entry['experimenter'].'</FONT>';
+				if ($admin) echo '<BR><FONT class="small">'.str_replace(",",", ",$entry['experimenter']).'</FONT>';
 
         			$cs__reg=experiment__count_participate_at($entry['experiment_id'],$entry['session_id']);
 
@@ -247,7 +247,7 @@ function calendar__month_table_inner($time=0,$admin=false,$print=false) {
 						time__format($lang['lang'],$to,true,false,true,true);
 					echo '<BR><FONT class="small">'.
                                         	laboratories__strip_lab_name(stripslashes($entry[$lang['lang']])).'</FONT><BR>';
-					echo $entry['reason'].'<BR><FONT class="small">'.$entry['experimenter'].'</FONT><BR>';
+					echo $entry['reason'].'<BR><FONT class="small">'.str_replace(",",", ",$entry['experimenter']).'</FONT><BR>';
 					if (check_allow('lab_space_edit'))
 						echo '<A HREF="lab_space_edit.php?space_id='.$entry['space_id'].'">'.
 							'<FONT class="small" align=right>'.$lang['edit'].'</FONT></A><BR>';

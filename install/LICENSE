@@ -1,6 +1,6 @@
 /*  This file is part of the Online Recruitment System for Economic Experiments (ORSEE).
 
-    Copyright (c) 2003,2004 Ben Greiner (m@ilben.de).
+    Copyright (c) 2003-2014 Ben Greiner (m@ilben.de).
 
     Author(s): Ben Greiner
 
@@ -14,13 +14,13 @@
        in accordance with standard academic citation practices:
        Any academic report, publication, or other academic disclosure of
        results obtained with the use of this software will acknowledge the
-       software's use by an appropiate citation of the following
+       software's use by an appropriate citation of the following
        publication (or an updated version):
 
          Ben Greiner: An Online Recruitment System for Economic Experiments.
          In: Kurt Kremer, Volker Macho (Eds.): 
          Forschung und wissenschaftliches Rechnen 2003. GWDG Bericht 63,
-         Göttingen : Ges. für Wiss. Datenverarbeitung, 79-93, 2004.
+         Goettingen : Ges. fuer Wiss. Datenverarbeitung, 79-93, 2004.
 
     2. Redistributions of source code must retain the above copyright
        notice, this list of conditions and the following disclaimer.

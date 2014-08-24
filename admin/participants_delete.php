@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="delete participant";
@@ -34,7 +35,7 @@ include ("header.php");
                 $query="UPDATE ".table('participants')."
                         SET deleted='y'
 			WHERE participant_id='".$participant_id."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		if ($result) { 
       			message ($lang['participant_unsubscribed']);
@@ -48,7 +49,7 @@ include ("header.php");
                 $query="UPDATE ".table('participants')."
                         SET deleted='y', excluded='y' 
                         WHERE participant_id='".$participant_id."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 if ($result) {
                         message ($lang['participant_unsubscribed_and_excluded']);

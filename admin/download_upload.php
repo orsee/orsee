@@ -1,11 +1,12 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="upload";
 include ("header.php");
 
 
-if ($_REQUEST['experiment_id']) {
+if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) {
 		$experiment_id=$_REQUEST['experiment_id'];
 		if (!check_allow('experiment_restriction_override'))
 			check_experiment_allowed($experiment_id,"admin/experiment_show.php?experiment_id=".$experiment_id);
@@ -20,7 +21,7 @@ if ($_REQUEST['experiment_id']) {
 		$allow=check_allow('download_general_upload','download_main.php');
 		}
 
-	if ($_REQUEST['upload']) {
+	if (isset($_REQUEST['upload']) && $_REQUEST['upload']) {
 
 		$file=$_FILES['contents'];
 		if ($file['size']>$settings['upload_max_size'] || $file['error']>0) {

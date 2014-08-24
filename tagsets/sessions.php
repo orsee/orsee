@@ -1,6 +1,5 @@
 <?php
-
-// experiment session functions. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 function sessions__format_alist($session) {
 	global $lang, $color;
@@ -101,6 +100,8 @@ function session__check_lab_time_clash($entry) {
                 $this_end_time=time__time_package_to_unixtime($thisendtimearray);
 		}
 
+		if (!isset($entry['space_id'])) $entry['space_id']='';
+		if (!isset($entry['session_id'])) $entry['session_id']='';
 
         $query="SELECT unix_timestamp(concat(session_start_year,'-',session_start_month,'-',session_start_day,' ',
 					session_start_hour,':',session_start_minute,':0')) as start_time, 
@@ -115,9 +116,9 @@ function session__check_lab_time_clash($entry) {
                 AND laboratory_id='".$entry['laboratory_id']."' 
 		HAVING NOT (start_time >= '".$this_end_time."' OR stop_time <= '".$this_start_time."')
 		ORDER BY start_time";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-        while ($osession=mysql_fetch_assoc($result)) {
+        while ($osession=mysqli_fetch_assoc($result)) {
         	message ('<UL><LI>'.
                 	$notice.': <A HREF="session_edit.php?session_id='.$osession['session_id'].'">'.
                         experiment__get_title($osession['experiment_id']).' - '.
@@ -134,9 +135,9 @@ function session__check_lab_time_clash($entry) {
 			AND space_id!='".$entry['space_id']."' 
                 HAVING NOT (start_time >= '".$this_end_time."' OR stop_time <= '".$this_start_time."')
                 ORDER BY start_time";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-        while ($osession=mysql_fetch_assoc($result)) {
+        while ($osession=mysqli_fetch_assoc($result)) {
 		$ostart_time=time__get_timepack_from_pack ($osession,"space_start_");
 		$ostop_time=time__get_timepack_from_pack ($osession,"space_stop_");
 		$ostart_string=time__format($lang['lang'],$ostart_time);
@@ -231,17 +232,16 @@ function sessions__get_registration_end($alist,$session_id="",$experiment_id="")
 		}
  	elseif ($experiment_id) {
 		$query="SELECT ".table('sessions').".*,
-                	max(session_start_year*100000000 +
-                	session_start_month*1000000 +
-                	session_start_day*10000 +
-                	session_start_hour*100 +
-                	session_start_minute) as time
-               	 	FROM ".table('experiments').", ".table('sessions')."
-                	WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
-                	AND experiment_type='laboratory'
+			session_start_year*100000000 +
+            session_start_month*1000000 +
+            session_start_day*10000 +
+            session_start_hour*100 +
+            session_start_minute as time
+            FROM ".table('experiments').", ".table('sessions')."
+            WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
+            AND experiment_type='laboratory'
 			AND ".table('experiments').".experiment_id='".$experiment_id."'
-			GROUP BY ".table('experiments').".experiment_id
-                	ORDER BY time DESC
+			ORDER BY time DESC
 			LIMIT 1";
 		$alist=orsee_query($query);
 		}

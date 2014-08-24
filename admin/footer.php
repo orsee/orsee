@@ -1,4 +1,5 @@
 <?php 
+// part of orsee. see orsee.org
 
 	echo '
 		<br><BR><BR>

@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="add option";
@@ -15,7 +16,7 @@ include ("header.php");
 
 	$languages=get_languages();
 
-	if ($_REQUEST['save']) {
+	if (isset($_REQUEST['save']) && $_REQUEST['save']) {
 
 		$continue=true;
 

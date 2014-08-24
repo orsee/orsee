@@ -1,13 +1,13 @@
 <?php
+// part of orsee. see orsee.org
 
-// participant functions. part of orsee. see orsee.org.
-
-function participants__count_participants($constraint="") {
-	if ($constraint) $where_clause=" AND ".$constraint;
-		else $where_clause="";
-     	$query="SELECT COUNT(participant_id) as pcount
-      		FROM ".table('participants')." 
-      		WHERE deleted='n' ".$where_clause;
+function participants__count_participants($constraint="",$inc_deleted=false) {
+	if ($constraint) $where_clause=" AND ".$constraint; else $where_clause="";
+     $query="SELECT COUNT(participant_id) as pcount
+	FROM ".table('participants')."
+	WHERE participant_id IS NOT NULL ";
+    if (!$inc_deleted) $query.=" AND deleted='n' ";
+    $query.=$where_clause;
 	$line=orsee_query($query);
 	return $line['pcount'];
 }
@@ -30,488 +30,6 @@ function participant__participant_id_exists($pid) {
                 if (isset($line['participant_id'])) $exists=true; else $exists=false;
         return $exists;
 }
-
-
-// Create unique participant id
-function participant__create_participant_id() {
-           $gibtsschon=true;
-	   srand ((double)microtime()*1000000);
-           while ($gibtsschon) {
-           	$crypt_id = "/";
-           	while (eregi("(/|\\.)",$crypt_id)) { //<or <match <get-var crypt_id> "/"> <match <get-var crypt_id> "\\.">>>
-           		$participant_id = rand();
-           		$crypt_id=unix_crypt($participant_id);
-           		}
-
-                $query="SELECT participant_id FROM ".table('participants')." 
-                 	WHERE participant_id=".$participant_id;
-		$line=orsee_query($query);
-                if (isset($line['participant_id'])) $gibtsschon=true; else $gibtsschon=false;
-
-                if (!$gibtsschon) {
-                	$query="SELECT participant_id FROM ".table('participants_temp')." 
-                 		WHERE participant_id=".$participant_id;
-                	$line=orsee_query($query);
-                	if (isset($line['participant_id'])) $gibtsschon=true; else $gibtsschon=false;	
-                	}
-
-                if (!$gibtsschon) {
-                	$query="SELECT participant_id FROM ".table('participants_os')." 
-                 		WHERE participant_id=".$participant_id;
-                        $line=orsee_query($query);
-                        if (isset($line['participant_id'])) $gibtsschon=true; else $gibtsschon=false;
-                	}
-          	}
-	return $participant_id; 
-}
-
-// create new id and replace old id with it
-function participant__create_new_participant_id($participant_id) {
-	//participants,participants_temp,participants_os
-	$tables=array(  "participants"=>"participant_id",
-			"participants_os"=>"participant_id",
-			"participants_temp"=>"participant_id",
-			"mail_queue"=>"mail_recipient",
-			"os_playerdata"=>"participant_id",
-			"os_results"=>"participant_id",
-			"participate_at"=>"participant_id",
-			);
-	$crypt_tables=array("participants","participants_temp","participants_os");
-	foreach ($tables as $table=>$column) {
-		$query="LOCK TABLES ".table($table);
-		$done=mysql_query($query);
-		}
-	$new_id=participant__create_participant_id();
-	foreach ($tables as $table=>$column) {
-                $query="UPDATE ".table($table)." SET ".$column."='".$new_id."' WHERE ".$column."='".$participant_id."'";
-                $done=mysql_query($query);
-                }
-	foreach ($crypt_tables as $table) {
-		$query="UPDATE ".table($table)." SET participant_id_crypt='".unix_crypt($new_id)."' WHERE participant_id='".$new_id."'";
-		$done=mysql_query($query);
-	}
-	$query="UNLOCK TABLES";
-	$done=mysql_query($query);
-	return $new_id;
-}
-
-// participant form entries
-
-function participant__form_fname() {
-	global $lang;
-	tpr("fname");
-	echo '<TD>'.$lang['firstname'].':</TD>
-	      <TD><INPUT name=fname type=text size=40 maxlength=50 value="'.$_REQUEST['fname'].'"></TD>
-	     </TR>';
-}
-
-function participant__check_exist($varname,$required) {
-global $errors__dataform;
-        if ($required=="y") {
-                if (!(isset($_REQUEST[$varname]) && $_REQUEST[$varname])) 
-                	$errors__dataform[]=$varname;
-        }
-}
-
-function participant__check_fname($required) {
-	participant__check_exist("fname",$required);
-}
-
-function participant__form_lname() {
-	global $lang;
-	tpr("lname");
-	echo '<TD>'.$lang['lastname'].':</TD>
-	      <TD><INPUT name=lname type=text size=40 maxlength=50 value="'.$_REQUEST['lname'].'"></TD>
-	      </TR>';
-}
-
-function participant__check_lname($required) {
-        participant__check_exist("lname",$required);
-}
-
-
-function participant__form_email() {
-	global $lang;
-	tpr("email");
-	echo '<TD>'.$lang['e-mail-address'].':</TD>
-	      <TD><INPUT name=email type=text size=40 maxlength=100 value="'.$_REQUEST['email'].'"></TD>
-	     </TR>';
-}
-
-function participant__check_email($required) {
-	participant__check_exist("email",$required);
-	global $errors__dataform, $lang;
-	if ($_REQUEST['email']) {
-		$isok=eregi("^[^@ \t\r\n]+@[-_0-9a-zA-Z]+\\.[^@ \t\r\n]+$",$_REQUEST['email']);
-		if (!$isok) {
-			$errors__dataform[]="email";
-			message($lang['email_address_not_ok']);
-		}
-	}
-}
-
-function participant__form_language($required,$admin) {
-	global $lang, $settings, $authdata;
-	$part_langs=lang__get_part_langs();
-        if (count($part_langs)>1) {
-		$lang_names=lang__get_language_names();
-		if ($_REQUEST['language']) $current_lang=$_REQUEST['language'];
-			elseif ($admin) $current_lang=$settings['public_standard_language'];
-			else $current_lang=$authdata['language'];
-		tpr("language");
-		echo '<TD>'.$lang['language'].':</TD>
-			<TD><SELECT name="language">';
-			foreach ($part_langs as $language) {
-				echo '<OPTION value="'.$language.'"';
-				if ($language==$current_lang) echo ' SELECTED';
-				echo '>'.$lang_names[$language].'</OPTION>
-					';
-				}
-		echo '</TD>
-			</TR>';
-		}
-}
-
-function participant__form_phone_number() {
-	global $form__type, $lang;
-	tpr("phone_number");
-	echo '<TD>'.$lang['phone_number'].':';
-	if (!ereg("admin",$form__type)) 
-		echo '<BR><FONT class="small">'.$lang['phone_number_remark'].'</FONT>';
-	echo '</TD>
-	      <TD><INPUT name=phone_number type=text size=20 maxlength=30 value="'.$_REQUEST['phone_number'].'"></TD>
-	     </TR>';
-}
-
-function participant__check_phone_number($required) {
-	participant__check_exist("phone_number",$required);
-}
-
-
-
-function participant__form_address() {
-	global $lang;
-	tpr("address");
-	echo '<TD>'.$lang['address'].':
-	      </TD>
-	     <TD>'.$lang['street'].': <INPUT name=address_street type=text size=25 maxlength=50 value="'.
-			$_REQUEST['address_street'].'"></TD>
-	    </TR>';
-	tpr("address");
-	echo '<TD></TD>
-	      <TD>'.$lang['zip'].': <INPUT name=address_zip type=text size=5 maxlength=8 value="'.
-			$_REQUEST['address_zip'].'">&nbsp;&nbsp;
-	      '.$lang['city'].': <INPUT name=address_city type=text size=20 maxlength=50 value="'.
-			$_REQUEST['address_city'].'"></TD>
-	     </TR>';
-	tpr("address");
-	echo '<TD></TD><TD>'.$lang['country'].': 
-	      <INPUT name=address_country type=text size=20 maxlength=50 value="'.$_REQUEST['address_country'].'"></TD>
-	     </TR>';
-}
-
-function participant__check_address($required) {
-global $errors__dataform;
-	if ($required=="y") {
-        	if (!($_REQUEST['address_street'] && $_REQUEST['address_zip'] && $_REQUEST['address_city'] && $_REQUEST['address_country']))
-                	$errors__dataform[]="address";
-	}
-}
-
-
-function participant__form_gender() {
-	global $lang;
-	tpr("gender");
-	echo '<TD>'.$lang['gender'].':</TD>
-	<TD>
-	<INPUT name=gender type=radio value="m"';
-		if ($_REQUEST['gender']=="m") echo " CHECKED";
-	echo '>'.$lang['gender_m'].'
-	&nbsp;&nbsp;&nbsp;
-        <INPUT name=gender type=radio value="f"';
-		if ($_REQUEST['gender']=="f") echo " CHECKED";
-        echo '>'.$lang['gender_f'].'
-	</TD>
-	</TR>';
-}
-
-function participant__check_gender($required) {
-	participant__check_exist("gender",$required);
-}
-
-
-function participant__form_profession() {
-	global $lang;
-	tpr("profession");
-	echo '<TD>'.$lang['profession'].':</TD>
-	 	<TD>';
-	select__profession($_REQUEST['profession'],"profession");
-	echo '</TD>
-	     </TR>';
-}
-
-function participant__form_field_of_studies() {
-	global $lang;
-	tpr("field_of_studies");
-	echo '<TD>'.$lang['studies'].':</TD>
-	      <TD>';
-	select__field_of_studies($_REQUEST['field_of_studies'],"field_of_studies");
-	echo '</TD>
-	      </TR>';
-}
-
-
-function participant__form_begin_of_studies() {
-	global $lang;
-	tpr("begin_of_studies");
-	echo '<TD>'.$lang['begin_of_studies'].':</TD><TD>';
-
-	select__begin_of_studies($_REQUEST['begin_of_studies'],"begin_of_studies");
-	echo '
-		</TD></TR>';
-}
-
-function participant__check_work($required) {
-	global $subpool, $errors__dataform, $lang;
-	if ($required=="y") {
-
-  		if ($subpool['subpool_type']=="w" && $_REQUEST['profession']==0) 
-                	$errors__dataform[]="profession";
-
-  		if ($subpool['subpool_type']=="s" && $_REQUEST['field_of_studies']==0)
-                	$errors__dataform[]="field_of_studies";
-		if ($subpool['subpool_type']=="s" && !$_REQUEST['begin_of_studies'])
-                        $errors__dataform[]="begin_of_studies";
-
-  		if ($subpool['subpool_type']=="b") {
-        		if ($_REQUEST['profession']==0 && $_REQUEST['field_of_studies']==0)
-                		$errors__dataform[]="studies_prof_admin";
-			if ( (!($_REQUEST['field_of_studies'] == 0)) && (!$_REQUEST['begin_of_studies']))
-				$errors__dataform[]="begin_of_studies";
-			} 
-		}
-
-	if ($_REQUEST['profession'] != 0 && $_REQUEST['field_of_studies'] != 0) {
-		$errors__dataform[]="studies_prof_admin";
-		message($lang['give_either_profession_or_study']);
-		}
-}
-
-
-
-function participant__form_subpool() {
-	global $settings;
-	global $lang;
-	tpr("subpool");
-	echo '<TD>
-		'.$lang['subpool'].'
-	      </TD><TD>';
-	if ($_REQUEST['subpool_id']) $selsub=$_REQUEST['subpool_id']; else $selsub=$settings['subpool_default_registration_id'];
-	subpools__select_field("subpool_id","subpool_id","subpool_name",$selsub,"");
-	echo '</TD></TR>';
-}
-
-function participant__form_studies_prof_admin() {
-	global $lang;
-	tpr("studies_prof_admin");
-	echo '<TD></TD>
-        	<TD>
-		<TABLE width=100% border=0>
-		<TR><TD>
-		'.$lang['studies'].'<BR>';
-	select__field_of_studies($_REQUEST['field_of_studies'],"field_of_studies");
-	echo '</TD><TD align=center>&nbsp;'.$lang['or'].'&nbsp;</TD><TD>
-	       '.$lang['profession'].'<BR>';
-        select__profession($_REQUEST['profession'],"profession");
-        echo '</TD>
-             </TR>';
-	tpr("begin_of_studies");
-	echo '<TD>
-		'.$lang['begin_of_studies'].'<BR>';
-	select__begin_of_studies($_REQUEST['begin_of_studies'],"begin_of_studies");
-	echo '</TD><TD colspan=2></TD></TR>
-		</TABLE>
-	    </TD></TR>';
-}
-
-function participant__form_invitations($admin=false) {
-	global $lang, $subpool;
-	tpr("subscriptions");
-	echo '<TD valign=top>';
-	if ($admin) echo $lang['invitations']; else echo $lang['i_want_invitations_for'];
-	echo ':</TD>
-		<TD>';
-
-	participant__subscription_checkboxes('invitations',$subpool['subpool_id'],$_REQUEST['invitations']);
-        echo ' <BR><BR>
-		</TD></TR>';
-}
-
-function participant__check_invitations($required) {
-	if (!is_array($_REQUEST['invitations'])) $_REQUEST['invitations']=array();
-	$_REQUEST['subscriptions']=implode(",",$_REQUEST['invitations']);
-        participant__check_exist("subscriptions",$required);
-}
-
-function participant__form_rules_signed() {
-	global $lang;
-	echo '<TR><TD>';
-	echo $lang['rules_signed'];
-	echo '</TD>
-		<TD>
-		<input type=radio name=rules_signed value="y"';
-		if ($_REQUEST['rules_signed']=="y") echo " CHECKED";
-		echo '>'.$lang['yes'].'
-			&nbsp;&nbsp;&nbsp;
-		<input type=radio name=rules_signed value="n"';
-		if ($_REQUEST['rules_signed']!="y") echo " CHECKED";
-		echo '>'.$lang['no'].'
-		</TD>
-		</TR>';
-}
-
-function participant__form_remarks() {
-	global $lang;
-	echo '<TR><TD>'.$lang['remarks'].'</TD>
-		<TD>
-		<TEXTAREA name=remarks rows=3 cols=30 wrap=virtual>';
-		echo $_REQUEST['remarks'];
-		echo '</textarea>
-			</TD></TR>';
-}
-
-
-function participant__form_add_to_session() {
-	global $lang;
-	echo '<TR><TD colspan=2>&nbsp;</TD></TR><TR><TD>
-		<INPUT type=checkbox name=register_session value="y"';
-			if ($_REQUEST['register_session']=="y") echo " CHECKED";
-	echo '>'.$lang['register_sub_for_session'].'
-		</TD><TD>';
-	select__sessions($_REQUEST['session_id'],"session_id","",true);
-	echo '</TD></TR>';
-}
-
-function tpr($fieldname) {
-global $errors__dataform, $color;
-  if (!isset($errors__dataform)) $errors__dataform=array();
-  echo '<TR';
-  if (in_array($fieldname,$errors__dataform)) 
-                echo ' bgcolor="'.$color['missing_field'].'"';
-  echo '>';
-}
-
-// Create entry form
-function participant__form($form_title="",$button_title="",$form_type="") {
-	global $lang, $subpool, $settings;
-
-	$admin=ereg("admin",$form_type);
-
-        if (!$_REQUEST['subpool_id']) 
-		$_REQUEST['subpool_id']=$settings['subpool_default_registration_id'];
-
-	$subpool=orsee_db_load_array("subpools",$_REQUEST['subpool_id'],"subpool_id");
-
-	if (!$subpool['subpool_id']) $subpool=orsee_db_load_array("subpools",1,"subpool_id");
-
-	echo '<CENTER><BR>
-		<h4>'.$form_title.'</h4>
-		';
-	show_message();
-
-	echo '<FORM action="'.thisdoc().'">';
-
-	if ($admin)  
-		echo '<INPUT type=hidden name=participant_id value="'.$_REQUEST['participant_id'].'">';
-	   else echo '<INPUT type=hidden name=p value="'.unix_crypt($_REQUEST['participant_id']).'">';
-
-
-	echo '<INPUT type=hidden name=s value="'.$_REQUEST['s'].'">';
-	echo '<INPUT type=hidden name=dr value="'.$_REQUEST['dr'].'">';
-
-	if (!$admin) 
-		echo '<INPUT type=hidden name=subpool_id value="'.$_REQUEST['subpool_id'].'">';
-
-	echo '<TABLE width=90%>';
-
-	participant__form_fname();
-	participant__form_lname();
-	participant__form_email();
-	//participant__form_address();
-
-	participant__form_language(true,$admin);
-
-	if ($admin) participant__form_subpool();
-
-	participant__form_invitations($admin);
-
-	if (!$admin) 
-		echo '<TR><TD></TD><TD>'.$lang['optional_fields_follow'].'</TD></TR>';
-
-	participant__form_phone_number();
-
-	participant__form_gender();
-
-	if (!$admin) {
-
-		switch ($subpool['subpool_type']) {
-			case "w": participant__form_profession(); 
-				  break;
-			case "s": participant__form_field_of_studies();
-				  participant__form_begin_of_studies();
-				  break;
-			case "b": participant__form_studies_prof_admin();
-				  break;
-			}
-		}
-	   else {
-		participant__form_studies_prof_admin();
-		}
-
-	if (!$admin) echo '<TR><TD colspan=2>&nbsp;</TD></TR>';
-
-	if ($admin) {
-		participant__form_rules_signed();
-		participant__form_remarks();
-		}
-
-	if (ereg("admin-add",$form_type)) participant__form_add_to_session();
-
-	echo '</TABLE>';
-
-	echo '<TABLE>
-		<TR><TD COLSPAN=2><INPUT name=add type=submit 
-		value="'.$button_title.'">
-		</TD></TR>
-		</table>
-
-		</FORM>
-		</CENTER>';
-}
-
-
-
-function participant__get_profession($profession_id,$language="") {
-     if (!$language){
-	global $lang;
-	$language=$lang['lang'];
-	}
-     $query="SELECT * from ".table('lang')." WHERE content_type='profession' AND content_name='".$profession_id."'";
-     $prof=orsee_query($query);
-     return $prof[$language];
-}
-
-
-function participant__get_field_of_studies($studies_id,$language="") {
-     if (!$language){
-        global $lang;
-        $language=$lang['lang'];
-        }
-     $query="SELECT * from ".table('lang')." WHERE content_type='field_of_studies' AND content_name='".$studies_id."'";
-     $stud=orsee_query($query);
-     return $stud[$language];
-}
-
 
 function participant__deleted($pid) {
        $query="SELECT deleted
@@ -541,9 +59,9 @@ function participant__exclude_participant($participant) {
 
         $query="UPDATE ".table('participants')."
 		SET excluded='y', deleted='y',
-		remarks='".mysql_escape_string($notice)."' 
+		remarks='".mysqli_real_escape_string($GLOBALS['mysqli'],$notice)."'
                 WHERE participant_id='".$participant['participant_id']."'";
-        $done=mysql_query($query);
+        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$result='excluded';
 
@@ -569,17 +87,7 @@ function participants__get_statistics($participant_id) {
 	echo '  <TR>
 			<TD>';
 			participants__stat_laboratory($participant_id);
-	echo '		</TD>
-		</TR>
-                <TR>
-                        <TD>
-                                '.$lang['part_statistics_for_online_surveys'].'
-                        </TD>
-                </TR>';
-        echo '  <TR>
-                        <TD>';
-                        participants__stat_online_survey($participant_id);
-        echo '          </TD>
+	echo '	     </TD>
                 </TR>';
 	echo '</TABLE>';
 
@@ -597,7 +105,7 @@ function participants__stat_laboratory($participant_id) {
 		GROUP BY ".table('experiments').".experiment_id
       		ORDER BY registered, session_finished, session_start_year DESC, session_start_month DESC, session_start_day DESC,
                  	session_start_hour DESC, session_start_minute DESC";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$now=time();
 
@@ -628,7 +136,7 @@ function participants__stat_laboratory($participant_id) {
 		</TD>
 	     </TR>';
 
-	while ($p=mysql_fetch_assoc($result)) {
+	while ($p=mysqli_fetch_assoc($result)) {
 		$last_reg_time=0;
 		if ($p['registered']!='y') $last_reg_time=sessions__get_registration_end("","",$p['experiment_id']);
 		if ($p['registered']=='y' || $last_reg_time > $now) {
@@ -685,72 +193,662 @@ function participants__stat_laboratory($participant_id) {
 	echo '</TABLE>';
 }
 
-function participants__stat_online_survey($participant_id) {
-	global $lang, $color;
 
-	$query="SELECT *
-      		FROM ".table('experiments').", ".table('participate_at').", ".table('os_properties')." 
-        	WHERE ".table('experiments').".experiment_id=".table('participate_at').".experiment_id
-		AND participant_id = '".$participant_id."'
-		AND ".table('os_properties').".experiment_id = ".table('experiments').".experiment_id
-		AND experiment_type='online-survey'
-      		ORDER BY participated, start_year, start_month, start_day,
-                 	start_hour, start_minute";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
 
-        $now=time();
+// Create unique participant id
+function participant__create_participant_id() {
+           $gibtsschon=true;
+	   srand ((double)microtime()*1000000);
+           while ($gibtsschon) {
+		$crypt_id = "/";
+		while (preg_match("/(\/|\\.)/",$crypt_id)) {
+			$participant_id = rand();
+			$crypt_id=unix_crypt($participant_id);
+			}
 
-        $shade=false;
+                $query="SELECT participant_id FROM ".table('participants')."
+			WHERE participant_id=".$participant_id;
+		$line=orsee_query($query);
+                if (isset($line['participant_id'])) $gibtsschon=true; else $gibtsschon=false;
 
-        echo '<TABLE width=90% border=0>';
-        echo '<TR>
-                <TD>
-                        '.$lang['experiment'].'
-                </TD>
-                <TD>
-                        '.$lang['type'].'
-                </TD>
-                <TD>
-                        '.$lang['date_and_time'].'
-                </TD>
-                <TD>
-                        '.$lang['participated'].'
-                </TD>
-		<TD>
-                        '.$lang['finished'].'
-                </TD>
-             </TR>';
-
-        while ($p=mysql_fetch_assoc($result)) {
-		$survey_end_time=survey__get_stop_unixtime("",$p);
-		if ($p['participated']=='y' || ($survey_end_time && $survey_end_time > $now)) {
-			echo '<TR';
-                                if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
-					else echo ' bgcolor="'.$color['list_shade2'].'"';
-                        echo '>
-                                <TD>
-                                        <A href="experiment_show.php?experiment_id='.$p['experiment_id'].'">'.
-                                                $p['experiment_name'].'</A>
-                                </TD>
-                                <TD>
-                                        '.$p['experiment_ext_type'].'
-                                </TD>
-                                <TD>
-					'.$lang['from'].' '.survey__print_start_time($p['experiment_id'],true).' '.
-                        		$lang['to'].' '.survey__print_stop_time($p['experiment_id'],true).'
-                        	</TD>
-                                <TD>';
-                                if ($p['participated']=='y') echo $lang['yes']; else echo $lang['no'];
-                        echo '  </TD>
-                                <TD>';
-                                if ($p['participated']=='y') echo 'finished?';
-                                        else echo '-';
-                        echo '  </TD>
-                              </TR>';
-                        if ($shade) $shade=false; else $shade=true;
-                        }
-                }
-	echo '</TABLE>';
+                if (!$gibtsschon) {
+			$query="SELECT participant_id FROM ".table('participants_temp')."
+				WHERE participant_id=".$participant_id;
+			$line=orsee_query($query);
+			if (isset($line['participant_id'])) $gibtsschon=true; else $gibtsschon=false;
+			}
+		}
+	return $participant_id;
 }
+
+// create new id and replace old id with it
+function participant__create_new_participant_id($participant_id) {
+	//participants,participants_temp
+	$tables=array(  "participants"=>"participant_id",
+			"participants_temp"=>"participant_id",
+			"mail_queue"=>"mail_recipient",
+			"participate_at"=>"participant_id",
+			);
+	$crypt_tables=array("participants","participants_temp");
+	foreach ($tables as $table=>$column) {
+		$query="LOCK TABLES ".table($table);
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+		}
+	$new_id=participant__create_participant_id();
+	foreach ($tables as $table=>$column) {
+                $query="UPDATE ".table($table)." SET ".$column."='".$new_id."' WHERE ".$column."='".$participant_id."'";
+                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                }
+	foreach ($crypt_tables as $table) {
+		$query="UPDATE ".table($table)." SET participant_id_crypt='".unix_crypt($new_id)."' WHERE participant_id='".$new_id."'";
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	}
+	$query="UNLOCK TABLES";
+	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	return $new_id;
+}
+
+
+
+// CHECKS
+// check unique
+function participantform__check_unique($edit,$formtype,$participant_id=0) {
+	global $lang, $settings, $errors__dataform;
+
+	$disable_form=false; $problem=false; $nonunique_fields=array();
+    if (!isset($edit['subpool_id']) || !$edit['subpool_id']) $edit['subpool_id']=$settings['subpool_default_registration_id'];
+	$subpool=orsee_db_load_array("subpools",$edit['subpool_id'],"subpool_id");
+	if (!$subpool['subpool_id']) $subpool=orsee_db_load_array("subpools",1,"subpool_id");
+	$edit['subpool_id']=$subpool['subpool_id'];
+
+	$nonunique=participantform__get_nonunique($edit,$participant_id);
+
+	if ($formtype=='create') {
+		foreach ($nonunique as $f) {
+			// conditions for check: 1) subpool must fit, 2) must be a public field, 3) form not yet disabled, 4) requires unique in creation form
+			if(($f['subpools']=='all' || in_array($subpool['subpool_id'],explode(",",$f['subpools']))) &&
+				($f['admin_only']!='y') &&
+				$disable_form==false &&
+				$f['require_unique_on_create_page']=='y'
+					) {
+
+				if ($f['nonunique_participants']) {
+					$errors__dataform[]=$f['mysql_column_name'];
+					$deleted=participant__deleted($f['nonunique_participants_list'][0]);
+					$excluded=participant__excluded($f['nonunique_participants_list'][0]);
+
+					if($excluded && $f['unique_on_create_page_tell_if_deleted']=='y') {
+						message($lang['error_sorry_you_are_excluded']);
+						message($lang['if_you_have_questions_write_to'].' '.support_mail_link());
+						$disable_form=true;
+					} elseif($deleted && $f['unique_on_create_page_tell_if_deleted']=='y') {
+						message($lang['error_sorry_you_are_deleted']);
+						message($lang['if_you_have_questions_write_to'].' '.support_mail_link());
+						$disable_form=true;
+					} else {
+						$problem=true;
+						if (isset($lang[$f['unique_on_create_page_error_message_if_exists_lang']])) message($lang[$f['unique_on_create_page_error_message_if_exists_lang']]);
+						else message($f['unique_on_create_page_error_message_if_exists_lang']);
+						if($f['unique_on_create_page_email_regmail_confmail_again']=='y') {
+							message($lang['message_with_edit_link_mailed']);
+							$done=experimentmail__mail_edit_link($f['nonunique_participants_list'][0]);
+							$disable_form=true;
+						}
+					}
+				} elseif($f['nonunique_participants_temp']) {
+						$problem=true;
+						$errors__dataform[]=$f['mysql_column_name'];
+						if (isset($lang[$f['unique_on_create_page_error_message_if_exists_lang']])) message($lang[$f['unique_on_create_page_error_message_if_exists_lang']]);
+						else message($f['unique_on_create_page_error_message_if_exists_lang']);
+						if($f['unique_on_create_page_email_regmail_confmail_again']=='y') {
+							message($lang['already_registered_but_not_confirmed'].' '.$lang['confirmation_message_mailed_again']);
+							$done=experimentmail__confirmation_mail($f['nonunique_participants_temp_list'][0]);
+							$disable_form=true;
+						}
+				}
+			}
+		}
+	$response=array(); $response['disable_form']=$disable_form; $response['problem']=$problem;
+	return $response;
+	} elseif ($formtype=='edit') {
+		foreach ($nonunique as $f) {
+			var_dump($f);
+			// conditions for check: 1) subpool must fit, 2) must be a public field, 3) requires unique in edit form
+			if(($f['subpools']=='all' || in_array($subpool['subpool_id'],explode(",",$f['subpools']))) &&
+				($f['admin_only']!='y') && $f['check_unique_on_edit_page']=='y') {
+
+				if ($f['nonunique_participants'] || $f['nonunique_participants_temp']) {
+					$errors__dataform[]=$f['mysql_column_name'];
+					$problem=true;
+					if (isset($lang[$f['unique_on_edit_page_error_message_if_exists_lang']])) message($lang[$f['unique_on_edit_page_error_message_if_exists_lang']]);
+					else message($f['unique_on_edit_page_error_message_if_exists_lang']);
+				}
+			}
+		}
+	}
+	$response=array(); $response['problem']=$problem;
+	return $response;
+}
+
+
+function participantform__get_nonunique($edit,$participant_id=0) {
+	$nonunique_fields=array();
+	$formfields=participantform__load();
+	foreach ($formfields as $f) {
+	$f['nonunique_participants']=false; $f['nonunique_participants_list']=array();
+	$f['nonunique_participants_temp']=false; $f['nonunique_participants_temp_list']=array();
+	if(($f['require_unique_on_create_page']=='y' || $f['check_unique_on_edit_page']=='y') &&
+		(isset($edit[$f['mysql_column_name']]) && $edit[$f['mysql_column_name']]) ) {
+		$query="SELECT participant_id FROM ".table('participants')."
+			WHERE ".$f['mysql_column_name']."='".mysqli_real_escape_string($GLOBALS['mysqli'],$edit[$f['mysql_column_name']])."'";
+        if ($participant_id) $query.=" AND participant_id!='".mysqli_real_escape_string($GLOBALS['mysqli'],$participant_id)."'";
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']).", Query=".$query);
+	while ($line = mysqli_fetch_assoc($result)) $f['nonunique_participants_list'][]=$line['participant_id'];
+		if (count($f['nonunique_participants_list'])>0) $f['nonunique_participants']=true;
+		else {
+			$query="SELECT participant_id FROM ".table('participants_temp')."
+				WHERE ".$f['mysql_column_name']."='".mysqli_real_escape_string($GLOBALS['mysqli'],$edit[$f['mysql_column_name']])."'";
+		if ($participant_id) $query.=" AND participant_id!='".mysqli_real_escape_string($GLOBALS['mysqli'],$participant_id)."'";
+			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']).", Query=".$query);
+		while ($line = mysqli_fetch_assoc($result)) $f['nonunique_participants_temp_list'][]=$line['participant_id'];
+			if (count($f['nonunique_participants_temp_list'])>0) $f['nonunique_participants_temp']=true;
+		}
+		if ($f['nonunique_participants'] || $f['nonunique_participants_temp']) $nonunique_fields[$f['mysql_column_name']]=$f;
+	}}
+	return $nonunique_fields;
+}
+
+
+// check fields
+function participantform__check_fields($edit,$admin) {
+	global $lang, $settings;
+	$errors_dataform=array();
+
+    if (!isset($edit['subpool_id']) || !$edit['subpool_id']) $edit['subpool_id']=$settings['subpool_default_registration_id'];
+	$subpool=orsee_db_load_array("subpools",$edit['subpool_id'],"subpool_id");
+	if (!$subpool['subpool_id']) $subpool=orsee_db_load_array("subpools",1,"subpool_id");
+	$edit['subpool_id']=$subpool['subpool_id'];
+
+	$formfields=participantform__load();
+	foreach ($formfields as $f) {
+	if($f['subpools']=='all' | in_array($subpool['subpool_id'],explode(",",$f['subpools']))) {
+		if ($f['type']=='invitations') {
+			if (!isset($_REQUEST[$f['mysql_column_name']]) || !is_array($_REQUEST[$f['mysql_column_name']])) $_REQUEST[$f['mysql_column_name']]=array();
+			$_REQUEST[$f['mysql_column_name']]=implode(",",$_REQUEST[$f['mysql_column_name']]);
+			$edit[$f['mysql_column_name']]=$_REQUEST[$f['mysql_column_name']];
+		}
+		if ($admin || $f['admin_only']!='y') {
+			if ($f['compulsory']=='y') {
+				if(!isset($edit[$f['mysql_column_name']]) || !$edit[$f['mysql_column_name']]) {
+					$errors_dataform[]=$f['mysql_column_name'];
+					if (isset($lang[$f['error_message_if_empty_lang']])) message($lang[$f['error_message_if_empty_lang']]);
+					else message($f['error_message_if_empty_lang']);
+				}
+			}
+			if ($f['perl_regexp']!='') {
+				if(!preg_match($f['perl_regexp'],$edit[$f['mysql_column_name']])) {
+					$errors_dataform[]=$f['mysql_column_name'];
+					if (isset($lang[$f['error_message_if_no_regexp_match_lang']])) message($lang[$f['error_message_if_no_regexp_match_lang']]);
+					else message($f['error_message_if_no_regexp_match_lang']);
+				}
+			}
+		}
+	}}
+	return $errors_dataform;
+}
+
+
+
+// form fields
+function participantform__allvalues() {
+$array=array(
+'admin_only'=>'n',
+'allow_sort_in_session_participants_list'=>'n',
+'check_unique_on_edit_page'=>'n',
+'cols'=>'40',
+'compulsory'=>'n',
+'default_value'=>'',
+'error_message_if_empty_lang'=>'',
+'error_message_if_no_regexp_match_lang'=>'',
+'include_in_statistics'=>'n',
+'include_none_option'=>'n',
+'link_as_email_in_lists'=>'n',
+'list_in_session_participants_list'=>'n',
+'list_in_session_pdf_list'=>'n',
+'maxlength'=>'100',
+'option_values_lang'=>'',
+'option_values'=>'',
+'perl_regexp'=>'',
+'require_unique_on_create_page'=>'n',
+'rows'=>'3',
+'search_include_in_experiment_assign_query'=>'n',
+'search_include_in_participant_query'=>'n',
+'search_result_allow_sort'=>'n',
+'search_result_sort_order'=>'',
+'searchresult_list_in_experiment_assign_results'=>'n',
+'searchresult_list_in_participant_results'=>'n',
+'size'=>'40',
+'subpools'=>'all',
+'unique_on_create_page_email_regmail_confmail_again'=>'n',
+'unique_on_create_page_error_message_if_exists_lang'=>'',
+'unique_on_create_page_tell_if_deleted'=>'n',
+'unique_on_edit_page_error_message_if_exists_lang'=>'',
+'value_begin'=>'0',
+'value_end'=>'1',
+'value_step'=>'0',
+'values_reverse'=>'n',
+'wrap'=>'virtual'
+);
+return $array;
+}
+
+function participantform__load() {
+	$pform=participantform__define();
+	foreach ($pform as $k=>$f) {
+		$t=participantform__allvalues();
+		foreach ($f as $kf=>$vf) {
+			$t[$kf]=$vf;
+		}
+		$pform[$k]=$t;
+	}
+	return $pform;
+}
+
+
+// processing the template
+function load_form_template($tpl_name,$out) {
+	global $lang, $settings__root_to_server,
+		$settings__root_directory, $settings;
+
+	// get the template
+        $tpl=file_get_contents($settings__root_to_server.
+                                $settings__root_directory.
+                                '/ftpl/'.$tpl_name.'.tpl');
+	// process conditionals
+	$pattern="/\{[^#\}]*#(!?)([^#!\}]+)#([^\}]+)\}/ie";
+    $replacement = "($1\$out['$2'])?\"$3\":''";
+    $tpl=preg_replace($pattern, $replacement, $tpl);
+
+	// fill in the vars
+	foreach ($out as $k=>$o) $tpl=str_replace("#".$k."#",$o,$tpl);
+
+	// fill in language terms
+        $pattern="/lang\[([^\]]+)\]/ie";
+        $replacement = "\$lang['$1']";
+        //$replacement = "(isset(\$lang['$1']))?\"\$lang['$1']\":\"$1\"";
+        $tpl=preg_replace($pattern, $replacement, $tpl);
+
+	return $tpl;
+}
+
+
+function form__replace_funcs_in_field($f) {
+	global $lang, $settings;
+    foreach ($f as $o=>$v) {
+		if (substr($f[$o],0,5)=='func:') eval('$f[$o]='.substr($f[$o],5).';');
+    }
+	return $f;
+}
+
+
+// generic fields
+function form__render_field($f) {
+	$out='';
+	switch($f['type']) {
+		case 'textline': $out=form__render_textline($f); break;
+		case 'textarea': $out=form__render_textarea($f); break;
+		case 'radioline': $out=form__render_radioline($f); break;
+		case 'select_list': $out=form__render_select_list($f); break;
+		case 'select_numbers': $out=form__render_select_numbers($f); break;
+		case 'select_lang': $out=form__render_select_lang($f); break;
+	}
+	return $out;
+}
+
+function form__render_textline($f) {
+	$out='<INPUT type="text" name="'.$f['mysql_column_name'].'" value="'.$f['value'].'" size="'.
+		$f['size'].'" maxlength="'.$f['maxlength'].'">';
+	return $out;
+}
+
+function form__render_textarea($f) {
+        $out='<textarea name="'.$f['mysql_column_name'].'" cols="'.$f['cols'].'" rows="'.
+                $f['rows'].'" wrap="'.$f['wrap'].'">'.$f['value'].'</textarea>';
+        return $out;
+}
+
+function form__render_radioline($f) {
+	global $lang;
+	$optionvalues=explode(",",$f['option_values']);
+	$optionnames=explode(",",$f['option_values_lang']);
+	$items=array();
+	foreach($optionvalues as $k=>$v) {
+		if (isset($optionnames[$k])) $items[$v]=$optionnames[$k];
+	}
+	$out='';
+	foreach ($items as $val=>$text) {
+		$out.='<INPUT name="'.$f['mysql_column_name'].'" type="radio" value="'.$val.'"';
+        if ($f['value']==$val) $out.=" CHECKED";
+	$out.='>';
+	if (isset($lang[$text])) $out.=$lang[$text]; else $out.=$text;
+	$out.='&nbsp;&nbsp;&nbsp;';
+	}
+    return $out;
+}
+
+function form__render_select_list($f) {
+	global $lang;
+	$optionvalues=explode(",",$f['option_values']);
+	$optionnames=explode(",",$f['option_values_lang']);
+	if ($f['include_none_option']=='y') $incnone=true; else $incnone=false;
+	$items=array();
+	foreach($optionvalues as $k=>$v) {
+		if (isset($optionnames[$k])) $items[$v]=$optionnames[$k];
+	}
+	$out='';
+	$out=helpers__select_text($items,$f['mysql_column_name'],$f['value'],$incnone);
+    return $out;
+}
+
+function form__render_select_lang($f) {
+	if ($f['include_none_option']=='y') $incnone=true; else $incnone=false;
+	$out=language__selectfield_item($f['mysql_column_name'],$f['mysql_column_name'],$f['value'],$incnone);
+	return $out;
+}
+
+
+function form__render_select_numbers($f) {
+		if ($f['include_none_option']=='y') $incnone=true; else $incnone=false;
+		if ($f['values_reverse']=='y') $reverse=true; else $reverse=false;
+        $out=participant__select_numbers($f['mysql_column_name'],$f['value'],$f['value_begin'],$f['value_end'],0,$f['value_step'],$reverse,$incnone);
+        return $out;
+}
+
+// special fields
+function participant__invitations_form_field($subpool_id,$varname,$value) {
+	global $settings, $lang;
+	if (!$subpool_id) $subpool_id=$settings['subpool_default_registration_id'];
+    $checked=explode(",",$value);
+    $query="SELECT *
+            FROM ".table('experiment_types')." as texpt,
+            ".table('lang')." as tlang, ".table('subpools')." as tsub
+            WHERE texpt.exptype_id=tlang.content_name
+            AND tlang.content_type='experiment_type'
+            AND texpt.enabled='y'
+			AND tsub.experiment_types LIKE concat('%',texpt.exptype_name ,'%')
+			AND tsub.subpool_id='".$subpool_id."'
+            ORDER BY exptype_id";
+    $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+    $out='';
+    while ($line = mysqli_fetch_assoc($result)) {
+	$out.='<INPUT type="checkbox" name="'.$varname.'['.$line['exptype_name'].']"
+                                        value="'.$line['exptype_name'].'"';
+        if (in_array($line['exptype_name'],$checked)) $out.=" CHECKED";
+        $out.='>'.$line[$lang['lang']];
+        $out.='<BR>
+                     ';
+    }
+    return $out;
+}
+
+function participant__rules_signed_form_field($current_rules_signed="") {
+	global $lang;
+	$out='<input type=radio name=rules_signed value="y"';
+	if ($current_rules_signed=="y") $out.=" CHECKED";
+        $out.='>'.$lang['yes'].'&nbsp;&nbsp;&nbsp;
+              <input type=radio name=rules_signed value="n"';
+        if ($current_rules_signed!="y") $out.=" CHECKED";
+        $out.='>'.$lang['no'];
+	return $out;
+}
+
+function participant__remarks_form_field($current_remarks="") {
+        global $lang;
+        $out='<TEXTAREA name=remarks rows=3 cols=70 wrap=virtual>';
+        $out.=$current_remarks;
+        $out.='</textarea>';
+	return $out;
+}
+
+function participant__add_to_session_checkbox() {
+        $out='<INPUT type=checkbox name=register_session value="y">';
+	return $out;
+}
+function participant__add_to_session_select($participant_id,$session_id="") {
+        $out=select__sessions($session_id,"session_id","",true,$participant_id);
+	return $out;
+}
+
+function participant__select_numbers($name,$prevalue,$begin,$end,$fillzeros=2,$steps=1,$reverse=false,$incnone=false,$existing=false,$where='',$show_count=false) {
+	$out='';
+	$out.='<select name="'.$name.'">';
+	if ($incnone) $out.='<option value="">-</option>';
+
+	if (!$existing) {
+		if ($begin<$end) { $lb=$begin; $ub=$end;} else { $lb=$end; $ub=$begin; }
+		if ($reverse) $i=$ub; else $i=$lb;
+		if ($steps<1) $steps=1;
+		while (($reverse==false && $i<=$ub) || ($reverse==true && $i>=$lb)) {
+			$out.='<option value="'.$i.'"'; if ($i == (int) $prevalue) $out.=' SELECTED'; $out.='>';
+			$out.=helpers__pad_number($i,$fillzeros); $out.='</option>';
+			if ($reverse) $i=$i-$steps; else $i=$i+$steps;
+		}
+	} else {
+		$query="SELECT count(*) as tf_count, ".$name." as tf_value
+				FROM ".table('participants')."
+				WHERE ".table('participants').".participant_id IS NOT NULL ";
+		if($where) $query.=" AND ".$where." ";
+		$query.=" GROUP BY ".$name."
+				  ORDER BY ".$name;
+		if ($reverse) $query.=" DESC ";
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+		$listitems=array();
+        while ($line = mysqli_fetch_assoc($result)) {
+			if(!isset($listitems[$line['tf_value']])) $listitems[$line['tf_value']]=$line;
+            else $listitems[$line['tf_value']]['tf_count']=$listitems[$line['tf_value']]['tf_count']+$line['tf_count'];
+        }
+        foreach ($listitems as $line) {
+            $out.='<option value="'.$line['tf_value'].'"'; if ($line['tf_value'] == (int) $prevalue) $out.=' SELECTED'; $out.='>';
+            if ($line['tf_value']!='') $out.=helpers__pad_number($line['tf_value'],$fillzeros);
+            else $out.='-';
+            if ($show_count) $out.=' ('.$line['tf_count'].')';
+		$out.='</option>';
+        }
+
+
+		while ($line = mysqli_fetch_assoc($result)) {
+			$out.='<option value="'.$line['tf_value'].'"'; if ($line['tf_value'] == (int) $prevalue) $out.=' SELECTED'; $out.='>';
+			$out.=helpers__pad_number($line['tf_value'],$fillzeros);
+			if ($show_count) $out.=' ('.$line['tf_count'].')';
+			$out.='</option>';
+		}
+	}
+	$out.='</select>';
+	return $out;
+}
+
+function participant__select_existing($name,$prevalue,$where='',$show_count=false) {
+	$out='';
+	$out.='<select name="'.$name.'">';
+	$query="SELECT count(*) as tf_count, ".$name." as tf_value
+			FROM ".table('participants')."
+			WHERE ".table('participants').".participant_id IS NOT NULL ";
+	if($where) $query.=" AND ".$where." ";
+	$query.=" GROUP BY ".$name."
+			  ORDER BY ".$name;
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line = mysqli_fetch_assoc($result)) {
+		$out.='<option value="'.$line['tf_value'].'"'; if ($line['tf_value'] == $prevalue) $out.=' SELECTED'; $out.='>';
+		$out.=$line['tf_value'];
+		if ($show_count) $out.=' ('.$line['tf_count'].')';
+		$out.='</option>';
+	}
+	$out.='</select>';
+	return $out;
+}
+
+
+// the participant form
+function participant__show_form($edit,$button_title="",$form_title="",$errors,$admin=false) {
+	global $lang, $subpool, $settings, $color;
+	$out=array(); $tout=array();
+
+	echo '<CENTER><BR>
+		<h4>'.$form_title.'</h4>
+		';
+	show_message();
+
+	if (!isset($edit['participant_id'])) $edit['participant_id']='';
+    if (!isset($edit['subpool_id']) || !$edit['subpool_id']) $edit['subpool_id']=$settings['subpool_default_registration_id'];
+	$subpool=orsee_db_load_array("subpools",$edit['subpool_id'],"subpool_id");
+	if (!$subpool['subpool_id']) $subpool=orsee_db_load_array("subpools",1,"subpool_id");
+	$edit['subpool_id']=$subpool['subpool_id'];
+
+	$pools=subpools__get_subpools();
+	foreach ($pools as $p) $out['is_subjectpool_'.$p]=false;
+	$out['is_subjectpool_'.$subpool['subpool_id']]=true;
+	$out['is_subpool_type_w']=false; $out['is_subpool_type_s']=false; $out['is_subpool_type_b']=false;
+	$out['is_subpool_type_'.$subpool['subpool_type']]=true;
+	if ($admin) { $out['is_admin']=true; $out['is_not_admin']=false; }
+	else { $out['is_admin']=false; $out['is_not_admin']=true; }
+
+
+	echo '<FORM action="'.thisdoc().'" method="POST">';
+
+    if ($admin) echo '<INPUT type="hidden" name="participant_id" value="'.$edit['participant_id'].'">';
+	else echo '<INPUT type=hidden name=p value="'.unix_crypt($edit['participant_id']).'">';
+	if (!isset($edit['s'])) $edit['s']='';
+    if (!isset($edit['dr'])) $edit['dr']='';
+    echo '<INPUT type=hidden name=s value="'.$edit['s'].'">';
+	echo '<INPUT type=hidden name=dr value="'.$edit['dr'].'">';
+	if (!$admin) echo '<INPUT type=hidden name=subpool_id value="'.$edit['subpool_id'].'">';
+
+	if ($admin) $nonunique=participantform__get_nonunique($edit,$edit['participant_id']);
+
+	$formfields=participantform__load();
+
+	foreach ($formfields as $f) {
+	if($f['subpools']=='all' | in_array($subpool['subpool_id'],explode(",",$f['subpools']))) {
+
+		$f=form__replace_funcs_in_field($f);
+		if (isset($edit[$f['mysql_column_name']])) $f['value']=$edit[$f['mysql_column_name']];
+		else $f['value']=$f['default_value'];
+
+		if ($f['type']=='language') {
+			$part_langs=lang__get_part_langs();
+		if (count($part_langs)>1) {
+		$out['multiple_participant_languages_exist']=true;
+		$tout['multiple_participant_languages_exist']=true;
+		} else {
+		$out['multiple_participant_languages_exist']=false;
+		$tout['multiple_participant_languages_exist']=false;
+		}
+		$field=lang__select_lang($f['mysql_column_name'],$f['value'],$type="part");
+		} elseif ($f['type']=='invitations') {
+			$field=participant__invitations_form_field($subpool['subpool_id'],$f['mysql_column_name'],$f['value']);
+		} else {
+			$field=form__render_field($f);
+		}
+		if ($admin) {
+			if (isset($nonunique[$f['mysql_column_name']])) {
+				if (isset($lang['not_unique'])) $note=$lang['not_unique'];
+						else $note='not unique';
+				$link='participants_show.php?new_query=true&deleted=b&use%5B0%5D=true&query_field='.urlencode($f['value']).'&field_bezug='.urlencode($f['mysql_column_name']).'&show=true';
+				$field.=' <A HREF="'.$link.'"><FONT color="red">'.$note.'</FONT></A>';
+			}
+		}
+
+		if ($f['admin_only']=='y') $tout[$f['mysql_column_name']]=$field; else $out[$f['mysql_column_name']]=$field;
+		if(in_array($f['mysql_column_name'],$errors)) {
+			$out['error_'.$f['mysql_column_name']]=' bgcolor="'.$color['missing_field'].'"';
+			$tout['error_'.$f['mysql_column_name']]=' bgcolor="'.$color['missing_field'].'"';
+		} else {
+			$out['error_'.$f['mysql_column_name']]='';
+			$tout['error_'.$f['mysql_column_name']]='';
+		}
+	}}
+
+	$formoutput=load_form_template('participant_form',$out);
+
+	echo '<table cellspacing=0 cellpadding="10em" border=0 width="90%">';
+	echo $formoutput;
+
+	if ($admin) {
+		if (isset($edit['participant_id'])) $tout['participant_id']=$edit['participant_id']; else $tout['participant_id']='';
+		if (isset($edit['participant_id_crypt'])) $tout['participant_id_crypt']=$edit['participant_id_crypt']; else $tout['participant_id_crypt']='';
+		if (isset($edit['creation_time'])) $tout['creation_time']=time__format($lang['lang'],'',false,false,true,false,$edit['creation_time']);  else $tout['creation_time']='';
+		if (!isset($edit['rules_signed'])) $edit['rules_signed']='';
+
+		$tout['subpool_id']=subpools__select_field("subpool_id","subpool_id","subpool_name",$edit['subpool_id'],"");
+		$tout['rules_signed']=participant__rules_signed_form_field($edit['rules_signed']);
+
+		if (!$edit['participant_id']) {
+			$tout['is_part_create_form']=true;
+			$tout['checkbox_add_to_session']=participant__add_to_session_checkbox();
+			$tout['select_add_to_session']=participant__add_to_session_select($edit['participant_id']);
+		} else $tout['is_part_create_form']=false;
+
+		$adminformoutput=load_form_template('participant_form_admin_addons',$tout);
+		echo $adminformoutput;
+	}
+
+	if (!$button_title) $button_title=$lang['change'];
+	echo '<tr>
+			<td colspan=2 align="center">
+			<INPUT name="add" type="submit" value="'.$button_title.'">
+			</td>
+                </tr>';
+    echo '</table> </form>';
+}
+
+
+function participant__load_result_table_fields($type='search',$tlang='') { // type can be search, assign, session, email
+	global $lang;
+	if (!$tlang) $tlang=$lang['lang'];
+	$formfields=participantform__load(); $result_columns=array();
+	foreach ($formfields as $f) {
+		if(  ($type=='search' && $f['searchresult_list_in_participant_results']=='y') ||
+			 ($type=='assign' && $f['searchresult_list_in_experiment_assign_results']=='y') ||
+			 ($type=='session' && $f['list_in_session_participants_list']=='y') ||
+			 ($type=='sessionpdf' && $f['list_in_session_pdf_list']=='y') ||
+			 ($type=='email' && $f['admin_only']!='y')  ) {
+			 if(  ($type=='search' && $f['search_result_allow_sort']=='y') ||
+				  ($type=='assign' && $f['search_result_allow_sort']=='y') ||
+				  ($type=='session' && $f['allow_sort_in_session_participants_list']=='y')  ) {
+				$f['allow_sort']=true;
+				if ($f['search_result_sort_order']) $f['sort_order']=$f['search_result_sort_order'];
+				else $f['sort_order']=$f['mysql_column_name'];
+			 } else {
+				$f['allow_sort']=false;
+				$f['sort_order']='';
+			 }
+			if(isset($lang[$f['name_lang']])) $f['column_name']=$lang[$f['name_lang']]; else $f['column_name']=$f['name_lang'];
+			if(preg_match("/(radioline|select_list)/",$f['type'])) {
+				$optionvalues=explode(",",$f['option_values']);
+				$optionnames=explode(",",$f['option_values_lang']);
+				$f['lang']=array();
+				foreach($optionvalues as $k=>$v) {
+					if (isset($optionnames[$k])) {
+						if ($tlang!=$lang['lang']) {
+							$oname=language__get_item('lang',$optionnames[$k],$tlang);
+							if ($oname) $f['lang'][$v]=$oname;
+							else $f['lang'][$v]=$optionnames[$k];
+						} else {
+							if(isset($lang[$optionnames[$k]])) $f['lang'][$v]=$lang[$optionnames[$k]];
+							else $f['lang'][$v]=$optionnames[$k];
+						}
+					}
+				}
+
+			} elseif ($f['type']=='select_lang') {
+				$f['lang']=lang__load_lang_cat($f['mysql_column_name'],$tlang);
+			}
+
+			$result_columns[]=$f;
+		}
+	}
+	return $result_columns;
+}
+
 
 ?>

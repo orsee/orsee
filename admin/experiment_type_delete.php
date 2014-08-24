@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -36,32 +37,27 @@ include ("header.php");
 
 		$query="DELETE FROM ".table('experiment_types')." 
                  	WHERE exptype_id='".$exptype_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 $query="DELETE FROM ".table('lang')."
                         WHERE content_name='".$exptype_id."'
 			AND content_type='experiment_type'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 $query="UPDATE ".table('participants')." 
                  	SET subscriptions=concat(subscriptions,',','".$merge_with."')
                  	WHERE subscriptions LIKE '%".$exptype['exptype_name']."%'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		$query="UPDATE ".table('participants_temp')."
                         SET subscriptions=concat(subscriptions,',','".$merge_with."')
                         WHERE subscriptions LIKE '%".$exptype['exptype_name']."%'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
-
-		$query="UPDATE ".table('participants_os')."
-                        SET subscriptions=concat(subscriptions,',','".$merge_with."')
-                        WHERE subscriptions LIKE '%".$exptype['exptype_name']."%'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		$query="UPDATE ".table('experiments')."
                         SET experiment_ext_type='".$merge_with."'
                         WHERE experiment_ext_type='".$exptype['exptype_name']."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	
 		log__admin("experimenttype_delete","experimenttype:".$exptype['exptype_name']);
                 message ($lang['experimenttype_deleted_partexp_moved_to'].' "'.$merge_with.'".');

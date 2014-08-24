@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -29,12 +30,12 @@ include("header.php");
 
 		// update admins 
 		$query="UPDATE ".table('admin')." SET admin_type='".$stype."' WHERE admin_type='".$type['type_name']."'";
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		// delete language column
        		$query="DELETE FROM ".table('admin_types')." 
         		WHERE type_id='".$type_id."'";
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 
 		// bye, bye
@@ -55,7 +56,6 @@ include("header.php");
 	echo '	<CENTER>
 		<FORM action="admin_type_delete.php">
 		<INPUT type=hidden name="type_id" value="'.$type_id.'">
-		<INPUT type=hidden name="nlang" value="'.$slang.'">
 
 		<TABLE>
 			<TR>

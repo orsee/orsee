@@ -1,15 +1,22 @@
 <?php
+// part of orsee. see orsee.org
 
-// participant query modules. part of orsee. see orsee.org.
-
-function query__form_module($module="",$experiment_id="") {
+function query__form_module($module="",$experiment_id="",$deleted='n') {
 	global $lang, $settings;
+	if(!isset($_REQUEST['new'])) $_REQUEST['new']="";
+
+	if(substr($module,0,6)=='pform:') {
+		$fieldname=substr($module,6);
+		$module='pform';
+	}
+
 switch ($module) {
 
 	case "all":
 		break;
 
 	case "experiment_classes":
+		if (!isset($_REQUEST['expclass_not'])) $_REQUEST['expclass_not']="";
 		echo '<TABLE width=90%>
                                 <TR>
                                         <TD>
@@ -30,6 +37,7 @@ switch ($module) {
                 break;
 
 	case "experiment_assigned_or":
+		if (!isset($_REQUEST['inex_ass'])) $_REQUEST['inex_ass']="";
                	echo '<TABLE width=90%>
 				<TR>
 					<TD>
@@ -51,6 +59,7 @@ switch ($module) {
 
 
 	case "experiment_participated_and":
+				if (!isset($_REQUEST['inex2'])) $_REQUEST['inex2']="";
                 echo '<TABLE width=90%>
                                 <TR>
                                         <TD>
@@ -71,7 +80,7 @@ switch ($module) {
                 break;
 
 	case "experiment_participated_or":
-
+				if (!isset($_REQUEST['inex'])) $_REQUEST['inex']="";
                 echo '<TABLE width=90%>
                                 <TR>
                                         <TD>
@@ -92,7 +101,21 @@ switch ($module) {
                 break;
 
 	case "field":
-		$bz=$_REQUEST['field_bezug'];
+		if (isset($_REQUEST['field_bezug'])) $bz=$_REQUEST['field_bezug']; else $bz="";
+		if (!isset($_REQUEST['query_field'])) $_REQUEST['query_field']="";
+		$formfields=participantform__load();
+		$form_query_fields=array();
+		foreach ($formfields as $f) {
+			if( preg_match("/(textline|textarea)/i",$f['type']) &&
+				((!$experiment_id && $f['search_include_in_participant_query']=='y')	||
+				($experiment_id && 	$f['search_include_in_experiment_assign_query']=='y'))) {
+					$tfield=array();
+					$tfield['value']=$f['mysql_column_name'];
+					if (isset($lang[$f['name_lang']])) $tfield['name']=$lang[$f['name_lang']];
+					else $tfield['name']=$f['name_lang'];
+					$form_query_fields[]=$tfield;
+				}
+		}
 		echo '	<TABLE width=90%>
 				<TR>
 					<TD> 
@@ -102,93 +125,84 @@ switch ($module) {
 						'.$lang['in'].'
         	                		<SELECT name="field_bezug">
                 	        	<OPTION value="all"'; if ($bz=="all" || $_REQUEST['new']) echo ' SELECTED'; echo '>'.
-						$lang['anyone'].'</OPTION>
-                        		<OPTION value="fname"'; if ($bz=="fname") echo ' SELECTED'; echo '>'.
-						$lang['firstname'].'</OPTION>
-	                        	<OPTION value="lname"'; if ($bz=="lname") echo ' SELECTED'; echo '>'
-						.$lang['lastname'].'</OPTION>
-        	                	<OPTION value="email"'; if ($bz=="email") echo ' SELECTED'; echo '>'.
-						$lang['e-mail-address'].'</OPTION>
+						$lang['anyone'].'</OPTION>';
+						foreach($form_query_fields as $tf) {
+				echo '<OPTION value="'.$tf['value'].'"';
+				if ($bz==$tf['value']) echo ' SELECTED';
+				echo '>'.$tf['name'].'</OPTION>';
+						}
+					echo '
                 	        		</SELECT>
 					</TD>
 				</TR>
 			</TABLE>';
 		break;
 
-	case "field_of_studies":
-		echo '	<TABLE width=90%>
-				<TR>
-					<TD>
-				 		'.$lang['where_field_of_studies_is'].'
-				 		<select name="field_of_studies_not">
-				 			<OPTION value=""';
-                                        			if (!$_REQUEST['field_of_studies_not']) 
-									echo ' SELECTED';
-                                        			echo '></OPTION>
-				 			<OPTION value="!"';
-								if ($_REQUEST['field_of_studies_not']) 
-									echo ' SELECTED';
-								echo '>'.$lang['not'].'</OPTION>
-				 		</select> ';
+	case "pform":
+		if (!isset($_REQUEST[$fieldname.'_not'])) $_REQUEST[$fieldname.'_not']="";
+		if (!isset($_REQUEST[$fieldname.'_sign'])) $_REQUEST[$fieldname.'_sign']="";
+		if (!isset($_REQUEST[$fieldname])) $_REQUEST[$fieldname]="";
 
-				 		select__field_of_studies($_REQUEST['field_of_studies'],
-										"field_of_studies");
-	        echo '			</TD>
-				</TR>
-	                </TABLE>';
+		// $existing=true;
+		//if ($experiment_id) $show_count=false; else $show_count=true;
+		// needs to much time for queries. So  better:
+		$existing=false; $show_count=false;
+
+		$formfields=participantform__load(); $f=array();
+		foreach ($formfields as $p) { if($p['mysql_column_name']==$fieldname) $f=$p; }
+		$f=form__replace_funcs_in_field($f);
+		if (isset($f['mysql_column_name'])) {
+			echo '<TABLE width=90%>
+					<TR>
+					<TD>'.$lang['where'].' ';
+			if(isset($lang[$f['name_lang']])) echo  $lang[$f['name_lang']]; else echo $f['name_lang'];
+			echo ' ';
+			if ($f['type']=='select_numbers') {
+				echo '<select name="'.$fieldname.'_sign">
+                      <OPTION value="<="'; if ($_REQUEST[$fieldname.'_sign']=="<=") echo ' SELECTED'; echo '><=</OPTION>
+					  <OPTION value="="'; if ($_REQUEST[$fieldname.'_sign']=="=" || $_REQUEST[$fieldname.'_sign']=="" || $_REQUEST['new']) echo ' SELECTED'; echo '>=</OPTION>
+                      <OPTION value=">"'; if ($_REQUEST[$fieldname.'_sign']==">") echo ' SELECTED'; echo '>></OPTION>
+					  </select>';
+			} else {
+				echo '<select name="'.$fieldname.'_not">
+					<OPTION value=""'; if (!$_REQUEST[$fieldname.'_not']) echo ' SELECTED'; echo '>=</OPTION>
+					<OPTION value="!"'; if ($_REQUEST[$fieldname.'_not']) echo ' SELECTED';	echo '>'.$lang['not'].' =</OPTION>
+					</select> ';
+			}
+
+			if ($f['type']=='select_lang') {
+				echo language__selectfield_item($fieldname,$fieldname,$_REQUEST[$fieldname],false,"",$existing,"deleted='".$deleted."'",$show_count);
+			} elseif ($f['type']=='select_numbers') {
+				if ($f['values_reverse']=='y') $reverse=true; else $reverse=false;
+			echo participant__select_numbers($fieldname,$_REQUEST[$fieldname],$f['value_begin'],$f['value_end'],0,$f['value_step'],$reverse,false,$existing,"deleted='".$deleted."'",$show_count);
+			} elseif (preg_match("/(select_list|radioline)/i",$f['type']) && !$existing) {
+				$f['value']=$_REQUEST[$fieldname];
+				echo  form__render_select_list($f);
+			} else {
+				echo participant__select_existing($fieldname,$_REQUEST[$fieldname],"deleted='".$deleted."'",$show_count);
+			}
+
+		echo '			</TD>
+					</TR>
+			    </TABLE>';
+	    }
 		break;
-
-        case "profession":
-                echo '  <TABLE width=90%>
-                                <TR>
-                                        <TD>
-                                                '.$lang['where_profession_is'].'
-                                                <select name="profession_not">
-                                                        <OPTION value=""';
-                                                                if (!$_REQUEST['profession_not']) echo ' SELECTED';
-                                                                echo '></OPTION>
-                                                        <OPTION value="!"';
-                                                                if ($_REQUEST['profession_not']) echo ' SELECTED';
-                                                                echo '>'.$lang['not'].'</OPTION>
-                                                </select> ';
-
-                                                select__profession($_REQUEST['profession'],"profession");
-                echo '                  </TD>
-                                </TR>
-                        </TABLE>';
-                break;
-
-	case "gender":
-                echo '	<TABLE width=90%>
-				<TR>
-					<TD>
-				 		'.$lang['where_gender_is'].'
-        	                		<SELECT name="query_gender">
-						<OPTION value="m"'; if ($_REQUEST['query_gender']!="f") echo ' SELECTED'; 
-							echo '>'.$lang['gender_m'].'</OPTION>
-	                        		<OPTION value="f"'; if ($_REQUEST['query_gender']=="f") echo ' SELECTED';
-                                       			echo '>'.$lang['gender_f'].'</OPTION>
-                	        		</SELECT>
-	                		</TD>
-				</TR>
-	                </TABLE>';
-		break;
-
 
 	case "noshowups":
 		$query="SELECT max(number_noshowup) as maxnoshow FROM ".table('participants')."
 			WHERE deleted='n' ORDER BY number_noshowup DESC LIMIT 1";
 		$line=orsee_query($query);
+		if (!isset($_REQUEST['query_noshowups'])) $_REQUEST['query_noshowups']=0;
                	echo '<TABLE width=90%>
 				<TR>
 					<TD>
 						'.$lang['where_nr_noshowups_is'].'
 				 		<select name="query_noshowups_sign">
                                  			<OPTION value="<="'; 
-						if ($_REQUEST['query_noshowups_sign']!=">") echo ' SELECTED';
+						if (!isset($_REQUEST['query_noshowups_sign']) || $_REQUEST['query_noshowups_sign']!=">") echo ' SELECTED';
                                                         echo '><=</OPTION>
                                  			<OPTION value=">""'; 
-						if ($_REQUEST['query_noshowups_sign']==">") echo ' SELECTED';
+						if (isset($_REQUEST['query_noshowups_sign']) && $_REQUEST['query_noshowups_sign']==">") echo ' SELECTED';
                                                         echo '>></OPTION>
                                  		</select> ';
 				 		helpers__select_numbers("query_noshowups",
@@ -203,16 +217,17 @@ switch ($module) {
                 $query="SELECT max(number_reg) as maxnumreg FROM ".table('participants')."
                         WHERE deleted='n' ORDER BY number_reg DESC LIMIT 1";
                 $line=orsee_query($query);
+                if (!isset($_REQUEST['query_nr_participations'])) $_REQUEST['query_nr_participations']=0;
                 echo '<TABLE width=90%>
                                 <TR>
                                         <TD>
                                                 '.$lang['where_nr_participations_is'].'
                                                 <select name="query_nr_participations_sign">
                                                         <OPTION value="<="';
-                                           if ($_REQUEST['query_nr_participations_sign']!=">") echo ' SELECTED';
+                                           if (!isset($_REQUEST['query_nr_participations_sign']) || $_REQUEST['query_nr_participations_sign']!=">") echo ' SELECTED';
                                                         echo '><=</OPTION>
                                                         <OPTION value=">""';
-                                           if ($_REQUEST['query_nr_participations_sign']==">") echo ' SELECTED';
+                                           if (isset($_REQUEST['query_nr_participations_sign']) && $_REQUEST['query_nr_participations_sign']==">") echo ' SELECTED';
                                                         echo '>></OPTION>
                                                 </select> ';
                                                 helpers__select_numbers("query_nr_participations",
@@ -224,7 +239,7 @@ switch ($module) {
                 break;
 
 	case "rand_subset":
-		$query_limit = (!$_REQUEST['query_limit']) ? $settings['query_random_subset_default_size'] : $_REQUEST['query_limit'];
+		$query_limit = (!isset($_REQUEST['query_limit']) ||!$_REQUEST['query_limit']) ? $settings['query_random_subset_default_size'] : $_REQUEST['query_limit'];
                 echo '	<TABLE width=90%>
 				<TR>
 					<TD>
@@ -236,40 +251,9 @@ switch ($module) {
 	                </TABLE>';
 		break;
 
-	case "study_start":
-
-              	echo '	<TABLE width=90%>
-				<TR>
-					<TD>
-				 		'.$lang['where_study_start_in_year'].'
-                                                <select name="query_study_start_sign">
-                                                        <OPTION value="<="'; if ($_REQUEST['query_study_start_sign']=="<=") echo ' SELECTED';
-                                                        		echo '><=</OPTION>
-							<OPTION value="="'; 
-							if ($_REQUEST['query_study_start_sign']=="=" || $_REQUEST['new']) echo ' SELECTED';
-                                                                        echo '>=</OPTION>
-                                                        <OPTION value=">"'; if ($_REQUEST['query_study_start_sign']==">") echo ' SELECTED';
-                                                                        echo '>></OPTION>
-                                                </select> 
-
-        	                		<SELECT name=query_study_start>';
-                		$query="SELECT DISTINCTROW begin_of_studies
-                        		FROM ".table('participants')."
-                        		ORDER BY begin_of_studies";
-				$result=mysql_query($query) or die("Database error: " . mysql_error());
-
-				while ($line = mysql_fetch_assoc($result)) {
-	                        	echo '<OPTION value="'.$line['begin_of_studies'].'"';
-						if ($_REQUEST['query_study_start']==$line['begin_of_studies']) echo ' SELECTED';
-						echo '>'.$line['begin_of_studies'].'</OPTION>';
-					}
-                	        echo '		</SELECT>
-	                		</TD>
-				</TR>
-	                </TABLE>';
-		break;
-
         case "subjectpool":
+			if (!isset($_REQUEST['subjectpool_not'])) $_REQUEST['subjectpool_not']="";
+			if (!isset($_REQUEST['query_subjectpool'])) $_REQUEST['query_subjectpool']="";
                 echo '  <TABLE width=90%>
                                 <TR>
                                         <TD>
@@ -284,7 +268,7 @@ switch ($module) {
                                                                         echo ' SELECTED';
                                                                 echo '>'.$lang['not'].'</OPTION>
                                                 </select> ';
-						subpools__select_field('query_subjectpool','subpool_id',
+						echo subpools__select_field('query_subjectpool','subpool_id',
 								'subpool_name',$_REQUEST['query_subjectpool']);
                 echo '                  </TD>
                                 </TR>
@@ -296,8 +280,12 @@ switch ($module) {
 }
 
 
-function query__where_clause_module($module="") {
+function query__where_clause_module($module="",$experiment_id="") {
 	$where_clause="";
+	if(substr($module,0,6)=='pform:') {
+		$fieldname=substr($module,6);
+		$module='pform';
+	}
 
 switch ($module) {
 
@@ -307,7 +295,7 @@ switch ($module) {
 
 	case "experiment_classes":
                 $class_posted=array(); $class_part=array(); $participants=array();
-                $class_posted= ($_REQUEST['expclass']) ? $_REQUEST['expclass'] : array();
+                $class_posted= (isset($_REQUEST['expclass']) && $_REQUEST['expclass']) ? $_REQUEST['expclass'] : array();
                 if (count($class_posted) > 0) {
                                 foreach ($class_posted as $class) if ($class) $class_part[]=$class;
                         } else {
@@ -324,11 +312,13 @@ switch ($module) {
                         if ($wclause) $wclause.=" )";
 
                         $query="SELECT DISTINCT participant_id 
-				FROM ".table('participate_at').", ".table('experiments')." 
-                                WHERE participated='y' ".$wclause." ORDER BY participant_id";
-                        $result=mysql_query($query) or die("Database error: " . mysql_error());
+								FROM ".table('participate_at').", ".table('experiments')."
+								WHERE participated='y'
+								AND ".table('participate_at').".experiment_id=".table('experiments').".experiment_id
+								".$wclause." ORDER BY participant_id";
+                        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-                        while ($line = mysql_fetch_assoc($result)) $participants[]=$line['participant_id'];
+                        while ($line = mysqli_fetch_assoc($result)) $participants[]=$line['participant_id'];
                  } else {
                         $participants=array();
                         }
@@ -340,7 +330,7 @@ switch ($module) {
 
 	case "experiment_assigned_or":
 		$exp_posted=array(); $exp_part=array(); $participants=array();
-		$exp_posted= ($_REQUEST['exp_ass']) ? $_REQUEST['exp_ass'] : array();
+		if(isset($_REQUEST['exp_ass'])) $exp_posted= ($_REQUEST['exp_ass']);
                 if (count($exp_posted) > 0) {
                                 foreach ($exp_posted as $exp) if ($exp) $exp_part[]=$exp;
                         } else {
@@ -358,9 +348,9 @@ switch ($module) {
 
                         $query="SELECT DISTINCT participant_id FROM ".table('participate_at')."
                                 WHERE experiment_id IS NOT NULL ".$wclause." ORDER BY participant_id";
-                        $result=mysql_query($query) or die("Database error: " . mysql_error());
+                        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-                        while ($line = mysql_fetch_assoc($result)) $participants[]=$line['participant_id'];
+                        while ($line = mysqli_fetch_assoc($result)) $participants[]=$line['participant_id'];
                  } else {
                         $participants=array();
                         }
@@ -372,7 +362,7 @@ switch ($module) {
 
 	case "experiment_participated_and":
                 $exp_posted=array(); $exp_part=array(); $participants=array();
-                $exp_posted=$_REQUEST['exp_and'];
+                if(isset($_REQUEST['exp_and'])) $exp_posted=$_REQUEST['exp_and'];
 		if (count($exp_posted) > 0) {
 				foreach ($exp_posted as $exp) if ($exp) $exp_part[]=$exp;
 			} else {
@@ -390,8 +380,8 @@ switch ($module) {
 
                 	$query="SELECT DISTINCT participant_id, experiment_id FROM ".table('participate_at')."
                         	WHERE participated='y' ".$wclause." ORDER BY participant_id";
-                	$result=mysql_query($query) or die("Database error: " . mysql_error());
-                	while ($line = mysql_fetch_assoc($result)) $part_exp[$line['experiment_id']][]=$line['participant_id'];
+			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+			while ($line = mysqli_fetch_assoc($result)) $part_exp[$line['experiment_id']][]=$line['participant_id'];
 		
 			if (count($exp_part)<2) {
 				$participants=$part_exp[$exp_part[0]];
@@ -417,7 +407,7 @@ switch ($module) {
 
 	case "experiment_participated_or":
 		$exp_posted=array(); $exp_part=array(); $participants=array();
-                $exp_posted=$_REQUEST['exp'];
+                if(isset($_REQUEST['exp'])) $exp_posted=$_REQUEST['exp'];
                 if (count($exp_posted) > 0) {
                                 foreach ($exp_posted as $exp) if ($exp) $exp_part[]=$exp;
                         } else {
@@ -435,9 +425,9 @@ switch ($module) {
 
                 	$query="SELECT DISTINCT participant_id FROM ".table('participate_at')."
                         	WHERE participated='y' ".$wclause." ORDER BY participant_id";
-                	$result=mysql_query($query) or die("Database error: " . mysql_error());
+			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-                	while ($line = mysql_fetch_assoc($result)) $participants[]=$line['participant_id'];
+			while ($line = mysqli_fetch_assoc($result)) $participants[]=$line['participant_id'];
                  } else {
                         $participants=array();
                         }
@@ -449,38 +439,43 @@ switch ($module) {
 
 
 	case "field":
-		if ($_REQUEST['query_field']) {
-			$qval=$_REQUEST['query_field'];
-			switch ($_REQUEST['field_bezug']) {
-        			case "email":
-				case "fname":
-				case "lname":
-                   			$where_clause=table('participants').".".$_REQUEST['field_bezug']." like '%".$qval."%'";
-					break;
-        			case "all":
-		   			$where_clause="(".table('participants').".fname like '%".$qval."%' OR 
-							".table('participants').".lname like '%".$qval."%' OR
-							".table('participants').".email like '%".$qval."%')"; 
-					break;
+		$qval=trim($_REQUEST['query_field']);
+
+		if ($_REQUEST['field_bezug']=='all') {
+			$formfields=participantform__load();
+			$form_query_fields=array();
+			foreach ($formfields as $f) {
+				if( preg_match("/(textline|textarea)/i",$f['type']) &&
+					((!$experiment_id && $f['search_include_in_participant_query']=='y')	||
+					($experiment_id && 	$f['search_include_in_experiment_assign_query']=='y'))) {
+					$form_query_fields[]=" ".table('participants').".".$f['mysql_column_name']." like '%".$qval."%' ";
 				}
 			}
+			$where_clause="(".implode(" OR ",$form_query_fields).")";
+		} else {
+				if (!$qval) $where_clause="(".table('participants').".".$_REQUEST['field_bezug']."='' OR ".table('participants').".".$_REQUEST['field_bezug']." IS NULL)";
+                else $where_clause=table('participants').".".$_REQUEST['field_bezug']." like '%".$qval."%'";
+		};
 		break;
 
 
-	case "field_of_studies":
-		$where_clause=table('participants').".field_of_studies ".$_REQUEST['field_of_studies_not']."= '".
-					$_REQUEST['field_of_studies']."'";
+	case "pform":
+		if (!isset($_REQUEST[$fieldname.'_not'])) $_REQUEST[$fieldname.'_not']="";
+		if (!isset($_REQUEST[$fieldname.'_sign'])) $_REQUEST[$fieldname.'_sign']="=";
+		if (!isset($_REQUEST[$fieldname])) $_REQUEST[$fieldname]="";
+		$formfields=participantform__load(); $f=array();
+		foreach ($formfields as $p) { if($p['mysql_column_name']==$fieldname) $f=$p; }
+		if (isset($f['mysql_column_name'])) {
+			if ($f['type']=='select_numbers') {
+				$where_clause=table('participants').".".$fieldname." ".$_REQUEST[$fieldname.'_sign'].
+					" '".mysqli_real_escape_string($GLOBALS['mysqli'],$_REQUEST[$fieldname])."'";
+			} else {
+				$where_clause=table('participants').".".$fieldname." ".$_REQUEST[$fieldname.'_not']."= '".
+					mysqli_real_escape_string($GLOBALS['mysqli'],$_REQUEST[$fieldname])."'";
+			}
+	    } else $where_clause="";
 		break;
 
-        case "profession":
-                $where_clause=table('participants').".profession ".$_REQUEST['profession_not']."= '".
-                                        $_REQUEST['profession']."'";
-                break;
-
-	case "gender":
-		$where_clause=table('participants').".gender = '".$_REQUEST['query_gender']."'"; 
-		break;
-	
 	case "noshowups":
 		$where_clause=table('participants').".number_noshowup ".$_REQUEST['query_noshowups_sign'].
 					" '".$_REQUEST['query_noshowups']."'";
@@ -492,24 +487,8 @@ switch ($module) {
                 break;
 
 	case "rand_subset":
-		/* do we do this somewhere else?
-		$limit = int ($_REQUEST['query_limit']);
-		if ($limit && $limit > 0) {
-                        $query="UPDATE ".table('participants')." SET rand_string=concat(rand())";
-			$done=mysql_query($query) or die("Database error: " . mysql_error());
-                        $query="SELECT rand_string FROM ".table('participants')."
-                                ORDER BY rand_string LIMIT ".$limit.",1";
-			$line=orsee_query($query);
-		    	$where_clause=table('participants').".rand_string < '".$line['rand_string']."'";
-			}
-		*/
+		// done in query__orderlimit_module
 		break;	
-
-
-	case "study_start":
-		$where_clause=table('participants').".begin_of_studies ".$_REQUEST['query_study_start_sign'].
-					" '".$_REQUEST['query_study_start']."'";
-		break;
 
         case "subjectpool":
                 $where_clause=table('participants').".subpool_id ".$_REQUEST['subjectpool_not']."= '".
@@ -523,8 +502,6 @@ return $where_clause;
 
 function query__orderlimit_module($module) {
 	$orderlimit="";
-
-	echo $module;
 
 	switch ($module) {
 
@@ -545,4 +522,23 @@ function query__join_assign_module($module) {
 
 	return $join_clause;
 }
+
+function query__get_participant_form_modules($query_modules,$experiment_id="") {
+	global $lang;
+	$return_array=array();
+	foreach($query_modules as $module) {
+		if ($module!='participant_form_fields') $return_array[]=$module;
+		else {
+			$formfields=participantform__load();
+			foreach ($formfields as $f) {
+				if( (!preg_match("/(textline|textarea)/i",$f['type'])) &&
+					( ((!$experiment_id)	&& $f['search_include_in_participant_query']=='y') ||
+					  ($experiment_id && $f['search_include_in_experiment_assign_query']=='y')
+					)  ) $return_array[]="pform:".$f['mysql_column_name'];
+			}
+		}
+	}
+	return $return_array;
+}
+
 ?>

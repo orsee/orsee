@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -7,7 +8,7 @@ include ("header.php");
 
 	$allow=check_allow('lang_lang_edit','lang_main.php');
 
-	if ($_REQUEST['elang']) {
+	if (isset($_REQUEST['elang']) && $_REQUEST['elang']) {
 		$tlang=$_REQUEST['elang'];
 		$tlang_name=load_language_symbol('lang_name',$tlang);
 		} else redirect ("admin/lang_main.php");
@@ -21,7 +22,7 @@ include ("header.php");
 
 	
 
-	if ($_REQUEST['add']) { 
+	if (isset($_REQUEST['add']) && $_REQUEST['add']) {
 		
 		// check for errors
 		$continue=true;
@@ -36,7 +37,7 @@ include ("header.php");
 
 			$query="UPDATE ".table('lang')." SET ".$tlang."='".$_REQUEST['lang_name']."' 
                                 WHERE content_type='lang' AND content_name='lang_name'";
-			$done=mysql_query($query);
+			$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 			message ($lang['changes_saved']);
 			log__admin("language_edit","language:".$tlang);

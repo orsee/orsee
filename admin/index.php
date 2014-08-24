@@ -1,7 +1,8 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
-$menu__area=mainpage;
+$menu__area="mainpage";
 $title="Welcome";
 
 include("header.php");

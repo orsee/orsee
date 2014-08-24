@@ -1,6 +1,5 @@
 <?php
-
-// experiment register functions. part of orsee. see orsee.org.
+// part of orsee. see orsee.org
 
 function expregister__list_invited_for_format($varray) {
 	static $saved_experiment_id;
@@ -172,13 +171,12 @@ function expregister__list_registered_for($participant_id,$reg_session_id="",$ty
       		ORDER BY session_start_year, session_start_month, session_start_day,
                  	session_start_hour, session_start_minute";
 
-        $result=mysql_query($query)
-                or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		$labs=array();
-                while ($line = mysql_fetch_assoc($result)) {
+                while ($line = mysqli_fetch_assoc($result)) {
                         $labs[]=expregister__list_registered_for_format($line,$reg_session_id,$type);
                         }
-        mysql_free_result($result);
+        mysqli_free_result($result);
 
 	echo '</TABLE>
 		</TD></TR>';
@@ -202,12 +200,11 @@ function expregister__list_history($participant_id) {
 		AND ".table('experiments').".experiment_type='laboratory' 
       		ORDER BY session_start_year DESC, session_start_month DESC, session_start_day DESC,
                  	session_start_hour DESC, session_start_minute DESC";
-        $result=mysql_query($query)
-                or die("Database error: " . mysql_error());
-                while ($line = mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                while ($line = mysqli_fetch_assoc($result)) {
                         $labs[]=expregister__list_registered_for_format($line,"","history");
                         }
-        mysql_free_result($result);
+        mysqli_free_result($result);
 
         echo '</TABLE>
                 </TD></TR>';
@@ -232,207 +229,12 @@ function expregister__register($participant_id,$session_id) {
       		SET registered='y', session_id='".$session_id."' 
       		WHERE experiment_id='".$experiment_id."'
         	AND participant_id='".$participant_id."'";
-	$done=mysql_query($query);
+	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	experimentmail__experiment_registration_mail($participant_id,$session_id,$experiment_id);
 
 }
 
-/* Online Survey Stuff ...
 
-
-<defun expregister::list-os-invited-format alist &key ostest>
-  <alist-to-package <get-var-once alist>>
-  <set-var os::start_string=<concat
-        <helpers::pad-number <get-var start_year> fillzeros=4>
-        <helpers::pad-number <get-var start_month> fillzeros=2>
-        <helpers::pad-number <get-var start_day> fillzeros=2>
-        <helpers::pad-number <get-var start_hour> fillzeros=2>
-        <helpers::pad-number <get-var start_minute> fillzeros=2>
-        >>
-
-  <set-var os::stop_string=<concat
-        <helpers::pad-number <get-var stop_year> fillzeros=4>
-        <helpers::pad-number <get-var stop_month> fillzeros=2>
-        <helpers::pad-number <get-var stop_day> fillzeros=2>
-        <helpers::pad-number <get-var stop_hour> fillzeros=2>
-        <helpers::pad-number <get-var stop_minute> fillzeros=2>
-        >>
-
-  <set-var os::now=<concat
-        <helpers::pad-number <date::format-time "YYYY"> fillzeros=4>
-        <helpers::pad-number <date::format-time "MM"> fillzeros=2>
-        <helpers::pad-number <date::format-time "DD"> fillzeros=2>
-        <helpers::pad-number <date::format-time "hh"> fillzeros=2>
-        <helpers::pad-number <date::format-time "mm"> fillzeros=2>
-        >>
-
-<when <lt <get-var os::now> <get-var os::stop_string>>>
-
-        <TR>
-        <TD colspan=3 bgcolor="<color::register_table_head2>">
-                <get-var experiment_public_name>
-        </TD></TR>
-
-	<TR bgcolor="<color::register_table_row>">
-	<TD rowspan=2>&nbsp;&nbsp;&nbsp;</TD>
-	<TD>
-	<lang::from> <time::format lang=<or <get-var authdata::lanuage> <get-var participant::language> <get-var settings::public-standard-language>> year=<get-var start_year> month=<get-var start_month> day=<get-var start_day> hour=<get-var start_hour> minute=<get-var start_minute> hide_second=true> 
-	<lang::to> <time::format lang=<or <get-var authdata::lanuage> <get-var participant::language> <get-var settings::public-standard-language>> year=<get-var stop_year> month=<get-var stop_month> day=<get-var stop_day> hour=<get-var stop_hour> minute=<get-var stop_minute> hide_second=true>
-	</TD>
-	<TD rowspan=2>
-	<when <or <gt <get-var os::now> <get-var os::start_string>>
-		<get-var ostest>
-		>>
-	<A HREF="os.mhtml?<if <get-var posted::p> <concat "p=" <get-var posted::p> "&">>e=<get-var experiment_id><if <get-var ostest> "&ostest=true">">
-	<lang::participate!>
-	</A>
-	</when>
-	</TD>
-	</TR>
-	<TD><get-var-once public_description></td>
-	<TR><TD colpan=3>&nbsp;</TD></TR>
-</when>
-</defun>
-
-
-
-<defun expregister::list-os-invited &key participant_id free_reg ostest>
-<when <get-var participant_id>>
-<sql::with-open-database db dsn=<site::dsn> nolock=true>
-    <sql::database-query
-     db true
-     "SELECT *
-      FROM experiments, participate_at, os_properties
-        WHERE experiments.experiment_id=participate_at.experiment_id
-	AND participate_at.participant_id = '<get-var participant_id>'
-	AND os_properties.experiment_id = experiments.experiment_id
-	AND participate_at.participated = 'n'
-	AND experiments.experiment_type='online-survey'
-      ORDER BY start_year, start_month, start_day,
-                 start_hour, start_minute"
-       format =<expregister::list-os-invited-format <package-to-alist>>>
-</sql::with-open-database>
-</when>
-
-<when <get-var free_reg>>
-<sql::with-open-database db dsn=<site::dsn> nolock=true>
-    <sql::database-query
-     db true
-     "SELECT *
-      FROM experiments, os_properties
-        WHERE experiments.experiment_id=os_properties.experiment_id
-        AND os_properties.free_registration='y'
-	AND os_properties.show_in_public='y'
-        AND experiments.experiment_type='online-survey'
-      ORDER BY start_year, start_month, start_day,
-                 start_hour, start_minute"
-       format =<expregister::list-os-invited-format <package-to-alist>>>
-</sql::with-open-database>
-</when>
-
-<when <get-var ostest>>
-<sql::with-open-database db dsn=<site::dsn> nolock=true>
-    <sql::database-query
-     db true
-     "SELECT *
-      FROM experiments, os_properties
-        WHERE experiments.experiment_type='online-survey'
-	AND os_properties.experiment_id = experiments.experiment_id
-      ORDER BY start_year, start_month, start_day,
-                 start_hour, start_minute"
-       format =<expregister::list-os-invited-format <package-to-alist> ostest=true>>
-</sql::with-open-database>
-</when>
-
-</defun>
-
-<defun expregister::list-os-history-format alist>
-  <alist-to-package <get-var-once alist>>
-  <set-var os::start_string=<concat
-        <helpers::pad-number <get-var start_year> fillzeros=4>
-        <helpers::pad-number <get-var start_month> fillzeros=2>
-        <helpers::pad-number <get-var start_day> fillzeros=2>
-        <helpers::pad-number <get-var start_hour> fillzeros=2>
-        <helpers::pad-number <get-var start_minute> fillzeros=2>
-        >>
-
-  <set-var os::stop_string=<concat
-        <helpers::pad-number <get-var stop_year> fillzeros=4>
-        <helpers::pad-number <get-var stop_month> fillzeros=2>
-        <helpers::pad-number <get-var stop_day> fillzeros=2>
-        <helpers::pad-number <get-var stop_hour> fillzeros=2>
-        <helpers::pad-number <get-var stop_minute> fillzeros=2>
-        >>
-
-  <set-var os::now=<concat
-        <helpers::pad-number <date::format-time "YYYY"> fillzeros=4>
-        <helpers::pad-number <date::format-time "MM"> fillzeros=2>
-        <helpers::pad-number <date::format-time "DD"> fillzeros=2>
-        <helpers::pad-number <date::format-time "hh"> fillzeros=2>
-        <helpers::pad-number <date::format-time "mm"> fillzeros=2>
-        >>
-
-<when <gt <get-var os::now> <get-var os::stop_string>>>
-        <TR>
-        <TD colspan=3 bgcolor="<color::register_table_head2>">
-                <get-var experiment_public_name>
-        </TD></TR>
-
-        <TR bgcolor="<color::register_table_row>">
-        <TD rowspan=2>&nbsp;&nbsp;&nbsp;</TD>
-        <TD>
-        <lang::from> <time::format lang=<or <get-var authdata::lanuage> <get-var participant::language> <get-var settings::public-standard-language>> year=<get-var start_year>
-month=<get-var start_month> day=<get-var start_day> hour=<get-var start_hour> minute=<get-var start_minute> hide_second=true>
-        <lang::to> <time::format lang=<or <get-var authdata::lanuage> <get-var participant::language> <get-var settings::public-standard-language>> year=<get-var stop_year> month=<get-var stop_month> day=<get-var stop_day> hour=<get-var stop_hour> minute=<get-var
-stop_minute> hide_second=true>
-        </TD>
-        <TD rowspan=2>
-        <when <string-eq <get-var participated> "y">>
-        <lang::participated>
-        </when>
-        </TD>
-        </TR>
-        <TD><get-var-once public_description></td>
-        <TR><TD colpan=3>&nbsp;</TD></TR>
-</when>
-</defun>
-
-
-<defun expregister::list-os-history &key participant_id free_reg>
-<when <get-var participant_id>>
-<sql::with-open-database db dsn=<site::dsn> nolock=true>
-    <sql::database-query
-     db true
-     "SELECT *
-      FROM experiments, participate_at, os_properties
-        WHERE experiments.experiment_id=participate_at.experiment_id
-        AND participate_at.participant_id = '<get-var participant_id>'
-        AND os_properties.experiment_id = experiments.experiment_id
-        AND experiments.experiment_type='online-survey'
-      ORDER BY start_year, start_month, start_day,
-                 start_hour, start_minute"
-       format =<expregister::list-os-history-format <package-to-alist>>>
-</sql::with-open-database>
-</when>
-
-<when <get-var free_reg>>
-<sql::with-open-database db dsn=<site::dsn> nolock=true>
-    <sql::database-query
-     db true
-     "SELECT *
-      FROM experiments, os_properties
-        WHERE experiments.experiment_id=os_properties.experiment_id
-        AND os_properties.free_registration='y'
-	AND os_properties.show_in_public='y'
-        AND experiments.experiment_type='online-survey'
-      ORDER BY start_year, start_month, start_day,
-                 start_hour, start_minute"
-       format =<expregister::list-os-history-format <package-to-alist>>>
-</sql::with-open-database>
-</when>
-</defun>
-
-*/
 
 ?>

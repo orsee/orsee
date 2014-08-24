@@ -1,18 +1,18 @@
 <?php
-// log functions. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 
 function log__participant($action,$participant_id,$target="") {
 	$darr=getdate();	
 
-	$query="INSERT INTO ".table('participants_log')." SET id='".$participant_id."',
+	$query="INSERT INTO ".table('participants_log')." SET id='".mysqli_real_escape_string($GLOBALS['mysqli'],$participant_id)."',
 		year='".$darr['year']."', 
 		month='".$darr['mon']."', 
 		day='".$darr['mday']."', 
 		action='".$action."',
 		target='".$target."',
 		timestamp='".$darr[0]."'";
-	$done=mysql_query($query);
+	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 }
 
 function log__admin($action="unknown",$target="") {
@@ -26,7 +26,7 @@ function log__admin($action="unknown",$target="") {
                 action='".$action."',
 		target='".$target."',
                 timestamp='".$darr[0]."'";
-        $done=mysql_query($query);
+        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 }
 
 function log__cron_job($action="unknown",$target="",$now="",$id="") {
@@ -39,9 +39,9 @@ function log__cron_job($action="unknown",$target="",$now="",$id="") {
                 month='".$darr['mon']."',
                 day='".$darr['mday']."',
                 action='".$action."',
-                target='".mysql_escape_string($target)."',
+                target='".mysqli_real_escape_string($GLOBALS['mysqli'],$target)."',
                 timestamp='".$now."'";
-        $done=mysql_query($query);
+        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	return $done;
 }
 
@@ -73,22 +73,21 @@ function log__show_log($log) {
 	global $limit;
 
 	if (!$limit) $limit=50;
-	if ($_REQUEST['os']>0) $offset=$_REQUEST['os']; else $offset=0;
+	if (isset($_REQUEST['os']) && $_REQUEST['os']>0) $offset=$_REQUEST['os']; else $offset=0;
 
 	global $lang, $color;
 
 
-	if ($_REQUEST['action']) $aquery=" AND action='".$_REQUEST['action']."' ";
+	if (isset($_REQUEST['action']) && $_REQUEST['action']) $aquery=" AND action='".$_REQUEST['action']."' ";
 			else $aquery="";
 
-	if ($_REQUEST['id']) $idquery=" AND id='".$_REQUEST['id']."' ";
+	if (isset($_REQUEST['id']) && $_REQUEST['id']) $idquery=" AND id='".$_REQUEST['id']."' ";
 			else $idquery="";
 
-	if ($_REQUEST['target']) $tquery=" AND target LIKE '%".$_REQUEST['target']."%' ";
+	if (isset($_REQUEST['target']) && $_REQUEST['target']) $tquery=" AND target LIKE '%".$_REQUEST['target']."%' ";
                         else $tquery="";
 
-	if (!$logtable) $logtable="participants_log";
-
+	$logtable=table('participants_log');
 	switch ($log) {
 		case "participant_actions":
 			$logtable=table('participants_log');
@@ -104,11 +103,11 @@ function log__show_log($log) {
 			break;
 		}
 
-	if ($_REQUEST['delete'] && $_REQUEST['days']) {
+	if (isset($_REQUEST['delete']) && $_REQUEST['delete'] && isset($_REQUEST['days']) && $_REQUEST['days']) {
 
 		$allow=check_allow('log_file_'.$log.'_delete','statistics_show_log.php?log='.$log);
 
-		if ($_REQUEST['days']=="all") $where_clause="";
+		if (isset($_REQUEST['days']) && $_REQUEST['days']=="all") $where_clause="";
 		   else {
                 	$now=time();
                 	$dsec= (int) $_REQUEST['days']*24*60*60;
@@ -116,8 +115,8 @@ function log__show_log($log) {
 			$where_clause=" WHERE timestamp < ".$dtime;
 			}
                 $query="DELETE FROM ".$logtable.$where_clause;
-		$done=mysql_query($query);
-		$number=mysql_affected_rows();
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+		$number=mysqli_affected_rows($GLOBALS['mysqli']);
 		message ($number.' '.$lang['xxx_log_entries_deleted']);
 		if ($number>0) log__admin("log_delete_entries","log:".$log."\ndays:".$_REQUEST['days']);
 		redirect ("admin/statistics_show_log.php?log=".$log);
@@ -131,9 +130,9 @@ function log__show_log($log) {
 		" ORDER BY timestamp DESC 
 		LIMIT ".$offset.",".$limit;
 
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-	$num_rows=mysql_num_rows($result);
+	$num_rows=mysqli_num_rows($result);
 
 	echo '<TABLE width=80% border=0>
 		<TR><TD width=50%>';
@@ -149,7 +148,7 @@ function log__show_log($log) {
 			<select name="days">
 			<option value="all">'.$lang['all_entries'].'</option>';
 			$ddays=array(1,7,30,90,180,360);
-			if ($_REQUEST['days']) $selected=$_REQUEST['days']; else $selected=90;
+			if (isset($_REQUEST['days']) && $_REQUEST['days']) $selected=$_REQUEST['days']; else $selected=90;
 			foreach ($ddays as $day) {
 				echo '<option value="'.$day.'"';
 				if ($day==$selected) echo ' SELECTED';
@@ -182,23 +181,23 @@ function log__show_log($log) {
 			elseif ($log=='experimenter_actions' || $log=='regular_tasks') {
 				echo $lang['experimenter'];
 				}
-			if ($_REQUEST['id']) 
+			if (isset($_REQUEST['id']) && $_REQUEST['id'])
 				echo ' '.log__link('id=','os=0').'<FONT class="small">['.$lang['unrestrict'].']</FONT></A>';
 	echo '	</TD>
 		<TD>
 			'.$lang['action'];
-			if ($_REQUEST['action'])
+			if (isset($_REQUEST['action']) && $_REQUEST['action'])
                                 echo ' '.log__link('action=','os=0').'<FONT class="small">['.$lang['unrestrict'].']</FONT></A>';
 	echo '	</TD>
 		<TD>
 			'.$lang['target'];
-			if ($_REQUEST['target'])
+			if (isset($_REQUEST['target']) && $_REQUEST['target'])
                                 echo ' '.log__link('target=','os=0').'<FONT class="small">['.$lang['unrestrict'].']</FONT></A>';
 	echo '	</TD>
 	      </TR>
 		';
 
-	while ($line=mysql_fetch_assoc($result)) {
+	while ($line=mysqli_fetch_assoc($result)) {
 
 		echo '<TR>
 			<TD>
@@ -216,16 +215,16 @@ function log__show_log($log) {
 				elseif ($log=='experimenter_actions' || $log=='regular_tasks') {
 					echo $line['adminname'];
 					}
-				if ($_REQUEST['id']!=$line['id']) echo ' '.log__restrict_link('id',$line['id']);
+				if (!isset($_REQUEST['id']) || $_REQUEST['id']!=$line['id']) echo ' '.log__restrict_link('id',$line['id']);
 		echo '	</TD>
 			<TD>
 				'.$line['action'];
-				if ($_REQUEST['action']!=$line['action']) 
+				if (!isset($_REQUEST['action']) || $_REQUEST['action']!=$line['action'])
 					echo ' '.log__restrict_link('action',$line['action']);
 		echo '	</TD>
 			<TD>
                                 '.nl2br(stripslashes($line['target']));
-				if ($_REQUEST['target']!=$line['target'] && $log!='regular_tasks')
+				if (!isset($_REQUEST['target']) || $_REQUEST['target']!=$line['target'] && $log!='regular_tasks')
                                         echo ' '.log__restrict_link('target',$line['target']);
                 echo '	</TD>
 		      </TR>';

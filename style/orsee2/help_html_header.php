@@ -11,7 +11,7 @@
 		<IMG border=0 SRC="<?php echo $settings__root_url; ?>/style/orsee2/help_logo.gif">
 		</TD>
 	<TD valign=middle align=center>
-		<FONT face="Arial" COLOR="#FFFFFF"><?php echo ereg_replace("_"," ",$_REQUEST['topic']); ?></FONT>
+		<FONT face="Arial" COLOR="#FFFFFF"></FONT>
 	</TD>
 	</TR>
 

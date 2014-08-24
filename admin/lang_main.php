@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -13,7 +14,7 @@ include ("header.php");
                 $enabled_pub=explode(",",$settings['language_enabled_public']);
 
 
-	if ($_REQUEST['change_def']) {
+	if (isset($_REQUEST['change_def']) && $_REQUEST['change_def']) {
 		$allow=check_allow('lang_avail_edit','lang_main.php');
 		$parts=array();
 		$pubs=array();
@@ -29,11 +30,11 @@ include ("header.php");
 
 		$query="UPDATE ".table('options')." SET option_value='".$pubs_string."' 
 			WHERE option_name='language_enabled_public'";
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		$query="UPDATE ".table('options')." SET option_value='".$parts_string."'
                         WHERE option_name='language_enabled_participants'";
-                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		log__admin("language_availability_edit");
 		message($lang['changes_saved']);
 		redirect("admin/lang_main.php");

@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 $title="mail participants";
 
@@ -11,12 +12,12 @@ include ("header.php");
 
 	if (isset($_REQUEST['id'])) $id=$_REQUEST['id']; else $id="";
 
-	if ($_REQUEST['preview']) $preview=true;
-	if ($_REQUEST['save']) $save=true;
-	if ($_REQUEST['send']) $send=true;
-	if ($_REQUEST['sendall']) $sendall=true; 
+	if (isset($_REQUEST['preview']) && $_REQUEST['preview']) $preview=true; else $preview=false;
+	if (isset($_REQUEST['save']) && $_REQUEST['save']) $save=true; else $save=false;
+	if (isset($_REQUEST['send']) && $_REQUEST['send']) $send=true; else $send=false;
+	if (isset($_REQUEST['sendall']) && $_REQUEST['sendall']) $sendall=true; else $sendall=false;
 
-	if ($preview || $save || $send || $sendall) $action=true;
+	if ($preview || $save || $send || $sendall) $action=true; else $action=false;
 
 
 	$experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");

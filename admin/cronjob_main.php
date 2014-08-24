@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -47,14 +48,14 @@ include ("header.php");
         $query="SELECT *
                 FROM ".table('cron_jobs')." 
                 ORDER BY job_name";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$allow_run=check_allow('regular_tasks_run');
 	$allow_edit=check_allow('regular_tasks_edit');
 
 	$shade=true;
 	
-        while ($line=mysql_fetch_assoc($result)) {
+        while ($line=mysqli_fetch_assoc($result)) {
 
                 echo '  <tr class="small"';
 			if ($line['enabled']=='n') echo ' bgcolor="'.$color['list_item_emphasize_background'].'"'; 

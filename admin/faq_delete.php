@@ -1,10 +1,11 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="delete faq";
 include ("header.php");
 
-	if (isset($_REQUEST['faq_id'])) $id=$_REQUEST['faq_id']; else $faq_id="";
+	if (isset($_REQUEST['faq_id'])) $faq_id=$_REQUEST['faq_id']; else $faq_id="";
 
         if (isset($_REQUEST['betternot']) && $_REQUEST['betternot'])
                 redirect ('admin/faq_edit.php?faq_id='.$faq_id);
@@ -29,19 +30,19 @@ include ("header.php");
                 $query="DELETE FROM ".table('lang')."
                         WHERE content_type='faq_question'
 			AND content_name='".$faq_id."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 $query="DELETE FROM ".table('lang')."
                         WHERE content_type='faq_answer'
                         AND content_name='".$faq_id."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 $query="DELETE FROM ".table('faqs')."
                         WHERE faq_id='".$faq_id."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 message ($lang['faq_deleted']);
-		log__admin("faq_delete","space_id:".$faq_id);
+		log__admin("faq_delete","faq_id:".$faq_id);
                 redirect ('admin/faq_main.php');
                 }
 

@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="statistics";
@@ -35,7 +36,7 @@ include ("header.php");
                 <TR>
                         <TD>&nbsp;&nbsp;</TD>
                         <TD>
-                                <A HREF="../usage">'.$lang['server_usage_statistics'].'</A>
+                                <A HREF="../usage/index.php">'.$lang['server_usage_statistics'].'</A>
                         </TD>
                 </TR>';
 

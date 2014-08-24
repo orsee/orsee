@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="options import data";
@@ -6,7 +7,7 @@ include ("header.php");
 
 	$allow=check_allow('import_data','options_main.php');
 
-	if ($_REQUEST['step']) $step=$_REQUEST['step']; else $step=1;
+	if (isset($_REQUEST['step']) && $_REQUEST['step']) $step=$_REQUEST['step']; else $step=1;
 
         echo '<BR><BR><BR>
                 <center><h4>Import data from old versions</h4>
@@ -53,6 +54,8 @@ include ("header.php");
 
 		if ($_SESSION['import_data']['old_version']=='1.0') {
 
+			$vars=array('old_db_host','old_db_name','old_db_user','old_db_password');
+			foreach ($vars as $v) { if (!isset($_SESSION['import_data'][$v])) $_SESSION['import_data'][$v]=""; }
 
 			echo '  <BR>
                         	<FORM action="import_data.php">
@@ -129,18 +132,17 @@ include ("header.php");
 				}
 
 			function import_db_config() {
-				$link2 = mysql_connect($_SESSION['import_data']['old_db_host'],$_SESSION['import_data']['old_db_user'],
-							$_SESSION['import_data']['old_db_password'])
-       						or die("Database connection failed: " . mysql_error());
-				mysql_select_db($_SESSION['import_data']['old_db_name'], $link2) or die("Database selection failed.");
+				$GLOBALS['mysqli2'] = mysqli_connect($_SESSION['import_data']['old_db_host'],$_SESSION['import_data']['old_db_user'],
+							$_SESSION['import_data']['old_db_password'],$_SESSION['import_data']['old_db_name'])
+						or die("Database connection failed: " . mysqli_error($GLOBALS['mysqli']));
 				}
 
 
 			function select_field_new_subpools ($old_subpool_id,$selected) {
 				echo '<SELECT name="new_subpool['.$old_subpool_id.']">';
 				$query="SELECT * FROM ".table('subpools');
-				$result=mysql_query($query) or die("Database error: " . mysql_error());
-				while ($line=mysql_fetch_assoc($result)) {
+				$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+				while ($line=mysqli_fetch_assoc($result)) {
 					echo '<OPTION value="'.$line['subpool_id'].'"';
 					if ($line['subpool_id']==$selected) echo ' SELECTED';
 					echo '>'.$line['subpool_name'].'</OPTION>';
@@ -150,9 +152,9 @@ include ("header.php");
 
 			function get_array_old_subpools() {
 				$query="SELECT * FROM subpools";
-				$result=mysql_query($query) or die("Database error: " . mysql_error());;
+				$result=mysqli_query($GLOBALS['mysqli2'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));;
 				$oldpools=array();
-                                while ($line=mysql_fetch_assoc($result)) {
+                                while ($line=mysqli_fetch_assoc($result)) {
                                         $oldpools[$line['subpool_id']]=$line['subpool_name'];
                                         }
 				return $oldpools;
@@ -161,8 +163,8 @@ include ("header.php");
 			function select_field_new_labs ($old_lab_id,$selected) {
                                 echo '<SELECT name="new_laboratories['.$old_lab_id.']">';
                                 $query="SELECT * FROM ".table('lang')." WHERE content_type='laboratory'";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
-                                while ($line=mysql_fetch_assoc($result)) {
+                                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                                while ($line=mysqli_fetch_assoc($result)) {
                                         echo '<OPTION value="'.$line['content_name'].'"';
                                         if ($line['content_name']==$selected) echo ' SELECTED';
                                         echo '>'.laboratories__strip_lab_name($line['subpool_name']).'</OPTION>';
@@ -172,9 +174,9 @@ include ("header.php");
 
 			function get_array_old_laboratories() {
                                 $query="SELECT * FROM laboratories";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                                $result=mysqli_query($GLOBALS['mysqli2'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                                 $oldlabs=array();
-                                while ($line=mysql_fetch_assoc($result)) $oldlabs[$line['laboratory_id']]=$line['laboratory_name'];
+                                while ($line=mysqli_fetch_assoc($result)) $oldlabs[$line['laboratory_id']]=$line['laboratory_name'];
 				return $oldlabs;
 				}
 
@@ -186,9 +188,9 @@ include ("header.php");
                 			FROM ".table('experiment_types')." 
                 			WHERE enabled='y' AND exptype_mapping LIKE '%".$search."%' 
                 			ORDER BY exptype_id";
-        			$result=mysql_query($query);
+				$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				echo '<SELECT name="new_ext_type_'.$oldexptype.'">';
-        			while ($line = mysql_fetch_assoc($result)) {
+				while ($line = mysqli_fetch_assoc($result)) {
                 			echo '<OPTION value="'.$line['exptype_name'].'"';
                 			if ($line['exptype_name']==$selected) echo " SELECTED";
                 			echo '>'.$line['exptype_name'].'</OPTION>';
@@ -438,10 +440,9 @@ include ("header.php");
 
 			function import_db_config() {
 				global $imset;
-                                $link2 = mysql_connect($imset['old_db_host'],$imset['old_db_user'],
-                                                        $imset['old_db_password'])
-                                                or die("Database connection failed: " . mysql_error());
-                                mysql_select_db($imset['old_db_name'], $link2) or die("Database selection failed.");
+                                $mysqli2 = mysqli_connect($imset['old_db_host'],$imset['old_db_user'],
+                                                        $imset['old_db_password'],$imset['old_db_name'])
+                                                or die("Database connection failed: " . mysqli_error($GLOBALS['mysqli']));
                                 }
 
 
@@ -452,15 +453,15 @@ include ("header.php");
 				// load old participants
 				import_db_config();
 				$query="SELECT * FROM participants";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				$old_participants=array();
-                                while ($line=mysql_fetch_assoc($result)) $old_participants[]=$line;
+                                while ($line=mysqli_fetch_assoc($result)) $old_participants[]=$line;
 				
 				site__database_config();
 
 
 				$query="DELETE FROM ".table('participants');
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 				foreach ($old_participants as $op) {
 
@@ -481,60 +482,26 @@ include ("header.php");
 				unset($old_participants);
 
 
-				// import participants_os
-
-				// load old participants_os
-                                import_db_config();
-                                $query="SELECT * FROM participants_os";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
-                                $old_participants=array();
-                                while ($line=mysql_fetch_assoc($result)) $old_participants[]=$line;
-
-                                site__database_config();
-
-
-                                $query="DELETE FROM ".table('participants_os');
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
-
-                                foreach ($old_participants as $op) {
-
-                                        // translate subscriptions
-                                        $subscriptions=array();
-                                        if ($op['get_labor']=='y')
-                                                $subscriptions=array_merge($subscriptions,$imset['new_exptypes_lab']);
-                                        if ($op['get_internet']=='y')
-                                                $subscriptions=array_merge($subscriptions,$imset['new_exptypes_internet']);
-                                        $op['subscriptions']=implode(",",$subscriptions);
-
-
-                                        // translate subjectpool
-                                        $op['subpool_id']=$imset['new_subpool'][$op['subpool_id']];
-
-                                        $done=orsee_db_save_array($op,"participants_os",$op['participant_id'],"participant_id");
-                                        }
-				unset($old_participants);
-
-
                                 // import experiments
 
                                 // load old experiments
                                 import_db_config();
                                 $query="SELECT * FROM experiments";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                                 $old_experiments=array();
-                                while ($line=mysql_fetch_assoc($result)) $old_experiments[]=$line;
+                                while ($line=mysqli_fetch_assoc($result)) $old_experiments[]=$line;
 
                                 site__database_config();
 
 
                                 $query="DELETE FROM ".table('experiments');
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 				// load experimenters and mails
 				$admins=array(); $admin_mails=array();
 				$query="SELECT * FROM ".table('admin');
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
-				while ($line=mysql_fetch_assoc($result)) {
+                                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+				while ($line=mysqli_fetch_assoc($result)) {
 					$admins[$line['fname'].' '.$line['lname']]=$line['adminname'];
 					$admins[$line['lname']]=$line['adminname'];
 					$admins[$line['email']]=$line['adminname'];
@@ -572,51 +539,19 @@ include ("header.php");
                                 unset($old_experiments);
 
 
-				// import os stuff
-				
-				// whcih tables?
-				$os_tables=array('os_data_form','os_items_checkbox','os_items_radio','os_items_select_numbers',
-						'os_items_select_text','os_items_textarea','os_items_textline','os_page_content',
-						'os_playerdata','os_pre_answers','os_properties','os_questions','os_results');
-				$os_ids=array('experiment_id','item_id','item_id','item_id',
-						'item_id','item_id','item_id','page_id',
-						'playerdata_id','answer_id','experiment_id','question_id','result_id');
-
-				$i=0;
-				foreach ($os_tables as $table) {
-					$id=$os_ids[$i];
-                                	// load old data
-                                	import_db_config();
-                                	$query="SELECT * FROM ".$table;
-                                	$result=mysql_query($query) or die("Database error: " . mysql_error());
-                                	$old_entries=array();
-                                	while ($line=mysql_fetch_assoc($result)) $old_entries[]=$line;
-
-                                	site__database_config();
-
-                                	$query="DELETE FROM ".table($table);
-                                	$done=mysql_query($query) or die("Database error: " . mysql_error());
-
-                                	foreach ($old_entries as $entry) {
-                                        	$done=orsee_db_save_array($entry,$table,$entry[$id],$id);
-                                        	}
-                                	unset($old_entries);
-					$i++;
-					}
-
 				// import sessions
 
                                 // load old sessions
                                 import_db_config();
                                 $query="SELECT * FROM sessions";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                                 $old_sessions=array();
-                                while ($line=mysql_fetch_assoc($result)) $old_sessions[]=$line;
+                                while ($line=mysqli_fetch_assoc($result)) $old_sessions[]=$line;
 
                                 site__database_config();
 
                                 $query="DELETE FROM ".table('sessions');
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                                 foreach ($old_sessions as $sess) {
 					$sess['send_reminder_on']='enough_participants_needed';
@@ -637,16 +572,16 @@ include ("header.php");
 				$i=0; $count=1;
 
 				$query="DELETE FROM ".table('participate_at');
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 				while ($count > 0) {
                                 	import_db_config();
                                 	$query="SELECT * FROM participate_at ORDER by participate_id LIMIT $i,200";
-                                	$result=mysql_query($query) or die("Database error: " . mysql_error());
-					$count=mysql_num_rows($result);
+					$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+					$count=mysqli_num_rows($result);
 
                                 	$old_part=array();
-                                	while ($line=mysql_fetch_assoc($result)) $old_part[]=$line;
+					while ($line=mysqli_fetch_assoc($result)) $old_part[]=$line;
 
                                 	site__database_config();
 
@@ -660,7 +595,7 @@ include ("header.php");
 							shownup='".$part['shownup']."',
 							participated='".$part['participated']."',
 							session_id='".$part['session_id']."'";
-                                        	$done=mysql_query($query); 
+						$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                                         	}
                                 	unset($old_part);
 					$i=$i+200;
@@ -673,14 +608,14 @@ include ("header.php");
 				// load old mails
                                 import_db_config();
                                 $query="SELECT * FROM experimentmail";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                                 $old_mails=array();
-                                while ($line=mysql_fetch_assoc($result)) $old_mails[]=$line;
+                                while ($line=mysqli_fetch_assoc($result)) $old_mails[]=$line;
 
                                 site__database_config();
 
                                 $query="DELETE FROM ".table('lang')." WHERE content_type='experiment_invitation_mail'";
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 				$query="SELECT max(lang_id) as max_id FROM ".table('lang');
                                 $line=orsee_query($query);
@@ -705,14 +640,14 @@ include ("header.php");
                                 // load old studies
                                 import_db_config();
                                 $query="SELECT * FROM field_of_studies ORDER by studies_id";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                                 $old_studies=array();
-                                while ($line=mysql_fetch_assoc($result)) $old_studies[]=$line;
+                                while ($line=mysqli_fetch_assoc($result)) $old_studies[]=$line;
 
                                 site__database_config();
 
                                 $query="DELETE FROM ".table('lang')." WHERE content_type='field_of_studies'";
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                                 $query="SELECT max(lang_id) as max_id FROM ".table('lang');
                                 $line=orsee_query($query);
@@ -739,14 +674,14 @@ include ("header.php");
                                 // load old professions
                                 import_db_config();
                                 $query="SELECT * FROM professions ORDER by profession_id";
-                                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                                 $old_profs=array();
-                                while ($line=mysql_fetch_assoc($result)) $old_profs[]=$line;
+                                while ($line=mysqli_fetch_assoc($result)) $old_profs[]=$line;
 
                                 site__database_config();
 
                                 $query="DELETE FROM ".table('lang')." WHERE content_type='profession'";
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                                 $query="SELECT max(lang_id) as max_id FROM ".table('lang');
                                 $line=orsee_query($query);
@@ -779,16 +714,16 @@ include ("header.php");
                                 $i=0; $count=1;
 
                                 $query="DELETE FROM ".table('participants_log');
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                                 while ($count > 0) {
                                         import_db_config();
                                         $query="SELECT * FROM participants_log ORDER by log_id LIMIT $i,200";
-                                        $result=mysql_query($query) or die("Database error: " . mysql_error());
-                                        $count=mysql_num_rows($result);
+                                        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                                        $count=mysqli_num_rows($result);
 
                                         $old_log=array();
-                                        while ($line=mysql_fetch_assoc($result)) $old_log[]=$line;
+                                        while ($line=mysqli_fetch_assoc($result)) $old_log[]=$line;
 
                                         site__database_config();
 
@@ -802,7 +737,7 @@ include ("header.php");
                                                         month='".$log['month']."',
                                                         day='".$log['day']."',
                                                         timestamp='".$log['timestamp']."'";
-                                                $done=mysql_query($query);
+                                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                                                 }
                                         unset($old_log);
                                         $i=$i+200;
@@ -810,7 +745,7 @@ include ("header.php");
 
 				$query="UPDATE ".table('participants_log')." 
 					SET action='subscribe' where action='register'";
-                                $done=mysql_query($query) or die("Database error: " . mysql_error());
+                                $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	
 				// end continue
 				}

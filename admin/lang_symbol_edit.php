@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -14,12 +15,12 @@ include ("header.php");
 
 	$languages=get_languages();
 
-	if ($_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id']; else $lang_id="";
+	if (isset($_REQUEST['lang_id']) && $_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id']; else $lang_id="";
 
 	if ($lang_id) $allow=check_allow('lang_symbol_edit','lang_main.php');
 		else $allow=check_allow('lang_symbol_add','lang_main.php');
 
-	if ($_REQUEST['save']) {
+	if (isset($_REQUEST['save']) && $_REQUEST['save']) {
 
 		$continue=true;
 
@@ -42,7 +43,7 @@ include ("header.php");
 
 
 	// if lang id given, load data
-	if ($lang_id) $content=orsee_db_load_array("lang",$lang_id,"lang_id"); else $content="";
+	if ($lang_id) $content=orsee_db_load_array("lang",$lang_id,"lang_id"); else $content=array('content_name'=>'');
 
 
 	// form
@@ -64,6 +65,7 @@ include ("header.php");
 			echo '	</TD>
 			</TR>';
 	foreach ($languages as $language) {
+		if(!isset($content[$language])) $content[$language]='';
 		echo '	<TR>
 				<TD valign=top>
 					'.$language.':

@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="download";
@@ -12,20 +13,14 @@ include ("header.php");
 		<BR>';
 	echo '  <TABLE width=80%>';
 
-	if ($_REQUEST['experiment_id']) {
+	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) {
 
 		$exp=orsee_db_load_array("experiments",$_REQUEST['experiment_id'],"experiment_id");
 
 	        echo '<TR bgcolor="'.$color['list_header_background'].'"><TD colspan=2>';
                 echo $exp['experiment_name'].' (';
-                if ($exp['experiment_type']=="laboratory") {
                         echo $lang['from'].' '.sessions__get_first_date($exp['experiment_id']).' ';
                         echo $lang['to'].' '.sessions__get_last_date($exp['experiment_id']);
-                }
-                elseif ($exp['experiment_type']=="online-survey") {
-                        echo $lang['from'].' '.survey__print_start_time($exp['experiment_id']).' ';
-                        echo $lang['to'].' '.survey__print_stop_time($exp['experiment_id']);
-                }
                 echo ') by ';
                 echo experiment__list_experimenters($exp['experimenter'],true,true);
                 echo '</TD></TR>';

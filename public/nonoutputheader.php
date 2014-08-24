@@ -1,5 +1,5 @@
 <?php
-
+// part of orsee. see orsee.org
 include ("../config/settings.php");
 include ("../config/system.php");
 include ("../config/requires.php");
@@ -60,8 +60,9 @@ $lang=load_language($authdata['language']);
                 redirect("public/");
                 }
 
-if ($settings__stop_public_site=="y" && !isset($umadmindata['username']) && !(thisdoc()=="error_temporaly_disabled.php")) redirect("errors/error_temporaly_disabled.php");
+if ($settings['stop_public_site']=="y" && !isset($umadmindata['username']) && !(thisdoc()=="error_temporaly_disabled.php")) redirect("errors/error_temporaly_disabled.php");
 
+if (!isset($title)) $title="";
 $pagetitle=$settings['default_area'].': '.$title;
 
 ?>

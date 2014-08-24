@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="experiments_new";
@@ -8,7 +9,7 @@ include ("header.php");
 echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 
 
-	if ($_REQUEST['experiment_id']) {
+	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) {
 		$allow=check_allow('experiment_edit','experiment_show.php?experiment_id='.$_REQUEST['experiment_id']);
       		$edit=orsee_db_load_array("experiments",$_REQUEST['experiment_id'],"experiment_id");
 		$edit['experiment_show_type']=$edit['experiment_type'].','.$edit['experiment_ext_type'];
@@ -21,7 +22,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 
 	$continue=true;
 
-	if ($_REQUEST['edit']) {
+	if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
  
 		if (isset($_REQUEST['experimenter_list'])) {
 			$texperimenter=array();
@@ -52,7 +53,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
                         $continue=false;
                         }
 
-  		if (!eregi("^[^@ \t\r\n]+@[-_0-9a-zA-Z]+\\.[^@ \t\r\n]+$",$_REQUEST['sender_mail'])) {
+		if (!preg_match("/^[^@ \t\r\n]+@[-_0-9a-zA-Z]+\.[^@ \t\r\n]+$/",$_REQUEST['sender_mail'])) {
 			message($lang['error_no_valid_sender_mail']);
         		$continue=false;
 			}
@@ -70,13 +71,13 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 
   		if ($continue) {
 
-        		if (!$_REQUEST['experiment_finished']) $_REQUEST['experiment_finished']="n";
+		if (!isset($_REQUEST['experiment_finished']) ||!$_REQUEST['experiment_finished']) $_REQUEST['experiment_finished']="n";
 
-			if (!$_REQUEST['hide_in_stats']) $_REQUEST['hide_in_stats']="n";
+			if (!isset($_REQUEST['hide_in_stats']) ||!$_REQUEST['hide_in_stats']) $_REQUEST['hide_in_stats']="n";
 
-			if (!$_REQUEST['hide_in_cal']) $_REQUEST['hide_in_cal']="n";
+			if (!isset($_REQUEST['hide_in_cal']) ||!$_REQUEST['hide_in_cal']) $_REQUEST['hide_in_cal']="n";
 
-			if (!$_REQUEST['access_restricted']) $_REQUEST['access_restricted']="n";
+			if (!isset($_REQUEST['access_restricted']) ||!$_REQUEST['access_restricted']) $_REQUEST['access_restricted']="n";
 
 			$exptypes=explode(",",$_REQUEST['experiment_show_type']);
 			$_REQUEST['experiment_type']=$exptypes[0];
@@ -104,17 +105,24 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 
 	// form
 
+	// initialize if empty
+	if (!isset($edit)) $edit=array();
+	$formvarnames=array('experiment_name','experiment_public_name','experiment_description','experiment_link_to_paper','experiment_class','experiment_id','sender_mail','experiment_show_type','access_restricted','experiment_finished','hide_in_stats','hide_in_cal');
+	foreach ($formvarnames as $fvn) {
+		if (!isset($edit[$fvn])) $edit[$fvn]="";
+	}
+
 	echo '<CENTER>';
 
 	show_message();
 
 
-	if (!$edit['experiment_id']) {
+	if (!isset($edit['experiment_id']) || !$edit['experiment_id']) {
            $gibtsschon=true;
            srand ((double)microtime()*1000000);
            while ($gibtsschon) {
                 $crypt_id = "/";
-                while (eregi("(/|\\.)",$crypt_id)) { //<or <match <get-var crypt_id> "/"> <match <get-var crypt_id> "\\.">>>
+		while (preg_match("/(\/|\.)/",$crypt_id)) {
                         $exp_id = rand();
                         $crypt_id=unix_crypt($exp_id);
                         }
@@ -216,7 +224,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 					'.$lang['experimenter'].':<BR>'.help("experimenter").'
 				</TD>
 				<TD>';
-					if (!$_REQUEST['experiment_id']) $edit['experimenter']=$expadmindata['adminname'];
+					if (!isset($_REQUEST['experiment_id']) || !$_REQUEST['experiment_id']) $edit['experimenter']=$expadmindata['adminname'];
 					experiment__experimenters_checkbox_list("experimenter_list",$edit['experimenter']);
 	echo '			</TD>
 			</TR>';
@@ -240,7 +248,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 					'.$lang['get_emails'].':<BR>'.help("experimenters_email").'
 				</TD>
 				<TD>';
-					if (!$_REQUEST['experiment_id']) $edit['experimenter_mail']=$expadmindata['adminname'];
+					if (!isset($_REQUEST['experiment_id']) || !$_REQUEST['experiment_id']) $edit['experimenter_mail']=$expadmindata['adminname'];
 					experiment__experimenters_checkbox_list("experimenter_mail_list",$edit['experimenter_mail']);
 	echo '			</TD>
 			</TR>';
@@ -312,7 +320,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 				<TD COLSPAN=2 align=center>
 					<INPUT name=edit type=submit 
 					value="';
-					if (!$_REQUEST['experiment_id']) echo $lang['add'];
+					if (!isset($_REQUEST['experiment_id']) || !$_REQUEST['experiment_id']) echo $lang['add'];
 						else echo $lang['change'];
 					echo '">
 				</TD>
@@ -323,7 +331,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 		</FORM>
 		<BR>';
 
-	if ($_REQUEST['experiment_id'] && check_allow('experiment_delete')) {
+	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id'] && check_allow('experiment_delete')) {
 		echo '	<FORM action="experiment_delete.php">
 			<INPUT type=hidden name="experiment_id" value="'.$edit['experiment_id'].'">
 			<table>
@@ -336,7 +344,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 			</FORM>';
 		}
 
-	if ($_REQUEST['experiment_id']) 
+	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id'])
 		echo '	<BR><BR>
 			<A HREF="experiment_show.php?experiment_id='.$_REQUEST['experiment_id'].'">'
 			.$lang['mainpage_of_this_experiment'].'</A>';

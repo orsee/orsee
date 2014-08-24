@@ -1,28 +1,40 @@
 <?php
-
-// subpool functions. part of orsee. see orsee.org.
+// part of orsee. see orsee.org
 
 function subpools__select_field($postvarname,$var,$showvar,$selected,$hidden='') {
 
-	echo '<SELECT name="'.$postvarname.'">';
-     	$query="SELECT *
-      		FROM ".table('subpools')." as tsub, ".table('lang')." as tlang
-		WHERE tsub.subpool_id=tlang.content_name 
-		AND tlang.content_type='subjectpool' 
+	$out='<SELECT name="'.$postvarname.'">';
+    $query="SELECT *
+		FROM ".table('subpools')." as tsub, ".table('lang')." as tlang
+			WHERE tsub.subpool_id=tlang.content_name
+			AND tlang.content_type='subjectpool'
       		ORDER BY subpool_id";
 
-	$result=mysql_query($query);
-	while ($line = mysql_fetch_assoc($result)) {
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line = mysqli_fetch_assoc($result)) {
 		if ($line[$var] != $hidden) {
-			echo '<OPTION value="'.$line[$var].'"';
-			if ($line[$var]==$selected) echo " SELECTED";
-			echo '>'.$line[$showvar];
-			echo '</OPTION>
+			$out.='<OPTION value="'.$line[$var].'"';
+			if ($line[$var]==$selected) $out.=" SELECTED";
+			$out.='>'.$line[$showvar];
+			$out.='</OPTION>
 				';
 			}
 		}
-	echo '</SELECT>';
+	$out.='</SELECT>';
+	return $out;
+}
 
+function subpools__get_subpools() {
+
+	$sarr=array();
+    $query="SELECT *
+		FROM ".table('subpools')."
+		ORDER BY subpool_id";
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line = mysqli_fetch_assoc($result)) {
+		$sarr[]=$line['subpool_id'];
+	}
+	return $sarr;
 }
 
 

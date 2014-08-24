@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 $temp__nosession=true;
 
@@ -27,8 +28,8 @@ include("header.php");
 
 
 	// copy from participants_temp to participants
-	$query="INSERT INTO ".table('participants')." SELECT * FROM ".table('participants_temp')." WHERE participant_id='".$p."'";
-	$done=mysql_query($query) or die("Database error: " . mysql_error());
+	$query="INSERT INTO ".table('participants')." SELECT * FROM ".table('participants_temp')." WHERE participant_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$p)."'";
+	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	if (!$done) {
 		message($lang['database_error']);
@@ -37,8 +38,8 @@ include("header.php");
 
 	// delete old entry
 
-        $query="DELETE FROM ".table('participants_temp')." WHERE participant_id='".$p."'";
-        $done=mysql_query($query) or die("Database error: " . mysql_error());
+        $query="DELETE FROM ".table('participants_temp')." WHERE participant_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$p)."'";
+        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 
 	log__participant("confirm",$p);

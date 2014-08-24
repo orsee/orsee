@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -7,7 +8,7 @@ include ("header.php");
 
 	$allow=check_allow('admin_type_edit','admin_type_show.php');
 
-	if ($_REQUEST['type_id']) $type_id=$_REQUEST['type_id']; else $type_id="";
+	if (isset($_REQUEST['type_id']) && $_REQUEST['type_id']) $type_id=$_REQUEST['type_id']; else $type_id="";
 
 	$rights=array();
 	if ($type_id) 
@@ -15,7 +16,7 @@ include ("header.php");
 	  else 	$type=array();
 
 
-	if ($_REQUEST['save']) {
+	if (isset($_REQUEST['save']) && $_REQUEST['save']) {
 
 		$continue=true;
 
@@ -41,8 +42,8 @@ include ("header.php");
 				$query="INSERT INTO ".table('admin_types')." 
 					SET type_name='".$type['type_name']."',
 					rights='".$type['rights']."'";
-				$done=mysql_query($query) or die("Database error: " . mysql_error());
-				$type_id=mysql_insert_id();
+				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+				$type_id=mysqli_insert_id($GLOBALS['mysqli']);
 				}
 			   else {
 				$done=orsee_db_save_array($type,"admin_types",$type_id,"type_id");
@@ -61,17 +62,18 @@ include ("header.php");
 
 
 	$rights=array();
-        if ($type['rights']) {
-                $trights=explode(",",$type['rights']);
-                foreach ($trights as $right) $rights[$right]=$right;
-                }
+        if (isset($type['rights']) && $type['rights']) {
+            $trights=explode(",",$type['rights']);
+		foreach ($trights as $right) $rights[$right]=true;
+        }
+        $rights=update_admin_rights_with_new_fields($rights);
 
 	$errors=array(); $required=array();
 	// perform precondition checks
         foreach ($system__admin_rights as $systemright) {
         	$line=explode(":",$systemright);
                 // if selected and preconditions exist ...
-                if ($line[2] && $rights[$line[0]]) {
+                if (isset($line[2]) && $line[2] && isset($rights[$line[0]]) && $rights[$line[0]]) {
                         $preconds=explode(",",$line[2]);
                         // check if preconditions are met!
 			foreach ($preconds as $cond) {
@@ -92,7 +94,7 @@ include ("header.php");
 
 
 	show_message();
-
+	if (!isset($type['type_name'])) $type['type_name']="";
 	// form
 	echo '<FORM action="admin_type_edit.php" method="post">
 		<INPUT type=hidden name="type_id" value="'.$type_id.'">
@@ -120,6 +122,8 @@ include ("header.php");
 	foreach ($system__admin_rights as $right) {
 		$line=explode(":",$right);
 		$tclass=str_replace(strstr($line[0],"_"),"",$line[0]);
+		if (!isset($line[1])) $line[1]="";
+		if (!isset($line[2])) $line[2]="";
 		if ($tclass!=$lastclass) {
 			echo '<TR><TD colspan=4>&nbsp;<BR>&nbsp;</TD></TR>';
 			$lastclass=$tclass; $shade=true;
@@ -130,7 +134,7 @@ include ("header.php");
 			echo '>
 				<TD class="small" align=right>
 					<INPUT class="small" type=checkbox name="right_list['.$line[0].']" value="'.$line[0].'"';
-					if ($rights[$line[0]]) echo ' CHECKED';
+					if (isset($rights[$line[0]]) && $rights[$line[0]]) echo ' CHECKED';
 					echo '>
 				</TD>
 				<TD class="small" align=left';

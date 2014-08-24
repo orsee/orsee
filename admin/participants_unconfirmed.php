@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="not confirmed registrations";
@@ -7,11 +8,11 @@ include ("header.php");
 	$allow=check_allow('participants_unconfirmed_edit','participants_main.php');
 
 	// delete one?
-	if ($_REQUEST['delete'] && $_REQUEST['participant_id']) {
+	if (isset($_REQUEST['delete']) && $_REQUEST['delete'] && isset($_REQUEST['participant_id']) && $_REQUEST['participant_id']) {
 		$participant=orsee_db_load_array("participants_temp",$_REQUEST['participant_id'],"participant_id");
         	$query="DELETE FROM ".table('participants_temp')." 
          		WHERE participant_id='".$_REQUEST['participant_id']."'";
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		message($lang['temp_participant_deleted'].': '.$participant['lname'].', '.$participant['fname']);
 		log__admin("participant_unconfirmed_delete","participant: ".$participant['lname'].', '.$participant['fname']);
 		redirect ("admin/participants_unconfirmed.php");
@@ -49,10 +50,34 @@ include ("header.php");
      	$query="SELECT *
       		FROM ".table('participants_temp')." 
       		ORDER BY creation_time, email";
-       	$result=mysql_query($query) or die("Database error: " . mysql_error());
-	$emails=array();
- 	while ($line=mysql_fetch_assoc($result)) {
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	$emails=array(); $shade=false;
+
+	$typenames=load_external_experiment_type_names();
+
+
+	while ($line=mysqli_fetch_assoc($result)) {
 		$emails[]=$line['email'];
+
+		$line['field_of_studies']=language__get_item('field_of_studies',$line['field_of_studies']);
+		$line['profession']=language__get_item('profession',$line['profession']);
+		$line['gender']=$lang['gender_'.$line['gender']];
+		$exptypes=explode(",",$line['subscriptions']);
+		$invnames=array();
+		foreach ($exptypes as $type) $invnames[]=$typenames[$type];
+		$line['invitations']=implode(", ",$invnames);
+		$line['registration_link']=$settings__root_url."/public/participant_confirm.php?p=".url_cr_encode($line['participant_id']);
+
+		$mailtext=load_mail("public_system_registration",$lang['lang']);
+		$message=process_mail_template($mailtext,$line);
+		$message=str_replace(" ","%20",$message);
+		$message=str_replace("\n\m","\n",$message);
+		$message=str_replace("\m\n","\n",$message);
+		$message=str_replace("\m","\n",$message);
+		$message=str_replace("\n","%0D%0A",$message);
+
+		$linktext='mailto:'.$line['email'].'?subject='.str_replace(" ","%20",$lang['registration_email_subject']).'&reply-to='.urlencode($settings['support_mail']).'&body='.$message;
+
 
 		echo '	<tr class="small"';
 		if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
@@ -71,7 +96,7 @@ include ("header.php");
 					'.$line['fname'].'
 				</td>
    				<td class="small">
-					<A class="small" HREF="mailto:'.$line['email'].'">'.$line['email'].'</A>
+					<A class="small" HREF="'.$linktext.'">'.$line['email'].'</A>
 				</td>
    				<td class="small">
 					'.$line['subscriptions'].'

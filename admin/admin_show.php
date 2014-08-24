@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="show admin";
@@ -28,10 +29,10 @@ include ("header.php");
 			</tr>';
 
      	$query="SELECT * FROM ".table('admin')." ORDER BY adminname";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-	$emails=array();
-	while ($admin=mysql_fetch_assoc($result)) {
+	$emails=array(); $shade=false;
+	while ($admin=mysqli_fetch_assoc($result)) {
 
         	if ($admin['email']) $emails[]=$admin['email'];
                 echo '<tr class="small"';
@@ -52,7 +53,7 @@ include ("header.php");
 					'.$admin['admin_type'].'
 				</td>
 				<td>
-					'; if ($admin['is_experimenter']=='n') echo $lang['n']; else echo $lang['y']; echo '
+					'; if ($admin['experimenter_list']=='n') echo $lang['n']; else echo $lang['y']; echo '
                         	<td>
                                 	<a href="admin_edit.php?admin_id='.$admin['admin_id'].'">'.$lang['edit'].'</a>
                         	</td>

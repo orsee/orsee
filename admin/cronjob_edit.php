@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 if (isset($_REQUEST['job_name'])) $job_name=$_REQUEST['job_name']; else $job_name="";
@@ -30,7 +31,7 @@ include ("header.php");
 	  	if ($continue) {
 
 			$done=orsee_db_save_array($_REQUEST,"cron_jobs",$job_name,"job_name");
-			log__admin("cronjob_edit",$_REQUEST['jobname']);
+			log__admin("cronjob_edit",$_REQUEST['job_name']);
        			message ($lang['changes_saved']);
                         redirect ("admin/cronjob_edit.php?job_name=".$job_name);
 			} else {
@@ -48,7 +49,6 @@ include ("header.php");
 
 	echo '
 			<FORM action="cronjob_edit.php">
-				<INPUT type=hidden name="job_name" value="'.$subpool['job_name'].'">
 
 		<TABLE>
 			<TR>

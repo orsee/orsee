@@ -1,4 +1,11 @@
-// navigation.php. part of orsee. see orsee.org.
+// part of orsee. see orsee.org.
+//
+// menu entry format:
+//     0         1          2      3   4     5     6        7          8	   9
+// entrytype|menu__area|lang_item|url|icon|target|addp?|showonlyifp?|hideifp?|options_condition
+//
+// uncomment line with // if not needed
+//
 
 head|admindata|current_user_data_box|
         

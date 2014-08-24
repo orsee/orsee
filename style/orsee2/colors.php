@@ -20,11 +20,12 @@ body_vlink:	#800080
 # experiment calendar colors
 calendar_month_font:		white
 calendar_month_background:	black
-calendar_experiment_name:	blue
+calendar_experiment_name:	#993300
+calendar_day_background:	#FF9933
 
 # the following two are color lists, seperated by ","
-calendar_admin_experiment_sessions:     burlywood,cadetblue,darkkhaki,darkturquoise,gold,lightcyan,lightsteelblue,mediumspringgreen,springgreen
-calendar_public_experiment_sessions:   burlywood,cadetblue,darkkhaki,darkturquoise,gold,lightcyan,lightsteelblue,mediumspringgreen,springgreen
+calendar_admin_experiment_sessions: burlywood,darkkhaki,darkturquoise,gold,lightcyan,mediumspringgreen,springgreen
+calendar_public_experiment_sessions:   burlywood,darkkhaki,darkturquoise,gold,lightcyan,mediumspringgreen,springgreen
 calendar_lab_space_reservation:	darksalmon,lightcoral,hotpink,lightpink,pink
 
 # session state text colors
@@ -37,33 +38,46 @@ session_public_complete:	red
 session_public_expired:		blue
 session_public_free_places:	green
 
+shownup_no:     red
+shownup_yes:    green
+
+# session reminder state text colors
+session_reminder_state_sent_text:	green
+session_reminder_state_checked_text:	red
+session_reminder_state_waiting_text:	blue
 
 # menu colors
 menu_title:	white
-menu_item:	lightgrey
-menu_item_highlighted_background:	red
+menu_item:	#FDF5E6
+menu_item_highlighted_background:	#B22222
 
+# item lists (experiments/sessions/options etc.)
+list_header_background:		#D2B48C
+list_title_background:		#DEB887
+list_item_background:		antiquewhite
+list_item_emphasize_background:	white
+list_list_background: 		#FFE4C4
+list_shade1:			#FFDEAD
+list_shade2:			lightgrey
+list_options_background:	lightgrey
 
-# notification colors
+list_highlighted_table_head_background:	brown
+list_highlighted_table_head_text:	white
+
+# notification message colors
 message_background:	coral
-message_border:		blue
+message_border:		orange
+message_text:		black
 
+# admin type list: error backgrounds
+admin_type_error_missing_required:	lightcoral
+admin_type_required_by_error:		lightgreen
 
-# background for fields not supplied in a form, used only sparly
+# background for fields not supplied in a form (used only sparly)
 missing_field:	orange
 
-# online survey colors
-os_missing_field:	orange
-
 # public area, experiment registration
-register_table_head1:	lightblue
-register_table_head2:	lavender
-register_table_row:	beige
-just_registered_session:	sandybrown
-shownup_no:	red
-shownup_yes:	green
+just_registered_session_background:	sandybrown
 
 # background for graphs in statistics section
 stats_graph_background:	snow
-
-

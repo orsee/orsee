@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 if (isset($_REQUEST['subpool_id'])) $subpool_id=$_REQUEST['subpool_id']; else $subpool_id="";
@@ -23,7 +24,10 @@ include ("header.php");
 
                 $query="SELECT * from ".table('lang')." WHERE content_type='subjectpool' AND content_name='".$subpool_id."'";
                 $selfdesc=orsee_query($query);
-                }
+        } else {
+		$subpool=array('subpool_name'=>'','subpool_description'=>'','subpool_type'=>'','exptypes'=>'','show_at_registration_page'=>'');
+		$selfdesc=array();
+        }
 
 	$continue=true;
 
@@ -99,9 +103,10 @@ include ("header.php");
 
 	show_message();
 
+
 	echo '
 			<FORM action="subpool_edit.php">
-				<INPUT type=hidden name="subpool_id" value="'.$subpool['subpool_id'].'">
+				<INPUT type=hidden name="subpool_id" value="'.$subpool_id.'">
 
 		<TABLE>
 			<TR>
@@ -109,7 +114,7 @@ include ("header.php");
 					'.$lang['id'].':
 				</TD>
 				<TD>
-					'.$subpool['subpool_id'].'
+					'.$subpool_id.'
 				</TD>
 			</TR>
 			<TR>
@@ -183,6 +188,7 @@ include ("header.php");
 			</TR>';
 
 			foreach ($languages as $language) {
+				if (!isset($selfdesc[$language])) $selfdesc[$language]='';
 				echo '	<TR>
 						<TD>
 							'.$language.':

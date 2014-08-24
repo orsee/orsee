@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="login";
@@ -9,9 +10,9 @@ include("header.php");
 	echo '<center>
 		<BR><BR>';
 
-	if ($_REQUEST['logout']) message($lang['logout']);
+	if (isset($_REQUEST['logout']) && $_REQUEST['logout']) message($lang['logout']);
 
-	if ($_REQUEST['pw']) {
+	if (isset($_REQUEST['pw']) && $_REQUEST['pw']) {
 		message($lang['logout']);
 		message ($lang['password_changed_log_in_again']);
 		}

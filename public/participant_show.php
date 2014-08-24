@@ -1,17 +1,18 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="my_registrations";
 include("header.php");
 
 
-	if ($_REQUEST['s']) $session_id=url_cr_decode_session($_REQUEST['s']); else $session_id="";
+	if (isset($_REQUEST['s']) && $_REQUEST['s']) $session_id=url_cr_decode_session($_REQUEST['s']); else $session_id="";
 
-	if ($_REQUEST['register']) {
+	if (isset($_REQUEST['register']) && $_REQUEST['register']) {
 
 		$continue=true;
 
-		if ($_REQUEST['betternot']) {
+		if (isset($_REQUEST['betternot']) && $_REQUEST['betternot']) {
 			redirect("public/participant_show.php?p=".url_cr_encode($participant_id));
 			}
 
@@ -28,7 +29,7 @@ include("header.php");
 		if ($registered) {
 			$continue=false;
 			message($lang['error_already_registered']);
-			redirect("public/participant_show.php?p=".url_encode($participant_id));
+			redirect("public/participant_show.php?p=".url_cr_encode($participant_id));
 			}	
 
 		$registration_end=sessions__get_registration_end("",$session_id);
@@ -47,7 +48,7 @@ include("header.php");
                          redirect("public/participant_show.php?p=".url_cr_encode($participant_id));
                          }
 
-		if ($_REQUEST['reallyregister']) {
+		if (isset($_REQUEST['reallyregister']) && $_REQUEST['reallyregister']) {
 
 			// if all checks are done, register ...
 			if ($continue) {
@@ -139,7 +140,7 @@ include("header.php");
 
 
 		<TABLE width=80%>
-		<TR><TD colspan=3 bgcolor=lightblue>';
+		<TR><TD colspan=3 bgcolor="'.$color['list_title_background'].'">';
 	echo $lang['experiments_you_are_invited_for'];
 	echo '</TD>
 		</TR>
@@ -151,7 +152,7 @@ include("header.php");
 
 
 	echo '<TR><TD colspan=3>&nbsp;</TD></TR>
-		<TR><TD colspan=3 bgcolor=lightblue>
+		<TR><TD colspan=3 bgcolor="'.$color['list_title_background'].'">
 		'.$lang['experiments_already_registered_for'].'
 		(<A HREF="javascript:openprint()">'.$lang['print_version'].'</A>)
 		</TD>
@@ -185,7 +186,7 @@ include("header.php");
 		}
 
 
-	echo '<TR><TD colspan=3 bgcolor=lightblue>
+	echo '<TR><TD colspan=3 bgcolor="'.$color['list_title_background'].'">
 		'.$lang['experiments_you_participated'].'
 		</TD></TR>
 		<TR><TD colspan=3>

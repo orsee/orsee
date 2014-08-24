@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 $title="bulk mail participants";
 
@@ -6,7 +7,7 @@ include ("header.php");
 
 	$allow=check_allow('participants_bulk_mail','participants_main.php');
 
-	if ($_REQUEST['send']) $send=true;
+	if (isset($_REQUEST['send']) && $_REQUEST['send']) $send=true; else $send=false;
 
 	// load invitation languages
 	$inv_langs=lang__get_part_langs();
@@ -42,9 +43,9 @@ include ("header.php");
 				$query="INSERT INTO ".table('bulk_mail_texts')." 
 					SET bulk_id='".$bulk_id."',
 					lang='".$inv_lang."',
-					bulk_subject='".mysql_escape_string($bulk[$inv_lang.'_subject'])."',
-					bulk_text='".mysql_escape_string($bulk[$inv_lang.'_body'])."'";
-                		$done=mysql_query($query) or die("Database error: " . mysql_error());
+					bulk_subject='".mysqli_real_escape_string($GLOBALS['mysqli'],$bulk[$inv_lang.'_subject'])."',
+					bulk_text='".mysqli_real_escape_string($GLOBALS['mysqli'],$bulk[$inv_lang.'_body'])."'";
+				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				}
 
 			$done=experimentmail__send_bulk_mail_to_queue($bulk_id,$plist_ids);
@@ -74,7 +75,8 @@ include ("header.php");
 		if (count($inv_langs) > 1) {
 			echo '<TR><TD colspan=2 bgcolor="'.$color['list_shade1'].'">'.$inv_lang.':</TD></TR>';
 			}
-
+		if (!isset($_REQUEST[$inv_lang.'_subject'])) $_REQUEST[$inv_lang.'_subject']="";
+		if (!isset($_REQUEST[$inv_lang.'_body'])) $_REQUEST[$inv_lang.'_body']="";
 		echo '
 			<TR>
 				<TD>

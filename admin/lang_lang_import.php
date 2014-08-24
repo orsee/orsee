@@ -1,16 +1,19 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="upload";
 include ("header.php");
 
 
-	if ($_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id'];
+	if (isset($_REQUEST['lang_id']) && $_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id'];
 		else redirect ("admin/lang_main.php");
 
 	$allow=check_allow('lang_lang_export','lang_lang_edit.php?elang='.$lang_id);
 
-	if ($_REQUEST['upload']) {
+	if (isset($_REQUEST['upload']) && $_REQUEST['upload']) {
+
+		if(!isset($_REQUEST['action'])) $_REQUEST['action']="";
 
 		switch ($_REQUEST['action']) {
 			case 'upgrade': $do_upgrade=true; $do_update=false; break;
@@ -44,12 +47,12 @@ include ("header.php");
                         $old_lang=array();
                         $query="SELECT content_type, content_name, ".$lang_id."
                                 as content_value FROM ".table('lang');
-                        $result=mysql_query($query) or die("Database error: " . mysql_error());
-                        while ($line = mysql_fetch_assoc($result)) {
+                        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                        while ($line = mysqli_fetch_assoc($result)) {
 				if ($line['content_value']==NULL) $line['content_value']="";
                                 $old_lang[$line['content_type']][$line['content_name']]=$line['content_value'];
                                 }
-                        mysql_free_result($result);
+                        mysqli_free_result($result);
 
        			$update=array();
 			$upgrade=array();
@@ -75,11 +78,11 @@ include ("header.php");
 					foreach ($item as $name=>$value) {
 						if ($name=='lang' || $name=='lang_name') continue;
 						$query="UPDATE ".table('lang')." 
-							SET ".$lang_id."='".mysql_escape_string($value)."' 
-							WHERE content_type='".mysql_escape_string($type)."' 
-							AND content_name='".mysql_escape_string($name)."'";
-						$done=mysql_query($query) or die("Database error: " . mysql_error());
-						if (mysql_affected_rows() > 0) $count++;
+							SET ".$lang_id."='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'
+							WHERE content_type='".mysqli_real_escape_string($GLOBALS['mysqli'],$type)."'
+							AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$name)."'";
+						$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+						if (mysqli_affected_rows($GLOBALS['mysqli']) > 0) $count++;
 					   	else $errors++;
 						}
 					$imported[]=$count.' '.$type;
@@ -107,22 +110,21 @@ include ("header.php");
 
 						if (isset($old_lang[$type][$name])) { 
                                                 	$query="UPDATE ".table('lang')."
-                                                        	SET ".$lang_id."='".mysql_escape_string($value)."'
-                                                        	WHERE content_type='".mysql_escape_string($type)."'
-                                                        	AND content_name='".mysql_escape_string($name)."'";
-                                                	$done=mysql_query($query) 
-								or die("Database error: " . mysql_error());
+								SET ".$lang_id."='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'
+								WHERE content_type='".mysqli_real_escape_string($GLOBALS['mysqli'],$type)."'
+								AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$name)."'";
+							$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 							}
 						   else {
 							$new_id++;
 							$query="INSERT INTO ".table('lang')."
                                                                 SET lang_id='".$new_id."', 
-								".$lang_id."='".mysql_escape_string($value)."',
-                                                                content_type='".mysql_escape_string($type)."',
-                                                                content_name='".mysql_escape_string($name)."'";
-                                                        $done=mysql_query($query)                                                                 						or die("Database error: " . mysql_error());
+								".$lang_id."='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."',
+                                                                content_type='".mysqli_real_escape_string($GLOBALS['mysqli'],$type)."',
+                                                                content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$name)."'";
+                                                        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 							}
-                                                if (mysql_affected_rows() > 0) $count++;
+                                                if (mysqli_affected_rows($GLOBALS['mysqli']) > 0) $count++;
                                                 else $errors++;
                                                 }
                                         $created[]=$count.' '.$type;

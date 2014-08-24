@@ -7,14 +7,13 @@ body {
 	margin-left: 0px;
 	margin-right: 0px;
 	margin-bottom: 2px;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: Helvetica, sans-serif;
         font-size: 10pt;
 	font-weight: bold;
-        color: black;
+	       color: black;
       }
 
 td    { font-family: Arial, Helvetica, sans-serif;
-	font-weight: bold;
 	text-decoration: none;
 	font-size: 10pt;
 	}
@@ -35,29 +34,26 @@ h1,h2,h3,h4,h5,h6 {
             }
 
 a, A     { font-family: Arial, Helvetica, sans-serif;
-        font-weight: bold;
 	font-size: 10pt;
       }
 
 
-.title1     { font-family: Arial, helvetica, sans-serif;	
+.title1     { font-family: Arial, helvetica, sans-serif;
 		font-size: 14pt;
-        	text-decoration: none; 
-		font-weight: bold;
+		text-decoration: none;
 	  }
 
 
 .menu_title {
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	color: white;
 	font-weight: bold;
 	font-size: 9pt;
 	}
 
 .menu_item {
-	font-family: Helvetica, Arial, sans-serif;
+	font-family: Arial, Helvetica, sans-serif;
 	color: lightgrey;
-	font-weight: bold;
 	font-size: 9pt;
 	}
 

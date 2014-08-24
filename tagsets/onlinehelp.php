@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 
 function help($topic,$link="") {
 	global $lang;

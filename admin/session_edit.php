@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="edit session";
@@ -6,7 +7,8 @@ include ("header.php");
               
 	echo '<center><h4>'.$lang['edit_session'].'</h4></center>';
 
-	if ($_REQUEST['session_id']) $session_id=$_REQUEST['session_id'];
+	if (isset($_REQUEST['session_id']) && $_REQUEST['session_id']) $session_id=$_REQUEST['session_id'];
+	else $session_id="";
 
 	if ($session_id) {
 		$edit=orsee_db_load_array("sessions",$session_id,"session_id");
@@ -15,15 +17,15 @@ include ("header.php");
 			check_experiment_allowed($edit['experiment_id'],"admin/experiment_show.php?experiment_id=".$edit['experiment_id']);
 		}
 
-	if ($_REQUEST['experiment_id']) {
+	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) {
 		$allow=check_allow('session_edit','experiment_show.php?experiment_id='.$_REQUEST['experiment_id']);
 	   if (!check_allow('experiment_restriction_override'))
 		check_experiment_allowed($_REQUEST['experiment_id'],"admin/experiment_show.php?experiment_id=".$_REQUEST['experiment_id']);
 		}
 
-	if ($_REQUEST['edit']) { 
+	if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
 
-		if (!$_REQUEST['session_finished']) $_REQUEST['session_finished']="n";
+		if (!isset($_REQUEST['session_finished']) || !$_REQUEST['session_finished']) $_REQUEST['session_finished']="n";
 
 		$oldtime=time__load_session_time($edit);
 		$oldunixtime=time__time_package_to_unixtime($oldtime);
@@ -49,7 +51,7 @@ include ("header.php");
 				}
 
 			if ( ($_REQUEST['session_reminder_hours']!=$edit['session_reminder_hours'] || $time_changed) && 
-					$edit['session_reminder_sent']=="y")
+					isset($edit['session_reminder_sent']) && $edit['session_reminder_sent']=="y")
 				message ($lang['session_reminder_changed_but_notice_sent']);
 			}
 
@@ -72,39 +74,49 @@ include ("header.php");
 
 // form
 
-        if (!$session_id) {
+	if (isset($_REQUEST['copy']) && $_REQUEST['copy']) $session_id="";
+
+	if (!$session_id) {
 		$addit=true;
-
-                $edit['experiment_id']=$_REQUEST['experiment_id'];
-                $edit['session_id']=get_unique_id("sessions","session_id");
-		
-		$edit['session_start_day']=date("d");
-		$edit['session_start_month']=date("m");
-		$edit['session_start_year']=date("Y");
-		$edit['session_start_hour']=date("H");
-		$edit['session_start_minute']=date("i");
-
-		$edit['session_duration_hour']=$settings['session_duration_hour_default'];
-		$edit['session_duration_minute']=$settings['session__duration_minute_default'];
-
-		$edit['session_reminder_hours']=$settings['session_reminder_hours_default'];
-		$edit['send_reminder_on']=$settings['session_reminder_send_on_default'];
-		$edit['registration_end_hours']=$settings['session_registration_end_hours_default'];
-		$session_time=0;
-
-		$edit['part_needed']=$settings['lab_participants_default'];
-		$edit['part_reserve']=$settings['reserve_participants_default'];
-
 		$button_name=$lang['add'];
-                }
-	   else {
-		$sessiontimearray=time__load_session_time($edit);
-                $session_time=time__time_package_to_unixtime($sessiontimearray);
 
+		if (isset($_REQUEST['copy']) && $_REQUEST['copy']) {
+			$edit=$_REQUEST;
+			$edit['session_id']=get_unique_id("sessions","session_id");
+			$edit['finished']='n';
+			$session_time=0;
+		} else {
+		$edit['experiment_id']=$_REQUEST['experiment_id'];
+		$edit['session_id']=get_unique_id("sessions","session_id");
+
+			$edit['laboratory_id']="";
+			$edit['session_remarks']="";
+		
+			$edit['session_start_day']=date("d");
+			$edit['session_start_month']=date("m");
+			$edit['session_start_year']=date("Y");
+			$edit['session_start_hour']=date("H");
+			$edit['session_start_minute']=date("i");
+
+			$edit['session_duration_hour']=$settings['session_duration_hour_default'];
+			$edit['session_duration_minute']=$settings['session_duration_minute_default'];
+
+			$edit['session_reminder_hours']=$settings['session_reminder_hours_default'];
+			$edit['send_reminder_on']=$settings['session_reminder_send_on_default'];
+			$edit['registration_end_hours']=$settings['session_registration_end_hours_default'];
+			$session_time=0;
+
+			$edit['part_needed']=$settings['lab_participants_default'];
+			$edit['part_reserve']=$settings['reserve_participants_default'];
+
+		}
+	} else {
+		$sessiontimearray=time__load_session_time($edit);
+        $session_time=time__time_package_to_unixtime($sessiontimearray);
 		$button_name=$lang['change'];
 
 		session__check_lab_time_clash($edit);
-		}
+	}
 
 	echo '<CENTER>';
 	show_message();
@@ -112,7 +124,7 @@ include ("header.php");
 	echo '<FORM action="session_edit.php">
 		<INPUT type=hidden name=session_id value="'.$edit['session_id'].'">
 		<INPUT type=hidden name=experiment_id value="'.$edit['experiment_id'].'">
-		'; if ($addit) echo '<INPUT type=hidden name="addit" value="true">'; echo '
+		'; if (isset($addit) && $addit) echo '<INPUT type=hidden name="addit" value="true">'; echo '
 		<TABLE>
 		<TR>
 			<TD>
@@ -178,7 +190,7 @@ include ("header.php");
 				helpers__select_numbers("session_duration_minute",
 						$edit['session_duration_minute'],0,59,2,
 						$settings['session_duration_minute_steps']);
-				echo ' '.help(session_duration).'
+				echo ' '.help("session_duration").'
 			</TD>
 		</TR>';
 
@@ -187,7 +199,7 @@ include ("header.php");
 				'.$lang['session_reminder_hours_before'].':
 			</TD>
 			<TD>';
-				if ($edit['session_reminder_sent']=="y") 
+				if (isset($edit['session_reminder_sent']) && $edit['session_reminder_sent']=="y")
 					echo $edit['session_reminder_hours'].' ('.$lang['session_reminder_already_sent'].')';
 				   else 
 					helpers__select_numbers_relative("session_reminder_hours",$edit['session_reminder_hours'],0,
@@ -257,19 +269,29 @@ include ("header.php");
 			</TD>
 			<TD>
 				<input name="session_finished" type=checkbox value="y"';
-				if ($edit['session_finished']=="y") echo ' CHECKED';
+				if (isset($edit['session_finished']) && $edit['session_finished']=="y") echo ' CHECKED';
 				echo '> '.help("session_finished").'
+			</TD>
+		</TR>
+
+		<TR>
+			<TD COLSPAN=2 align="center">
+				<INPUT name="edit" type="submit" value="'.$button_name.'">
 			</TD>
 		</TR>';
 
-	echo '</TABLE>
- 	      <TABLE>
+	if ($session_id) {
 
-		<TR>
-			<TD COLSPAN=2>
-				<INPUT name=edit type=submit value="'.$button_name.'">
-			</TD>
-		</TR>
+		if (isset($lang['copy_as_new_session'])) $copy_button=$lang['copy_as_new_session']; else $copy_button="Copy as new session";
+		echo '
+			<TR>
+				<TD COLSPAN=2 align="right">
+					<INPUT name="copy" type="submit" value="'.$copy_button.'">
+				</TD>
+			</TR>';
+	}
+
+	echo '
 	      </table>
 	</FORM>
 	<BR>';

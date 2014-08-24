@@ -1,27 +1,43 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 
 
-if ($_REQUEST['export']) {
+if (isset($_REQUEST['export']) && $_REQUEST['export']) {
 
 	include ("nonoutputheader.php");
 
-	if ($_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id']; else redirect ("admin/lang_main.php");
+	if (isset($_REQUEST['lang_id']) && $_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id']; else redirect ("admin/lang_main.php");
 
 	$allow=check_allow('lang_lang_export','lang_lang_edit.php?elang='.$lang_id);
 
 	$query="SELECT * FROM ".table('lang')." 
 		WHERE content_type IN ('lang','mail','default_text','help')
 		ORDER by lang_id";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$items="";
-	while ($line=mysql_fetch_assoc($result)) {
+	while ($line=mysqli_fetch_assoc($result)) {
 		$items.=stripslashes($line['content_type']).'--:orsee_next:--'.
 			stripslashes($line['content_name']).'--:orsee_next:--'.
 			stripslashes($line[$lang_id]).'--:orsee_line:--';
 		}
+//	$file=chunk_split(base64_encode($items),60);
+
+	$mime_type="text/*";
+	$filename='orsee_'.$lang_id.'.orl';
+
+	ob_end_clean();
+	header("Pragma: public");
+	header("Expires: 0");
+	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+
+	header("Content-Type: ".$mime_type);
+	header( "Content-Disposition: attachment; filename=\"$filename\"");
+
+	header( "Content-Description: File Transfer");
+
 	$file=chunk_split(base64_encode($items),60);
 
 	echo $file;
@@ -34,7 +50,7 @@ if ($_REQUEST['export']) {
 	$title="export language";
 	include ("header.php");
 
-	if ($_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id']; else redirect ("admin/lang_main.php");
+	if (isset($_REQUEST['lang_id']) && $_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id']; else redirect ("admin/lang_main.php");
 	
 	$allow=check_allow('lang_lang_export','lang_lang_edit.php?elang='.$lang_id);
 

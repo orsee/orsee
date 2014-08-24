@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 $menu__area="calendar";
 include ("header.php");
@@ -11,7 +12,7 @@ include ("header.php");
 		<H4>'.$lang['experiment_calendar'].'</h4>';
 
 
-	if (!$_REQUEST['year']) {
+	if (!(isset($_REQUEST['year']) && $_REQUEST['year'])) {
 
 		$lastmonth=date__skip_months(-1,$_REQUEST['time']);
 		$nextmonth=date__skip_months(1,$_REQUEST['time']);

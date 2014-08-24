@@ -1,5 +1,7 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
+
 
 $menu__area="mainpage";
 
@@ -10,6 +12,8 @@ echo "<center>";
 show_message();
 
 echo content__get_content("mainpage_welcome");
+
+if (!isset($addp)) $addp="";
 
 if ($addp) $sign="&"; else $sign="?";
 
@@ -33,6 +37,8 @@ echo '<BR><BR>
 }
 
 echo "</center>";
+
+clearpixel();
 
 include "footer.php";
 

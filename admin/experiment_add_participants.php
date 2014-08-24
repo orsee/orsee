@@ -1,12 +1,12 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="experiments";
 $title="assign participants";
-$query_modules=array("field","noshowups","nr_participations","subjectpool","gender",
-			"study_start","field_of_studies","profession","experiment_classes",
-			"experiment_participated_or","experiment_participated_and",
-			"experiment_assigned_or","rand_subset");
+$query_modules=array("field","noshowups","nr_participations","subjectpool",
+			"participant_form_fields",
+			"experiment_classes","experiment_participated_or","experiment_participated_and","experiment_assigned_or","rand_subset");
 
 include ("header.php");
 
@@ -20,30 +20,35 @@ include ("header.php");
 	if (!check_allow('experiment_restriction_override'))
 		check_experiment_allowed($experiment,"admin/experiment_show.php?experiment_id=".$experiment_id);
 
+	$query_modules=query__get_participant_form_modules($query_modules,$experiment_id);
+
 	echo '	<center>
 		<BR><BR>
 			<h4>'.$experiment['experiment_name'].'</h4>
 			<h4>'.$lang['assign_subjects'].'</h4>
 		';
 
-	if ($_REQUEST['addselected'] || $_REQUEST['addall']) {
+	if(!isset($_REQUEST['use'])) $_REQUEST['use']=array();
+	if(!isset($_REQUEST['con'])) $_REQUEST['con']=array();
+	if(!isset($_REQUEST['new'])) $_REQUEST['new']="";
+	if ((isset($_REQUEST['addselected']) && $_REQUEST['addselected']) || (isset($_REQUEST['addall']) && $_REQUEST['addall'])) {
 
 		// data base queries for assign ...
 
 		$assign_ids=$_SESSION['assign_ids'];
 
-		if ($_REQUEST['addall']) {
+		if (isset($_REQUEST['addall']) && $_REQUEST['addall']) {
 
 		$assigned_count=count($assign_ids);
 		$instring=implode("','",$assign_ids);
 
 			}
-		elseif ($_REQUEST['addselected']) {
+		elseif (isset($_REQUEST['addselected']) && $_REQUEST['addselected']) {
 			$selected_ids=array();
 			$i=0;
 			foreach ($assign_ids as $id) {
 				$i++;
-				if ($_REQUEST['p'.$i]==$id) $selected_ids[]=$id;
+				if (isset($_REQUEST['p'.$i]) && $_REQUEST['p'.$i]==$id) $selected_ids[]=$id;
 				}
                 	$assigned_count=count($selected_ids);
                 	$instring=implode("','",$selected_ids);
@@ -53,7 +58,7 @@ include ("header.php");
                         SELECT participant_id, '".$experiment_id."' 
                         FROM ".table('participants')." 
 			WHERE participant_id IN ('".$instring."') ";
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 log__admin("experiment_assign_participants","experiment:".$experiment['experiment_name']);
 
@@ -63,15 +68,15 @@ include ("header.php");
 
 		}
 
-	elseif ($_REQUEST['show']) {
+	elseif (isset($_REQUEST['show']) && $_REQUEST['show']) {
 
-		$sort = ($_REQUEST['sort']) ? $_REQUEST['sort']:"lname,fname,email";
+		$sort = (isset($_REQUEST['sort']) && $_REQUEST['sort']) ? $_REQUEST['sort']:"lname,fname,email";
 
-		if ($_REQUEST['new_query'] || !$_SESSION['assign_select_query']) {
+		if ((isset($_REQUEST['new_query']) && $_REQUEST['new_query']) || (!isset($_REQUEST['assign_select_query']) || !$_SESSION['assign_select_query'])) {
 			unset($_REQUEST['new_query']);
-	       		$where_clause=query__where_clause($query_modules,
+		$where_clause=query__where_clause($query_modules,
 							  $_REQUEST['use'],
-							  $_REQUEST['con']);
+							  $_REQUEST['con'],$experiment_id);
 
 			if (!$where_clause) $where_clause=query__where_clause_module("all");
 
@@ -136,13 +141,14 @@ include ("header.php");
 
 	else 	{
 
-		if ($_REQUEST['new']) $_SESSION['assign_request']=array();
+		if (!isset($_SESSION['assign_request'])) $_SESSION['assign_request']=array();
 			else {
+				if (!isset($_SESSION['assign_request']) || !is_array($_SESSION['assign_request'])) $_SESSION['assign_request']=array();
 				$new_req=array_merge($_SESSION['assign_request'],$_REQUEST);
 				$_REQUEST=$new_req;
 				$_SESSION['assign_request']=$_REQUEST;
 				}
-
+		$_SESSION['assign_ids']=array();
 		$exptypes=load_external_experiment_type_names(false);
 		$wstring="subscriptions LIKE '%".$experiment['experiment_ext_type']."%'";
 		echo participants__count_participants($wstring);

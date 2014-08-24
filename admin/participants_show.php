@@ -1,29 +1,33 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="participants";
 $title="show participants";
-$query_modules=array("field","noshowups","nr_participations","subjectpool","gender",
-			"study_start","field_of_studies","profession","experiment_classes",
-			"experiment_participated_or","experiment_participated_and","experiment_assigned_or");
+$query_modules=array("field","noshowups","nr_participations","subjectpool",
+			"participant_form_fields",
+			"experiment_classes","experiment_participated_or","experiment_participated_and","experiment_assigned_or");
 
 include ("header.php");
 
 	$allow=check_allow('participants_show','participants_main.php');
+	$deleted= (isset($_REQUEST['deleted']) && $_REQUEST['deleted']) ? $_REQUEST['deleted'] : "n";
 
 	echo '	<center>
 		<BR><BR>
 			<h4>'.$lang['edit_participants'].'</h4>
 		';
 
-	$deleted= ($_REQUEST['deleted']) ? $_REQUEST['deleted'] : "n";
+	$query_modules=query__get_participant_form_modules($query_modules);
 
-	if ($_REQUEST['show']) {
+	if (isset($_REQUEST['show']) && $_REQUEST['show']) {
 
-		$sort = ($_REQUEST['sort']) ? $_REQUEST['sort']:"lname,fname,email";
+		$sort = (isset($_REQUEST['sort']) && $_REQUEST['sort']) ? $_REQUEST['sort']:"lname,fname,email";
 
-		if ($_REQUEST['new_query'] || !$_SESSION['assign_select_query']) {
+		if (  (isset($_REQUEST['new_query']) && $_REQUEST['new_query']) || (!isset($_SESSION['assign_select_query']) || !$_SESSION['assign_select_query'])) {
 			unset($_REQUEST['new_query']);
+				if (!isset($_REQUEST['use'])) $_REQUEST['use']=array();
+				if (!isset($_REQUEST['con'])) $_REQUEST['con']=array();
 	       		$where_clause=query__where_clause($query_modules,
 							  $_REQUEST['use'],
 							  $_REQUEST['con']);
@@ -32,17 +36,18 @@ include ("header.php");
 
 			$select_query="SELECT ".table('participants').".* 
                         	FROM ".table('participants')."  
-				WHERE deleted='".$deleted."' ".
-                        	$where_clause;
+							WHERE";
+							if ($deleted=='b') $select_query.=" (deleted='y' OR deleted='n') ";
+							else $select_query.=" deleted='".$deleted."' ";
+				$select_query.=$where_clause;
 
-                	$_SESSION['assign_where_clause']=$where_clause;
+            $_SESSION['assign_where_clause']=$where_clause;
 			$_SESSION['assign_select_query']=$select_query;
 			$_SESSION['assign_request']=$_REQUEST;
-			}
-		   else {
+		} else {
 			$where_clause=$_SESSION['assign_where_clause'];
-                        $select_query=$_SESSION['assign_select_query'];
-			}
+            $select_query=$_SESSION['assign_select_query'];
+		}
 
 		//echo '<A HREF="participants_excel_import.php">'.$lang['excel_import'].'</A><BR>';
 
@@ -59,13 +64,13 @@ include ("header.php");
 
 	else 	{
 
-		if ($_REQUEST['new']) $_SESSION['assign_request']=array();
+		if (!isset($_SESSION['assign_request'])) $_SESSION['assign_request']=array();
 			else {
 				$new_req=array_merge($_SESSION['assign_request'],$_REQUEST);
 				$_REQUEST=$new_req;
 				$_SESSION['assign_request']=$_REQUEST;
 				}
-		$deleted= ($_REQUEST['deleted']) ? $_REQUEST['deleted'] : "n";
+		$deleted= (isset($_REQUEST['deleted']) && $_REQUEST['deleted']) ? $_REQUEST['deleted'] : "n";
 
 		echo participants__count_participants("deleted = 'n'");
 		echo ' '.$lang['xxx_participants_registered'].'

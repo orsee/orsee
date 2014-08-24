@@ -1,6 +1,5 @@
 <?php
-
-// public content functions. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 function content__get_content($content_name) {
 global $lang;

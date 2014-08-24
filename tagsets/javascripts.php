@@ -1,6 +1,5 @@
 <?php
-
-// javascript generation functions. part of orsee. see orsee.org.
+// part of orsee. see orsee.org
 
 function script__part_list_checkall() {
 

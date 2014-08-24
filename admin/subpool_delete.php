@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -36,27 +37,22 @@ include ("header.php");
 
 		$query="DELETE FROM ".table('subpools')." 
                  	WHERE subpool_id='".$subpool_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 $query="DELETE FROM ".table('lang')."
                         WHERE content_name='".$subpool_id."'
 			AND content_type='subjectpool'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 $query="UPDATE ".table('participants')." 
                  	SET subpool_id='".$merge_with."'
                  	WHERE subpool_id='".$subpool_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	
                 $query="UPDATE ".table('participants_temp')."
                         SET subpool_id='".$merge_with."'
                         WHERE subpool_id='".$subpool_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
-
-                $query="UPDATE ".table('participants_os')."
-                        SET subpool_id='".$merge_with."'
-                        WHERE subpool_id='".$subpool_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		log__admin("subjectpool_delete","subjectpool:".$subpool['subpool_name']);
                 message ($lang['subpool_deleted_part_moved_to'].' "'.subpools__get_subpool_name($merge_with).'".');
@@ -80,15 +76,14 @@ include ("header.php");
                                 </TD>
                         </TR>
                         <TR>
-                                <TD align=left>
+                                <TD align=left colspan=2>
                                         <INPUT type=submit name=reallydelete value="'.$lang['yes_delete'].'">
 					<BR>
 					'.$lang['merge_subject_pool_with'].' ';
-					subpools__select_field("merge_with","subpool_id","subpool_name","1",$subpool_id);
-		echo '		</TD>
-                                </TD>
-                                <TD align=right>
-                                        <INPUT type=submit name=betternot value="'.$lang['no_sorry'].'">
+					echo subpools__select_field("merge_with","subpool_id","subpool_name","1",$subpool_id);
+		echo '		</TD></TR><TR>
+                                <TD align=center colspan=2><BR><BR>
+                                <INPUT type=submit name=betternot value="'.$lang['no_sorry'].'">
                                 </TD>
                         </TR>
                 </TABLE>

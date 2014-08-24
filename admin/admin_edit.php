@@ -1,20 +1,23 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 $title="edit admin";
 $menu__area="options";
 
 include("header.php");
 
-	if ($_REQUEST['admin_id']) $admin_id=$_REQUEST['admin_id'];
-		elseif ($_REQUEST['new']) $admin_id="";
+	if (isset($_REQUEST['admin_id']) && $_REQUEST['admin_id']) $admin_id=$_REQUEST['admin_id'];
+		elseif (isset($_REQUEST['new']) && $_REQUEST['new']) $admin_id="";
 		else $admin_id=$expadmindata['admin_id'];
 
-	if ($admin_id) $admin=orsee_db_load_array("admin",$admin_id,"admin_id");
+	if ($admin_id) $admin=orsee_db_load_array("admin",$admin_id,"admin_id"); else {
+		$admin=array('adminname'=>'','fname'=>'','lname'=>'','email'=>'','admin_type'=>'','language'=>'','experimenter_list'=>'','get_calendar_mail'=>'','get_statistics_mail'=>'');
+	}
 
 	if ((!$admin_id) ||  $admin_id!=$expadmindata['admin_id']) 
 		$allow=check_allow('admin_edit','admin_show.php');
 
-	if ($_REQUEST['edit']) {
+	if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
 
 		$continue=true;
 
@@ -269,7 +272,7 @@ include("header.php");
 	    }
 
 
-	if ($adminright['admin_edit']) {
+	if (check_allow('admin_edit')) {
 		echo '<BR><A href="admin_show.php">'.$lang['edit_administrators'].'</A><BR><BR>';
 		}
 

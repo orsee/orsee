@@ -1,41 +1,46 @@
-This are short installation notes for ORSEE 2.0.2
+These are short installation notes for ORSEE 2.2.0
 
-The manual will contains a longer version.
+The ORSEE manual contains more details on ORSEE installation (but still needs to be updated to version 2.2.0).
 
 When you upgrade from an older version of ORSEE, please read the UPGRADE.howto
 
 PREREQUISITES
 
 - a webserver (Apache preferred)
-- PHP >=4.2.2 as cgi and on commandline (might also run on older versions)
-    with GD module (php-gd), MySQL module (php-mysql), Session module (php-session)
-- MySQL >=4.02
+- PHP >=5 both as apache module (apache2-mod_php5) and on commandline (php5) with modules: php5-gd, php5-mysql, php5-mbstring.
+- MySQL >=5 (I recommend the community-server version from Oracle)
 - cronjob access
+- webalizer for web traffic analysis, of required.
 
 BASIC INSTALLATION
 
 1. Unpack ORSEE's tgz file in your webservers path. (Oh, you already did?)
 
-2. Wanna rename the directory?
-   % mv orsee-2.0.2 yourdirname
+2. Rename the directory if needed
+   % mv orsee-2.2.0 yourdirname
 
 3. Cd to the 'install' directory.
+   % cd yourdirname/install
 
-4. Create the mysql database.
+4. Enter mysql and create the mysql database. (You will need the privileges to add a database.)
+   % mysql
 
-5. Import the 'install.sql' file in the install dir
-   to your database:
+   mysql> CREATE DATABASE orseedbname;
+   mysql> GRANT ALL PRIVILEGES ON orseedbname.* TO orseedbusername@localhost IDENTIFIED BY 'orseeuserdbpassword';
+   mysql> FLUSH PRIVILEGES;
+   mysql> quit
 
-   % mysql databasename -uusername -ppassword < install.sql
+5. Import the default database structure. You have the choice between a recommended unicode version (install.UTF8.sql) ready for any international characters and an older charset version only allowing western characters (install.ISO8859-1.sql). I recommend the unicode version, and only switch to ISO if that does not work for a reason.
+
+   % mysql orseedbname -uorseedbusername -porseeuserdbpassword < install.UTF8.sql
 
 6. Install the crontab named 'crontab-for-orsee'. Edit the settings
    in this file to match your needs.
    % crontab crontab-for-orsee
 
-7. Browse to the 'config' dir. Edit the few settings in 'settings.php'.
+7. Browse to the 'config' dir. Edit the few settings in 'settings.php'. Don't forget to change the $settings__charset option to 'ISO8859-1' if you use the ISO version of the database.
 
-8. Make sure that the 'usage' directory is writable for the user the
-   cronjob is running under.
+8. Make sure that the 'usage' directory is writable for the user under which the cronjob is running. The webalizer output will be saved there by the server.
 
 9. Browse to your ORSEE installation: 'http://yourorseewebpath/admin'.
 
@@ -48,9 +53,15 @@ POST-INSTALLATION
 
 Just some notes:
 
-- CHANGE THE DEFAULT PASSWORD.
+- CHANGE THE DEFAULT PASSWORD OF USER orsee_install.
 
-- Edit the settings in Options/General Settings and Options/Default Values
+- Also change the email address of the user orsee_install in Options/Edit administrators.
+
+- Edit the settings in Options/General Settings and Options/Default Values. Don't forget to change the "System support email address", otherwise your system emails appear to come from orsee.org, and *I* will receive replies to *your* emails.
+
+- Check whether all characters are correctly displayed on the site. To do so, just use the pre-installed German language with all its umlauts (click on Switch to Deutsch when on public/index.php).
+
+- If you want to add your own fields in the participant profile from, then please read the instructions in config/participant_form.php.
 
 - Create your own style
   ->Copy the 'orsee' directory from the 'style' dir.
@@ -58,9 +69,9 @@ Just some notes:
   -> Edit the files in the directory.
   -> Select the style in Options/General Settings
 
-- Enable the Options/Regular Tasks (the Cronjobs)
+- Enable the Options/Regular Tasks (the cronjobs)
 
-- Edit the Options/Administrator Types and their Rights
+- Edit the Options/Administrator Types and their rights
 
 - Create Administrators.
 
@@ -68,16 +79,19 @@ Just some notes:
 
 - Create Options/Subjectpools.
 
-- Edit Options/external Experiment Types.
+- Edit Options/External Experiment Types.
 
 - Create Options/Experiment Classes.
 
-- Select your Options/public Languages.
+- Select your Options/Languages/Public Language.
 
-- Edit Public Content, FAQs, Fields of Studies, Professions, default Mails, 
-  default Texts.
+- Edit Public Content, FAQs, Fields of Studies, Professions, Default Emails,
+  Default texts.
 
 - You might want to edit the file 'webalizer.template' in the 'usage' dir.
+
+- Note that there is a new track function in ORSEE. It has been really hard for me to keep track of where ORSEE has been installed and which of these installations are active. So there is a tag included in the public/index.php which loads a small transparent image from www.orsee.org and at the same time tells orsee.org where the page is located. Other than the link to the page no information is transferred. This helps me keep track of active ORSEE installations. If you don't like this, you can include a "$settings__disable_orsee_stats=='n'" in your config/settings.php and the tracking will be disabled.
+
 
 Ready to start.
 

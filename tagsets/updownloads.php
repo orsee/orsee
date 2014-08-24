@@ -1,9 +1,8 @@
 <?php
-
-// up and download functions for orsee. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 function downloads__list_files($experiment_id='',$showsize=false,$showtype=false,$showdate=false) {
-	global $lang;
+	global $lang, $color;
 
 	$allow_dl=check_allow('download_download');
 
@@ -21,11 +20,11 @@ function downloads__list_files($experiment_id='',$showsize=false,$showtype=false
 		$where_clause.
 		" ORDER BY upload_type, upload_name, upload_id";
 
-	$result=mysql_query($query);
-	if (mysql_num_rows($result) > 0) {
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	if (mysqli_num_rows($result) > 0) {
 		$shade=true;
 		echo '<TABLE width="100%" border=0>';
-		while ($upload = mysql_fetch_assoc($result)) {
+		while ($upload = mysqli_fetch_assoc($result)) {
 			if ($shade) {
                         	$bgcolor=' bgcolor="'.$color['list_shade1'].'"';
                         	$shade=false;
@@ -41,7 +40,11 @@ function downloads__list_files($experiment_id='',$showsize=false,$showtype=false
 				}
 			echo '<TR'.$bgcolor.'><TD>&nbsp;&nbsp;</TD><TD>';
 			if ($allow_dl) 
-				echo '<A HREF="download_file.php?t=d&i='.$upload['upload_id'].'" target="_blank">';
+//				echo '<A HREF="download_file.php?t=d&i='.$upload['upload_id'].'" target="_blank">';
+				echo '<A HREF="download_file.php'.
+						'/'.rawurlencode($upload['upload_name'].'.'.$upload['upload_suffix']).
+						'?t=d&i='.$upload['upload_id'].'">';
+
 			echo $upload['upload_name'];
 			if ($allow_dl) echo '</A>';
 			echo '</TD>';
@@ -86,7 +89,7 @@ function downloads__files_downloadable($experiment_id=0) {
 }
 
 function downloads__list_experiments($showsize=false,$showtype=false,$showdate=false) {
-	global $lang;
+	global $lang, $color;
 	echo '<TABLE width=100% border=0>';
 
 	$query="SELECT DISTINCT ".table('experiments').".*, ".table('uploads').".*
@@ -94,9 +97,9 @@ function downloads__list_experiments($showsize=false,$showtype=false,$showdate=f
       		WHERE ".table('experiments').".experiment_id=".table('uploads').".experiment_id
 		GROUP BY ".table('experiments').".experiment_id
 		ORDER BY experiment_name";
-	$result=mysql_query($query);
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	$shade=true;
-	while ($exp = mysql_fetch_assoc($result)) {
+	while ($exp = mysqli_fetch_assoc($result)) {
 		if ($shade) {
 			$bgcolor=' bgcolor="'.$color['list_shade1'].'"';
 			$shade=false;
@@ -107,14 +110,8 @@ function downloads__list_experiments($showsize=false,$showtype=false,$showdate=f
 			}
 		echo '<TR'.$bgcolor.'><TD>';
 		echo $exp['experiment_name'].'</TD><TD>(';
-		if ($exp['experiment_type']=="laboratory") {
                 	echo $lang['from'].' '.sessions__get_first_date($exp['experiment_id']).' ';
                 	echo $lang['to'].' '.sessions__get_last_date($exp['experiment_id']);
-                }
-          	elseif ($exp['experiment_type']=="online-survey") {
-                	echo $lang['from'].' '.survey__print_start_time($exp['experiment_id'],true).' ';
-                	echo $lang['to'].' '.survey__print_stop_time($exp['experiment_id'],true);
-                }
 		echo ')</TD><TD>by ';
 		echo experiment__list_experimenters($exp['experimenter'],true,true);
 		echo '</TD><TD><A HREF="download_main.php?experiment_id='.$exp['experiment_id'].'">'.

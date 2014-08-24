@@ -1,11 +1,12 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 $title="mail preview";
 
 include("header.php");
 
-	if ($_REQUEST['experiment_id']) $experiment_id=$_REQUEST['experiment_id'];
-			else redirect ("admin/");
+	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) $experiment_id=$_REQUEST['experiment_id'];
+			else { $experiment_id=""; redirect ("admin/"); }
 
 	$allow=check_allow('experiment_invitation_edit','experiment_show.php?experiment_id='.$experiment_id);
 	$experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
@@ -19,9 +20,6 @@ include("header.php");
 
 	$inv_langs=lang__get_part_langs();
 
-
-	if ($experiment['experiment_type']=="online-survey")
-		$os=orsee_db_load_array("os_properties",$experiment_id,"experiment_id");
 
 	echo '	<BR><BR>
 		<center>
@@ -49,22 +47,6 @@ include("header.php");
                 	$experimentmail['link']=experimentmail__build_lab_registration_link(0);
                 	}
 
-        	elseif ($experiment['experiment_type']=="online-survey") {
-
-                	$experimentmail['link']=experimentmail__build_os_link($participant_id);
-
-                	/*
-                	$experimentmail['start_time']=time__format lang=<get-var settings::public-standard-language>
-                                year=<get-var os::start_year> month=<get-var os::start_month> day=<get-var os::start_day>
-                                hour=<get-var os::start_hour> minute=<get-var os::start_minute> hide_second=true></defun>
-
-                	<defun experimentmail::stop_time><time::format lang=<get-var settings::public-standard-language>
-                                year=<get-var os::stop_year> month=<get-var os::stop_month> day=<get-var os::stop_day>
-                                hour=<get-var os::stop_hour> minute=<get-var os::stop_minute> hide_second=true></defun>
-                	*/
-
-                	}
-
 		if (count($inv_langs) > 1) {
                         echo '<TR><TD colspan=2 bgcolor="'.$color['list_shade1'].'">'.$inv_lang.':</TD></TR>';
                         }
@@ -85,7 +67,7 @@ include("header.php");
                 	<TR>
 				<TD valign=top bgcolor="'.$color['list_list_background'].'" colspan=2>
 					'.nl2br(process_mail_template(stripslashes($body),$experimentmail));
-				if ($experimentmail['include_footer']=="y") 
+				if (isset($experimentmail['include_footer']) && $experimentmail['include_footer']=="y")
 					echo nl2br(stripslashes(experimentmail__get_mail_footer(0)));
 		echo '		</TD>
 			</TR>';

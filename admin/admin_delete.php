@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -28,7 +29,7 @@ include("header.php");
 
         	$query="DELETE FROM ".table('admin')." 
          		WHERE admin_id='".$admin_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		log__admin("admin_delete",$admin['adminname']);
 
         	message ($lang['admin_deleted'].': '.$admin['adminname']);

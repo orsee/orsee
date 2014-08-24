@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="delete lab reservation";
@@ -27,7 +28,7 @@ include("header.php");
 
         	$query="DELETE FROM ".table('lab_space')." 
          		WHERE space_id='".$space_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		log__admin("lab_space_delete","space_id:".$space_id);
         	message ($lang['lab_reservation_deleted']);

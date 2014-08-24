@@ -1,9 +1,12 @@
-// navigation.php. part of orsee. see orsee.org. 
+// part of orsee. see orsee.org.
 //
 // menu entry format:
 //     0         1          2      3   4     5     6        7          8
 // entrytype|menu__area|lang_item|url|icon|target|addp?|showonlyifp?|hideifp?
-
+// part of orsee. see orsee.org.
+//
+// uncomment line with // if not needed
+//
  
 headlink|mainpage|mainpage|/public/index.php|||true
 

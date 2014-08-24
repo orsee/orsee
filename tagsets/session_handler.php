@@ -1,6 +1,5 @@
 <?php
-
-// session functions for orsee. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 function orsee_session_open($aSavaPath, $aSessionName)
 {
@@ -18,38 +17,42 @@ function orsee_session_close()
 function orsee_session_read( $aKey )
 {
        $query = "SELECT DataValue FROM ".table('http_sessions')." WHERE SessionID='$aKey'";
-       $busca = mysql_query($query);
-       if(mysql_num_rows($busca) == 1)
+       $busca = mysqli_query($GLOBALS['mysqli'],$query) or die("Query:" . $query. "--- Database error: " . mysqli_error($GLOBALS['mysqli']));
+       if(mysqli_num_rows($busca) == 1)
        {
-             $r = mysql_fetch_array($busca);
+             $r = mysqli_fetch_array($busca);
              return $r['DataValue'];
        } ELSE {
              $query = "INSERT INTO ".table('http_sessions')." (SessionID, LastUpdated, DataValue)
                        VALUES ('$aKey', NOW(), '')";
-             mysql_query($query);
+             mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
              return "";
        }
 }
 
 function orsee_session_write( $aKey, $aVal )
 {
+	site__database_config();
        $aVal = addslashes( $aVal );
        $query = "UPDATE ".table('http_sessions')." SET DataValue = '$aVal', LastUpdated = NOW() WHERE SessionID = '$aKey'";
-       mysql_query($query);
+       mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
        return True;
 }
 
 function orsee_session_destroy( $aKey )
 {
+	site__database_config();
        $query = "DELETE FROM ".table('http_sessions')." WHERE SessionID = '$aKey'";
-       mysql_query($query);
+       mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
        return True;
 }
 
 function orsee_session_gc( $aMaxLifeTime )
 {
+	site__database_config();
+	if (!isset($aMaxLifeTime) || (!$aMaxLifeTime)) $aMaxLifeTime=60*60;
        $query = "DELETE FROM ".table('http_sessions')." WHERE UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(LastUpdated) > $aMaxLifeTime";
-       mysql_query($query);
+       mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']). ", Query: ".$query);
        return True;
 }
 

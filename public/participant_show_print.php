@@ -1,5 +1,5 @@
 <?php
-
+// part of orsee. see orsee.org
 include("nonoutputheader.php");
 
 html__header(true);

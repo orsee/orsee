@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
  
 $menu__area="participants";
@@ -9,7 +10,7 @@ include("header.php");
 	echo '<BR><BR><center>';
 
 	echo '</center><pre>';
-	var_dump(gd_info());
+	//var_dump(gd_info());
 	echo stats__textstats_all();
 	echo '</pre><center>';
 

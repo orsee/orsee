@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -16,7 +17,13 @@ include ("header.php");
 	// load languages
         $languages=get_languages();
 
-	if ($_REQUEST['add']) { 
+
+        if (!isset($_REQUEST['nlang_sc'])) $_REQUEST['nlang_sc']="";
+        if (!isset($_REQUEST['nlang_name'])) $_REQUEST['nlang_name']="";
+        if (!isset($_REQUEST['nlang_base'])) $_REQUEST['nlang_base']="";
+
+
+	if (isset($_REQUEST['add']) && $_REQUEST['add']) {
 		
 		// check for errors
 		$continue=true;
@@ -41,20 +48,20 @@ include ("header.php");
 		if ($continue) {
 
 			$query="ALTER TABLE ".table('lang')." ADD COLUMN ".$_REQUEST['nlang_sc']." text";
-			$done=mysql_query($query);
+			$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 			if ($done) message ($lang['language_created'].' '.$_REQUEST['nlang_sc']);
 
 			$query="UPDATE ".table('lang')." SET ".$_REQUEST['nlang_sc']."=".$_REQUEST['nlang_base']." ";
-                        $done=mysql_query($query);
+                        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                         if ($done) message ($lang['language_items_copied_from_base_language'].' '.$_REQUEST['nlang_base']);
 
 			$query="UPDATE ".table('lang')." SET ".$_REQUEST['nlang_sc']."='".$_REQUEST['nlang_sc']."' 
 				WHERE content_type='lang' AND content_name='lang'";
-			$done=mysql_query($query);
+			$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 			$query="UPDATE ".table('lang')." SET ".$_REQUEST['nlang_sc']."='".$_REQUEST['nlang_name']."' 
                                 WHERE content_type='lang' AND content_name='lang_name'";
-			$done=mysql_query($query);
+			$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 			log__admin("language_add","language:".$_REQUEST['nlang_sc']);
 			redirect ("admin/lang_main.php");
 			}

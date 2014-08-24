@@ -1,15 +1,12 @@
 <?php
-// system version dependent settings. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
-$system__version="2.0.2";
+$system__version="2.2.0";
 
 
 // implemented experiment types
 
 $system__experiment_types=array('laboratory','online-survey','internet');
-
-$system__os_question_types=array('textline','textarea','select_text','select_numbers','radio','checkbox');
-
 
 
 // include path for tagsets
@@ -20,10 +17,10 @@ $settings__root_url="http://".$settings__server_url.$settings__root_directory;
 
 // define administration rights
 $system__admin_rights=array(
-"admin_delete:delete an administrator:admin_edit",
-"admin_edit:create/edit administrators",
+"admin_delete:delete an administrator account:admin_edit",
+"admin_edit:create/edit administrator accounts",
 "admin_type_delete:delete admin user types:admin_type_edit",
-"admin_type_edit:add/edit user types of admin area",
+"admin_type_edit:add/edit admin user types",
 "default_text_add:add new default text item - dev!:default_text_edit",
 "default_text_delete:delete default text item - dev!:default_text_edit",
 "default_text_edit:edit system's default texts",
@@ -33,14 +30,14 @@ $system__admin_rights=array(
 "download_general_delete:delete uploaded general file:download_download",
 "download_general_upload:upload general file:download_download",
 "experiment_assign_participants:assign subjects to experiment/delete assignments:experiment_show",
-"experiment_delete:delete experiment (with sessions, assignments ...):experiment_show,experiment_edit",
+"experiment_delete:delete experiment (with sessions, assignments, etc.):experiment_show,experiment_edit",
 "experiment_edit:create experiment/edit experiment's basic settings:experiment_show",
 "experiment_edit_participants:edit session's participants list (show-ups etc.):experiment_show,experiment_show_participants",
 "experiment_invitation_edit:edit invitation texts:experiment_show",
 "experiment_invite_participants:send out invitations for an experiment:experiment_show,experiment_invitation_edit",
 "experiment_restriction_override:override experiment access restriction",
 "experiment_show:see an experiment's main page",
-"experiment_show_participants:see participants list for an experiment:experiment_show",
+"experiment_show_participants:see participant list for an experiment:experiment_show",
 "experimentclass_add:add class of experiments:experimentclass_edit",
 "experimentclass_delete:delete experiment class:experimentclass_edit",
 "experimentclass_edit:edit experiment class",
@@ -50,9 +47,6 @@ $system__admin_rights=array(
 "faq_add:add FAQ:faq_edit",
 "faq_delete:delete FAQ:faq_edit",
 "faq_edit:edit FAQ",
-"field_of_studies_add:add field of studies:field_of_studies_edit",
-"field_of_studies_delete:delete field of studies:field_of_studies_edit",
-"field_of_studies_edit:edit fields of studies",
 "help_add:add new help item - dev!:help_edit",
 "help_delete:delete help item - dev!:help_edit",
 "help_edit:edit help entries",
@@ -62,54 +56,65 @@ $system__admin_rights=array(
 "laboratory_add:add new laboratory:laboratory_edit",
 "laboratory_delete:delete laboratory:laboratory_edit",
 "laboratory_edit:edit laboratory settings",
-"lang_avail_edit:edit language public avability settings",
+"lang_avail_edit:edit language's public avability settings",
 "lang_lang_add:install language:lang_lang_edit",
 "lang_lang_delete:uninstall language:lang_lang_edit",
 "lang_lang_edit:edit specific language settings",
 "lang_lang_export:export language to orsee language file:lang_lang_edit",
-"lang_lang_import: import language from orsee_langauge_file:lang_lang_edit",
+"lang_lang_import: import language from orsee langauge file:lang_lang_edit",
 "lang_symbol_add:add new language symbol- dev!:lang_symbol_edit",
 "lang_symbol_delete:delete language symbol - dev!:lang_symbol_edit",
-"lang_symbol_edit:edit language symbols (words,expressions)",
+"lang_symbol_edit:edit language symbols (words, expressions, etc.)",
 "log_file_experimenter_actions_delete:delete log file of experimenter actions:log_file_experimenter_actions_show",
 "log_file_experimenter_actions_show:see log file of experimenter actions",
 "log_file_participant_actions_delete:delete log file of participant actions:log_file_participant_actions_show",
 "log_file_participant_actions_show:view log file for participant actions",
 "log_file_regular_tasks_delete:delete log file of regular system tasks:log_file_regular_tasks_show",
-"log_file_regular_tasks_show:view log file of regzular tasks",
+"log_file_regular_tasks_show:view log file of regular tasks",
 "login:login into administration area",
-"mail_add:add new default mail text - dev!:mail_edit",
-"mail_delete:delete default mail text - dev!:mail_edit",
+"mail_add:add new default email text - dev!:mail_edit",
+"mail_delete:delete default email text - dev!:mail_edit",
 "mail_edit:edit default email texts",
-"participants_bulk_mail:send bulk mail to participants:participants_show",
-"participants_edit:create participant/change data for participant:participants_show",
+"participants_bulk_mail:send bulk email to participants:participants_show",
+"participants_edit:create participant/change participant profile:participants_show",
 "participants_resubscribe:resubscribe participant:participants_show,participants_edit",
-"participants_show:search participants, view list",
+"participants_show:search participants, view search results",
 "participants_unconfirmed_edit:view and delete unconfirmed participant entries",
 "participants_unsubscribe:unsubscribe/exlude participant:participants_show,participants_edit",
-"profession_add:add profession:profession_edit",
-"profession_delete:delete profession:profession_edit",
-"profession_edit:edit professions",
+"pform_lang_field_add:add item for a select_lang field in participant profile:pform_lang_field_edit",
+"pform_lang_field_delete:delete item of a select_lang field in participant profile:pform_lang_field_edit",
+"pform_lang_field_edit:edit item of a select_lang field in participant profile",
 "public_content_add:add new public content item - dev!:public_content_edit",
 "public_content_delete:delete public content item - dev!:public_content_edit",
-"public_content_edit:edit system's public content",
+"public_content_edit:edit public content pages",
 "regular_tasks_add:add new regular task - dev!:regular_tasks_show,regular_tasks_edit",
 "regular_tasks_edit:edit regular tasks:regular_tasks_show",
-"regular_tasks_run:run regular task by hand:regular_tasks_show",
+"regular_tasks_run:run regular task manually:regular_tasks_show",
 "regular_tasks_show:show list of system's regular tasks",
 "session_edit:create session/change session settings:experiment_show",
-"session_empty_delete:remove session without registrations:experiment_show,session_edit",
-"session_nonempty_delete:delete sessions with and without registrations:experiment_show,session_edit",
-"session_send_reminder:send session reminder by hand:experiment_show,experiment_show_participants",
+"session_empty_delete:delete a session that hasn't any signups:experiment_show,session_edit",
+"session_nonempty_delete:delete a session independent of participant signups:experiment_show,session_edit",
+"session_send_reminder:send session reminder manually:experiment_show,experiment_show_participants",
 "settings_edit:edit general settings and defaults",
 "settings_option_add:add general option item - dev!",
 "statistics_participants_show:see participant statistics",
 "statistics_server_usage_show:see web server statistics",
 "statistics_system_show:see system statistics",
-"subjectpool_add:add new subject pool:subjectpool_edit",
-"subjectpool_delete:delete subject pool:subjectpool_edit",
-"subjectpool_edit:edit subjectpool settings"
+"subjectpool_add:add new sub-subject pool:subjectpool_edit",
+"subjectpool_delete:delete sub-subject pool:subjectpool_edit",
+"subjectpool_edit:edit sub-subjectpool settings"
 		);	
+
+// default rights assignments for new rights based on old rights
+$default_new_rights=array(
+array('old'=>'profession_add','new'=>'pform_lang_field_add'),
+array('old'=>'profession_delete','new'=>'pform_lang_field_delete'),
+array('old'=>'profession_edit','new'=>'pform_lang_field_edit'),
+array('old'=>'field_of_studies_add','new'=>'pform_lang_field_add'),
+array('old'=>'field_of_studies_delete','new'=>'pform_lang_field_delete'),
+array('old'=>'field_of_studies_edit','new'=>'pform_lang_field_edit')
+);
+
 
 
 // define options

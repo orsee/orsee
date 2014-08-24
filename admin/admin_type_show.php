@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="show admin types";
@@ -25,9 +26,10 @@ include ("header.php");
 			</tr>';
 
      	$query="SELECT * FROM ".table('admin_types')." ORDER BY type_name";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-	while ($type=mysql_fetch_assoc($result)) {
+	$shade=false;
+	while ($type=mysqli_fetch_assoc($result)) {
 
                 echo '<tr class="small"';
 			if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';

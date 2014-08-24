@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="edit settings";
@@ -6,15 +7,16 @@ include ("header.php");
 
 	$allow=check_allow('settings_edit','options_main.php');
 
-	if ($_REQUEST['otype']) $otype=$_REQUEST['otype']; else redirect ("admin/options_main.php");
+	if (isset($_REQUEST['otype']) && $_REQUEST['otype']) $otype=$_REQUEST['otype'];
+	else {$otype=""; redirect ("admin/options_main.php"); }
 
 	switch ($otype) {
 		case "general":
 				$header=$lang['edit_general_settings'];
 				break;
-                case "default":
-                                $header=$lang['edit_default_values'];
-                                break;
+        case "default":
+                $header=$lang['edit_default_values'];
+                break;
 		}
 
 
@@ -25,15 +27,15 @@ include ("header.php");
 		<BR>';
 
 
-		if ($_REQUEST['change']) {
+		if (isset($_REQUEST['change']) && $_REQUEST['change']) {
 
 			$newoptions=$_REQUEST['options'];
 			foreach ($newoptions as $oname => $ovalue) {
 				$query="UPDATE ".table('options')." 
-					SET option_value='".mysql_escape_string($ovalue)."' 
+					SET option_value='".mysqli_real_escape_string($GLOBALS['mysqli'],$ovalue)."'
 					WHERE option_name='".$oname."'
 					AND option_type='".$otype."'";
-				$done=mysql_query($query) or die("Database error: " . mysql_error());
+				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				}
 			message($lang['changes_saved']);
 			log__admin("options_edit","type:".$otype);
@@ -43,10 +45,10 @@ include ("header.php");
 	$query="select * from ".table('options')."
                  where option_type='".$otype."'
                  order by option_name";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$options=array();
-        while ($line=mysql_fetch_assoc($result)) {
+        while ($line=mysqli_fetch_assoc($result)) {
 		$options[$line['option_name']]=$line['option_value'];
 		}
 
@@ -287,7 +289,7 @@ include ("header.php");
                                         Default registration subject pool?
                                 </TD>
                                 <TD>';
-					subpools__select_field("options[subpool_default_registration_id]","subpool_id",
+					echo subpools__select_field("options[subpool_default_registration_id]","subpool_id",
 							"subpool_name",$options['subpool_default_registration_id']);
 					echo '
                                 </TD>
@@ -772,9 +774,9 @@ include ("header.php");
 	$query="select * from ".table('options')."
                  where option_type='".$otype."'
                  order by option_name";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-	while ($line=mysql_fetch_assoc($result)) {
+	while ($line=mysqli_fetch_assoc($result)) {
 
 		echo '	<TR>
 				<TD>

@@ -1,5 +1,5 @@
 <?php
-// some database functions for orsee. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 
 function table($table) {
@@ -12,25 +12,24 @@ function table($table) {
 
 function orsee_query($query,$funcname="") {
 
-	$result=mysql_query($query)
-        	or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']).", Query=".$query);
 	if ($funcname) {
 		$back=array();
-        	while ($line = mysql_fetch_assoc($result)) {
+		while ($line = mysqli_fetch_assoc($result)) {
                 	$back[]=$funcname($line);
                 	}
-        	mysql_free_result($result);
+		mysqli_free_result($result);
 		return $back;
 
          } else {
-        	$line=mysql_fetch_assoc($result);
-        	mysql_free_result($result);
+		$line=mysqli_fetch_assoc($result);
+		mysqli_free_result($result);
         	return $line;
         	}
 }
 
 function orsee_db_load_array($table,$key,$keyname) {
-        $query="SELECT * FROM ".table($table)." where ".$keyname."='".$key."'";
+        $query="SELECT * FROM ".table($table)." where ".$keyname."='".mysqli_real_escape_string($GLOBALS['mysqli'],$key)."'";
         $line=orsee_query($query);
         return $line;
 }
@@ -40,11 +39,20 @@ function orsee_db_save_array($array,$table,$key,$keyname) {
 	global $site__database_database;
 
 	// find out which fields i can save
+	$query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+			WHERE table_name='".table($table)."'
+			AND table_schema = '".$site__database_database."'";
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']).", Query=".$query);
+    while ($line = mysqli_fetch_assoc($result)) {
+	$columns[]=$line['COLUMN_NAME'];
+    }
+    /*
 	$fields = mysql_list_fields($site__database_database,table($table));
 	$column_count = mysql_num_fields($fields);
 	for ($i = 0; $i < $column_count; $i++) {
     		$columns[]=mysql_field_name($fields, $i);
 	}
+	*/
 
 	// delete key
 	if (isset($array[$keyname])) unset($array[$keyname]);
@@ -54,24 +62,22 @@ function orsee_db_save_array($array,$table,$key,$keyname) {
 	$first=true; $set_phrase="";
 	foreach ($fields_to_save as $field) {
 		if ($first) $first=false; else $set_phrase=$set_phrase.", ";
-		$set_phrase=$set_phrase.$field."='".mysql_escape_string($array[$field])."'";
+		$set_phrase=$set_phrase.$field."='".mysqli_real_escape_string($GLOBALS['mysqli'],$array[$field])."'";
 		}
 
 	// check if already saved
-	$query="SELECT ".$keyname." FROM ".table($table)." WHERE ".$keyname."='".$key."'";
-	$result=mysql_query($query)
-        	or die("Database error: " . mysql_error());
-	$num_rows = mysql_num_rows($result);
+	$query="SELECT ".$keyname." FROM ".table($table)." WHERE ".$keyname."='".mysqli_real_escape_string($GLOBALS['mysqli'],$key)."'";
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	$num_rows = mysqli_num_rows($result);
 
 	if ($num_rows>0) {
 		// update query
-        	$query="UPDATE ".table($table)." SET ".$set_phrase." WHERE ".$keyname."='".$key."'";
+		$query="UPDATE ".table($table)." SET ".$set_phrase." WHERE ".$keyname."='".mysqli_real_escape_string($GLOBALS['mysqli'],$key)."'";
          } else {
 		// insert query
-        	$query="INSERT INTO ".table($table)." SET ".$keyname."='".$key."', ".$set_phrase;
+		$query="INSERT INTO ".table($table)." SET ".$keyname."='".mysqli_real_escape_string($GLOBALS['mysqli'],$key)."', ".$set_phrase;
         }
-	$result=mysql_query($query)
-		or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	return $result;
 }
 

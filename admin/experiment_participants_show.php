@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="experiments";
@@ -6,13 +7,13 @@ $title="show participants";
 
 include("header.php");
 
-	if ($_REQUEST['experiment_id']) $experiment_id=$_REQUEST['experiment_id'];
+	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) $experiment_id=$_REQUEST['experiment_id'];
                 else redirect("admin/experiment_main.php");
 
-        if ($_REQUEST['session_id']) $session_id=$_REQUEST['session_id'];
+        if (isset($_REQUEST['session_id']) && $_REQUEST['session_id']) $session_id=$_REQUEST['session_id'];
                 else $session_id='';
 
-	if ($_REQUEST['remember']) { 
+	if (isset($_REQUEST['remember']) && $_REQUEST['remember']) {
 		$_REQUEST=array_merge($_REQUEST,$_SESSION['save_posted']);
 		$_SESSION['save_posted']=array();
 		unset($_REQUEST['change']);
@@ -24,17 +25,20 @@ include("header.php");
 	if (!check_allow('experiment_restriction_override'))
 		check_experiment_allowed($experiment,"admin/experiment_show.php?experiment_id=".$experiment_id);
 
-	if ($_REQUEST['change']) {
+	if (isset($_REQUEST['change']) && $_REQUEST['change']) {
 
 		$allow=check_allow('experiment_edit_participants','experiment_participants_show.php?experiment_id='.
 				$_REQUEST['experiment_id'].'&session_id='.$_REQUEST['session_id'].'&focus='.$_REQUEST['focus']);
 
-		if ($_REQUEST['focus']) $focus=$_REQUEST['focus'];
+		if (isset($_REQUEST['focus']) && $_REQUEST['focus']) $focus=$_REQUEST['focus'];
 			else redirect('admin/'.thisdoc().'?experiment_id='.$_REQUEST['experiment_id'].
 						'&session_id='.$_REQUEST['session_id']);
+		$focuses=array('assigned','invited','registered','shownup','participated');
+		foreach($focuses as $f) { $$f=false; }
 		$$focus=true;
 
-		if ($_REQUEST['result_count']) $pcount=$_REQUEST['result_count']; else $pcount=0;
+
+		if (isset($_REQUEST['result_count']) && $_REQUEST['result_count']) $pcount=$_REQUEST['result_count']; else $pcount=0;
 
 		if ($assigned || $invited) {
 			$continue=true;
@@ -55,12 +59,12 @@ include("header.php");
 			$i=0;
                         while ($i < $pcount) {
                                 $i++;
-				if ($_REQUEST['reg'.$i]=="y") $p_to_add[]=$_REQUEST['pid'.$i];
+				if (isset($_REQUEST['reg'.$i]) && $_REQUEST['reg'.$i]=="y") $p_to_add[]=$_REQUEST['pid'.$i];
 				}
 
 			$num_to_add=count($p_to_add);
 
-			if ($_REQUEST['check_if_full']) {
+			if (isset($_REQUEST['check_if_full']) && $_REQUEST['check_if_full']) {
 				$alr_reg=experiment__count_participate_at($experiment_id,$to_session);
 				$free_places=$tsession['part_needed']+$tsession['part_reserve']-$alr_reg;
 				if ($free_places < 0) $free_places=0;
@@ -87,7 +91,7 @@ include("header.php");
 						registered='y'
 					WHERE experiment_id='".$experiment_id."'
 					AND participant_id IN ('".$part_list."')";
-				$done=mysql_query($query) or die("Database error: " . mysql_error());
+				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 				message ($num_to_add.' '.$lang['xxx_subjects_registered_to_session_xxx'].' '.
 					session__build_name($tsession).'.<BR>
@@ -111,15 +115,17 @@ include("header.php");
 		        $i=0;
                         while ($i < $pcount) {
                         	$i++;
-                        	if ($_REQUEST['shup'.$i]=="y") $p_shup[]=$_REQUEST['pid'.$i];
+				if (isset($_REQUEST['shup'.$i]) && $_REQUEST['shup'.$i]=="y") $p_shup[]=$_REQUEST['pid'.$i];
 							else $p_shup_not[]=$_REQUEST['pid'.$i];
 
-                                if ($_REQUEST['part'.$i]=="y") $p_part[]=$_REQUEST['pid'.$i];
+                                if (isset($_REQUEST['part'.$i]) && $_REQUEST['part'.$i]=="y") $p_part[]=$_REQUEST['pid'.$i];
                                                         else $p_part_not[]=$_REQUEST['pid'.$i];
 
-                                if ($_REQUEST['rules'.$i]=="y") $p_rules[]=$_REQUEST['pid'.$i];
+                                if (isset($_REQUEST['rules'.$i]) && $_REQUEST['rules'.$i]=="y") $p_rules[]=$_REQUEST['pid'.$i];
                                                         else $p_rules_not[]=$_REQUEST['pid'.$i];
 
+				if (!isset($_REQUEST['session'.$i])) $_REQUEST['session'.$i]="";
+				if (!isset($_REQUEST['csession'.$i])) $_REQUEST['csession'.$i]="";
 				if ($_REQUEST['session'.$i]!=$session_id 
 				    && $_REQUEST['session'.$i] != $_REQUEST['csession'.$i]) {
 					$to_session=$_REQUEST['session'.$i];
@@ -134,14 +140,14 @@ include("header.php");
                                 SET shownup = 'y'
                                 WHERE experiment_id='".$experiment_id."'
 				AND participant_id IN ('".$part_list."')";
-			$done=mysql_query($query) or die("Database error: " . mysql_error());
+			$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 			
 			$part_list=implode("','",$p_shup_not);
                         $query="UPDATE ".table('participate_at')."
                                 SET shownup = 'n'
                                 WHERE experiment_id='".$experiment_id."'
 				AND participant_id IN ('".$part_list."')";
-                        $done=mysql_query($query) or die("Database error: " . mysql_error());
+                        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 			// update participation data
                         $part_list=implode("','",$p_part);
@@ -149,33 +155,33 @@ include("header.php");
                                 SET participated = 'y'
                                 WHERE experiment_id='".$experiment_id."'
                                 AND participant_id IN ('".$part_list."')";
-                        $done=mysql_query($query) or die("Database error: " . mysql_error());
+                        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                         $part_list=implode("','",$p_part_not);
                         $query="UPDATE ".table('participate_at')."
                                 SET participated = 'n'
                                 WHERE experiment_id='".$experiment_id."'
                                 AND participant_id IN ('".$part_list."')";
-                        $done=mysql_query($query) or die("Database error: " . mysql_error());
+                        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 			// check for inconsitencies and clean
 			$query="UPDATE ".table('participate_at')."
                                 SET shownup = 'y'
                                 WHERE participated='y'";
-                        $done=mysql_query($query) or die("Database error: " . mysql_error());
+                        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 			// update rules signed data
                         $part_list=implode("','",$p_rules);
                         $query="UPDATE ".table('participants')."
                                 SET rules_signed = 'y'
                                 WHERE participant_id IN ('".$part_list."')";
-                        $done=mysql_query($query) or die("Database error: " . mysql_error());
+                        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                         $part_list=implode("','",$p_rules_not);
                         $query="UPDATE ".table('participants')."
                                 SET rules_signed = 'n'
                                 WHERE participant_id IN ('".$part_list."')";
-                        $done=mysql_query($query) or die("Database error: " . mysql_error());
+                        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 
 
@@ -187,14 +193,14 @@ include("header.php");
                                 	SET session_id = '".$msession."', shownup='n', participated='n'
                              		WHERE participant_id IN ('".$part_list."')
 					AND experiment_id='".$experiment_id."'";
-				$done=mysql_query($query) or die("Database error: " . mysql_error());
+				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				}
 
 			// clean up 'no session's
                         $query="UPDATE ".table('participate_at')."
                                 SET participated = 'n', shownup='n', registered='n'
                              	WHERE session_id='0'";
-			$done=mysql_query($query) or die("Database error: " . mysql_error());
+			$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 
 
@@ -229,16 +235,27 @@ include("header.php");
 		}
 	// list output
 
+
+	$columns=participant__load_result_table_fields($type='session');
+
 	if ($session_id) $session=orsee_db_load_array("sessions",$session_id,"session_id");
 
 	script__part_reg_show();
 
+	$csorts=array();
+	foreach($columns as $c) if (count($csorts)<2 && $c['allow_sort']) $csorts[]=$c['sort_order'];
+	$csorts_string=implode(",",$csorts);
 
-	if ($_REQUEST['sort']) $order=$_REQUEST['sort']; 
-		else $order="session_start_year, session_start_month, session_start_day,
-                	session_start_hour, session_start_minute, lname, fname, email";
+	if (isset($_REQUEST['sort']) && $_REQUEST['sort']) $order=$_REQUEST['sort'];
+		else {
+			$order="session_start_year, session_start_month, session_start_day,
+			session_start_hour, session_start_minute";
+            if ($csorts_string) $order.=",".$csorts_string;
+    }
 
-	if ($_REQUEST['focus']) $focus=$_REQUEST['focus']; else $focus="assigned";
+	if (isset($_REQUEST['focus']) && $_REQUEST['focus']) $focus=$_REQUEST['focus']; else $focus="assigned";
+
+	$assigned=false; $invited=false; $registered=false; $shownup=false; $participated=false;
 
 	$$focus=true;
 
@@ -287,16 +304,17 @@ include("header.php");
 	echo '	<P class="small">Query: '.$select_query.'</P>';
 
 	// get result
-	$result=mysql_query($select_query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$select_query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
         $participants=array(); $plist_ids=array();
-        while ($line=mysql_fetch_assoc($result)) {
+        while ($line=mysqli_fetch_assoc($result)) {
                 $participants[]=$line;
 		$plist_ids[]=$line['participant_id'];
                 }
 	$_SESSION['plist_ids']=$plist_ids;
 	$result_count=count($participants);
 
+	$nr_normal_columns=2;
 	// form
 	echo '
 		<FORM name="part_list" method=post action="'.thisdoc().'">
@@ -305,12 +323,11 @@ include("header.php");
 		<table border=0>
 			<TR>
 				<TD class="small"></TD>';
-				headcell($lang['lastname'],"lname,fname,email");
-				headcell($lang['firstname'],"fname,lname,email");
-				headcell($lang['e-mail-address'],"email,lname,fname");
-				headcell($lang['phone_number']);
-				headcell($lang['gender'],"gender");
-				headcell($lang['studies'].'/'.$lang['profession'],"field_of_studies,profession");
+				foreach($columns as $c) {
+			if($c['allow_sort']) headcell($c['column_name'],$c['sort_order']);
+			else headcell($c['column_name']);
+			$nr_normal_columns++;
+                }
 				headcell($lang['noshowup'],"number_noshowup,number_reg");
 			if ($assigned || $invited) {
 				headcell($lang['invited'],"invited","invited");
@@ -324,10 +341,6 @@ include("header.php");
 				}
 	echo '		</TR>';
 
-	$nr_normal_columns=8;
-
-	$studies=lang__load_studies();
-        $professions=lang__load_professions();
 
 	$shade=false;
 
@@ -351,22 +364,18 @@ include("header.php");
 	        echo '	<td class="small">
 				'.$pnr.'
 				<INPUT name="pid'.$pnr.'" type=hidden value="'.$p['participant_id'].'">
-			</td>
-			<td class="small">'.$p['lname'].'</td>
-                        <td class="small">'.$p['fname'].'</td>
-        	   	<td class="small"><A class="small" HREF="mailto:'.
-                                                $p['email'].'">'.$p['email'].'</A></TD>
-		   	<td class="small">'.$p['phone_number'].'</td>
-                        <td class="small">';
-				if ($p['gender']=='m') echo $lang['gender_m_abbr'];
-                        		elseif ($p['gender']=='f') echo $lang['gender_f_abbr'];
-                        		else echo "?";
-		echo '	</td>
-                        <td class="small">';
-                                        if ($p['field_of_studies']>0)
-                        echo $studies[$p['field_of_studies']].' ('.$p['begin_of_studies'].')';
-                                        else echo $professions[$p['profession']];
-                                echo '</td>
+			</td>';
+			foreach($columns as $c) {
+		echo '<td class="small">';
+		if($c['link_as_email_in_lists']=='y') echo '<A class="small" HREF="mailto:'.
+			$p[$c['mysql_column_name']].'">';
+		if(preg_match("/(radioline|select_list|select_lang)/",$c['type']) && isset($c['lang'][$p[$c['mysql_column_name']]]))
+			echo $c['lang'][$p[$c['mysql_column_name']]];
+		else echo $p[$c['mysql_column_name']];
+		if($c['link_as_email_in_lists']=='y') '</A>';
+		echo '</td>';
+            }
+			echo '
 			<td class="small">'.$p['number_noshowup'].
                                                 '/'.$p['number_reg'].'</td>';
 
@@ -374,7 +383,7 @@ include("header.php");
 			echo '<td class="small">'.$p['invited'].'</td>
 			      <td class="small">
 					<INPUT type=checkbox name="reg'.$pnr.'" value="y"';
-					if ($_REQUEST['reg'.$pnr]=="y") echo ' CHECKED';
+					if (isset($_REQUEST['reg'.$pnr]) && $_REQUEST['reg'.$pnr]=="y") echo ' CHECKED';
 					if ($disabled) echo ' DISABLED';
 					echo '>
 				</td>';
@@ -385,7 +394,7 @@ include("header.php");
 				echo '<INPUT type=hidden name="csession'.$pnr.'" value="'.$p['session_id'].'">';
 				}
 				if ($disabled) echo session__build_name($p);
-				   else select__sessions($p['session_id'],'session'.$pnr,$experiment_id,false);
+				   else echo select__sessions($p['session_id'],'session'.$pnr,$experiment_id,false);
 	   		echo '</td>
 	   			<td class="small">';
 
@@ -473,10 +482,13 @@ function form__check_all($name,$count,$second_sel_name="",$second_un_name="") {
 				<TD>&nbsp;</TD>
 			</TR>';
 	if ($assigned || $invited) {
+		if(!isset($_REQUEST['to_session'])) $_REQUEST['to_session']="";
+		if(!isset($_REQUEST['check_if_full'])) $_REQUEST['check_if_full']="";
+		if(!isset($_REQUEST['remember'])) $_REQUEST['remember']="";
 		echo '	<TR>
 				<TD>
 					'.$lang['register_marked_for_session'].' ';
-					select__sessions($_REQUEST['to_session'],'to_session',$experiment_id,false);
+					echo select__sessions($_REQUEST['to_session'],'to_session',$experiment_id,false);
 			echo '	</TD>
 			</TR>
 			<TR>

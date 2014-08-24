@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="my_data";
@@ -6,30 +7,25 @@ include("header.php");
 
 	$form=true;
 
-	if ($_REQUEST['add']) {
+	$errors__dataform=array();
+
+	if (isset($_REQUEST['add']) && $_REQUEST['add']) {
 		$continue=true;
 		$_REQUEST['participant_id']=$participant['participant_id'];
-                $errors__dataform=array();
 
-                participant__check_email(true);
-                participant__check_fname(true);
-                participant__check_lname(true);
-		participant__check_invitations(true);
+		// checks and errors
+		foreach ($_REQUEST as $k=>$v) {
+			if(!is_array($v)) $_REQUEST[$k]=trim($v);
+		}
+		$errors__dataform=participantform__check_fields($_REQUEST,false);
+        $error_count=count($errors__dataform);
+        if ($error_count>0) $continue=false;
 
-                $error_count=count($errors__dataform);
+		$response=participantform__check_unique($_REQUEST,"edit",$_REQUEST['participant_id']);
+		if($response['problem']) { $continue=false; }
 
-                if ($error_count>0) {
-                        $continue=false;
-
-                        if (in_array("email",$errors__dataform)) message($lang['you_have_to_email_address']);
-                        if (in_array("fname",$errors__dataform)) message($lang['you_have_to_fname']);
-                        if (in_array("lname",$errors__dataform)) message($lang['you_have_to_lname']);
-			if (in_array("subscriptions",$errors__dataform))
-                                message($lang['at_least_one_exptype_has_to_be_selected']);
-                        }
-
-        	if ($continue) {
-                	$participant=$_REQUEST;
+        if ($continue) {
+		$participant=$_REQUEST;
 
 			$done=orsee_db_save_array($participant,"participants",$participant['participant_id'],"participant_id");
 
@@ -37,28 +33,21 @@ include("header.php");
 				message($lang['changes_saved']);
 				log__participant("edit",$participant['participant_id']);
 				redirect("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
-				}
-	   		   else {
+			} else {
 				message($lang['database_error']);
-                		redirect ("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
-	  			} 
+		redirect ("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
 			}
 		}
-
-	   else {
-        	$_REQUEST=$participant;
-		$subexptypes=explode(",",$_REQUEST['subscriptions']);
-                $_REQUEST['invitations']=array();
-                foreach ($subexptypes as $type) $_REQUEST['invitations'][$type]=$type;
-		}
-
+	} else {
+	$_REQUEST=$participant;
+	}
 
 
 // form
 
 	if ($form) {
 
-		participant__form($lang['edit_participant_data'],$lang['save']);
+		participant__show_form($_REQUEST,$lang['save'],$lang['edit_participant_data'],$errors__dataform,false);
 
 		echo '<CENTER>
 			<BR><BR>

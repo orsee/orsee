@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -28,7 +29,7 @@ include("header.php");
 
         	$query="DELETE FROM ".table('lang')." 
          		WHERE lang_id='".$lang_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
         	message ($lang['symbol_deleted']);
 		log__admin("language_symbol_delete","lang_id:lang,".$symbol['content_name']);

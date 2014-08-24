@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="participants_main";
@@ -34,8 +35,8 @@ include ("header.php");
                 		AND tlang.content_type='experiment_type'
                 		AND texpt.enabled='y'
                 		ORDER BY exptype_id";
-			$result=mysql_query($query);
-        		while ($line = mysql_fetch_assoc($result)) {
+			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+			while ($line = mysqli_fetch_assoc($result)) {
 				$wstring="subscriptions LIKE '%".$line['exptype_name']."%'";
 				echo '<TR>
 					<TD>

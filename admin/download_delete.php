@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="delete download";
@@ -37,12 +38,12 @@ include("header.php");
 
         	$query="DELETE FROM ".table('uploads')." 
          		WHERE upload_id='".$upload_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		$query="DELETE FROM ".table('uploads_data')."  
                         WHERE upload_id='".$upload_id."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
-		$target.= ($experiment_id) ? "experiment_id:".$experiment_id : "general";
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+		$target= ($experiment_id) ? "experiment_id:".$experiment_id : "general";
 		log__admin("file_delete",$target);
         	message ($lang['download_deleted']);
 

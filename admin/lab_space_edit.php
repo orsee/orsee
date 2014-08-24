@@ -1,17 +1,18 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="reserve laboratory space";
 include ("header.php");
               
-	if ($_REQUEST['space_id']) $space_id=$_REQUEST['space_id'];
+	if (isset($_REQUEST['space_id']) && $_REQUEST['space_id']) $space_id=$_REQUEST['space_id']; else $space_id="";
 
 	$allow=check_allow('lab_space_edit','calendar_main.php');
 
 	if ($space_id)
 		$edit=orsee_db_load_array("lab_space",$space_id,"space_id");
 
-	if ($_REQUEST['edit']) { 
+	if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
 
    		$edit=$_REQUEST;
 		$continue=true;
@@ -64,6 +65,8 @@ include ("header.php");
 
 
 		$edit['experimenter']=$expadmindata['adminname'];
+		$edit['laboratory_id']="";
+		$edit['reason']="";
 
 		$button_name=$lang['add'];
                 }
@@ -83,7 +86,7 @@ include ("header.php");
 
 	echo '<FORM action="lab_space_edit.php">
 		<INPUT type=hidden name=space_id value="'.$edit['space_id'].'">
-		'; if ($addit) echo '<INPUT type=hidden name="addit" value="true">'; echo '
+		'; if (isset($addit) && $addit) echo '<INPUT type=hidden name="addit" value="true">'; echo '
 		<TABLE>
 		<TR>
 			<TD>

@@ -1,8 +1,10 @@
 <?php
+// part of orsee. see orsee.org
 
 include ("../config/settings.php");
 include ("../config/system.php");
 include ("../config/requires.php");
+include ("../config/participant_form.php");
 
 site__database_config();
 
@@ -13,7 +15,7 @@ $color=load_colors();
 session_set_save_handler("orsee_session_open", "orsee_session_close", "orsee_session_read", "orsee_session_write", "orsee_session_destroy", "orsee_session_gc");
 
 session_start();
-$authdata=$_SESSION['authdata'];
+if (isset($_SESSION['authdata'])) $authdata=$_SESSION['authdata']; else $authdata=array();
 
 if (isset($_REQUEST['language'])) {
 	$langarray=lang__get_public_langs();
@@ -31,6 +33,13 @@ $part_load=array("participant_edit.php",
 		"participant_show_print.php");
 
 if (in_array(thisdoc(),$part_load)) {
+
+	// fix the uuencode malformed url issue
+	if (!$_REQUEST['p']) {
+		foreach ($_REQUEST as $key=>$value) {
+			if (substr($key,0,1)=='p') $_REQUEST['p']='cd'.substr($key,strlen($key)-11);
+			}
+		}
 
         if (!$_REQUEST['p']) redirect("public/");
         $participant_id=url_cr_decode($_REQUEST['p']);
@@ -62,7 +71,10 @@ $lang=load_language($authdata['language']);
 
 if ($settings['stop_public_site']=="y" && !isset($expadmindata['adminname']) && !(thisdoc()=="disabled.php")) redirect("public/disabled.php");
 
-$pagetitle=$settings['default_area'].': '.$title;
+
+$pagetitle=$settings['default_area'];
+if (isset($title)) $pagetitle=$pagetitle.': '.$title;
+
 
 html__header();
 include ("../style/".$settings['style']."/html_header.php");

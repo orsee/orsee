@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="faq";
@@ -7,16 +8,18 @@ include ("nonoutputheader.php");
 html__header();
 include ("../style/".$settings['style']."/help_html_header.php");
 
+	if (!isset($_REQUEST['id'])) $_REQUEST['id']="";
 
-	if ($vote[$_REQUEST['id']]) $v_already=true;
+	if (!isset($_SESSION['vote'])) $_SESSION['vote']=array();
+	if (!isset($_SESSION['vote'][$_REQUEST['id']])) $_SESSION['vote'][$_REQUEST['id']]="";
 
+	if ($_SESSION['vote'][$_REQUEST['id']]) $v_already=true; else $v_already=false;
 
 	if (isset($_REQUEST['eval']) && !($v_already)) {
 
-		$query="UPDATE ".table('faqs')." SET evaluation=evaluation+1 WHERE faq_id=".$_REQUEST['id'];
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
-		$vote[$_REQUEST['id']]=true;
-		session_register(vote);
+		$query="UPDATE ".table('faqs')." SET evaluation=evaluation+1 WHERE faq_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$_REQUEST['id'])."'";
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+		$_SESSION['vote'][$_REQUEST['id']]=true;
 
 		echo '
 		<SCRIPT LANGUAGE="JavaScript">
@@ -30,7 +33,7 @@ include ("../style/".$settings['style']."/help_html_header.php");
 
 		}
 
-	if (!isset($_REQUEST['id'])) echo "No ID!<BR>";
+	if (!$_REQUEST['id']) echo "No ID!<BR>";
 
 
 	if (isset($_REQUEST['eval']) && $v_already) {
@@ -41,15 +44,15 @@ include ("../style/".$settings['style']."/help_html_header.php");
 
 	show_message();
 
-	if (isset($_REQUEST['id'])) {
+	if ($_REQUEST['id']) {
 
-		$query="SELECT * FROM ".table('lang')." WHERE content_type='faq_question' AND content_name='".$_REQUEST['id']."' LIMIT 1";
+		$query="SELECT * FROM ".table('lang')." WHERE content_type='faq_question' AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$_REQUEST['id'])."' LIMIT 1";
 		$result=orsee_query($query);
-		$question=$result[$lang['lang']];
+		$question=stripslashes($result[$lang['lang']]);
 
-        	$query="SELECT * FROM ".table('lang')." WHERE content_type='faq_answer' AND content_name='".$_REQUEST['id']."' LIMIT 1";
+		$query="SELECT * FROM ".table('lang')." WHERE content_type='faq_answer' AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$_REQUEST['id'])."' LIMIT 1";
         	$result=orsee_query($query);
-        	$answer=$result[$lang['lang']];
+		$answer=stripslashes($result[$lang['lang']]);
 
 		// FAQ print out
 		echo '

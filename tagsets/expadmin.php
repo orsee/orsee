@@ -1,12 +1,12 @@
 <?php
-// orsee admin functions. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 // login form
 function admin__login_form() {
 	global $lang;
 	echo '<form name="login" action="admin_login.php" method=post>
 		<INPUT type=hidden name=redirect value="';
-		if ($_REQUEST['redirect']) echo $_REQUEST['redirect'];
+		if (isset($_REQUEST['redirect']) && $_REQUEST['redirect']) echo $_REQUEST['redirect'];
 			else echo 'admin/index.php';
 	echo '">
 		'.$lang['username'].':
@@ -21,14 +21,14 @@ function admin__login_form() {
 // if ok, redirect
 function admin__check_login($username,$password) {
 	global $lang;
-	$query="SELECT * FROM ".table('admin')." 
-      		WHERE adminname='".$username."'
-		AND password='".$password."'";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
-	$num_rows = mysql_num_rows($result);
+        $query="SELECT * FROM ".table('admin')."
+                WHERE adminname='".mysqli_real_escape_string($GLOBALS['mysqli'],$username)."'
+                AND password='".mysqli_real_escape_string($GLOBALS['mysqli'],$password)."'";
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        $num_rows = mysqli_num_rows($result);
 
 	if ($num_rows==1) {
-		$expadmindata=mysql_fetch_assoc($result);
+		$expadmindata=mysqli_fetch_assoc($result);
 		// load admin rights
 		$expadmindata['rights']=admin__load_admin_rights($expadmindata['admin_type']);
 		if ($expadmindata['rights']['login']) {
@@ -49,12 +49,21 @@ function admin__load_admin_rights($admin_type) {
 	$trights=explode(",",$admin_type['rights']);
 	$rights=array();
 	foreach ($trights as $right) $rights[$right]=true;
+	$rights=update_admin_rights_with_new_fields($rights);
+	return $rights;
+}
+
+function update_admin_rights_with_new_fields($rights) {
+	global $default_new_rights;
+	foreach($default_new_rights as $m) {
+		if(isset($rights[$m['old']]) && $rights[$m['old']] && (!isset($rights[$m['new']]))) $rights[$m['new']]=true;
+	}
 	return $rights;
 }
 
 function check_allow($right,$redirect="") {
 	global $expadmindata, $lang;
-	if ($expadmindata['rights'][$right]) return true;
+	if (isset($expadmindata['rights'][$right]) && $expadmindata['rights'][$right]) return true;
 	   else {
 		if ($redirect) {
 			message ($lang['error_not_authorized_to_access_this_function']);
@@ -76,18 +85,18 @@ function admin__logout() {
 // Updating password for admin
 function admin__set_password($password,$userid) {
 	$query="UPDATE ".table('admin')." 
-         	SET password='$password'
-         	WHERE admin_id='$userid'";
-	$done=mysql_query($query) or die("Database error: " . mysql_error());
+		SET password='".mysqli_real_escape_string($GLOBALS['mysqli'],$password)."'
+		WHERE admin_id='".$userid."'";
+	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 }
 
 // admin type selection list
 function admin__select_admin_type($fieldname,$selected="") {
 	$query="SELECT * from ".table('admin_types')."
 		ORDER by type_name";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	echo '<SELECT name="'.$fieldname.'">';
-	while ($line=mysql_fetch_assoc($result)) {
+	while ($line=mysqli_fetch_assoc($result)) {
 		echo '<OPTION value="'.$line['type_name'].'"';
 		if ($line['type_name']==$selected) echo ' SELECTED';
 		echo '>'.$line['type_name'].'</OPTION>';

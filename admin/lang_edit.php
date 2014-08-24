@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -13,7 +14,7 @@ include ("header.php");
 			<H4>'.$lang['edit_language'].'</H4>
 		<BR>';
 
-	if (!$_REQUEST['el']) { 
+	if (!isset($_REQUEST['el']) || !$_REQUEST['el']) {
 		
 		// load languages
 		$languages=get_languages();
@@ -36,35 +37,35 @@ include ("header.php");
 
 		$edlang=$_REQUEST['el'];
 
-		if ($_REQUEST['search']) {
+		if (isset($_REQUEST['search']) && $_REQUEST['search']) {
                 	$letter="";
                 	$search=$_REQUEST['search'];
 
                 	$lquery="select * from ".table('lang')."
                         	 where content_type='lang'
-                        	 and (content_name LIKE '%".mysql_escape_string($search)."%'
-                        	 or ".$lang['lang']." LIKE '%".mysql_escape_string($search)."%'
-                        	 or ".$edlang." LIKE '%".mysql_escape_string($search)."%')
+				 and (content_name LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%'
+				 or ".$lang['lang']." LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%'
+				 or ".$edlang." LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%')
                         	 order by content_name";
                 	}
         	   else {
                 	$search="";
-                	if ($_REQUEST['letter']) $letter=$_REQUEST['letter']; else $letter='a';
+			if (isset($_REQUEST['letter']) && $_REQUEST['letter']) $letter=$_REQUEST['letter']; else $letter='a';
                 	$lquery="select * from ".table('lang')."
                         	 where content_type='lang' and left(content_name,1)='".$letter."'
 				 order by content_name";
                 	} 
 
 
-		if ($_REQUEST['alter_lang']) {
+		if (isset($_REQUEST['alter_lang']) && $_REQUEST['alter_lang']) {
 
 			$newwords=$_REQUEST['symbols'];
 			foreach ($newwords as $symbol => $content) {
 				$query="UPDATE ".table('lang')." 
-					SET ".$edlang."='".mysql_escape_string($content)."' 
+					SET ".$edlang."='".mysqli_real_escape_string($GLOBALS['mysqli'],$content)."'
 					WHERE content_name='".$symbol."'
 					AND content_type='lang'";
-				$done=mysql_query($query) or die("Database error: " . mysql_error());
+				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				}
 			message($lang['changes_saved']);
 			log__admin("language_edit_symbols","language:".$edlang);
@@ -81,15 +82,15 @@ include ("header.php");
         $query="select left(content_name,1) as letter, count(lang_id) as number, content_name 
 		from ".table('lang')." 
 		where content_type='lang' GROUP BY letter";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
-	while ($line=mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line=mysqli_fetch_assoc($result)) {
 		if ($line['letter']!=$letter) 
 			echo '<A HREF="lang_edit.php?el='.$edlang.'&letter='.$line['letter'].'">'.$line['letter'].'</A>&nbsp; ';
 		   else echo $letter.'&nbsp; ';
 		}
 
-	$result=mysql_query($lquery) or die("Database error: " . mysql_error());
-	$number=mysql_num_rows($result);
+	$result=mysqli_query($GLOBALS['mysqli'],$lquery) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	$number=mysqli_num_rows($result);
 
 	echo '<BR><BR>'.$lang['symbols'].': '.$number.'<BR><BR>
 
@@ -117,7 +118,7 @@ include ("header.php");
 				</TD>
 			</TR>';
 
-	while ($line=mysql_fetch_assoc($result)) {
+	while ($line=mysqli_fetch_assoc($result)) {
 
 		echo '	<TR>
 				<TD>

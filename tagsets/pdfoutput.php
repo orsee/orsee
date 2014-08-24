@@ -1,6 +1,5 @@
 <?php
-
-// pdf output functions. part of orsee. see orsee.org.
+// part of orsee. see orsee.org
 
 function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$file=false,$tlang="") {
 	global $settings;
@@ -8,21 +7,35 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 	if ($tlang=="") {
 		global $lang;
 		}
-	   else {
+	  else {
 		$lang=load_language($tlang);
-		}
+	}
 
 	$experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
 
 	if ($session_id) $session=orsee_db_load_array("sessions",$session_id,"session_id");
 		else $session=array();
 
+	$columns=participant__load_result_table_fields($type='sessionpdf');
+
+	if ($session_id) $session=orsee_db_load_array("sessions",$session_id,"session_id");
+
+	script__part_reg_show();
+
+	$csorts=array();
+	foreach($columns as $c) if (count($csorts)<2 && $c['allow_sort']) $csorts[]=$c['sort_order'];
+	$csorts_string=implode(",",$csorts);
+
 	if ($sort) $order=$sort;
-                else $order="session_start_year, session_start_month, session_start_day,
-                        session_start_hour, session_start_minute, lname, fname, email";
+	else {
+			$order="session_start_year, session_start_month, session_start_day,
+			session_start_hour, session_start_minute";
+            if ($csorts_string) $order.=",".$csorts_string;
+    }
 
+		$focuses=array('assigned','invited','registered','shownup','participated');
+		foreach($focuses as $f) { $$f=false; }
         if (!$focus) $focus="assigned";
-
         $$focus=true;
 
         switch ($focus) {
@@ -55,17 +68,17 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 
 
 	// get result
-        $result=mysql_query($select_query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$select_query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
         $participants=array();
-        while ($line=mysql_fetch_assoc($result)) {
+        while ($line=mysqli_fetch_assoc($result)) {
                 $participants[]=$line;
                 }
         $result_count=count($participants);
 
 
 	// determine table title
-	$table_title=$experiment['experiment_name'];
+	$table_title=$experiment['experiment_public_name'];
 	if ($session_id) $table_title.=', '.$lang['session'].' '.session__build_name($session);
 	$table_title.=' - '.$title;
 
@@ -73,12 +86,9 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 	// determine table headings
 	$table_headings=array();
 	$table_headings[]="";
-	$table_headings[]=$lang['lastname'];
-	$table_headings[]=$lang['firstname'];
-	$table_headings[]=$lang['e-mail-address'];
-	$table_headings[]=$lang['phone_number'];
-	$table_headings[]=$lang['gender'];
-	$table_headings[]=$lang['studies'].'/'.$lang['profession'];
+	foreach($columns as $c) {
+        $table_headings[]=$c['column_name'];
+    }
 	$table_headings[]=$lang['noshowup'];
 	if ($assigned || $invited) $table_headings[]=$lang['invited_abbr'];
 	if ($registered || $shownup || $participated) {
@@ -88,9 +98,6 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 		}
 	$table_headings[]=$lang['rules_abbr'];
 
-	// generate table content
-	$studies=lang__load_studies();
-        $professions=lang__load_professions();
 
 	$table_data=array();
 	$session_names=array();
@@ -101,16 +108,11 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 		$row=array();
 		$pnr++;
 		$row[]=$pnr;
-        	$row[]=$p['lname'];
-	        $row[]=$p['fname'];
-        	$row[]=$p['email'];
-		$row[]=$p['phone_number'];
-		if ($p['gender']=='m') $row[]=$lang['gender_m_abbr'];
-			elseif ($p['gender']=='f') $row[]=$lang['gender_f_abbr'];
-			else $row[]="?";
-		$row[]= ($p['field_of_studies']>0) ? 
-				$studies[$p['field_of_studies']].' ('.$p['begin_of_studies'].')' : 
-				$professions[$p['profession']];
+		foreach($columns as $c) {
+		if(preg_match("/(radioline|select_list|select_lang)/",$c['type']) && isset($c['lang'][$p[$c['mysql_column_name']]]))
+			$row[]=$c['lang'][$p[$c['mysql_column_name']]];
+            else $row[]=$p[$c['mysql_column_name']];
+        }
 		$row[]=$p['number_noshowup'].'/'.$p['number_reg'];
 		if ($assigned || $invited) $row[]=$p['invited'];
 		if ($registered || $shownup || $participated) {
@@ -129,7 +131,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
         // prepare pdf
         include_once('../tagsets/class.ezpdf.php');
 
-        $pdf =& new Cezpdf('a4','landscape');
+        $pdf = new Cezpdf('a4','landscape');
 
         $pdf->selectFont('../tagsets/fonts/Times-Roman.afm');
 
@@ -139,8 +141,8 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 	$y=$pdf->ezTable($table_data,
                                 $table_headings,
                                 $table_title,
-                        array('showLines'=>2,
-                                'showHeadings'=>1,
+                        array(	'gridlines'=>31,
+					'showHeadings'=>1,
                                 'shaded'=>2,
                                 'shadeCol'=>array(1,1,1),
                                 'shadeCol2'=>array(0.9,0.9,0.9),
@@ -171,7 +173,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 function pdfoutput__make_calendar($caltime=0,$calyear=false,$admin=false,$forward=0,$file=false) {
 	global $settings;
 
-	$debug=$_REQUEST['d'];
+	if(isset($_REQUEST['d'])) $debug=$_REQUEST['d']; else $debug=false;
 
 	if ($caltime==0) $caltime=time();
 
@@ -183,7 +185,7 @@ function pdfoutput__make_calendar($caltime=0,$calyear=false,$admin=false,$forwar
 	// prepare pdf
 	include_once('../tagsets/class.ezpdf.php');
 
-	$pdf =& new Cezpdf('a4');
+	$pdf = new Cezpdf('a4');
 
 	$pdf->selectFont('../tagsets/fonts/Times-Roman.afm');
 
@@ -201,7 +203,8 @@ function pdfoutput__make_calendar($caltime=0,$calyear=false,$admin=false,$forwar
 		$y=$pdf->ezTable($data,
               			$headings,
 				$title,
-              		array('showLines'=>2,
+			array( //'showLines'=>2,
+					'gridlines'=>31,
                     		'showHeadings'=>1,
                     		'shaded'=>2,
                     		'shadeCol'=>array(1,1,1),
@@ -272,8 +275,8 @@ function pdfoutput__calendar_get_month_table($time=0,$admin=false) {
         $query.=" AND session_start_year='".$year."'
                  AND session_start_month='".$date['mon']."'
                  ORDER BY session_start_day, session_start_hour, session_start_minute";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
-        while ($line=mysql_fetch_assoc($result)) $days[$line['session_start_day']][]=$line;
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        while ($line=mysqli_fetch_assoc($result)) $days[$line['session_start_day']][]=$line;
 
         // get maintenance times
         $monthstring=$year.$month;
@@ -286,8 +289,8 @@ function pdfoutput__calendar_get_month_table($time=0,$admin=false) {
                 HAVING space_start<='".$monthstring."'
                         AND space_stop>='".$monthstring."'
                 ORDER BY space_start_day, space_start_hour, space_start_minute";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
-        while ($line=mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        while ($line=mysqli_fetch_assoc($result)) {
                 $maintstart = ($line['space_start']==$monthstring) ? $line['space_start_day'] : 1;
                 $maintstop = ($line['space_stop']==$monthstring) ? $line['space_stop_day'] : $limit;
                 for ($i=$maintstart; $i<=$maintstop; $i++) $days[$i][]=$line;
@@ -334,6 +337,7 @@ function pdfoutput__calendar_get_month_table($time=0,$admin=false) {
                         $duration=time__get_timepack_from_pack($entry,"session_duration_");
                         $end_time=time__add_packages($start_time,$duration);
 
+						if (!isset($las2[$wday])) $las2[$wday]="";
                         $las2[$wday].=time__format($lang['lang'],$start_time,true,false,true,true).'-'.
                                                 time__format($lang['lang'],$end_time,true,false,true,true);
 

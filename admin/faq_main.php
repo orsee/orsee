@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="options faqs";
@@ -22,7 +23,7 @@ include ("header.php");
 
 
         echo '<BR>
-                <table border=0>
+                <table border=0 width="80%">
                         <TR>
                                 <TD></TD>';
                         foreach ($languages as $language) {
@@ -41,10 +42,10 @@ include ("header.php");
                 WHERE content_type='faq_question'
 		AND ".table('faqs').".faq_id=".table('lang').".content_name 
                 ORDER BY ".$lang['lang'];
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-	$faqcount=0;
-        while ($line=mysql_fetch_assoc($result)) {
+	$faqcount=0; $shade=false;
+        while ($line=mysqli_fetch_assoc($result)) {
 		$faqcount++;
 
                 echo '  <tr class="small"';

@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 $menu__area="public_register";
 include ("header.php");
@@ -26,6 +27,11 @@ orsee_query($query,"subpool__save_all_pool_ids");
 if (count($all_pool_ids)==1) redirect ("public/".thisdoc()."?s=".$all_pool_ids[0]);
 
 if (count($all_pool_ids)==0) redirect ("public/".thisdoc()."?s=1");
+
+if (count($all_pool_ids)<=1 && $settings['subpool_default_registration_id']) redirect("public/".thisdoc()."?s=".$settings['subpool_default_registration_id']);
+elseif (count($all_pool_ids)==1 && !$settings['subpool_default_registration_id']) redirect("public/".thisdoc()."?s=".$all_pool_ids[0]);
+elseif (count($all_pool_ids)==0 && !$settings['subpool_default_registration_id']) redirect ("public/".thisdoc()."?s=1");
+
 
 ////////////////////////////////////////
 // show subpools
@@ -77,97 +83,33 @@ if (isset($_REQUEST['s']) && !(isset($_REQUEST['dr']))) {
 
 echo '<center>';
 
-$form=true;
+$form=true; $errors__dataform=array();
 
 	if (isset($_REQUEST['add'])) {
- 
+
+		if (!$_REQUEST['subpool_id']) $_REQUEST['subpool_id']=$settings['subpool_default_registration_id'];
+        $subpool=orsee_db_load_array("subpools",$_REQUEST['subpool_id'],"subpool_id");
+        if (!$subpool['subpool_id']) {
+			$subpool=orsee_db_load_array("subpools",$settings['subpool_default_registration_id'],"subpool_id");
+			$_REQUEST['subpool_id'] = $subpool['subpool_id'];
+		}
+
 		$continue=true;
-		$errors__dataform=array();
 
-		participant__check_email(true);
-		participant__check_fname(true);
-		participant__check_lname(true);
-		participant__check_invitations(true);
-
-        	$error_count=count($errors__dataform);
-
-        	if ($error_count>0) {
-			$continue=false;
- 
-	  		if (in_array("email",$errors__dataform)) 
-					message($lang['you_have_to_email_address']);
-          		if (in_array("fname",$errors__dataform)) 
-					message($lang['you_have_to_fname']);
-          		if (in_array("lname",$errors__dataform)) 
-					message($lang['you_have_to_lname']);
-			if (in_array("subscriptions",$errors__dataform))
-                                message($lang['at_least_one_exptype_has_to_be_selected']);
-          		}
-
-
-	if ($_REQUEST['email'] && $continue) {
-
-                $query="SELECT participant_id FROM ".table('participants')." 
-                 	WHERE email='".$_REQUEST['email']."'";
-		$result=orsee_query($query);
-		$gibtsschon_part=$result['participant_id'];
-
-                if (!$gibtsschon_part) {
-                	$query="SELECT participant_id FROM ".table('participants_temp')." 
-                        WHERE email='".$_REQUEST['email']."'";
-                	$result=orsee_query($query);
-                	$gibtsschon_temp=$result['participant_id'];
-                }
-
-		if ($gibtsschon_part) {
-			$deleted=participant__deleted($gibtsschon_part);
-			$excluded=participant__excluded($gibtsschon_part);
-			
-			if ($excluded) {
-                		message($lang['error_sorry_you_are_excluded']);
-				show_message();
-                        	echo $lang['if_you_have_questions_write_to'].' ';
-                        	echo support_mail_link();
-				$continue=false;
-                		$form=false;
-                	}
-
-                        if ($deleted && $continue) {
-                        	message($lang['error_sorry_you_are_deleted']);
-				show_message();
-                        	echo $lang['if_you_have_questions_write_to'].' ';
-                        	echo support_mail_link();
-				$continue=false;
-                		$form=false;
-                        }
-
-			if ($continue) {
-				experimentmail__mail_edit_link($gibtsschon_part);
-			message($lang['your_email_address_exists'].' '.$lang['message_with_edit_link_mailed']);
-				show_message();
-				$continue=false;
-				$form=false;
-				}
+		// checks and errors
+		foreach ($_REQUEST as $k=>$v) {
+			if(!is_array($v)) $_REQUEST[$k]=trim($v);
 		}
+		$errors__dataform=participantform__check_fields($_REQUEST,false);
+        $error_count=count($errors__dataform);
+        if ($error_count>0) $continue=false;
 
-		if ($gibtsschon_temp && $continue) {
-			experimentmail__confirmation_mail($gibtsschon_temp);
-			message($lang['already_registered_but_not_confirmed'].'
-				'.$lang['confirmation_message_mailed_again']);
-			show_message();
-                        $continue=false;
-                        $form=false;
-		}
-
-	}	
-
+		$response=participantform__check_unique($_REQUEST,"create");
+		if ($response['disable_form']) { $continue=false; $form=false; show_message(); }
+		elseif($response['problem']) { $continue=false; }
 
 	if ($continue) {
-
-
-                $participant=$_REQUEST;
-
-
+        $participant=$_REQUEST;
 		$participant['participant_id']=participant__create_participant_id();
 		$participant['participant_id_crypt']=unix_crypt($participant['participant_id']);
 		$participant['creation_time']=time();
@@ -175,10 +117,7 @@ $form=true;
 				$participant['subpool_id']=$_REQUEST['subpool_id'];
 			else  	$participant['subpool_id']=$settings['subpool_default_registration_id'];
 		if (!$participant['language']) $participant['language']=$settings['public_standard_language'];
-
-
 		$geschafft=orsee_db_save_array($participant,"participants_temp",$participant['participant_id'],"participant_id");
-
 		$p=$participant['participant_id_crypt'];
 
 	   if ($geschafft) {
@@ -190,21 +129,20 @@ $form=true;
 	 	else {	
 	    	echo $lang['database_error'].'<BR>';
 	  	} 
-
 	}
 }
 
 
-if ($_REQUEST['r']=="t") {
+if (isset($_REQUEST['r']) && $_REQUEST['r']=="t") {
 	$form=false;
 	show_message($lang['successfully_registered']);
 	}
 
 
-if ($_REQUEST['s'] && $_REQUEST['dr']) {
+if (isset($_REQUEST['s']) && $_REQUEST['s'] && isset($_REQUEST['dr']) && $_REQUEST['dr']) {
 	$_REQUEST['subpool_id']=$_REQUEST['s'];  
 
-	if ($form) participant__form($lang['registration_form'],$lang['submit']);
+	if ($form) participant__show_form($_REQUEST,$lang['submit'],$lang['registration_form'],$errors__dataform,false);
 
 	}
 

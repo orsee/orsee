@@ -1,6 +1,5 @@
 <?php
-
-// laboratory functions. part of orsee. see orsee.org.
+// part of orsee. see orsee.org
 
 function laboratories__strip_lab_name($lab_text="") {
 	$textarray=explode("\n",$lab_text);
@@ -23,8 +22,8 @@ function laboratories__select_field($postvarname,$selected) {
 		WHERE content_type='laboratory' 
 		AND enabled='y' 
       		ORDER BY content_name";
-	$result=mysql_query($query);
-	while ($line = mysql_fetch_assoc($result)) {
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line = mysqli_fetch_assoc($result)) {
 		$labname=laboratories__strip_lab_name(stripslashes($line[$lang['lang']]));
 		echo '<OPTION value="'.$line['content_name'].'"';
 		if ($line['content_name']==$selected) echo " SELECTED";

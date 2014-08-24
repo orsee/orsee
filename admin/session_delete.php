@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="delete session";
@@ -34,12 +35,12 @@ include("header.php");
 
         	$query="DELETE FROM ".table('sessions')." 
          		WHERE session_id='".$session_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
         	$query="UPDATE ".table('participate_at')."
 			SET session_id='0', registered='n'
          		WHERE session_id='".$session_id."'";
-		$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
         	message ($lang['session_deleted']);
 		log__admin("session_delete","session:".session__build_name($session,$settings['admin_standard_language']).

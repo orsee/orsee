@@ -1,23 +1,16 @@
 <?php
-
-// important functions for whole orsee system. part of orsee. see orsee.org
-
-function site__test() {
-$test="Test succeeded!";
-return $test;
-}
-
+// part of orsee. see orsee.org
 
 function load_settings() {
 $query="SELECT * FROM ".table('options')." 
 	WHERE option_type='general' OR option_type='default'";
 
-$result=mysql_query($query);
+$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-while ($line = mysql_fetch_assoc($result)) {
+while ($line = mysqli_fetch_assoc($result)) {
             $settings[$line['option_name']]=stripslashes($line['option_value']);
             }
-mysql_free_result($result);
+mysqli_free_result($result);
 return $settings;
 }
 
@@ -30,12 +23,12 @@ function check_options_exist() {
 
 	$query="SELECT * FROM ".table('options')."
         	WHERE option_type='general' OR option_type='default'";
-	$result=mysql_query($query);
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-	while ($line = mysql_fetch_assoc($result)) {
+	while ($line = mysqli_fetch_assoc($result)) {
             	$existing_options[$line['option_name']]=stripslashes($line['option_value']);
             	}
-	mysql_free_result($result);
+	mysqli_free_result($result);
 
 	foreach ($system__options as $option) {
 		$option_array=explode(":",$option);
@@ -59,20 +52,6 @@ function create_new_option($option_array) {
 }
 
 
-function load_colors_old() {
-$query="SELECT * FROM ".table('options')." 
-        WHERE option_type='color'";
-
-$result=mysql_query($query);
-
-while ($line = mysql_fetch_assoc($result)) {
-            $colors[$line['option_name']]=stripslashes($line['option_value']);
-            }
-mysql_free_result($result);
-return $colors;
-}
-
-
 function load_colors() {
 	global $settings;
 
@@ -84,6 +63,7 @@ function load_colors() {
 	foreach ($colorfile as $line) {
 		if (!($line && substr($line,0,1)!="#")) continue; 
 		$citems=explode(":",$line);
+		if (!(isset($citems[0]) && isset($citems[1]))) continue;
 		if (!(trim($citems[0]) && trim($citems[1]))) continue;
 		$color[trim($citems[0])]=trim($citems[1]);
 		}
@@ -96,22 +76,20 @@ global $site__database_host;
 global $site__database_admin_username;
 global $site__database_admin_password;
 global $site__database_database;
-global $link;
 
-$link = mysql_connect($site__database_host,$site__database_admin_username,$site__database_admin_password)
-       or die("Database connection failed: " . mysql_error());
-mysql_select_db($site__database_database) or die("Database selection failed.");
+$GLOBALS['mysqli'] = mysqli_connect($site__database_host,$site__database_admin_username,$site__database_admin_password,$site__database_database)
+       or die("Database connection failed.");
 }
 
-function make_date($zeit=0) {
-if ($zeit==0) $zeit=time();
-$timestring=date("d.m.Y H:i:s",$zeit);
-return $timestring;
+function clearpixel() {
+global $settings__disable_orsee_tracking;
+if(!(isset($settings__disable_orsee_tracking) && $settings__disable_orsee_tracking=='y')) {
+	if(isset($_SERVER['SERVER_NAME'])) $host=$_SERVER['SERVER_NAME']; else $host='';
+	if(isset($_SERVER['PHP_SELF'])) $uri=$_SERVER['PHP_SELF']; else $uri='';
+	$url=$host.$uri;
+	echo '<IMG height=1 width=1 border=0 src="http://www.orsee.org/clearpixel.php?u='.urlencode($url).'">';
 }
 
-function make_date_mysql($zeit) {
-$timestring=substr($zeit,6,2).".".substr($zeit,4,2).".".substr($zeit,0,4)." ".substr($zeit,8,2).":".substr($zeit,10,2).":".substr($zeit,12,2);
-return $timestring;
 }
 
 function message($new_message,$icon="") {
@@ -130,7 +108,8 @@ function show_message() {
 	$numargs = func_num_args();
 	if ($numargs>0) message(func_get_arg(0));
 
-	$message_text=$_SESSION['message_text'];
+	if (isset($_SESSION['message_text'])) $message_text=$_SESSION['message_text'];
+	else $message_text="";
 
         if ($message_text) {
 			echo '<BR><table bgcolor="'.
@@ -159,44 +138,35 @@ function show_message() {
 
         }
 
-function copyright() {
-
-echo '<FONT class="small">programming 2002 by ben greiner</FONT>';
-
-}
-
-
-function switch_to_lang($new_lang) {
-global $lang;
-include($settings__root_directory."/lang/".$new_lang."/words.lang");
-}
-
 
 function redirect($url) {
 global $settings__root_url;
 
-if (eregi("http://",substr($url,0,7))) {
-	header("Location: ".$url);
+if (preg_match("/http:\/\//i",substr($url,0,7))) {
+	header("Location: ".trim($url));
 	} else {
-	$newurl=$settings__root_url."/".$url;
+	$newurl=trim($settings__root_url."/".$url);
 	header("Location: ".$newurl);
 	}
-ob_end_flush();
+if (ob_get_level() != 0) {
+	ob_end_flush();
+}
 session_write_close();
 
 }
 
 function thisdoc() {
-return basename($_SERVER['SCRIPT_NAME']);
+if (isset($_SERVER['SCRIPT_NAME'])) return basename($_SERVER['SCRIPT_NAME']); else return '';
 }
 
 function icon($icon,$link="") {
-	global $settings;
-	$out='';
-	if ($link) $out.='<A HREF="'.$link.'">';
-	$out.='<IMG src="../style/'.$settings['style'].'/icons/'.$icon.'.png" border=0>';
-	if ($link) $out.='</A>';
-	return $out;
+        global $settings;
+        if (preg_match("/\.(gif|jpg|png)$/i",$icon)) $ending=""; else $ending=".png";
+        $out='';
+        if ($link) $out.='<A HREF="'.$link.'">';
+        $out.='<IMG src="../style/'.$settings['style'].'/icons/'.$icon.$ending.'" border=0>';
+        if ($link) $out.='</A>';
+        return $out;
 }
 
 ?>

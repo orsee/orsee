@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -29,9 +30,10 @@ include ("header.php");
         $query="SELECT *
                 FROM ".table('experiment_types')." 
                 ORDER BY exptype_id";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-        while ($line=mysql_fetch_assoc($result)) {
+		$shade=false;
+        while ($line=mysqli_fetch_assoc($result)) {
 
                 echo '  <tr class="small"';
 			if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 

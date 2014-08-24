@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 if (isset($_REQUEST['exptype_id'])) $exptype_id=$_REQUEST['exptype_id']; else $exptype_id="";
@@ -14,15 +15,17 @@ include ("header.php");
 		else $allow=check_allow('experimenttype_add','experiment_type_main.php');
 
         if ($exptype_id) {
-                $exptype=orsee_db_load_array("experiment_types",$exptype_id,"exptype_id");
-		$map=explode(",",$exptype['exptype_mapping']);
-		foreach ($map as $etype) {
-			$exptype['exptype_map'][$etype]=$etype;
+			$exptype=orsee_db_load_array("experiment_types",$exptype_id,"exptype_id");
+			$map=explode(",",$exptype['exptype_mapping']);
+			foreach ($map as $etype) {
+				$exptype['exptype_map'][$etype]=$etype;
+			}
+            $query="SELECT * from ".table('lang')." WHERE content_type='experiment_type' AND content_name='".$exptype_id."'";
+            $selfdesc=orsee_query($query);
+        } else {
+			$exptype=array('exptype_name'=>'','exptype_description'=>'');
+			$selfdesc=array();
 		}
-
-                $query="SELECT * from ".table('lang')." WHERE content_type='experiment_type' AND content_name='".$exptype_id."'";
-                $selfdesc=orsee_query($query);
-                }
 
 	$continue=true;
 
@@ -37,7 +40,7 @@ include ("header.php");
 		
 		$types=$system__experiment_types;
                 foreach ($types as $etype) {
-                        if ($_REQUEST['exptype_map'][$etype]) $map[]=$_REQUEST['exptype_map'][$etype];
+                        if (isset($_REQUEST['exptype_map'][$etype]) && $_REQUEST['exptype_map'][$etype]) $map[]=$_REQUEST['exptype_map'][$etype];
                         }
 		if (count($map)==0) {
 				message($lang['at_minimum_one_exptype_mapping_required']);
@@ -101,7 +104,7 @@ include ("header.php");
 
 	echo '
 			<FORM action="experiment_type_edit.php">
-				<INPUT type=hidden name="exptype_id" value="'.$exptype['exptype_id'].'">
+				<INPUT type=hidden name="exptype_id" value="'.$exptype_id.'">
 
 		<TABLE>
 			<TR>
@@ -109,7 +112,7 @@ include ("header.php");
 					'.$lang['id'].':
 				</TD>
 				<TD>
-					'.$exptype['exptype_id'].'
+					'.$exptype_id.'
 				</TD>
 			</TR>
 			<TR>
@@ -140,7 +143,7 @@ include ("header.php");
 					$experiment_types=$system__experiment_types;
 					foreach ($experiment_types as $etype) {
 					echo '<INPUT type=checkbox name="exptype_map['.$etype.']" value="'.$etype.'"';
-						if ($exptype['exptype_map'][$etype]) echo ' CHECKED';
+						if (isset($exptype['exptype_map'][$etype]) && $exptype['exptype_map'][$etype]) echo ' CHECKED';
 						echo '>'.$lang[$etype].'
 					<BR>';
 					}
@@ -155,6 +158,7 @@ include ("header.php");
 			</TR>';
 
 			foreach ($languages as $language) {
+				if (!isset($selfdesc[$language])) $selfdesc[$language]='';
 				echo '	<TR>
 						<TD>
 							'.$language.':

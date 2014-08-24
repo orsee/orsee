@@ -1,12 +1,13 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="calendar";
 $title="calendar";
 include ("header.php");
 
-if ($_REQUEST['time']) $caltime=$_REQUEST['time']; else $caltime=time();
-if ($_REQUEST['year']) $calyear=true; else $calyear=false;
+if (isset($_REQUEST['time']) && $_REQUEST['time']) $caltime=$_REQUEST['time']; else $caltime=time();
+if (isset($_REQUEST['year']) && $_REQUEST['year']) $calyear=true; else $calyear=false;
 
 	echo '<center>
 		<BR><BR>

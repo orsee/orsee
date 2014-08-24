@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -17,28 +18,35 @@ include ("header.php");
                 </FORM>';
 
 
+
         echo '<BR>
                 <table border=0>
                         <TR>
-                                <TD></TD>';
-        echo '                  <TD>
-				</TD>
+                                <TD>'.$lang['id'].'</TD>
+                          <TD>'.$lang['name'].'
+							<TD>'.$lang['description'].'</TD>
+							<TD></TD>
+							<TD></TD>
                         </TR>';
+
 
         $query="SELECT *
                 FROM ".table('subpools')." 
                 ORDER BY subpool_id";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-        while ($line=mysql_fetch_assoc($result)) {
+		$shade=false;
+        while ($line=mysqli_fetch_assoc($result)) {
 
                 echo '  <tr class="small"';
 			if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
 					else echo ' bgcolor="'.$color['list_shade2'].'"';
                         echo '>
-                                <td valign=top>
-					<A HREF="subpool_edit.php?subpool_id='.$line['subpool_id'].'">
-                                        '.$line['subpool_name'].'</A>
+                                <TD>
+					'.$line['subpool_id'].'
+					</TD>
+				<td valign=top>
+					'.$line['subpool_name'].'
                                 </td>
                 		<TD>
 					'.$line['subpool_description'].' 
@@ -47,6 +55,10 @@ include ("header.php");
                                         '.$lang['subjects'].': '.
 					participants__count_participants("subpool_id='".$line['subpool_id']."'").'
                                 </TD>
+                    <td valign=top>
+					<A HREF="subpool_edit.php?subpool_id='.$line['subpool_id'].'">
+                                        '.$lang['edit'].'</A>
+                                </td>
                         </tr>';
                 if ($shade) $shade=false; else $shade=true;
                 }

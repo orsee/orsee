@@ -2,19 +2,19 @@
 
 <center>
 <TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH="100%">
-	<TR VALIGN=TOP ALIGN=LEFT BGCOLOR="#BC8F8F">
+	<TR VALIGN=TOP ALIGN=LEFT BGCOLOR="#cc9966">
 		<TD COLSPAN=2 WIDTH=100% HEIGHT=19 ALIGN=RIGHT VALIGN=BOTTOM>
 		<P><FONT face="Arial" size=1 class="small" COLOR="#FFFFFF">ONLINE RECRUITMENT SYSTEM FOR ECONOMIC EXPERIMENTS</FONT>
 		</TD>
 	</TR>
 
 
-	<TR bgcolor="#2F4F4F">
+	<TR bgcolor="#996600">
 		<TD WIDTH=100% HEIGHT=70 VALIGN=MIDDLE ALIGN=LEFT rowspan=2>
 			<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=0 WIDTH=300>
 			<TR>
 				<TD VALIGN=TOP>
-				<FONT style="font-size:30pt;color: white">&nbsp;&nbsp;&nbsp;| &#248;</FONT>
+				<IMG border=0 SRC="../style/orsee2/orsee_sign.gif">
 				</TD>
 			</TR>
 			</TABLE>
@@ -25,7 +25,7 @@
 
                         <TR>
                                 <TD valign=bottom align=right>
-                                <FONT style="font-size:30pt;color: white;font-weight: bold">ORSEE&nbsp;&nbsp;&nbsp;</FONT>
+                                <IMG SRC="../style/orsee2/orsee_logo.gif" BORDER=0>&nbsp;
                                 </TD>
                         </TR>
                         </TABLE>
@@ -33,14 +33,14 @@
 
 	</TR>
 
-	<TR bgcolor="#2F4F4F">
+	<TR bgcolor="#996600">
                 <TD valign=top align=right>
                         <FONT face="Arial" size=1 class="small" COLOR="#FFFFFF">THE EASE OF RECRUITMENT</FONT>
                 </TD>
 
 	</TR>
 
-	<TR bgcolor="#BC8F8F" valign=top align=center>
+	<TR bgcolor="#cc9966" valign=top align=center>
 		<TD valign=top align=left colspan=2>
 		<?php navigation("horizontal"); ?>
 		</TD>

@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -49,14 +50,14 @@ include("header.php");
 			$tables=array('participants','participants_temp','participants_os','admin');
 			foreach ($tables as $table) {
 				$query="UPDATE ".table($table)." SET language='".$slang."' WHERE language='".$tlang."'";
-				$done=mysql_query($query) or die("Database error: " . mysql_error());
+				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				}
 			message ($lang['updated_language_settings']);
 
 			// delete language column
         		$query="ALTER TABLE ".table('lang')." 
          			DROP column ".$tlang;
-			$done=mysql_query($query) or die("Database error: " . mysql_error());
+			$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 
 			// bye, bye

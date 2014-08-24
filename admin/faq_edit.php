@@ -1,7 +1,8 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
-if (isset($_REQUEST['faq_id'])) $id=$_REQUEST['faq_id']; else $faq_id="";
+if (isset($_REQUEST['faq_id'])) $faq_id=$_REQUEST['faq_id']; else $faq_id="";
 
 $title="edit faq";
 include ("header.php");
@@ -18,7 +19,10 @@ include ("header.php");
 	if ($faq_id) {
 		$question=faq__load_question($faq_id);
 		$answer=faq__load_answer($faq_id);
-		}	
+		} else {
+		$question=array();
+		$answer=array();
+		}
 
         // load languages
         $languages=get_languages();
@@ -94,6 +98,8 @@ include ("header.php");
 			</TR>';
 	$shade=true;
 	foreach ($languages as $language) {
+		if (!isset($question[$language])) $question[$language]="";
+		if (!isset($answer[$language])) $answer[$language]="";
 		echo '	<tr';
                         if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
 					else echo ' bgcolor="'.$color['list_shade2'].'"';
@@ -144,7 +150,7 @@ include ("header.php");
                 </FORM>
                 <BR>';
 
-        if ($id && check_allow('faq_delete')) {
+        if ($faq_id && check_allow('faq_delete')) {
                 echo '<BR><BR><FORM action="faq_delete.php">
                         <INPUT type=hidden name="faq_id" value="'.$faq_id.'">
                         <INPUT type=submit name="submit" value="'.$lang['delete'].'">

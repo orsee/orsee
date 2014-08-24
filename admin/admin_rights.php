@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $menu__area="options";
@@ -21,7 +22,7 @@ include ("header.php");
 	$shade=true; $lastclass="";
 	foreach ($system__admin_rights as $right) {
 		$line=explode(":",$right);
-		if ($rights[$line[0]]) {
+		if (isset($rights[$line[0]]) && $rights[$line[0]]) {
 			$tclass=str_replace(strstr($line[0],"_"),"",$line[0]);
 			if ($tclass!=$lastclass) {
 				echo '<TR><TD colspan=4>&nbsp;</TD></TR>';

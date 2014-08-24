@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 	if (isset($_REQUEST['item'])) $item=$_REQUEST['item']; else $item="";
@@ -19,27 +20,34 @@ include ("header.php");
 
 	$titem=orsee_db_load_array("lang",$id,"lang_id");
 
-	$allow=check_allow($item.'_delete','lang_item_edit.php?id='.$id.'&item='.$item);
+	$done=false;
+	$formfields=participantform__load(); $allow_cat=$item;
+	foreach($formfields as $f) {
+		if ($f['type']=='select_lang' && $item==$f['mysql_column_name']) {
+			$done=true;
+			$header=isset($lang[$f['name_lang']])?$lang[$f['name_lang']]:$f['name_lang'];
+			$headervar=$lang['lang'];
+			$reset_part_field=$f['mysql_column_name'];
+			$deletion_message=$lang['symbol_deleted'];
+			$allow_cat='pform_lang_field';
+            break;
+		}
+    }
+    $allow=check_allow($allow_cat.'_delete','lang_item_edit.php?id='.$id.'&item='.$item);
 
         switch($item) {
-                        case 'field_of_studies':
-                                                $header=$lang['delete_field_of_studies'];
-                                                $headervar=$lang['lang'];
-						$reset_part_field="field_of_studies";
-						$deletion_message=$lang['field_of_studies_deleted'];
-                                                break;
-                        case 'profession':
-                                                $header=$lang['delete_profession'];
-                                                $headervar=$lang['lang'];
-						$reset_part_field="profession";
-						$deletion_message=$lang['profession_deleted'];
-                                                break;
+						case 'experimentclass':
+							$header=""; //$lang['delete_experiment_class'];
+							$headervar=$lang['lang'];
+							$reset_part_field="";
+							$deletion_message=""; //$lang['experiment_class_deleted'];
+						break;
                         case 'public_content':
-                                                $header=$lang['delete_public_content'];
-                                                $headervar="content_name";
-						$reset_part_field="";
-						$deletion_message=$lang['public_content_deleted'];
-                                                break;
+                            $header=$lang['delete_public_content'];
+                            $headervar="content_name";
+							$reset_part_field="";
+							$deletion_message=$lang['public_content_deleted'];
+                            break;
                         case 'help':
                                                 $header=$lang['delete_help'];
                                                 $headervar="content_name";
@@ -58,7 +66,7 @@ include ("header.php");
                                                 $reset_part_field="";
                                                 $deletion_message=$lang['default_text_deleted'];
                                                 break;
-		        case 'laboratory':
+					case 'laboratory':
                                                 $header=$lang['delete_laboratory'];
                                                 $headervar="content_name";
                                                 $reset_part_field="";
@@ -76,23 +84,19 @@ include ("header.php");
 
                 $query="DELETE FROM ".table('lang')."
                         WHERE lang_id='".$id."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		if ($reset_part_field) {
                 	$query="UPDATE ".table('participants')." 
                  		SET ".$reset_part_field."='0'
                  		WHERE ".$reset_part_field."='".$cid."'";
-                	$result=mysql_query($query) or die("Database error: " . mysql_error());
+			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                         $query="UPDATE ".table('participants_temp')."
                                 SET ".$reset_part_field."='0'
                                 WHERE ".$reset_part_field."='".$cid."'";
-                        $result=mysql_query($query) or die("Database error: " . mysql_error());
+                        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-                        $query="UPDATE ".table('participants_os')."
-                                SET ".$reset_part_field."='0'
-                                WHERE ".$reset_part_field."='".$cid."'";
-                        $result=mysql_query($query) or die("Database error: " . mysql_error());
 			}
 
                 message ($deletion_message);

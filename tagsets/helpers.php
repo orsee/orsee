@@ -1,7 +1,5 @@
 <?php
-
-// helper functions for use by other functions. part of orsee. see orsee.org
-// 
+// part of orsee. see orsee.org
 
 function getmicrotime()
 {
@@ -59,7 +57,8 @@ function time__build_session_timestring($unixtime="") {
 
 function time__get_timepack_from_pack ($from_package,$prefix="session_start_") {
 	$vars=array('day','month','year','minute','hour');
-	foreach ($vars as $var) $to_package[$var]=$from_package[$prefix.$var];
+	$to_package=array();
+	foreach ($vars as $var) { if (isset($from_package[$prefix.$var])) $to_package[$var]=$from_package[$prefix.$var]; else $to_package[$var]=0; }
         $to_package['second']='0';
 	return $to_package;
 }
@@ -68,15 +67,6 @@ function time__get_timepack_from_pack ($from_package,$prefix="session_start_") {
 function time__load_session_time($from_package) {
 	return time__get_timepack_from_pack ($from_package,'session_start_');
 }
-
-function time__load_survey_start_time($from_package) {
-	return time__get_timepack_from_pack ($from_package,'start_');
-}
-
-function time__load_survey_stop_time($from_package) {
-	return time__get_timepack_from_pack ($from_package,'stop_');
-}
-
 
 function time__add_packages($orig,$plus,$return_unixtime=false) {
 	$orig_pack=array('year'=>0,'month'=>0,'day'=>0,'hour'=>0,'minute'=>0,'second'=>0);
@@ -120,8 +110,12 @@ return $unixtime;
 
 function time__format($lang,$ttime,$hide_date=false,$hide_time=false,$hide_second=true,$hide_year=false,$unixtime="") { 
 
+
 	if ($unixtime) $ta=time__unixtime_to_time_package($unixtime);
 		else $ta=$ttime;
+
+	$tvars=array('day','month','year','hour','minute','second');
+	foreach ($tvars as $t) { if (!isset($ta[$t])) $ta[$t]=0; }
 
 	$ta['day']=helpers__pad_number($ta['day'],2);
 	$ta['month']=helpers__pad_number($ta['month'],2);
@@ -142,6 +136,8 @@ function time__format($lang,$ttime,$hide_date=false,$hide_time=false,$hide_secon
 
 	$datestring="";
 
+	$ready=false;
+
 	// de - german
 	if ($lang=="de") {
 		$ready=true;
@@ -149,43 +145,59 @@ function time__format($lang,$ttime,$hide_date=false,$hide_time=false,$hide_secon
 			$datestring.=$ta['day'].'.'.$ta['month'].'.';
 			if (!$hide_year) $datestring.=$ta['year'];
 			$datestring.=" ";
-			}
+		}
 		if ((!$hide_time) && $time_ex) {
 			$datestring.=$ta['hour'].':'.$ta['minute'];
 			if (!$hide_second && $ta['second']) $datestring.=':'.$ta['second'];
-			}
 		}
+	}
 
-        // es - spanish
-        if ($lang=="es") {
-                $ready=true;
-                if (!$hide_date) {
-                        $datestring.=$ta['day'].'/'.$ta['month'];
-                        if (!$hide_year) $datestring.='/'.$ta['year'];
+	// es - spanish
+	if ($lang=="es") {
+		$ready=true;
+		if (!$hide_date) {
+			$datestring.=$ta['day'].'/'.$ta['month'];
+			if (!$hide_year) $datestring.='/'.$ta['year'];
 			$datestring.=" ";
-                        }
-                if (!$hide_time && $time_ex) {
-                        $datestring.=$ta['hour'].':'.$ta['minute'];
-                        if (!$hide_second && $ta['second']) $datestring.=':'.$ta['second'];
-                        }
-                }
+		}
+		if (!$hide_time && $time_ex) {
+			$datestring.=$ta['hour'].':'.$ta['minute'];
+			if (!$hide_second && $ta['second']) $datestring.=':'.$ta['second'];
+		}
+	}
 
-        // default en - english
-        if (!$ready) {
-                $ready=true;
-                if (!$hide_date) {
-                        $datestring.=$ta['month'].'/'.$ta['day'];
-                        if (!$hide_year) $datestring.='/'.$ta['year'];
+	// default en - english as AM/PM
+	if (!$ready) {
+		$ready=true;
+		if (!$hide_date) {
+
+			// US-ENGLISH MM/DD/YYYY
+			$datestring.=$ta['month'].'/'.$ta['day'];
+			if (!$hide_year) $datestring.='/'.$ta['year'];
+
+			// OTHER ENGLISH DD/MM/YYYY (comment/uncomment as needed)
+			//$datestring.=$ta['month'].'/'.$ta['day'];
+			//if (!$hide_year) $datestring.='/'.$ta['year'];
+
 			$datestring.=" ";
-                        }
-                if (!$hide_time && $time_ex) {
-                        $datestring.=$ta['hour'].':'.$ta['minute'];
-                        if (!$hide_second && $ta['second']) $datestring.=':'.$ta['second'];
-                        }
-                }
+		}
+		if (!$hide_time && $time_ex) {
+
+			// 12-hour AM/PM format
+			if ($ta['hour']>12) $hour=$ta['hour']-12; elseif ($ta['hour']==0) $hour=12; else $hour=$ta['hour'];
+			if ($ta['hour']>=12) $ampm='pm'; else $ampm='am';
+			$datestring.=$hour.':'.$ta['minute'];
+			if (!$hide_second && $ta['second']) $datestring.=':'.$ta['second'];
+			$datestring.=$ampm;
+
+			// 24-hour military format (comment/uncomment as needed)
+			//$datestring.=$ta['hour'].':'.$ta['minute'];
+			//if (!$hide_second && $ta['second']) $datestring.=':'.$ta['second'];
+		}
+	}
+
 
 	return $datestring;
-
 }
 
  
@@ -212,7 +224,7 @@ function get_unique_id($table,$idcol) {
            srand ((double)microtime()*1000000);
            while ($exists) {
                 $crypt_id = "/";
-                while (eregi("(/|\\.)",$crypt_id)) {
+		while (preg_match("/(\/|\\.)/",$crypt_id)) {
                         $id = rand();
                         $crypt_id=unix_crypt($id);
                         }
@@ -241,17 +253,18 @@ function url_cr_encode($var) {
 
 // Url-Decode
 function url_cr_decode($value,$temp=false) {
-	$decoded=""; 
+	$decoded="";
+	if (substr($value,0,2)!='cd') $value='cd'.substr($value,1);
 	if ($temp) {
 		$query="SELECT participant_id FROM ".table('participants_temp')." 
-                	WHERE participant_id_crypt='".$value."'";
+			WHERE participant_id_crypt='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'";
 		$decarray=orsee_query($query);
 		$decoded=$decarray['participant_id'];
 	}
 
 	if (!$decoded) {
 		$query="SELECT participant_id FROM ".table('participants')." 
-                 	WHERE participant_id_crypt='".$value."'";
+			WHERE participant_id_crypt='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'";
 		$decarray=orsee_query($query);
 		$decoded=$decarray['participant_id'];
 		}
@@ -261,7 +274,7 @@ function url_cr_decode($value,$temp=false) {
 // Url-Decodec session id
 function url_cr_decode_session($value) {
 	$query="SELECT session_id FROM ".table('sessions')."
-                WHERE session_id_crypt='".$value."'";
+                WHERE session_id_crypt='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'";
 	$decarray=orsee_query($query);
         $decoded=$decarray['session_id'];
 	return $decoded;
@@ -284,16 +297,34 @@ function helpers__update_encrypted($table) {
 	}
 
 	$query="SELECT ".$idvar." FROM ".table($table);
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
-	while ($line=mysql_fetch_assoc($result)) {
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line=mysqli_fetch_assoc($result)) {
 		$ids[$line[$idvar]]=$line[$idvar];
 		}
 
 	foreach ($ids as $id) {
 		$query="UPDATE ".table($table)." SET ".$idvar."_crypt='".unix_crypt($id)."'
 			WHERE ".$idvar."='".$id."'";
-		$done=mysql_query($query) or die("Database error: " . mysql_error());
+		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		}
+}
+
+function helpers__scramblemail($address) {
+	$address = "<a class=\"small\" href=\"mailto:$address\">";
+	$temp =  chunk_split($address,3,"##");
+	$temp_array =  explode("##",$temp);
+	$scrambled="";
+
+	foreach($temp_array as $piece)
+		{ $scrambled.="+'$piece'"; }
+	$scrambled =  substr($scrambled,1, strlen($scrambled));
+
+	$result = "<script type='text/javascript'>";
+	$result.="<!--\n";
+	$result.= "document.write($scrambled);\n";
+	$result.="-->";
+	$result.="</SCRIPT>";
+	echo $result;
 }
 
 ?>

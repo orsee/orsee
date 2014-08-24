@@ -1,8 +1,13 @@
 <?php
-
+// part of orsee. see orsee.org
 include ("../config/settings.php");
 include ("../config/system.php");
 include ("../config/requires.php");
+include ("../config/participant_form.php");
+
+	$document=thisdoc();
+	if ($settings__stop_admin_site=="y" && $document!="error_temporarily_disabled.php")
+		redirect("admin/error_temporarily_disabled.php");
 
 	site__database_config();
 
@@ -19,16 +24,10 @@ include ("../config/requires.php");
 
 	session_start();
 
-	$expadmindata=$_SESSION['expadmindata'];
-
-	$document=thisdoc();
-
-	if ($settings__stop_admin_site=="y" && $document!="error_temporaly_disabled.php") 
-		redirect("errors/error_temporaly_disabled.php");
-
+	if (isset($_SESSION['expadmindata'])) $expadmindata=$_SESSION['expadmindata']; else $expadmindata=array();
 
 	// Check for login
-	if ((!$expadmindata['adminname']) && ($document!="admin_login.php")) 
+	if ((!(isset($expadmindata['adminname']) && $expadmindata['adminname'])) && $document!="admin_login.php")
 		redirect ("admin/admin_login.php"); 
 
 
@@ -45,6 +44,7 @@ include ("../config/requires.php");
 
 	$lang=load_language($expadmindata['language']);
 
+	if (!isset($title)) $title="";
 	$pagetitle=$settings['default_area'].': '.$title;
 
 	html__header();

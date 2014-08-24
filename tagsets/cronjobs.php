@@ -1,5 +1,5 @@
 <?php
-// cronjob functions. part of orsee. see orsee.org
+// part of orsee. see orsee.org
 
 
 function cron__job_time_select_field($selected) {
@@ -36,10 +36,10 @@ function cron__run_cronjobs() {
 			'run_webalizer');
 
 	$query="SELECT * from ".table('cron_jobs')." WHERE enabled='y'";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$cronprop=array();
-	while ($line=mysql_fetch_assoc($result)) {
+	while ($line=mysqli_fetch_assoc($result)) {
 		$cronprop[$line['job_name']]=$line;
 		}
 
@@ -76,7 +76,7 @@ function cron__save_and_log_job($cronjob,$now="",$target="") {
 	$query="UPDATE ".table('cron_jobs')."
 		SET job_last_exec='".$now."' 
 		WHERE job_name='".$cronjob."'";
-	$done=mysql_query($query) or die("Database error: " . mysql_error());
+	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$done=log__cron_job($cronjob,$target,$now,$id);
 	return $done;
@@ -186,7 +186,7 @@ function cron__send_participant_statistics() {
 }
 
 function cron__run_webalizer() {
-	global $settings, $settings__root_to_server, $settings__root_directory, $settings__server_url;
+	global $settings, $settings__root_to_server, $settings__root_directory, $settings__server_url, $lang;
 	// set webalizer vars
 	$web['log_file']=$settings['http_log_file_location'];
 	$web['output_dir']=$settings__root_to_server.$settings__root_directory."/usage";
@@ -229,7 +229,7 @@ function cron__participants_update_history_participant($part,$what) {
 	$query="UPDATE ".table('participants')." 
       		SET ".$what."='".$part[$what]."' 
         	WHERE participant_id = '".$part['participant_id']."'";
-	$done=mysql_query($query) or die("Database error: " . mysql_error());
+	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	return $done;
 }
 
@@ -239,7 +239,7 @@ function cron__update_participants_history() {
 	// initialize with zero
      	$query="UPDATE ".table('participants')." 
       		SET number_reg = 0, number_noshowup = 0";
-	$done=mysql_query($query) or die("Database error: " . mysql_error());
+	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
      	$query="SELECT ".table('participate_at').".participant_id, 
 		count(participate_id) as number_reg
@@ -252,10 +252,10 @@ function cron__update_participants_history() {
       		AND session_finished = 'y'
       		AND registered = 'y' 
       		GROUP BY participant_id";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$n=0;
-	while ($line=mysql_fetch_assoc($result)) {
+	while ($line=mysqli_fetch_assoc($result)) {
        		$done=cron__participants_update_history_participant($line,'number_reg');
 		$n++;
 		}
@@ -272,10 +272,10 @@ function cron__update_participants_history() {
                 AND session_finished = 'y'
                 AND registered = 'y' AND shownup='n' 
                 GROUP BY participant_id";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$n=0;
-        while ($line=mysql_fetch_assoc($result)) {
+        while ($line=mysqli_fetch_assoc($result)) {
                 $done=cron__participants_update_history_participant($line,'number_noshowup');
 		$n++;
 		}
@@ -285,16 +285,17 @@ function cron__update_participants_history() {
 
 
 function cron__check_for_registration_end() {
+	global $settings;
 	$now=time();
 
 	$query="SELECT ".table('experiments').".*, ".table('sessions').".* 
       		FROM ".table('experiments').", ".table('sessions')." 
       		WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
       		AND ".table('sessions').".reg_notice_sent = 'n'";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$mess="";
-	while ($line=mysql_fetch_assoc($result)) {
+	while ($line=mysqli_fetch_assoc($result)) {
                 // is due?
                 if (sessions__get_registration_end($line) < $now && sessions__get_session_time($line) > $now) {
 			$done=experimentmail__send_registration_notice($line);
@@ -315,10 +316,10 @@ function cron__check_for_session_reminders() {
 		AND ".table('sessions').".experiment_id = ".table('experiments').".experiment_id 
       		AND session_finished='n' AND reminder_sent = 'n' AND reminder_checked='n' 
 		GROUP BY ".table('participate_at').".session_id";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$mess="";
-        while ($line=mysql_fetch_assoc($result)) {
+        while ($line=mysqli_fetch_assoc($result)) {
 		// is due?
 		if (sessions__get_reminder_time($line) < $now && sessions__get_session_time($line) > $now) {
 			// ok: and now what to do?
@@ -371,10 +372,10 @@ function cron__check_for_noshow_warnings() {
                 WHERE ".table('sessions').".experiment_id = ".table('experiments').".experiment_id
                 AND session_finished='y' AND noshow_warning_sent = 'n' 
                 ORDER BY session_start_year, session_start_month, session_start_day, session_start_hour";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
         $mess="";
-        while ($line=mysql_fetch_assoc($result)) {
+        while ($line=mysqli_fetch_assoc($result)) {
 		$mess.="found session ".session__build_name($line,$settings['admin_standard_language'])."\n";
         	if ($settings['send_noshow_warnings']=='y') {
 			$number=experimentmail__send_noshow_warnings_to_queue($line);
@@ -393,10 +394,10 @@ function cron__check_for_participant_exclusion() {
         	$query="SELECT * FROM ".table('participants')." 
                 	WHERE deleted='n' AND excluded='n' 
                 	AND number_noshowup >= '".$settings['automatic_exclusion_noshows']."'";
-        	$result=mysql_query($query) or die("Database error: " . mysql_error());
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		$excluded=0; $informed=0;
-        	while ($line=mysql_fetch_assoc($result)) {
+		while ($line=mysqli_fetch_assoc($result)) {
 			echo 'test3';
 			$done=participant__exclude_participant($line);
 			if ($done=='informed') $informed++;

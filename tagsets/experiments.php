@@ -1,6 +1,5 @@
 <?php
-
-// experiment functions. part of orsee. see orsee.org.
+// part of orsee. see orsee.org
 
 
 // current experiments summary
@@ -12,8 +11,9 @@ function experiment__current_experiment_summary($experimenter="",$finished="n",$
 	if ($experimenter) $expq=" AND ".table('experiments').".experimenter LIKE '%".$expadmindata['adminname']."%' ";
 		      else $expq="";
 
+	$classq="";
 	if ($class) {
-			if ($_REQUEST['class']) $tclass=$_REQUEST['class']; else $tclass="";
+			if (isset($_REQUEST['class']) && $_REQUEST['class']) $tclass=$_REQUEST['class']; else $tclass="";
 			if ($tclass) $classq= " AND ".table('experiments').".experiment_class = '".$tclass."' ";
 				else $classq="";
 			}
@@ -122,10 +122,11 @@ function experiment__current_experiment_summary($experimenter="",$finished="n",$
 				<BR>';
 		echo '	</TD>
 			<TD>';
+		if(!$experimenter) {
 			if ($finished=="n") 
 				echo '<A HREF="experiment_old.php">'.$lang['finished_experiments'].'</A>';
 		   	else echo '<A HREF="experiment_main.php">'.$lang['current_experiments'].'</A>';
-			
+		}
 
 		echo '</TR>
 			</TABLE>
@@ -141,8 +142,8 @@ function experiment__experimenters_checkbox_list($fieldname,$list,$realnames=tru
 
 	$admins=array();
 	$query="SELECT * from ".table('admin')." where experimenter_list='y' order by adminname";
-	$result=mysql_query($query) or die("Database error: " . mysql_error());
-	while ($line=mysql_fetch_assoc($result)) {
+	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line=mysqli_fetch_assoc($result)) {
 		$admins[]=$line;
 		}
 
@@ -150,6 +151,7 @@ function experiment__experimenters_checkbox_list($fieldname,$list,$realnames=tru
         $ccol=1;
 
         echo '<TABLE width=100% border=1 cellspacing=0 cellpadding=0><TR>';
+	$i=0;
         foreach ($admins as $ad) {
         	echo '<TD class="small">
                       <INPUT class="small" type=checkbox name="'.$fieldname.'['.$ad['adminname'].']" value="'.$ad['adminname'].'"';
@@ -180,8 +182,8 @@ function experiment__list_experimenters($namelist,$showlinks=true,$realnames=fal
 
         $admins=array();
         $query="SELECT * from ".table('admin')." order by adminname";
-        $result=mysql_query($query) or die("Database error: " . mysql_error());
-        while ($line=mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        while ($line=mysqli_fetch_assoc($result)) {
                 $admins[$line['adminname']]=$line;
                 }
 
@@ -264,14 +266,8 @@ function experiment__experiments_format_alist($alist) {
         echo '</td>
         	<td>';
 
-	if ($experiment_type=="laboratory") {
         	echo $lang['from'].' '.sessions__get_first_date($experiment_id).' ';
 		echo $lang['to'].' '.sessions__get_last_date($experiment_id);
-		}
-	  elseif ($experiment_type=="online-survey") {
-		echo $lang['from'].' '.survey__print_start_time($experiment_id).' ';
-        	echo $lang['to'].' '.survey__print_stop_time($experiment_id);
-		}
 
         echo '</td>
         	</TR>
@@ -312,28 +308,6 @@ function experiment__experiments_format_alist($alist) {
 		'.experiment__count_participated($experiment_id).'
 		</TD>
 		</TR>';
-		}
-
-        if ($experiment_type=="online-survey") {
-		echo '<TR>
-                	<TD class="small">
-			'.$lang['participants_from_subject_pool'].'
-                	</TD>
-
-                	<TD class="small">
-			'.$lang['free_registration'].'
-                	</TD>
-        	</TR>
-        	<TR>
-                	<TD class="small">
-                	'.$lang['finished'].':
-			'.survey__count_finished($experiment_id,"n").'
-                	</TD>
-                	<TD class="small">
-                	'.$lang['finished'].': 
-			'.survey__count_finished($experiment_id,"y").'
-                	</TD>
-        	</TR>';
 		}
 
 	if ($experiment_link_to_paper) {
@@ -381,13 +355,6 @@ function experiment__old_experiments_format_alist($alist) {
 		echo experiment__count_sessions($experiment_id).' '.$lang['sessions'].', ';
 		echo experiment__count_participated($experiment_id).' '.$lang['participants'];
                 }
-          elseif ($experiment_type=="online-survey") {
-                echo $lang['from'].' '.survey__print_start_time($experiment_id).' ';
-                echo $lang['to'].' '.survey__print_stop_time($experiment_id).', ';
-		$part_count= (int) survey__count_finished($experiment_id,"n") + (int) survey__count_finished($experiment_id,"y");
-		echo $part_count.' '.$lang['participants'];
-                } 
- 
         echo '</font></TD>
         	</TR>';
 	if ($shade) $shade=false; else $shade=true;
@@ -413,8 +380,8 @@ function experiment__exptype_select_field($postvarname,$var,$showvar,$selected,$
                 AND tlang.content_type='experiment_type'
                 ORDER BY exptype_id";
 
-        $result=mysql_query($query);
-        while ($line = mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        while ($line = mysqli_fetch_assoc($result)) {
                 if ($line[$var] != $hidden) {
                         echo '<OPTION value="'.$line[$var].'"';
                         if ($line[$var]==$selected) echo " SELECTED";
@@ -437,8 +404,8 @@ function experiment__experiment_class_select_field($postvarname,$selected,$hidde
                 WHERE content_type='experimentclass'
                 ORDER BY ".$lang['lang'];
 
-        $result=mysql_query($query);
-        while ($line = mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        while ($line = mysqli_fetch_assoc($result)) {
                 if ($line['content_name'] != $hidden) {
                         echo '<OPTION value="'.$line['content_name'].'"';
                         if ($line['content_name']==$selected) echo " SELECTED";
@@ -451,10 +418,13 @@ function experiment__experiment_class_select_field($postvarname,$selected,$hidde
 
 }
 
-function experiment__get_experiment_class_names($id='') {
+function experiment__get_experiment_class_names($id=-1) {
         global $lang;
 
-	if ($id) {
+	if ($id==0) {
+		return "-";
+
+	} elseif ($id) {
 		$query="SELECT *
                         FROM ".table('lang')."
                         WHERE content_type='experimentclass'
@@ -469,8 +439,8 @@ function experiment__get_experiment_class_names($id='') {
                 	FROM ".table('lang')."
                 	WHERE content_type='experimentclass'
                 	ORDER BY ".$lang['lang'];
-        	$result=mysql_query($query);
-        	while ($line = mysql_fetch_assoc($result)) $names[$line['content_name']]=$line[$lang['lang']];
+		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+		while ($line = mysqli_fetch_assoc($result)) $names[$line['content_name']]=$line[$lang['lang']];
 		return $names;
 		}
 }
@@ -557,8 +527,8 @@ function load_external_experiment_types($expinttype="",$enabled=true) {
 		WHERE exptype_id IS NOT NULL";
 	if ($enabled) $query.=" AND enabled='y' ";
         if ($expinttype) $query.=" AND exptype_mapping LIKE '%".$expinttype."%' ";
-        $result=mysql_query($query);
-	while ($line=mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	while ($line=mysqli_fetch_assoc($result)) {
 		$exttypes[]=$line['exptype_name'];
 		}
 	return $exttypes;
@@ -574,8 +544,8 @@ function load_external_experiment_type_names($enabled=true) {
                 AND tlang.content_type='experiment_type'".
                 $enstring."
                 ORDER BY exptype_id";
-        $result=mysql_query($query);
-        while ($line=mysql_fetch_assoc($result)) {
+        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        while ($line=mysqli_fetch_assoc($result)) {
                 $exttypes[$line['exptype_name']]=$line[$lang['lang']];
                 }
         return $exttypes;

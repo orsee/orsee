@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 
 // Including tagsets
 require "orsee_mysql.php";
@@ -28,6 +29,5 @@ require "expregister.php";
 require "pdfoutput.php";
 require "faqs.php";
 require "stats.php";
-require "survey.php";
 
 ?>

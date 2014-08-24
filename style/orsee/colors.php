@@ -48,16 +48,16 @@ session_reminder_state_waiting_text:	blue
 
 # menu colors
 menu_title:	white
-menu_item:	lightgrey
+menu_item:	#E2E2E2
 menu_item_highlighted_background:	red
 
 # item lists (experiments/sessions/options etc.)
-list_header_background:		lightskyblue
-list_title_background:		deepskyblue
-list_item_background:		antiquewhite
+list_header_background:		#E0E0EA
+list_title_background:		#A3A3C2
+list_item_background:		#DADAE7
 list_item_emphasize_background:	white
-list_list_background: 		aliceblue
-list_shade1:			lightblue
+list_list_background: 		#E9E9F1
+list_shade1:			#BDCEEF
 list_shade2:			lightgrey
 list_options_background:	lightgrey
 
@@ -81,5 +81,3 @@ just_registered_session_background:	sandybrown
 
 # background for graphs in statistics section
 stats_graph_background:	snow
-
-

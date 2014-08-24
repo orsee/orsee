@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="resubscribe participant";
@@ -30,7 +31,7 @@ include ("header.php");
                 $query="UPDATE ".table('participants')."
                         SET deleted='n', excluded='n' 
                         WHERE participant_id='".$participant_id."'";
-                $result=mysql_query($query) or die("Database error: " . mysql_error());
+                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                 if ($result) {
 			log__admin("participant_resubscribe","participant_id:".$participant_id);

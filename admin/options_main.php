@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 $title="options";
@@ -109,6 +110,7 @@ include ("header.php");
                         </TD>
                 </TR>';
 
+	/*
 	if (check_allow('default_text_edit')) echo '
                 <TR>
                         <TD>&nbsp;&nbsp;</TD>
@@ -116,6 +118,7 @@ include ("header.php");
                                 <A HREF="lang_item_main.php?item=default_text">'.$lang['default_texts'].'</A>
                         </TD>
                 </TR>';
+	*/
 
 	if (check_allow('help_edit')) echo '
 		<TR>
@@ -175,35 +178,36 @@ include ("header.php");
                         </TD>
                 </TR>';
 
-	echo '	<TR><TD colspan=2>&nbsp;</TD></TR>';
 
-	if (check_allow('field_of_studies_edit')) echo '
-		<TR>
-                        <TD>&nbsp;&nbsp;</TD>
-                        <TD>
-				<A HREF="lang_item_main.php?item=field_of_studies">'.$lang['studies'].'</A>
-                        </TD>
-                </TR>';
 
-	if (check_allow('profession_edit')) echo '
-		<TR>
-                        <TD>&nbsp;&nbsp;</TD>
-                        <TD>
-				<A HREF="lang_item_main.php?item=profession">'.$lang['professions'].'</A>
-                        </TD>
-                </TR>';
+	if (check_allow('pform_lang_field_edit')) {
+		echo '	<TR><TD colspan=2>&nbsp;</TD></TR>';
+		$formfields=participantform__load();
+		foreach($formfields as $f) {
+			if ($f['type']=='select_lang') {
+				echo '<TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="lang_item_main.php?item='.
+						$f['mysql_column_name'].'">';
+				if (isset($lang[$f['name_lang']])) echo $lang[$f['name_lang']];
+				else echo $f['name_lang'];
+				echo '</A></TD></TR>';
+			}
+        }
+	}
 
-	if (check_allow('faq_edit')) echo '
+	if (check_allow('faq_edit')) {
+		echo '	<TR><TD colspan=2>&nbsp;</TD></TR>';
+		echo '
 		<TR>
                         <TD>&nbsp;&nbsp;</TD>
                         <TD>
 				<A HREF="faq_main.php">'.$lang['faqs'].'</A>
                         </TD>
                 </TR>';
+    }
 	echo '	<TR>
                         <TD colspan=2>&nbsp;&nbsp;</TD>
                 </TR>';
-
+/*
 	if (check_allow('import_data')) echo '
                 <TR>
                         <TD>&nbsp;&nbsp;</TD>
@@ -211,7 +215,7 @@ include ("header.php");
                                 <A HREF="import_data.php">'.$lang['import_data_from_old_versions'].'</A>
                         </TD>
                 </TR>';
-
+*/
 	echo '	</TABLE>';
 
 //		<A HREF="database_main.php">'.$lang['database'].'</A><BR><BR>

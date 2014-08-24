@@ -1,4 +1,5 @@
 <?php
+// part of orsee. see orsee.org
 ob_start();
 
 include ("nonoutputheader.php");
@@ -24,8 +25,8 @@ if (!$_REQUEST['i']) redirect ("admin/");
 	header("Expires: 0");
 	header("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
 
-	header("Content-Type: ".$mime_type);
-	//header( "Content-Disposition: attachment; filename=\"$filename\"");
+	header("Content-Type: ".$mime_type."; name=\"$filename\"");
+	header( "Content-Disposition: attachment; filename=\"$filename\"");
 
 	header( "Content-Description: File Transfer");
 
