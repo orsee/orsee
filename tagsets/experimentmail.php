@@ -154,7 +154,7 @@ function experimentmail__get_session_list($experiment_id,$tlang="") {
 
 	if (!$tlang) $tlang=$settings['public_standard_language'];
 
-	if ($lang['lang']!=$tlang)
+	if ($lang['lang']!=$tlang) 
 		$lang=load_language($tlang);
 
 	$query="SELECT *
@@ -216,7 +216,7 @@ function experimentmail__send_bulk_mail_to_queue($bulk_id,$part_array) {
 				mail_type='bulk_mail',
 				mail_recipient='".$participant_id."',
 				bulk_id='".$bulk_id."'";
-			$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 			}
 			$return=true;
 		}
@@ -291,9 +291,9 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
 
 	$smails=array(); $smails_ids=array();
 
-	$invitations=array(); $reminders=array(); $bulks=array(); $errors=array();
+	$invitations=array(); $reminders=array(); $bulks=array(); $errors=array(); 
 	$reminder_text=array(); $warning_text=array();
-        $pform_fields=array(); $professions=array(); $fields_of_studies=array(); $genders=array();
+        $pform_fields=array(); $professions=array(); $fields_of_studies=array(); $genders=array(); 
         $warnings=array(); $exps=array(); $sesss=array(); $parts=array(); $inv_texts=array(); $slists=array();
         $labs=array();
 
@@ -312,7 +312,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
 		$smails_ids[]=$line['mail_id'];
 	}
 	$smails_ids_string=implode("','",$smails_ids);
-	$query="DELETE FROM ".table('mail_queue')."
+	$query="DELETE FROM ".table('mail_queue')." 
 		WHERE mail_id IN ('".$smails_ids_string."')";
 	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
@@ -346,7 +346,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
                         $labs[$tsess][$tlang]=laboratories__get_laboratory_text($sesss[$tsess]['laboratory_id'],$tlang);
                         }
         if (!isset($pform_fields[$tlang])) $pform_fields[$tlang]=participant__load_result_table_fields('email',$tlang);
-
+		
 		if ($ttype=="invitation" && !isset($inv_texts[$texp][$tlang]))
 			$inv_texts[$texp][$tlang]=experimentmail__load_invitation_text($texp,$tlang);
 		if ($ttype=="invitation" && !isset($slists[$texp][$tlang]))
@@ -360,8 +360,8 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
 			// email error: no recipient
 			$line['error'].="recipient:";
 		} else {
-			foreach ($pform_fields[$tlang] as $f) {
-				if(preg_match("/(radioline|select_list|select_lang)/",$f['type']) && isset($f['lang'][$parts[$tpart][$f['mysql_column_name']]]))
+		   	foreach ($pform_fields[$tlang] as $f) {
+		   		if(preg_match("/(radioline|select_list|select_lang)/",$f['type']) && isset($f['lang'][$parts[$tpart][$f['mysql_column_name']]]))
 					$parts[$tpart][$f['mysql_column_name']]=$f['lang'][$parts[$tpart][$f['mysql_column_name']]];
 			}
 		}
@@ -925,7 +925,7 @@ function experimentmail__send_calendar() {
                         }
 
 	mysqli_free_result($result);
-
+	
 	if ($maillang!=$old_lang) $lang=load_language($old_lang);
 
 	return $cal_name." sent to ".$i." out of ".$rec_count." administrators\n";

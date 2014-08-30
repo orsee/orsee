@@ -56,23 +56,23 @@ function detectUTF8($string)
 		if(is_array($tabdata['fields'])) $fs=$tabdata['fields'];
 		else $fs=$langs;
 		$idvar=$tabdata['id'];
-
+		
 		$i=0; $j=0;
 		$query="SELECT * FROM ".table($table);
 		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		while ($line = mysqli_fetch_assoc($result)) {
-		foreach($fs as $f) {
-			if (detectUTF8(stripslashes($line[$f]))) {
-				$iso=utf8_decode(stripslashes($line[$f]));
-				$query2="UPDATE ".table($table)."
-					SET ".$f."='".mysqli_real_escape_string($GLOBALS['mysqli'],$iso)."'
-					WHERE ".$idvar."='".$line[$idvar]."'";
-				$done=mysqli_query($GLOBALS['mysqli'],$query2) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-				$i++;
-			}
-		$j++;
-		}
-	}
+    		foreach($fs as $f) {
+    			if (detectUTF8(stripslashes($line[$f]))) {
+    				$iso=utf8_decode(stripslashes($line[$f]));
+    				$query2="UPDATE ".table($table)." 
+    					SET ".$f."='".mysqli_real_escape_string($GLOBALS['mysqli'],$iso)."' 
+    					WHERE ".$idvar."='".$line[$idvar]."'";
+    				$done=mysqli_query($GLOBALS['mysqli'],$query2) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+    				$i++;
+    			}
+    		$j++;
+    		}
+    	}
 		echo "Converted ".$i." out of ".$j." terms in ".count($fs)." fields in table ".table($table)." to ISO-8859-1.\n";
 	}
 

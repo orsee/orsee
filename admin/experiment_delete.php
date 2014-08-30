@@ -44,7 +44,7 @@ include("header.php");
                 $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 
-	message ($lang['experiment_deleted']);
+       	message ($lang['experiment_deleted']);
 
 		log__admin("experiment_delete","experiment:".$experiment['experiment_name']);
 		redirect ('admin/experiment_main.php');

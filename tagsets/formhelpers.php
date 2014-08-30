@@ -141,7 +141,7 @@ function select__sessions($preval,$varname,$exp_id,$hide_nosession) {
                     FROM ".table('sessions')."
 					WHERE experiment_id='".$exp_id."'
 					OR session_id=0
-                    ORDER BY session_start_year, session_start_month, session_start_day,
+                    ORDER BY session_start_year, session_start_month, session_start_day, 
                     session_start_hour, session_start_minute";
 			$with_exp=false;
 			}
@@ -149,8 +149,8 @@ function select__sessions($preval,$varname,$exp_id,$hide_nosession) {
 			$query="SELECT *
                     FROM ".table('sessions').", ".table('experiments')."
                     WHERE ".table('sessions').".experiment_id=".table('experiments').".experiment_id
-					AND ".table('sessions').".session_finished='n'
-                    ORDER BY session_start_year, session_start_month, session_start_day,
+					AND ".table('sessions').".session_finished='n' 
+                    ORDER BY session_start_year, session_start_month, session_start_day, 
                     session_start_hour, session_start_minute";
 			$with_exp=true;
 			}
@@ -166,8 +166,8 @@ function select__sessions($preval,$varname,$exp_id,$hide_nosession) {
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	while ($line = mysqli_fetch_assoc($result)) {
-	$out.='<OPTION value="'.$line['session_id'].'"';
-		if ($preval==$line['session_id']) $out.=" SELECTED";
+    	$out.='<OPTION value="'.$line['session_id'].'"';
+        	if ($preval==$line['session_id']) $out.=" SELECTED";
 		$out.='>';
 		if ($line['session_id']==0) {
 			$out.=$lang['no_session'];
@@ -180,7 +180,7 @@ function select__sessions($preval,$varname,$exp_id,$hide_nosession) {
 						'minute'=>$line['session_start_minute']);
 				$out.=time__format($expadmindata['language'],$tarr,false,false,true,false);
 			}
-		$out.='</OPTION>';
+        	$out.='</OPTION>';
 		}
         $out.='</SELECT>';
         return $out;

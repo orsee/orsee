@@ -16,7 +16,7 @@ include ("header.php");
                 <form action="subpool_edit.php">
                 <INPUT type=submit name="addit" value="'.$lang['create_new'].'">
                 </FORM>';
-
+	
 
 
         echo '<BR>
@@ -24,11 +24,11 @@ include ("header.php");
                         <TR>
                                 <TD>'.$lang['id'].'</TD>
                           <TD>'.$lang['name'].'
-							<TD>'.$lang['description'].'</TD>
-							<TD></TD>
-							<TD></TD>
+        						<TD>'.$lang['description'].'</TD>
+        						<TD></TD>
+        						<TD></TD>
                         </TR>';
-
+                        
 
         $query="SELECT *
                 FROM ".table('subpools')." 
@@ -43,7 +43,7 @@ include ("header.php");
 					else echo ' bgcolor="'.$color['list_shade2'].'"';
                         echo '>
                                 <TD>
-					'.$line['subpool_id'].'
+					'.$line['subpool_id'].' 
 					</TD>
 				<td valign=top>
 					'.$line['subpool_name'].'

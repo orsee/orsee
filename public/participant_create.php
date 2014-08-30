@@ -95,19 +95,19 @@ $form=true; $errors__dataform=array();
 		}
 
 		$continue=true;
-
+		
 		// checks and errors
 		foreach ($_REQUEST as $k=>$v) {
 			if(!is_array($v)) $_REQUEST[$k]=trim($v);
 		}
-		$errors__dataform=participantform__check_fields($_REQUEST,false);
+		$errors__dataform=participantform__check_fields($_REQUEST,false);		
         $error_count=count($errors__dataform);
         if ($error_count>0) $continue=false;
-
+       
 		$response=participantform__check_unique($_REQUEST,"create");
 		if ($response['disable_form']) { $continue=false; $form=false; show_message(); }
 		elseif($response['problem']) { $continue=false; }
-
+		
 	if ($continue) {
         $participant=$_REQUEST;
 		$participant['participant_id']=participant__create_participant_id();

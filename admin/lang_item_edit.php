@@ -22,15 +22,15 @@ include ("header.php");
 			$allow_cat='pform_lang_field';
 		}
     }
-
+    
 	if (!$id) $allow=check_allow($allow_cat.'_edit','lang_item_main.php?item='.$item);
 	else $allow=check_allow($allow_cat.'_edit','options_main.php');
-
+	
     if (!$done) {
 
 		switch($item) {
 						case 'experimentclass':
-                            if ($id) $header=$lang['edit_experiment_class'];
+                            if ($id) $header=$lang['edit_experiment_class']; 
 							else $header=$lang['add_experiment_class'];
                             $new_id='time';
 							$check_allow_content_shortcut=false;
@@ -90,12 +90,12 @@ include ("header.php");
                         }
 
   		foreach ($languages as $language) {
-			if (!trim($_REQUEST[$language])) {
+  			if (!trim($_REQUEST[$language])) {
   				message ($lang['missing_language'].": ".$language);
   				$continue=false;
-			} else {
-				$_REQUEST[$language]=trim($_REQUEST[$language]);
-			}
+  			} else {
+  				$_REQUEST[$language]=trim($_REQUEST[$language]);
+  			}
 		}
 
    		if ($continue) {
@@ -108,13 +108,13 @@ include ("header.php");
 				if ($new_id=="time") $sitem['content_name']=time();
 				}
 			//$sitem['lang_id']=$id;
-			if ($new_id=="content_shortcut") $sitem['content_name']=trim($_REQUEST['content_shortcut']);
+			if ($new_id=="content_shortcut") $sitem['content_name']=trim($_REQUEST['content_shortcut']); 
 
 			if ($new) { $id=lang__insert_to_lang($sitem); $done=true; }
 			   else $done=orsee_db_save_array($sitem,"lang",$id,"lang_id");
 
 			if (!$new && $new_id=="time") $sitem['content_name']=trim($_REQUEST['content_shortcut']);
-
+			
    			if ($done) {
 				log__admin($item."_edit","lang_id:".$sitem['content_type'].','.$sitem['content_name']);
 				message ($lang['changes_saved']);
@@ -169,7 +169,7 @@ include ("header.php");
 				}
 			elseif ($id) 
 				echo $titem['content_name'].
-					'<INPUT type=hidden name="content_shortcut" value="'.$titem['content_name'].'">';
+					'<INPUT type=hidden name="content_shortcut" value="'.$titem['content_name'].'">'; 
 			   else echo '???';
 		echo '		</TD>
 			</TR>';

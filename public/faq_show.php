@@ -9,7 +9,7 @@ html__header();
 include ("../style/".$settings['style']."/help_html_header.php");
 
 	if (!isset($_REQUEST['id'])) $_REQUEST['id']="";
-
+	
 	if (!isset($_SESSION['vote'])) $_SESSION['vote']=array();
 	if (!isset($_SESSION['vote'][$_REQUEST['id']])) $_SESSION['vote'][$_REQUEST['id']]="";
 
@@ -20,7 +20,7 @@ include ("../style/".$settings['style']."/help_html_header.php");
 		$query="UPDATE ".table('faqs')." SET evaluation=evaluation+1 WHERE faq_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$_REQUEST['id'])."'";
 		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		$_SESSION['vote'][$_REQUEST['id']]=true;
-
+	
 		echo '
 		<SCRIPT LANGUAGE="JavaScript">
 		<!--
@@ -30,9 +30,9 @@ include ("../style/".$settings['style']."/help_html_header.php");
   		//-->
 		</SCRIPT>
 		';
-
+	
 		}
-
+	
 	if (!$_REQUEST['id']) echo "No ID!<BR>";
 
 
@@ -50,9 +50,9 @@ include ("../style/".$settings['style']."/help_html_header.php");
 		$result=orsee_query($query);
 		$question=stripslashes($result[$lang['lang']]);
 
-		$query="SELECT * FROM ".table('lang')." WHERE content_type='faq_answer' AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$_REQUEST['id'])."' LIMIT 1";
+        	$query="SELECT * FROM ".table('lang')." WHERE content_type='faq_answer' AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$_REQUEST['id'])."' LIMIT 1";
         	$result=orsee_query($query);
-		$answer=stripslashes($result[$lang['lang']]);
+        	$answer=stripslashes($result[$lang['lang']]);
 
 		// FAQ print out
 		echo '

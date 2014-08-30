@@ -16,18 +16,18 @@ include ("header.php");
 	$allow=check_allow('experiment_assign_participants','experiment_show.php?experiment_id='.$experiment_id);
 
 	$experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
-
+	
 	if (!check_allow('experiment_restriction_override'))
 		check_experiment_allowed($experiment,"admin/experiment_show.php?experiment_id=".$experiment_id);
 
 	$query_modules=query__get_participant_form_modules($query_modules,$experiment_id);
-
+	
 	echo '	<center>
 		<BR><BR>
 			<h4>'.$experiment['experiment_name'].'</h4>
 			<h4>'.$lang['remove_participants_from_exp'].'</h4>
 		';
-
+		
 	if(!isset($_REQUEST['use'])) $_REQUEST['use']=array();
 	if(!isset($_REQUEST['con'])) $_REQUEST['con']=array();
 	if(!isset($_REQUEST['new'])) $_REQUEST['new']="";

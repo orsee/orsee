@@ -7,7 +7,7 @@ include ("header.php");
 
 	$allow=check_allow('settings_edit','options_main.php');
 
-	if (isset($_REQUEST['otype']) && $_REQUEST['otype']) $otype=$_REQUEST['otype'];
+	if (isset($_REQUEST['otype']) && $_REQUEST['otype']) $otype=$_REQUEST['otype']; 
 	else {$otype=""; redirect ("admin/options_main.php"); }
 
 	switch ($otype) {
@@ -32,7 +32,7 @@ include ("header.php");
 			$newoptions=$_REQUEST['options'];
 			foreach ($newoptions as $oname => $ovalue) {
 				$query="UPDATE ".table('options')." 
-					SET option_value='".mysqli_real_escape_string($GLOBALS['mysqli'],$ovalue)."'
+					SET option_value='".mysqli_real_escape_string($GLOBALS['mysqli'],$ovalue)."' 
 					WHERE option_name='".$oname."'
 					AND option_type='".$otype."'";
 				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));

@@ -1,9 +1,9 @@
 /*
-This file provides some instructions for the participant form template (and any other from templates to be added later).
+This file provides some instructions for the participant form template (and any other from templates to be added later). 
 
-The participant_form.tpl contains HTML code that define the layout of the form, and placeholders to be filled by ORSEE in runtime.
+The participant_form.tpl contains HTML code that define the layout of the form, and placeholders to be filled by ORSEE in runtime. 
 
-The HTML assumes a 2-column table, and the template defines the rows of this table. That is, the template expects a number of rows, and each of these rows is thought of as <TR><TD>some content</TD><TD>some more content</TD></TR>. So after assuming that there was a <TABLE> tag before and a </TABLE> tag after, you are pretty free to layout away.
+The HTML assumes a 2-column table, and the template defines the rows of this table. That is, the template expects a number of rows, and each of these rows is thought of as <TR><TD>some content</TD><TD>some more content</TD></TR>. So after assuming that there was a <TABLE> tag before and a </TABLE> tag after, you are pretty free to layout away. 
 
 There are four types of placeholders:
 
@@ -35,3 +35,5 @@ Note that ORSEE assumes consistency here. That is, if a form_field is only defin
 
 
 */
+
+

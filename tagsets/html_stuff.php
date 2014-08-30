@@ -77,8 +77,8 @@ echo '
 
 function tab_menu($menu_items,$orientation="vertical",$current_user_data_box="",$showicons=true) {
 	// menu entry format:
-	// info[0]       1          2      3   4     5     6        7          8	  9
-	// entrytype|menu__area|lang_item|url|icon|target|addp?|showonlyifp?|hideifp?|options_condition
+ 	// info[0]       1          2      3   4     5     6        7          8	  9
+ 	// entrytype|menu__area|lang_item|url|icon|target|addp?|showonlyifp?|hideifp?|options_condition
 
 	global $settings__root_url, $color, $lang, $menu__area, $settings;
 
@@ -102,9 +102,9 @@ function tab_menu($menu_items,$orientation="vertical",$current_user_data_box="",
 
 		$info=array(); $icon=""; $target="";
 		$info=explode("|",$item); for ($i=0; $i<=9; $i++) { if (!isset($info[$i])) $info[$i]=""; }
-
+		
 		if (!(isset($info[9]) && $info[9] && $settings[$info[9]]!='y')) {
-
+		
         	if (substr($info[3],0,1)=="/")
                 	$info[3] = $settings__root_url.$info[3];
 
@@ -131,7 +131,7 @@ function tab_menu($menu_items,$orientation="vertical",$current_user_data_box="",
 
 					$hlist_cl=1; $hlist_ncl=2;
 
-		} else {
+         	} else {
                 	$list.= '<td>&nbsp;</td>
                         	<td'; if ($icon) $list.= $bgcolor; $list.= '>';
                         	if ($icon && $showicons) $list.= icon($icon,$info[3]);
@@ -140,10 +140,10 @@ function tab_menu($menu_items,$orientation="vertical",$current_user_data_box="",
 
 					$hlist_cl=2; $hlist_ncl=1;
 
-		}
+        	}
 
 			$hlist[$hlist_cl].='<TD ';
-			if ($info[2]=='current_user_data_box') $hlist[$hlist_cl].=' rowspan=2';
+			if ($info[2]=='current_user_data_box') $hlist[$hlist_cl].=' rowspan=2'; 
 			if ($icon && $showicons) $hlist[$hlist_cl].=$bgcolor;
 			if ($hlist_cl==1) $hlist[$hlist_cl].=' valign=bottom'; else $hlist[$hlist_cl].=' valign=top';
 			$hlist[$hlist_cl].='>';
@@ -160,7 +160,7 @@ function tab_menu($menu_items,$orientation="vertical",$current_user_data_box="",
 			}
 
 			if (preg_match("/head/i",$info[0])) {
-		$list.= '<FONT class="menu_title"><FONT color="'.$color['menu_title'].'">';
+            	$list.= '<FONT class="menu_title"><FONT color="'.$color['menu_title'].'">';
 				$hlist[$hlist_cl].='<FONT class="menu_title"><FONT color="'.$color['menu_title'].'">';
 			}
 
@@ -175,12 +175,12 @@ function tab_menu($menu_items,$orientation="vertical",$current_user_data_box="",
 			}
 
 			if (preg_match("/head/i",$info[0])) {
-		$list.= '</FONT></FONT>';
+            	$list.= '</FONT></FONT>';
 				$hlist[$hlist_cl].= '</FONT></FONT>';
 			}
 
 			if (preg_match("/link/i",$info[0])) {
-		$list.= '</FONT></A>';
+            	$list.= '</FONT></A>';
 				$hlist[$hlist_cl].= '</FONT></A>';
 			}
 

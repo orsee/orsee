@@ -50,16 +50,16 @@ include ("header.php");
      	$query="SELECT *
       		FROM ".table('participants_temp')." 
       		ORDER BY creation_time, email";
-	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+       	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	$emails=array(); $shade=false;
-
+	
 	$typenames=load_external_experiment_type_names();
-
-
-	while ($line=mysqli_fetch_assoc($result)) {
+	
+	
+ 	while ($line=mysqli_fetch_assoc($result)) {
 		$emails[]=$line['email'];
-
-		$line['field_of_studies']=language__get_item('field_of_studies',$line['field_of_studies']);
+		
+		$line['field_of_studies']=language__get_item('field_of_studies',$line['field_of_studies']);       
 		$line['profession']=language__get_item('profession',$line['profession']);
 		$line['gender']=$lang['gender_'.$line['gender']];
 		$exptypes=explode(",",$line['subscriptions']);

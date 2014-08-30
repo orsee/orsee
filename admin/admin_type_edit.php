@@ -64,7 +64,7 @@ include ("header.php");
 	$rights=array();
         if (isset($type['rights']) && $type['rights']) {
             $trights=explode(",",$type['rights']);
-		foreach ($trights as $right) $rights[$right]=true;
+        	foreach ($trights as $right) $rights[$right]=true;
         }
         $rights=update_admin_rights_with_new_fields($rights);
 

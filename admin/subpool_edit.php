@@ -25,8 +25,8 @@ include ("header.php");
                 $query="SELECT * from ".table('lang')." WHERE content_type='subjectpool' AND content_name='".$subpool_id."'";
                 $selfdesc=orsee_query($query);
         } else {
-		$subpool=array('subpool_name'=>'','subpool_description'=>'','subpool_type'=>'','exptypes'=>'','show_at_registration_page'=>'');
-		$selfdesc=array();
+        	$subpool=array('subpool_name'=>'','subpool_description'=>'','subpool_type'=>'','exptypes'=>'','show_at_registration_page'=>'');
+        	$selfdesc=array();
         }
 
 	$continue=true;

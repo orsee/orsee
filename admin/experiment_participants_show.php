@@ -13,7 +13,7 @@ include("header.php");
         if (isset($_REQUEST['session_id']) && $_REQUEST['session_id']) $session_id=$_REQUEST['session_id'];
                 else $session_id='';
 
-	if (isset($_REQUEST['remember']) && $_REQUEST['remember']) {
+	if (isset($_REQUEST['remember']) && $_REQUEST['remember']) { 
 		$_REQUEST=array_merge($_REQUEST,$_SESSION['save_posted']);
 		$_SESSION['save_posted']=array();
 		unset($_REQUEST['change']);
@@ -36,7 +36,7 @@ include("header.php");
 		$focuses=array('assigned','invited','registered','shownup','participated');
 		foreach($focuses as $f) { $$f=false; }
 		$$focus=true;
-
+		
 
 		if (isset($_REQUEST['result_count']) && $_REQUEST['result_count']) $pcount=$_REQUEST['result_count']; else $pcount=0;
 
@@ -115,7 +115,7 @@ include("header.php");
 		        $i=0;
                         while ($i < $pcount) {
                         	$i++;
-				if (isset($_REQUEST['shup'.$i]) && $_REQUEST['shup'.$i]=="y") $p_shup[]=$_REQUEST['pid'.$i];
+                        	if (isset($_REQUEST['shup'.$i]) && $_REQUEST['shup'.$i]=="y") $p_shup[]=$_REQUEST['pid'.$i];
 							else $p_shup_not[]=$_REQUEST['pid'.$i];
 
                                 if (isset($_REQUEST['part'.$i]) && $_REQUEST['part'.$i]=="y") $p_part[]=$_REQUEST['pid'.$i];
@@ -242,14 +242,14 @@ include("header.php");
 
 	script__part_reg_show();
 
-	$csorts=array();
+	$csorts=array(); 
 	foreach($columns as $c) if (count($csorts)<2 && $c['allow_sort']) $csorts[]=$c['sort_order'];
 	$csorts_string=implode(",",$csorts);
 
-	if (isset($_REQUEST['sort']) && $_REQUEST['sort']) $order=$_REQUEST['sort'];
-		else {
+	if (isset($_REQUEST['sort']) && $_REQUEST['sort']) $order=$_REQUEST['sort']; 
+		else { 
 			$order="session_start_year, session_start_month, session_start_day,
-			session_start_hour, session_start_minute";
+                	session_start_hour, session_start_minute";
             if ($csorts_string) $order.=",".$csorts_string;
     }
 
@@ -324,9 +324,9 @@ include("header.php");
 			<TR>
 				<TD class="small"></TD>';
 				foreach($columns as $c) {
-			if($c['allow_sort']) headcell($c['column_name'],$c['sort_order']);
-			else headcell($c['column_name']);
-			$nr_normal_columns++;
+                   	if($c['allow_sort']) headcell($c['column_name'],$c['sort_order']);
+                   	else headcell($c['column_name']);
+                   	$nr_normal_columns++;
                 }
 				headcell($lang['noshowup'],"number_noshowup,number_reg");
 			if ($assigned || $invited) {
@@ -366,14 +366,14 @@ include("header.php");
 				<INPUT name="pid'.$pnr.'" type=hidden value="'.$p['participant_id'].'">
 			</td>';
 			foreach($columns as $c) {
-		echo '<td class="small">';
-		if($c['link_as_email_in_lists']=='y') echo '<A class="small" HREF="mailto:'.
-			$p[$c['mysql_column_name']].'">';
-		if(preg_match("/(radioline|select_list|select_lang)/",$c['type']) && isset($c['lang'][$p[$c['mysql_column_name']]]))
-			echo $c['lang'][$p[$c['mysql_column_name']]];
-		else echo $p[$c['mysql_column_name']];
-		if($c['link_as_email_in_lists']=='y') '</A>';
-		echo '</td>';
+               	echo '<td class="small">';
+               	if($c['link_as_email_in_lists']=='y') echo '<A class="small" HREF="mailto:'.
+               		$p[$c['mysql_column_name']].'">';
+               	if(preg_match("/(radioline|select_list|select_lang)/",$c['type']) && isset($c['lang'][$p[$c['mysql_column_name']]]))
+               		echo $c['lang'][$p[$c['mysql_column_name']]];
+               	else echo $p[$c['mysql_column_name']];
+               	if($c['link_as_email_in_lists']=='y') '</A>';
+               	echo '</td>';
             }
 			echo '
 			<td class="small">'.$p['number_noshowup'].

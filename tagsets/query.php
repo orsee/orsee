@@ -97,10 +97,10 @@ function query__orderlimit($query_modules,$use) {
         $query__orderlimit="ORDER BY lname, fname, participant_id";
 		$i=0;
         foreach ($query_modules as $module) {
-		if (isset($use[$i]) && $use[$i]) {
+        	if (isset($use[$i]) && $use[$i]) {
         		$current_order=query__orderlimit_module($module);
-		if ($current_order) $query__orderlimit=$current_order;
-		}
+              	if ($current_order) $query__orderlimit=$current_order;
+           	}
 		$i=$i+1;
         }
 	return $query__orderlimit;
@@ -234,10 +234,10 @@ function query__experiment_classes_checkbox_list($experiment_id="") {
                 $query="SELECT ".table('lang').".*
                         FROM ".table('experiments').", ".table('lang')."
                         WHERE ".table('experiments').".experiment_class=".table('lang').".content_name
-                        AND ".table('lang').".content_type='experimentclass'
-                        AND ".table('lang').".content_name!='0'
+                        AND ".table('lang').".content_type='experimentclass' 
+                        AND ".table('lang').".content_name!='0' 
                         AND ".table('experiments').".experiment_id!='".$experiment_id."'
-						GROUP BY content_name
+						GROUP BY content_name 
                         ORDER BY ".$lang['lang'];
                 $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
                 while ($line=mysqli_fetch_assoc($result)) {
@@ -312,10 +312,10 @@ function query_show_result($select_query,$sort="lname,fname",$type="edit") {
 
 	if ($assign || $drop) $columns=participant__load_result_table_fields($type='assign');
 	else $columns=participant__load_result_table_fields($type='search');
-
-    echo '
+	
+    echo ' 
                         <A HREF="'.thisdoc();
-			if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id'])
+			if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) 
 				echo "?experiment_id=".$_REQUEST['experiment_id'];
 			echo '">'.$lang['new_query'].'</A>
                 <BR><BR>
@@ -330,8 +330,8 @@ function query_show_result($select_query,$sort="lname,fname",$type="edit") {
 			if ($assign || $drop) echo '<TD></TD>';
                         headcell($lang['id'],"participant_id");
                         foreach($columns as $c) {
-				if($c['allow_sort']) headcell($c['column_name'],$c['sort_order']);
-				else headcell($c['column_name']);
+                        	if($c['allow_sort']) headcell($c['column_name'],$c['sort_order']);
+                        	else headcell($c['column_name']);
                         }
                         headcell($lang['noshowup'],"number_noshowup,number_reg");
                         headcell($lang['rules'],"rules_signed,lname,fname");
@@ -352,14 +352,14 @@ function query_show_result($select_query,$sort="lname,fname",$type="edit") {
 						value="'.$p['participant_id'].'"></td>';
                 echo '	<td class="small">'.$p['participant_id'].'</TD>';
                 foreach($columns as $c) {
-			echo '<td class="small">';
-			if($c['link_as_email_in_lists']=='y') echo '<A class="small" HREF="mailto:'.
-				$p[$c['mysql_column_name']].'">';
-			if(preg_match("/(radioline|select_list|select_lang)/",$c['type']) && isset($c['lang'][$p[$c['mysql_column_name']]]))
-				echo $c['lang'][$p[$c['mysql_column_name']]];
-			else echo $p[$c['mysql_column_name']];
-			if($c['link_as_email_in_lists']=='y') '</A>';
-			echo '</td>';
+                	echo '<td class="small">';
+                	if($c['link_as_email_in_lists']=='y') echo '<A class="small" HREF="mailto:'.
+                		$p[$c['mysql_column_name']].'">';
+                	if(preg_match("/(radioline|select_list|select_lang)/",$c['type']) && isset($c['lang'][$p[$c['mysql_column_name']]]))
+                		echo $c['lang'][$p[$c['mysql_column_name']]];
+                	else echo $p[$c['mysql_column_name']];
+                	if($c['link_as_email_in_lists']=='y') '</A>';
+                	echo '</td>';
                 }
                 echo '
                         <td class="small">'.$p['number_noshowup'].

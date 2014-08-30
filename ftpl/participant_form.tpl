@@ -11,7 +11,7 @@
                         <td>lang[e-mail-address]</td>
                         <td>#email#</td>
                 </tr>
-        { #multiple_participant_languages_exist#
+        { #multiple_participant_languages_exist# 
 		<tr #error_language#>
                         <td>lang[language]</td>
                         <td>#language#</td>
@@ -44,12 +44,12 @@
 		{ #is_subpool_type_b#
                 <tr>
 			<td></td>
-			<td>
-				<table width="100%" border="0">
-					<tr>
+                	<td>
+                		<table width="100%" border="0">
+                			<tr>
 						<td #error_field_of_studies#>lang[studies]<br />#field_of_studies#</td>
 
-						<td align="center">&nbsp;lang[or]&nbsp;</td>
+        					<td align="center">&nbsp;lang[or]&nbsp;</td>
 
 						<td #error_profession#>lang[profession]<br />#profession#</td>
 					</tr>
@@ -77,3 +77,4 @@
                         <td>lang[profession]</td>
                         <td>#profession#</td>
                 </tr> }
+

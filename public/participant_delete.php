@@ -14,7 +14,7 @@ include("header.php");
 
                 $query="UPDATE ".table('participants')." 
 		 	SET deleted='y'
-			WHERE participant_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$participant_id)."'";
+                 	WHERE participant_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$participant_id)."'";
 		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		log__participant("delete",$participant_id);
 		$form=false;

@@ -56,7 +56,7 @@ include ("header.php");
 
 			$vars=array('old_db_host','old_db_name','old_db_user','old_db_password');
 			foreach ($vars as $v) { if (!isset($_SESSION['import_data'][$v])) $_SESSION['import_data'][$v]=""; }
-
+			
 			echo '  <BR>
                         	<FORM action="import_data.php">
                         	<INPUT type=hidden name="step" value="3">
@@ -134,7 +134,7 @@ include ("header.php");
 			function import_db_config() {
 				$GLOBALS['mysqli2'] = mysqli_connect($_SESSION['import_data']['old_db_host'],$_SESSION['import_data']['old_db_user'],
 							$_SESSION['import_data']['old_db_password'],$_SESSION['import_data']['old_db_name'])
-						or die("Database connection failed: " . mysqli_error($GLOBALS['mysqli']));
+       						or die("Database connection failed: " . mysqli_error($GLOBALS['mysqli']));
 				}
 
 
@@ -188,9 +188,9 @@ include ("header.php");
                 			FROM ".table('experiment_types')." 
                 			WHERE enabled='y' AND exptype_mapping LIKE '%".$search."%' 
                 			ORDER BY exptype_id";
-				$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				echo '<SELECT name="new_ext_type_'.$oldexptype.'">';
-				while ($line = mysqli_fetch_assoc($result)) {
+        			while ($line = mysqli_fetch_assoc($result)) {
                 			echo '<OPTION value="'.$line['exptype_name'].'"';
                 			if ($line['exptype_name']==$selected) echo " SELECTED";
                 			echo '>'.$line['exptype_name'].'</OPTION>';
@@ -577,11 +577,11 @@ include ("header.php");
 				while ($count > 0) {
                                 	import_db_config();
                                 	$query="SELECT * FROM participate_at ORDER by participate_id LIMIT $i,200";
-					$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                                	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 					$count=mysqli_num_rows($result);
 
                                 	$old_part=array();
-					while ($line=mysqli_fetch_assoc($result)) $old_part[]=$line;
+                                	while ($line=mysqli_fetch_assoc($result)) $old_part[]=$line;
 
                                 	site__database_config();
 
@@ -595,7 +595,7 @@ include ("header.php");
 							shownup='".$part['shownup']."',
 							participated='".$part['participated']."',
 							session_id='".$part['session_id']."'";
-						$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                                        	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli'])); 
                                         	}
                                 	unset($old_part);
 					$i=$i+200;

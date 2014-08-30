@@ -21,10 +21,10 @@ include ("header.php");
 			$allow_cat='pform_lang_field';
 		}
     }
-
+    
 	$allow=check_allow($allow_cat.'_edit','options_main.php');
 
-
+    
     if (!$done) {
                 switch($item) {
                         case 'public_content':
@@ -61,7 +61,7 @@ include ("header.php");
 							$chnl2br=true;
                             break;
 						case 'experimentclass':
-				$header=$lang['experiment_classes'];
+                        	$header=$lang['experiment_classes'];
                             $where=" AND content_name > 0 ";
                             $order=$lang['lang'];
                             $show_part_stats=false;
@@ -90,10 +90,10 @@ include ("header.php");
 			<TR>
 				<TD class="small">
 					'.$lang['id'].'
-		</TD>
-				';
+            	</TD>
+ 				';
         		foreach ($languages as $language) {
-			echo '<td class="small">
+                	echo '<td class="small">
 							'.$language.'
 					</td>';
 				}
@@ -102,16 +102,16 @@ include ("header.php");
 			</TR>';
 
 	if ($show_part_stats) {
-		$num_p=array();
-		$query="SELECT ".$item." as type_p,
-			count(*) as num_p
-			FROM ".table('participants')."
-			GROUP BY ".$item;
-		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysql_error($GLOBALS['mysqli']));
-		while ($line=mysqli_fetch_assoc($result)) {
-			$num_p[$line['type_p']]=$line['num_p'];
-		}
-	}
+ 		$num_p=array();
+ 		$query="SELECT ".$item." as type_p, 
+ 			count(*) as num_p 
+ 			FROM ".table('participants')." 
+ 			GROUP BY ".$item;
+ 		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysql_error($GLOBALS['mysqli']));
+ 		while ($line=mysqli_fetch_assoc($result)) {
+ 			$num_p[$line['type_p']]=$line['num_p'];
+ 		}
+ 	}
 
 	$query="SELECT *
       		FROM ".table('lang')."
@@ -126,15 +126,15 @@ include ("header.php");
 	while ($line=mysqli_fetch_assoc($result)) {
 
    		echo '	<tr class="small"'; 
-		if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
+   		if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
 		else echo ' bgcolor="'.$color['list_shade2'].'"';
-		echo '>
+   		echo '>
 				<td class="small" valign=top>
 					'.$line['content_name'].'
 				</td>';
 		foreach ($languages as $language) {
-		echo '	<td class="small" valign=top';
-            if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
+        	echo '	<td class="small" valign=top';
+            if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
 			else echo ' bgcolor="'.$color['list_shade2'].'"';
             echo '>';
 			if (isset($chnl2br) && $chnl2br) echo nl2br(stripslashes($line[$language]));
@@ -145,8 +145,8 @@ include ("header.php");
 			if (isset($num_p[$line['content_name']])) $np=$num_p[$line['content_name']]; else $np=0;
 			echo '<td class="small">'.$np.'</td>';
 		}
-
-		echo '		<TD>
+                       
+   		echo '		<TD>
 					<A HREF="lang_item_edit.php?item='.$item.'&id='.$line['lang_id'].'">'.
 						$lang['edit'].'</A>
 				</TD>

@@ -23,7 +23,7 @@ include("header.php");
 	     	WHERE ".table('lang').".content_name=".table('faqs').".faq_id
 	     	AND ".table('lang').".content_type='faq_question'
 	     	ORDER BY ".table('faqs').".evaluation DESC, ".table('lang').".".$lang['lang'];
-	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+    	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 	$shade=false;
 	while ($line=mysqli_fetch_assoc($result)) {

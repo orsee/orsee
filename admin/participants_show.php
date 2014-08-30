@@ -39,7 +39,7 @@ include ("header.php");
 							WHERE";
 							if ($deleted=='b') $select_query.=" (deleted='y' OR deleted='n') ";
 							else $select_query.=" deleted='".$deleted."' ";
-				$select_query.=$where_clause;
+                        	$select_query.=$where_clause;
 
             $_SESSION['assign_where_clause']=$where_clause;
 			$_SESSION['assign_select_query']=$select_query;

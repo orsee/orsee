@@ -15,15 +15,15 @@ function orsee_query($query,$funcname="") {
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']).", Query=".$query);
 	if ($funcname) {
 		$back=array();
-		while ($line = mysqli_fetch_assoc($result)) {
+        	while ($line = mysqli_fetch_assoc($result)) {
                 	$back[]=$funcname($line);
                 	}
-		mysqli_free_result($result);
+        	mysqli_free_result($result);
 		return $back;
 
          } else {
-		$line=mysqli_fetch_assoc($result);
-		mysqli_free_result($result);
+        	$line=mysqli_fetch_assoc($result);
+        	mysqli_free_result($result);
         	return $line;
         	}
 }
@@ -39,12 +39,12 @@ function orsee_db_save_array($array,$table,$key,$keyname) {
 	global $site__database_database;
 
 	// find out which fields i can save
-	$query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
-			WHERE table_name='".table($table)."'
+	$query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
+			WHERE table_name='".table($table)."' 
 			AND table_schema = '".$site__database_database."'";
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']).", Query=".$query);
     while ($line = mysqli_fetch_assoc($result)) {
-	$columns[]=$line['COLUMN_NAME'];
+    	$columns[]=$line['COLUMN_NAME'];
     }
     /*
 	$fields = mysql_list_fields($site__database_database,table($table));
@@ -72,10 +72,10 @@ function orsee_db_save_array($array,$table,$key,$keyname) {
 
 	if ($num_rows>0) {
 		// update query
-		$query="UPDATE ".table($table)." SET ".$set_phrase." WHERE ".$keyname."='".mysqli_real_escape_string($GLOBALS['mysqli'],$key)."'";
+        	$query="UPDATE ".table($table)." SET ".$set_phrase." WHERE ".$keyname."='".mysqli_real_escape_string($GLOBALS['mysqli'],$key)."'";
          } else {
 		// insert query
-		$query="INSERT INTO ".table($table)." SET ".$keyname."='".mysqli_real_escape_string($GLOBALS['mysqli'],$key)."', ".$set_phrase;
+        	$query="INSERT INTO ".table($table)." SET ".$keyname."='".mysqli_real_escape_string($GLOBALS['mysqli'],$key)."', ".$set_phrase;
         }
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	return $result;

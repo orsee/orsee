@@ -25,7 +25,7 @@ mysql> ALTER TABLE or_participants ADD INDEX mysql_column_name_index (mysql_colu
 --
 ORSEE allows for a range of form fields types which are described below. There are a number of options which are shared among the types, and some that are specific. If an option is not stated the field definition, then the default is assumed. Only the options 'mysql_column_name','name_lang',' and type' are compulsory and no default exists for them.
 
-Whenever an option requires a language item (that is, an entry in the or_lang language table), this can be created in Options/Languages/Add symbol (your admin type will need the right to create a language symbol). You will need to use the same shortcut for the symbol as provided here.
+Whenever an option requires a language item (that is, an entry in the or_lang language table), this can be created in Options/Languages/Add symbol (your admin type will need the right to create a language symbol). You will need to use the same shortcut for the symbol as provided here. 
 
 One special feature is that the system also allows to assign php code to an option. If the option value is preceded by "func:" then what follows is interpreted as a php expression and is evaluated before the value is assigned in runtime. Examples are provided below for ype "select_numbers" where the current year is used to determine the start year of a list, as in 'value_begin'=>'func:(int) date("Y")-10'.
 
@@ -90,7 +90,7 @@ TYPE-SPECIFIC OPTIONS
 
 TYPE: select_lang
 A select list with a number of options. Options can be freely configured in Options/itemname where the new field is automatically included (similar to field of studies and professions in older ORSEE versions). For examples, see the ORSEE-original definitions of "field_of_studies" and "profession" below.
-'include_none_option': Whether or not to include a "none" option (represented by value 0 and '-' in the select list) in addition to the options defined in Options/itemname.
+'include_none_option': Whether or not to include a "none" option (represented by value 0 and '-' in the select list) in addition to the options defined in Options/itemname. 
 
 TYPE: select_numbers
 A select list with numbers.
@@ -99,7 +99,7 @@ A select list with numbers.
 'value_step: step size, default '1'
 'values_reverse': whether to display from largest number to smallest (value 'y') or smallest to largest (value 'n'). Default is 'n'.
 In this type, the possibility of using code within the options is particularly useful. For an example, see the ORSEE-original definition of "begin of studies" below. As another example, for a year of birth that allows all years from current-17 to current-100 we could use 'value_begin'=>'func:(int) date("Y")-100','value_end'=>'func:(int) date("Y")-17','value_step'=>'1','values_reverse'=>'y'.
-
+ 
 TYPE: select_list
 If there are only a few values, it might be more efficient to use this type instead of select_numbers. It allows to define the options right away here in the field definition.
 'option_values': a comma-separated list of the values for each option
@@ -273,7 +273,7 @@ $participantform[]=array(
 'allow_sort_in_session_participants_list'=>'y',
 'list_in_session_pdf_list'=>'y',
 'include_in_statistics'=>'pie'
-);
+); 
 
 $participantform[]=array(
 'mysql_column_name'=>'field_of_studies',

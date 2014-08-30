@@ -19,7 +19,7 @@ include ("header.php");
 			$map=explode(",",$exptype['exptype_mapping']);
 			foreach ($map as $etype) {
 				$exptype['exptype_map'][$etype]=$etype;
-			}
+			} 
             $query="SELECT * from ".table('lang')." WHERE content_type='experiment_type' AND content_name='".$exptype_id."'";
             $selfdesc=orsee_query($query);
         } else {

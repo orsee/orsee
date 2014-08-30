@@ -21,7 +21,7 @@ function admin__login_form() {
 // if ok, redirect
 function admin__check_login($username,$password) {
 	global $lang;
-        $query="SELECT * FROM ".table('admin')."
+        $query="SELECT * FROM ".table('admin')." 
                 WHERE adminname='".mysqli_real_escape_string($GLOBALS['mysqli'],$username)."'
                 AND password='".mysqli_real_escape_string($GLOBALS['mysqli'],$password)."'";
         $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
@@ -85,8 +85,8 @@ function admin__logout() {
 // Updating password for admin
 function admin__set_password($password,$userid) {
 	$query="UPDATE ".table('admin')." 
-		SET password='".mysqli_real_escape_string($GLOBALS['mysqli'],$password)."'
-		WHERE admin_id='".$userid."'";
+         	SET password='".mysqli_real_escape_string($GLOBALS['mysqli'],$password)."'
+         	WHERE admin_id='".$userid."'";
 	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 }
 

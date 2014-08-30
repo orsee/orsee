@@ -181,7 +181,7 @@ function log__show_log($log) {
 			elseif ($log=='experimenter_actions' || $log=='regular_tasks') {
 				echo $lang['experimenter'];
 				}
-			if (isset($_REQUEST['id']) && $_REQUEST['id'])
+			if (isset($_REQUEST['id']) && $_REQUEST['id']) 
 				echo ' '.log__link('id=','os=0').'<FONT class="small">['.$lang['unrestrict'].']</FONT></A>';
 	echo '	</TD>
 		<TD>
@@ -219,7 +219,7 @@ function log__show_log($log) {
 		echo '	</TD>
 			<TD>
 				'.$line['action'];
-				if (!isset($_REQUEST['action']) || $_REQUEST['action']!=$line['action'])
+				if (!isset($_REQUEST['action']) || $_REQUEST['action']!=$line['action']) 
 					echo ' '.log__restrict_link('action',$line['action']);
 		echo '	</TD>
 			<TD>

@@ -5,7 +5,7 @@ function load_language($language) {
 	$query="SELECT content_name, ".$language." as content_value FROM ".table('lang')." WHERE content_type='lang'";
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	while ($line = mysqli_fetch_assoc($result)) {
-		$lang[$line['content_name']]=stripslashes($line['content_value']);
+        	$lang[$line['content_name']]=stripslashes($line['content_value']);
             	}
 	mysqli_free_result($result);
 	return $lang;
@@ -40,7 +40,7 @@ function language__selectfield_item($content_type,$varname,$selected,$incnone=fa
 	$items=array();
     $query="SELECT *, ".$lang['lang']." AS item
             FROM ".table('lang')."
-			WHERE content_type='".$content_type."'
+			WHERE content_type='".$content_type."'  
             ORDER BY ".$language;
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
     while ($line = mysqli_fetch_assoc($result)) {
@@ -52,17 +52,17 @@ function language__selectfield_item($content_type,$varname,$selected,$incnone=fa
     if (!$existing) {
 	    if ($incnone) { $out.='<OPTION value="0"'; if ($selected==0) $out.=' SELECTED';	$out.='>-</OPTION>'; }
 	    foreach ($items as $k=>$v) {
-		$out.='<OPTION value="'.$k.'"';
-		if ($selected==$k) $out.=' SELECTED';
-		$out.='>'.$v.'</OPTION>';
+        	$out.='<OPTION value="'.$k.'"';
+        	if ($selected==$k) $out.=' SELECTED';
+    		$out.='>'.$v.'</OPTION>';
 		}
 	} else {
-		$query="SELECT count(*) as tf_count, ".$varname." as tf_value
-				FROM ".table('participants')."
+		$query="SELECT count(*) as tf_count, ".$varname." as tf_value 
+				FROM ".table('participants')."  
 				WHERE ".table('participants').".participant_id IS NOT NULL ";
 		if($where) $query.=" AND ".$where." ";
-		$query.=" GROUP BY ".$varname."
-				ORDER BY ".$varname;
+		$query.=" GROUP BY ".$varname." 
+			  	ORDER BY ".$varname;
 		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		while ($line = mysqli_fetch_assoc($result)) {
 			$out.='<option value="'.$line['tf_value'].'"'; if ($line['tf_value'] == $selected) $out.=' SELECTED'; $out.='>';
@@ -75,7 +75,7 @@ function language__selectfield_item($content_type,$varname,$selected,$incnone=fa
 	}
     $out.='</SELECT>';
     return $out;
-}
+} 
 
 
 function get_languages() {
@@ -84,7 +84,7 @@ function get_languages() {
 	$line=orsee_query($query);
 	foreach($line as $columnname=>$v) {
 		if (!preg_match("(lang_id|content_name|content_type|enabled)",$columnname))
-		$languages[]=$columnname;
+        	$languages[]=$columnname;
 	}
 	asort($languages);
 	return $languages;
@@ -215,7 +215,7 @@ function lang__load_lang_cat($content_type,$language="") {
 	global $lang; $cat=array();
 
 	if (!$language) $language=$lang['lang'];
-	$query="SELECT content_name, ".$language." as content_value
+	$query="SELECT content_name, ".$language." as content_value 
 	FROM ".table('lang')." WHERE content_type='".$content_type."'";
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 

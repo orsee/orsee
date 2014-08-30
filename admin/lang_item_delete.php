@@ -34,10 +34,10 @@ include ("header.php");
 		}
     }
     $allow=check_allow($allow_cat.'_delete','lang_item_edit.php?id='.$id.'&item='.$item);
-
+	
         switch($item) {
 						case 'experimentclass':
-							$header=""; //$lang['delete_experiment_class'];
+							$header=""; //$lang['delete_experiment_class']; 
 							$headervar=$lang['lang'];
 							$reset_part_field="";
 							$deletion_message=""; //$lang['experiment_class_deleted'];
@@ -66,7 +66,7 @@ include ("header.php");
                                                 $reset_part_field="";
                                                 $deletion_message=$lang['default_text_deleted'];
                                                 break;
-					case 'laboratory':
+		        		case 'laboratory':
                                                 $header=$lang['delete_laboratory'];
                                                 $headervar="content_name";
                                                 $reset_part_field="";
@@ -90,7 +90,7 @@ include ("header.php");
                 	$query="UPDATE ".table('participants')." 
                  		SET ".$reset_part_field."='0'
                  		WHERE ".$reset_part_field."='".$cid."'";
-			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
                         $query="UPDATE ".table('participants_temp')."
                                 SET ".$reset_part_field."='0'

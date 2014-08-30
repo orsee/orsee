@@ -119,7 +119,7 @@ function stats__get_textstats($stype) {
         $stat=$fname();
 		if ($stat['graphtype']=='pie') $stat=stats__rearrange_pie_array($stat);
     } else {
-	$stat['data']=array(array('no data',0));
+    	$stat['data']=array(array('no data',0));
     }
     $output.=stats__textstats_format_table($stat,true);
 	$output.="\n";
@@ -167,7 +167,7 @@ function stats__all($type='text') { // text, html, graph, htmlgraph
 		elseif ($sfield[1]=='graph') $output.=stats__get_graphstats($sfield[0]);
 	}
 
-	return $output;
+	return $output;      
 }
 
 function stats__textstats_all() {
@@ -226,8 +226,8 @@ function stats__htmlstats_format_table($stat,$lines=true,$stype='') {
 function stats__get_htmlstats($stype) {
         $stat=array(); $output="";
         if(substr($stype,0,6)=="pform:") {
-		$stat=stats__array_pform_field(substr($stype,6));
-		if ($stat['graphtype']=='pie') $stat=stats__rearrange_pie_array($stat);
+        	$stat=stats__array_pform_field(substr($stype,6));
+        	if ($stat['graphtype']=='pie') $stat=stats__rearrange_pie_array($stat);
         } elseif (function_exists('stats__array_'.$stype)) {
             $fname='stats__array_'.$stype;
             $stat=$fname();
@@ -405,8 +405,8 @@ function stats__array_begin_of_studies() {
                 if (!$line['begin_of_studies']) $line['begin_of_studies']="?";
                 if(isset($bgs[$line['begin_of_studies']]))
                         $bgs[$line['begin_of_studies']]=$bgs[$line['begin_of_studies']]+$line['nrpart'];
-                else $bgs[$line['begin_of_studies']]=$line['nrpart'];
-        }
+                else $bgs[$line['begin_of_studies']]=$line['nrpart']; 
+        }               
         foreach ($bgs as $k=>$v) {
                 $data[]=array($k,$v);
         }
@@ -415,7 +415,7 @@ function stats__array_begin_of_studies() {
 }
 
 
-
+        
 
 function stats__array_gender() {
         global $lang, $subpool_id;
@@ -455,13 +455,13 @@ function stats__array_gender() {
 function stats__array_pform_field($field) {
         global $lang, $subpool_id;
         $stat=array();
-
+        
         // load pform field
         $formfields=participantform__load(); $f=array();
-		foreach($formfields as $tf) if ($tf['mysql_column_name']==$field &&
+		foreach($formfields as $tf) if ($tf['mysql_column_name']==$field && 
 			($tf['include_in_statistics']=='pie' || $tf['include_in_statistics']=='bars')) $f=$tf;
-
-
+			
+     
         // titles ect ...
         $stat['xtitle']='';
         $stat['ytitle']='';
@@ -472,7 +472,7 @@ function stats__array_pform_field($field) {
         $stat['legend_y']='';
         $data=array();
         if($f['include_in_statistics']=='pie') $data[0][]='mmm';
-
+        
         if ($f['type']=='select_lang') $names=lang__load_lang_cat($f['mysql_column_name'],$lang['lang']);
         elseif(preg_match("/(radioline|select_list)/",$f['type'])) {
 				$optionvalues=explode(",",$f['option_values']);
@@ -485,12 +485,12 @@ function stats__array_pform_field($field) {
 					}
 				}
 		} else $names=array();
-
+        
         $order=($f['include_in_statistics']=='pie')?"nrpart DESC, ".$f['mysql_column_name']:$f['mysql_column_name'];
-
+        
         if ($subpool_id) $qsubpool=" AND subpool_id='".$subpool_id."'";
                 else $qsubpool="";
-        $query="SELECT ".$f['mysql_column_name']." as myfield, count(participant_id) as nrpart
+        $query="SELECT ".$f['mysql_column_name']." as myfield, count(participant_id) as nrpart 
 		        FROM ".table('participants')."
                 WHERE deleted='n' ".
 				$qsubpool."
@@ -499,15 +499,15 @@ function stats__array_pform_field($field) {
         $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
         $values=array();
         while ($line=mysqli_fetch_assoc($result)) {
-		if (!$line['myfield']) $line['myfield']="?";
+        	if (!$line['myfield']) $line['myfield']="?";
             if(isset($values[$line['myfield']]))
                      $values[$line['myfield']]=$values[$line['myfield']]+$line['nrpart'];
             else $values[$line['myfield']]=$line['nrpart'];
         }
         foreach ($values as $k=>$v) {
-		$tname=$k;
-		$tname=(isset($names[$k]))?$names[$k]:$k;
-		if($f['include_in_statistics']=='bars') {
+        	$tname=$k;
+        	$tname=(isset($names[$k]))?$names[$k]:$k;
+        	if($f['include_in_statistics']=='bars') {
                 $data[]=array($tname,$v);
             } else {
                 $stat['legend'][]=$tname;

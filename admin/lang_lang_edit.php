@@ -22,7 +22,7 @@ include ("header.php");
 
 	
 
-	if (isset($_REQUEST['add']) && $_REQUEST['add']) {
+	if (isset($_REQUEST['add']) && $_REQUEST['add']) { 
 		
 		// check for errors
 		$continue=true;

@@ -394,10 +394,10 @@ function cron__check_for_participant_exclusion() {
         	$query="SELECT * FROM ".table('participants')." 
                 	WHERE deleted='n' AND excluded='n' 
                 	AND number_noshowup >= '".$settings['automatic_exclusion_noshows']."'";
-		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
 		$excluded=0; $informed=0;
-		while ($line=mysqli_fetch_assoc($result)) {
+        	while ($line=mysqli_fetch_assoc($result)) {
 			echo 'test3';
 			$done=participant__exclude_participant($line);
 			if ($done=='informed') $informed++;

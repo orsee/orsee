@@ -119,7 +119,7 @@ include ("header.php");
                         </TD>
                 </TR>';
 	*/
-
+	
 	if (check_allow('help_edit')) echo '
 		<TR>
                         <TD>&nbsp;&nbsp;</TD>
@@ -178,13 +178,13 @@ include ("header.php");
                         </TD>
                 </TR>';
 
-
+	
 
 	if (check_allow('pform_lang_field_edit')) {
 		echo '	<TR><TD colspan=2>&nbsp;</TD></TR>';
 		$formfields=participantform__load();
 		foreach($formfields as $f) {
-			if ($f['type']=='select_lang') {
+			if ($f['type']=='select_lang') {	
 				echo '<TR><TD>&nbsp;&nbsp;</TD><TD><A HREF="lang_item_main.php?item='.
 						$f['mysql_column_name'].'">';
 				if (isset($lang[$f['name_lang']])) echo $lang[$f['name_lang']];
@@ -193,7 +193,7 @@ include ("header.php");
 			}
         }
 	}
-
+	
 	if (check_allow('faq_edit')) {
 		echo '	<TR><TD colspan=2>&nbsp;</TD></TR>';
 		echo '

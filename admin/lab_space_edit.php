@@ -12,7 +12,7 @@ include ("header.php");
 	if ($space_id)
 		$edit=orsee_db_load_array("lab_space",$space_id,"space_id");
 
-	if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
+	if (isset($_REQUEST['edit']) && $_REQUEST['edit']) { 
 
    		$edit=$_REQUEST;
 		$continue=true;
@@ -67,7 +67,7 @@ include ("header.php");
 		$edit['experimenter']=$expadmindata['adminname'];
 		$edit['laboratory_id']="";
 		$edit['reason']="";
-
+		
 		$button_name=$lang['add'];
                 }
 	   else {

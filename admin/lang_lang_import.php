@@ -14,7 +14,7 @@ include ("header.php");
 	if (isset($_REQUEST['upload']) && $_REQUEST['upload']) {
 
 		if(!isset($_REQUEST['action'])) $_REQUEST['action']="";
-
+		
 		switch ($_REQUEST['action']) {
 			case 'upgrade': $do_upgrade=true; $do_update=false; break;
 			case 'update': $do_upgrade=false; $do_update=true; break;
@@ -78,8 +78,8 @@ include ("header.php");
 					foreach ($item as $name=>$value) {
 						if ($name=='lang' || $name=='lang_name') continue;
 						$query="UPDATE ".table('lang')." 
-							SET ".$lang_id."='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'
-							WHERE content_type='".mysqli_real_escape_string($GLOBALS['mysqli'],$type)."'
+							SET ".$lang_id."='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."' 
+							WHERE content_type='".mysqli_real_escape_string($GLOBALS['mysqli'],$type)."' 
 							AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$name)."'";
 						$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 						if (mysqli_affected_rows($GLOBALS['mysqli']) > 0) $count++;
@@ -110,10 +110,10 @@ include ("header.php");
 
 						if (isset($old_lang[$type][$name])) { 
                                                 	$query="UPDATE ".table('lang')."
-								SET ".$lang_id."='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'
-								WHERE content_type='".mysqli_real_escape_string($GLOBALS['mysqli'],$type)."'
-								AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$name)."'";
-							$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                                                        	SET ".$lang_id."='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'
+                                                        	WHERE content_type='".mysqli_real_escape_string($GLOBALS['mysqli'],$type)."'
+                                                        	AND content_name='".mysqli_real_escape_string($GLOBALS['mysqli'],$name)."'";
+                                                	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 							}
 						   else {
 							$new_id++;

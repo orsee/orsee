@@ -28,7 +28,7 @@ $plot_defaults=array(
 		'background_color'=>$color['stats_graph_background']
 		);
         if(isset($_REQUEST['stype']) && substr($_REQUEST['stype'],0,6)=="pform:") {
-		$stat=stats__array_pform_field(substr($_REQUEST['stype'],6));
+        	$stat=stats__array_pform_field(substr($_REQUEST['stype'],6));
         } elseif (isset($_REQUEST['stype']) && function_exists('stats__array_'.$_REQUEST['stype'])) {
             $fname='stats__array_'.$_REQUEST['stype'];
             $stat=$fname();
@@ -79,8 +79,8 @@ if ($stat['ytitle']) $graph->SetYTitle($stat['ytitle'], 'plotleft');// plotleft,
 
 // Please remember that angles other than 90 are taken as 0 when working fith fixed fonts.
 if(isset($stat['x_label_angle'])) {
-	$graph->SetXLabelAngle($stat['x_label_angle']);
-} else {
+	$graph->SetXLabelAngle($stat['x_label_angle']); 
+} else { 
 	$graph->SetXLabelAngle(0);
 }
 $graph->SetYLabelAngle(0);

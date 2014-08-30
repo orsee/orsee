@@ -71,7 +71,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 
   		if ($continue) {
 
-		if (!isset($_REQUEST['experiment_finished']) ||!$_REQUEST['experiment_finished']) $_REQUEST['experiment_finished']="n";
+        	if (!isset($_REQUEST['experiment_finished']) ||!$_REQUEST['experiment_finished']) $_REQUEST['experiment_finished']="n";
 
 			if (!isset($_REQUEST['hide_in_stats']) ||!$_REQUEST['hide_in_stats']) $_REQUEST['hide_in_stats']="n";
 
@@ -344,7 +344,7 @@ echo '<center><h4>'.$lang['edit_experiment'].'</h4></center>';
 			</FORM>';
 		}
 
-	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id'])
+	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) 
 		echo '	<BR><BR>
 			<A HREF="experiment_show.php?experiment_id='.$_REQUEST['experiment_id'].'">'
 			.$lang['mainpage_of_this_experiment'].'</A>';

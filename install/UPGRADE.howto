@@ -1,17 +1,17 @@
 This are upgrade instructions for ORSEE 2.2.0 from the last version ORSEE 2.0.2.
 
-ORSEE 2.2.0 is essentially a re-release of ORSEE 2.0.2.
+ORSEE 2.2.0 is essentially a re-release of ORSEE 2.0.2. 
 
 It fixes a series of bugs, brings ORSEE fully up to PHP5 and MySQL5 standards and adds  unicode/UTF-8 support, but it does not contain new features and keeps the same database structure, with one important exception: it now provides a very convenient way to add new fields in the participant form which are then automatically picked up in query forms (search, experiment assignments), query result tables, statistics, emails, etc.
 
-This makes it easy to upgrade if you have not made any functional changes to your ORSEE 2.0.2 installation (see A below) or when you only added fields in the participant form (see B below). Things are a little more complicated when you made further changes (see C below).
+This makes it easy to upgrade if you have not made any functional changes to your ORSEE 2.0.2 installation (see A below) or when you only added fields in the participant form (see B below). Things are a little more complicated when you made further changes (see C below). 
 
 Please note that ORSEE 2.2.0 requires MySQL >=5 and PHP >=5 with php5-gd, php5-mysql, php5-mbstring.
 
 A. UPGRADE WHEN *NO* *CUSTOMIZED* *CODE* HAS BEEN ADDED
-(I assume that your old installation is named orsee and your old database is named orseedb):
+(I assume that your old installation is named orsee and your old database is named orseedb): 
 1. Install the new orsee-2.2.0 version in parallel to your old orsee version, only do NOT import the install.sql in mysql, instead configure config/settings.php to connect right away to your old database orseedb.
-2. Enter the new ORSEE version (e.g. on http://yourserv.er/orsee-2.2.0/admin) with your usual credentials. This will verify that you entered the configuration details correctly. Since the database has not been upgraded yet but unicode output is enforced, some characters (umlauts etc.) might look funny.
+2. Enter the new ORSEE version (e.g. on http://yourserv.er/orsee-2.2.0/admin) with your usual credentials. This will verify that you entered the configuration details correctly. Since the database has not been upgraded yet but unicode output is enforced, some characters (umlauts etc.) might look funny. 
 3. Stop the public site of ORSEE installations (Options/General Settings/Stop public site) so subjects cannot change anything in the database.
 4. Upgrade your database to unicode/UTF-8 (recommended). See details below.
 6. Copy over your customized style from your old orsee/style folder to the new orsee-2.2.0/style folder. Select the respective style in Options/General Settings/Style for Public Area+Style for Administration Area. Copy over your usage/* content if you want to keep your old webalizer output.
@@ -19,36 +19,36 @@ A. UPGRADE WHEN *NO* *CUSTOMIZED* *CODE* HAS BEEN ADDED
 Done.
 
 UPGRADE THE DATABASE TO UNICODE
-Character encoding is a very tricky thing. To make ORSEE as compatible as possible with any international characters (such as umlauts, accent graves, tildes, etc.), the new version offer the option to use unicode/UTF-8 character encoding. To upgrade your database to unicode,
-1. First make a backup copy of your database (or work on a copy database).
+Character encoding is a very tricky thing. To make ORSEE as compatible as possible with any international characters (such as umlauts, accent graves, tildes, etc.), the new version offer the option to use unicode/UTF-8 character encoding. To upgrade your database to unicode, 
+1. First make a backup copy of your database (or work on a copy database). 
 % mysqldump orseedbname -uorseedbusername -porseeuserdbpassword > orsee_backup.mysql
 Then go to the install directory and run the upgrade script.
 % cd install/
 % php convert_db_to_UTF8.php
-The script will read the database details from config/settings.php, so make sure you have the right details there. (Note that this script also deletes some obsolete ORSEE tables which are not used anymore.)
+The script will read the database details from config/settings.php, so make sure you have the right details there. (Note that this script also deletes some obsolete ORSEE tables which are not used anymore.) 
 The script may take a while, depending on your database size. Run the script only once.
 2. Make sure that in config/settings.php, the option $settings__charset is set to 'UTF-8'.
-3. Log in again into your new ORSEE version and verify that everything is displayed correctly.
+3. Log in again into your new ORSEE version and verify that everything is displayed correctly. 
 If not, you can always reverse the database transformation by reading back your backup copy
 % mysql orseedbname -uorseedbusername -porseeuserdbpassword < orsee_backup.mysql
-Alternatively, you can run the script
+Alternatively, you can run the script 
 % php convert_db_to_ISO8859-1.php
 which will convert back all tables and content to latin1 (ISO8859-1).
-Note that once you converted to UTF-8, some characters in your *old* ORSEE version might look funny. This is simply because they are unicode now, but the *old* ORSEE tells the browser that they are ISO8859-1.
+Note that once you converted to UTF-8, some characters in your *old* ORSEE version might look funny. This is simply because they are unicode now, but the *old* ORSEE tells the browser that they are ISO8859-1. 
 
 
 B. UPGRADE WHEN *PARTICIPANT* *FORM* *FIELDS* HAVE BEEN ADDED
 Proceed as above under A, only that:
-After point 1.: Edit config/participant_form.php to match your current participant form fields (see detailed documentation in the file). Edit ftpl/participant_form.tpl and ftpl/participant_form_admin_addons.tpl as required (see documentation in ftpl/template_instructions.txt).
+After point 1.: Edit config/participant_form.php to match your current participant form fields (see detailed documentation in the file). Edit ftpl/participant_form.tpl and ftpl/participant_form_admin_addons.tpl as required (see documentation in ftpl/template_instructions.txt). 
 After point 3.: In case that your custom participant form fields allow for any text input (i.e. allow for any special characters like umlauts etc. to be present), add these fields to the list on the top of the script install/convert_db_to_utf8.php in the list of columns of tables participants and participants_temp, to make sure they are included in the UTF-8 conversion.
 
 C. UPGRADE WHEN CUSTOMIZED CODE HAS BEEN ADDED
 If you made further functional changes to your ORSEE 2.0.2 installation (other than adding participant form fields and the fixes suggested on the ORSEE bug tracker most of which are included in the new version), then there are principally two ways to go:
 
-1) You proceed as above, but after step 3, you go through the code and apply all changes *you* made to the old version also to the new version. (One way to get all the code changes which you made is to download the old orsee-2.0.2 again, unzip it, and then run a
-% diff -rwB orsee-2.0.2 orsee
+1) You proceed as above, but after step 3, you go through the code and apply all changes *you* made to the old version also to the new version. (One way to get all the code changes which you made is to download the old orsee-2.0.2 again, unzip it, and then run a 
+% diff -rwB orsee-2.0.2 orsee 
 which will give you a list of all changes you made.
 
 2) You apply all differences between 2.0.2 and 2.2.0 to your own orsee installation. But I would seriously recommend against this procedure, simply because there were quite a lot of changes. In principle you can get a list of these changes by running, after downloading orsee-2.0.2,
-% diff -rwB orsee-2.0.2 orsee-2.2.0
+% diff -rwB orsee-2.0.2 orsee-2.2.0 
 

@@ -36,7 +36,7 @@ include ("header.php");
                 		AND texpt.enabled='y'
                 		ORDER BY exptype_id";
 			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-			while ($line = mysqli_fetch_assoc($result)) {
+        		while ($line = mysqli_fetch_assoc($result)) {
 				$wstring="subscriptions LIKE '%".$line['exptype_name']."%'";
 				echo '<TR>
 					<TD>

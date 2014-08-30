@@ -21,24 +21,24 @@ include ("header.php");
 
 	$continue=true; $errors__dataform=array();
 
-	if (isset($_REQUEST['add']) && $_REQUEST['add']) {
+	if (isset($_REQUEST['add']) && $_REQUEST['add']) { 
 
 		// checks and errors
 		foreach ($_REQUEST as $k=>$v) {
 			if(!is_array($v)) $_REQUEST[$k]=trim($v);
 		}
-		$errors__dataform=participantform__check_fields($_REQUEST,true);
+		$errors__dataform=participantform__check_fields($_REQUEST,true);		
         $error_count=count($errors__dataform);
         if ($error_count>0) $continue=false;
 
 		if ($continue) {
-		$participant=$_REQUEST;
+           	$participant=$_REQUEST;
 
 			if (!$participant_id) {
 				$participant['participant_id']=participant__create_participant_id();
-			$participant['participant_id_crypt']=unix_crypt($participant['participant_id']);
-			$participant['creation_time']=time();
-			if (isset($_REQUEST['subpool_id']) && $_REQUEST['subpool_id']) $participant['subpool_id']=$_REQUEST['subpool_id'];
+           		$participant['participant_id_crypt']=unix_crypt($participant['participant_id']);
+           		$participant['creation_time']=time();
+           		if (isset($_REQUEST['subpool_id']) && $_REQUEST['subpool_id']) $participant['subpool_id']=$_REQUEST['subpool_id'];
                 else $participant['subpool_id']=$settings['subpool_default_registration_id'];
                 if (!isset($participant['language']) || !$participant['language']) $participant['language']=$settings['public_standard_language'];
 			}
@@ -46,7 +46,7 @@ include ("header.php");
 			$done=orsee_db_save_array($participant,"participants",$participant['participant_id'],"participant_id");
 			if ($done) message($lang['changes_saved']);
 			var_dump($participant);
-
+			
 			if (!$participant_id && isset($_REQUEST['register_session']) && $_REQUEST['register_session']=='y') {
 				$session=orsee_db_load_array("sessions",$_REQUEST['session_id'],"session_id");
 				if ($session['session_id']) {
@@ -63,20 +63,20 @@ include ("header.php");
 				}
 			}
 
-		if ($done) {
+           	if ($done) {
 				if (isset($_REQUEST['participant_id']) && $_REQUEST['participant_id'])
 					log__admin("participant_edit","participant_id:".$participant['participant_id']);
 				else log__admin("participant_create","participant_id:".$participant['participant_id']);
                 $form=false;
                 redirect ("admin/participants_edit.php?participant_id=".$participant['participant_id']);
             } else {
-		message($lang['database_error']);
+            	message($lang['database_error']);
             }
 		}
 	}
 
     if ($participant_id && $continue) {
-	$_REQUEST=orsee_db_load_array("participants",$participant_id,"participant_id");
+    	$_REQUEST=orsee_db_load_array("participants",$participant_id,"participant_id");
 	}
 
 	$button_title = ($participant_id) ? $lang['save'] : $lang['add'];

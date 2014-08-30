@@ -170,26 +170,26 @@ function time__format($lang,$ttime,$hide_date=false,$hide_time=false,$hide_secon
 	if (!$ready) {
 		$ready=true;
 		if (!$hide_date) {
-
+		
 			// US-ENGLISH MM/DD/YYYY
 			$datestring.=$ta['month'].'/'.$ta['day'];
 			if (!$hide_year) $datestring.='/'.$ta['year'];
-
+			
 			// OTHER ENGLISH DD/MM/YYYY (comment/uncomment as needed)
 			//$datestring.=$ta['month'].'/'.$ta['day'];
 			//if (!$hide_year) $datestring.='/'.$ta['year'];
-
+			
 			$datestring.=" ";
 		}
 		if (!$hide_time && $time_ex) {
-
+		
 			// 12-hour AM/PM format
 			if ($ta['hour']>12) $hour=$ta['hour']-12; elseif ($ta['hour']==0) $hour=12; else $hour=$ta['hour'];
 			if ($ta['hour']>=12) $ampm='pm'; else $ampm='am';
 			$datestring.=$hour.':'.$ta['minute'];
 			if (!$hide_second && $ta['second']) $datestring.=':'.$ta['second'];
 			$datestring.=$ampm;
-
+			
 			// 24-hour military format (comment/uncomment as needed)
 			//$datestring.=$ta['hour'].':'.$ta['minute'];
 			//if (!$hide_second && $ta['second']) $datestring.=':'.$ta['second'];
@@ -257,14 +257,14 @@ function url_cr_decode($value,$temp=false) {
 	if (substr($value,0,2)!='cd') $value='cd'.substr($value,1);
 	if ($temp) {
 		$query="SELECT participant_id FROM ".table('participants_temp')." 
-			WHERE participant_id_crypt='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'";
+                	WHERE participant_id_crypt='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'";
 		$decarray=orsee_query($query);
 		$decoded=$decarray['participant_id'];
 	}
 
 	if (!$decoded) {
 		$query="SELECT participant_id FROM ".table('participants')." 
-			WHERE participant_id_crypt='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'";
+                 	WHERE participant_id_crypt='".mysqli_real_escape_string($GLOBALS['mysqli'],$value)."'";
 		$decarray=orsee_query($query);
 		$decoded=$decarray['participant_id'];
 		}
@@ -309,22 +309,22 @@ function helpers__update_encrypted($table) {
 		}
 }
 
-function helpers__scramblemail($address) {
-	$address = "<a class=\"small\" href=\"mailto:$address\">";
-	$temp =  chunk_split($address,3,"##");
-	$temp_array =  explode("##",$temp);
-	$scrambled="";
-
-	foreach($temp_array as $piece)
-		{ $scrambled.="+'$piece'"; }
-	$scrambled =  substr($scrambled,1, strlen($scrambled));
-
-	$result = "<script type='text/javascript'>";
-	$result.="<!--\n";
-	$result.= "document.write($scrambled);\n";
-	$result.="-->";
-	$result.="</SCRIPT>";
-	echo $result;
-}
+function helpers__scramblemail($address) { 
+ 	$address = "<a class=\"small\" href=\"mailto:$address\">";
+ 	$temp =  chunk_split($address,3,"##"); 
+ 	$temp_array =  explode("##",$temp);
+ 	$scrambled="";
+ 	
+ 	foreach($temp_array as $piece) 
+ 		{ $scrambled.="+'$piece'"; } 
+ 	$scrambled =  substr($scrambled,1, strlen($scrambled));
+ 
+ 	$result = "<script type='text/javascript'>";
+ 	$result.="<!--\n"; 
+ 	$result.= "document.write($scrambled);\n"; 
+ 	$result.="-->"; 
+ 	$result.="</SCRIPT>"; 
+ 	echo $result; 
+} 
 
 ?>

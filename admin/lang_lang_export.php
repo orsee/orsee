@@ -24,14 +24,14 @@ if (isset($_REQUEST['export']) && $_REQUEST['export']) {
 			stripslashes($line[$lang_id]).'--:orsee_line:--';
 		}
 //	$file=chunk_split(base64_encode($items),60);
-
+	
 	$mime_type="text/*";
 	$filename='orsee_'.$lang_id.'.orl';
 
 	ob_end_clean();
 	header("Pragma: public");
 	header("Expires: 0");
-	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+	header("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
 
 	header("Content-Type: ".$mime_type);
 	header( "Content-Disposition: attachment; filename=\"$filename\"");

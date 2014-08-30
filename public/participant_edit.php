@@ -6,26 +6,26 @@ $menu__area="my_data";
 include("header.php");
 
 	$form=true;
-
-	$errors__dataform=array();
-
+	
+	$errors__dataform=array(); 
+	
 	if (isset($_REQUEST['add']) && $_REQUEST['add']) {
 		$continue=true;
 		$_REQUEST['participant_id']=$participant['participant_id'];
-
+            
 		// checks and errors
 		foreach ($_REQUEST as $k=>$v) {
 			if(!is_array($v)) $_REQUEST[$k]=trim($v);
 		}
-		$errors__dataform=participantform__check_fields($_REQUEST,false);
+		$errors__dataform=participantform__check_fields($_REQUEST,false);		
         $error_count=count($errors__dataform);
         if ($error_count>0) $continue=false;
 
 		$response=participantform__check_unique($_REQUEST,"edit",$_REQUEST['participant_id']);
 		if($response['problem']) { $continue=false; }
-
+        
         if ($continue) {
-		$participant=$_REQUEST;
+           	$participant=$_REQUEST;
 
 			$done=orsee_db_save_array($participant,"participants",$participant['participant_id'],"participant_id");
 
@@ -35,11 +35,11 @@ include("header.php");
 				redirect("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
 			} else {
 				message($lang['database_error']);
-		redirect ("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
-			}
+             	redirect ("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
+	  		} 
 		}
 	} else {
-	$_REQUEST=$participant;
+    	$_REQUEST=$participant;
 	}
 
 

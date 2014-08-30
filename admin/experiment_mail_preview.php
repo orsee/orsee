@@ -67,7 +67,7 @@ include("header.php");
                 	<TR>
 				<TD valign=top bgcolor="'.$color['list_list_background'].'" colspan=2>
 					'.nl2br(process_mail_template(stripslashes($body),$experimentmail));
-				if (isset($experimentmail['include_footer']) && $experimentmail['include_footer']=="y")
+				if (isset($experimentmail['include_footer']) && $experimentmail['include_footer']=="y") 
 					echo nl2br(stripslashes(experimentmail__get_mail_footer(0)));
 		echo '		</TD>
 			</TR>';

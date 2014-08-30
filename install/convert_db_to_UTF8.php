@@ -36,8 +36,8 @@ foreach($drop_tables as $t) {
 	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 }
 
-// PREPARE or_lang TABLE FOR UTF-8
-/// (indexes are limited to 1000 chars,
+// PREPARE or_lang TABLE FOR UTF-8 
+/// (indexes are limited to 1000 chars, 
 // index needs 3xfield size under UTF-8)
 $query="ALTER TABLE ".table('lang')." CHANGE content_type content_type VARCHAR(30) default NULL";
 $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
@@ -75,24 +75,24 @@ function detectUTF8($string)
 		if(is_array($tabdata['fields'])) $fs=$tabdata['fields'];
 		else $fs=$langs;
 		$idvar=$tabdata['id'];
-
+		
 		$i=0; $j=0;
 		$query="SELECT * FROM ".table($table);
 		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 		while ($line = mysqli_fetch_assoc($result)) {
-		foreach($fs as $f) {
-			if (!detectUTF8(stripslashes($line[$f]))) {
-				$utf=utf8_encode(stripslashes($line[$f]));
-				$query2="UPDATE ".table($table)."
-					SET ".$f."='".mysqli_real_escape_string($GLOBALS['mysqli'],$utf)."'
-					WHERE ".$idvar."='".$line[$idvar]."'";
-				$done=mysqli_query($GLOBALS['mysqli'],$query2) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-				//echo $query2."\n\n";
-				$i++;
-			}
-		$j++;
-		}
-	}
+    		foreach($fs as $f) {
+    			if (!detectUTF8(stripslashes($line[$f]))) {
+    				$utf=utf8_encode(stripslashes($line[$f]));
+    				$query2="UPDATE ".table($table)." 
+    					SET ".$f."='".mysqli_real_escape_string($GLOBALS['mysqli'],$utf)."' 
+    					WHERE ".$idvar."='".$line[$idvar]."'";
+    				$done=mysqli_query($GLOBALS['mysqli'],$query2) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+    				//echo $query2."\n\n";
+    				$i++;
+    			}
+    		$j++;
+    		}
+    	}
 		echo "Converted ".$i." out of ".$j." terms in ".count($fs)." fields in table ".table($table)." to UTF-8.\n";
 	}
 

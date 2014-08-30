@@ -23,7 +23,7 @@ include ("header.php");
         if (!isset($_REQUEST['nlang_base'])) $_REQUEST['nlang_base']="";
 
 
-	if (isset($_REQUEST['add']) && $_REQUEST['add']) {
+	if (isset($_REQUEST['add']) && $_REQUEST['add']) { 
 		
 		// check for errors
 		$continue=true;

@@ -181,7 +181,7 @@ function calendar__month_table_inner($time=0,$admin=false,$print=false) {
 				}
 
 
-				if ($admin) echo '<BR><FONT class="small">'.str_replace(",",", ",$entry['experimenter']).'</FONT>';
+        			if ($admin) echo '<BR><FONT class="small">'.str_replace(",",", ",$entry['experimenter']).'</FONT>';
 
         			$cs__reg=experiment__count_participate_at($entry['experiment_id'],$entry['session_id']);
 

@@ -112,10 +112,10 @@ switch ($module) {
 					$tfield=array();
 					$tfield['value']=$f['mysql_column_name'];
 					if (isset($lang[$f['name_lang']])) $tfield['name']=$lang[$f['name_lang']];
-					else $tfield['name']=$f['name_lang'];
+					else $tfield['name']=$f['name_lang']; 
 					$form_query_fields[]=$tfield;
 				}
-		}
+		} 
 		echo '	<TABLE width=90%>
 				<TR>
 					<TD> 
@@ -127,9 +127,9 @@ switch ($module) {
                 	        	<OPTION value="all"'; if ($bz=="all" || $_REQUEST['new']) echo ' SELECTED'; echo '>'.
 						$lang['anyone'].'</OPTION>';
 						foreach($form_query_fields as $tf) {
-				echo '<OPTION value="'.$tf['value'].'"';
-				if ($bz==$tf['value']) echo ' SELECTED';
-				echo '>'.$tf['name'].'</OPTION>';
+                        	echo '<OPTION value="'.$tf['value'].'"'; 
+                        	if ($bz==$tf['value']) echo ' SELECTED'; 
+                        	echo '>'.$tf['name'].'</OPTION>';
 						}
 					echo '
                 	        		</SELECT>
@@ -142,12 +142,12 @@ switch ($module) {
 		if (!isset($_REQUEST[$fieldname.'_not'])) $_REQUEST[$fieldname.'_not']="";
 		if (!isset($_REQUEST[$fieldname.'_sign'])) $_REQUEST[$fieldname.'_sign']="";
 		if (!isset($_REQUEST[$fieldname])) $_REQUEST[$fieldname]="";
-
+		
 		// $existing=true;
 		//if ($experiment_id) $show_count=false; else $show_count=true;
 		// needs to much time for queries. So  better:
 		$existing=false; $show_count=false;
-
+		
 		$formfields=participantform__load(); $f=array();
 		foreach ($formfields as $p) { if($p['mysql_column_name']==$fieldname) $f=$p; }
 		$f=form__replace_funcs_in_field($f);
@@ -162,19 +162,19 @@ switch ($module) {
                       <OPTION value="<="'; if ($_REQUEST[$fieldname.'_sign']=="<=") echo ' SELECTED'; echo '><=</OPTION>
 					  <OPTION value="="'; if ($_REQUEST[$fieldname.'_sign']=="=" || $_REQUEST[$fieldname.'_sign']=="" || $_REQUEST['new']) echo ' SELECTED'; echo '>=</OPTION>
                       <OPTION value=">"'; if ($_REQUEST[$fieldname.'_sign']==">") echo ' SELECTED'; echo '>></OPTION>
-					  </select>';
+					  </select>';							
 			} else {
 				echo '<select name="'.$fieldname.'_not">
-					<OPTION value=""'; if (!$_REQUEST[$fieldname.'_not']) echo ' SELECTED'; echo '>=</OPTION>
-					<OPTION value="!"'; if ($_REQUEST[$fieldname.'_not']) echo ' SELECTED';	echo '>'.$lang['not'].' =</OPTION>
-					</select> ';
+				 	<OPTION value=""'; if (!$_REQUEST[$fieldname.'_not']) echo ' SELECTED'; echo '>=</OPTION>
+				 	<OPTION value="!"'; if ($_REQUEST[$fieldname.'_not']) echo ' SELECTED';	echo '>'.$lang['not'].' =</OPTION>
+				 	</select> ';
 			}
 
 			if ($f['type']=='select_lang') {
 				echo language__selectfield_item($fieldname,$fieldname,$_REQUEST[$fieldname],false,"",$existing,"deleted='".$deleted."'",$show_count);
 			} elseif ($f['type']=='select_numbers') {
 				if ($f['values_reverse']=='y') $reverse=true; else $reverse=false;
-			echo participant__select_numbers($fieldname,$_REQUEST[$fieldname],$f['value_begin'],$f['value_end'],0,$f['value_step'],$reverse,false,$existing,"deleted='".$deleted."'",$show_count);
+        		echo participant__select_numbers($fieldname,$_REQUEST[$fieldname],$f['value_begin'],$f['value_end'],0,$f['value_step'],$reverse,false,$existing,"deleted='".$deleted."'",$show_count);
 			} elseif (preg_match("/(select_list|radioline)/i",$f['type']) && !$existing) {
 				$f['value']=$_REQUEST[$fieldname];
 				echo  form__render_select_list($f);
@@ -182,9 +182,9 @@ switch ($module) {
 				echo participant__select_existing($fieldname,$_REQUEST[$fieldname],"deleted='".$deleted."'",$show_count);
 			}
 
-		echo '			</TD>
+	    	echo '			</TD>
 					</TR>
-			    </TABLE>';
+	            	    </TABLE>';
 	    }
 		break;
 
@@ -252,8 +252,8 @@ switch ($module) {
 		break;
 
         case "subjectpool":
-			if (!isset($_REQUEST['subjectpool_not'])) $_REQUEST['subjectpool_not']="";
-			if (!isset($_REQUEST['query_subjectpool'])) $_REQUEST['query_subjectpool']="";
+        		if (!isset($_REQUEST['subjectpool_not'])) $_REQUEST['subjectpool_not']="";
+        		if (!isset($_REQUEST['query_subjectpool'])) $_REQUEST['query_subjectpool']="";
                 echo '  <TABLE width=90%>
                                 <TR>
                                         <TD>
@@ -313,8 +313,8 @@ switch ($module) {
 
                         $query="SELECT DISTINCT participant_id 
 								FROM ".table('participate_at').", ".table('experiments')."
-								WHERE participated='y'
-								AND ".table('participate_at').".experiment_id=".table('experiments').".experiment_id
+								WHERE participated='y' 
+								AND ".table('participate_at').".experiment_id=".table('experiments').".experiment_id 
 								".$wclause." ORDER BY participant_id";
                         $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
@@ -380,8 +380,8 @@ switch ($module) {
 
                 	$query="SELECT DISTINCT participant_id, experiment_id FROM ".table('participate_at')."
                         	WHERE participated='y' ".$wclause." ORDER BY participant_id";
-			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-			while ($line = mysqli_fetch_assoc($result)) $part_exp[$line['experiment_id']][]=$line['participant_id'];
+                	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                	while ($line = mysqli_fetch_assoc($result)) $part_exp[$line['experiment_id']][]=$line['participant_id'];
 		
 			if (count($exp_part)<2) {
 				$participants=$part_exp[$exp_part[0]];
@@ -425,9 +425,9 @@ switch ($module) {
 
                 	$query="SELECT DISTINCT participant_id FROM ".table('participate_at')."
                         	WHERE participated='y' ".$wclause." ORDER BY participant_id";
-			$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 
-			while ($line = mysqli_fetch_assoc($result)) $participants[]=$line['participant_id'];
+                	while ($line = mysqli_fetch_assoc($result)) $participants[]=$line['participant_id'];
                  } else {
                         $participants=array();
                         }
@@ -440,7 +440,7 @@ switch ($module) {
 
 	case "field":
 		$qval=trim($_REQUEST['query_field']);
-
+		
 		if ($_REQUEST['field_bezug']=='all') {
 			$formfields=participantform__load();
 			$form_query_fields=array();
@@ -451,13 +451,13 @@ switch ($module) {
 					$form_query_fields[]=" ".table('participants').".".$f['mysql_column_name']." like '%".$qval."%' ";
 				}
 			}
-			$where_clause="(".implode(" OR ",$form_query_fields).")";
+			$where_clause="(".implode(" OR ",$form_query_fields).")"; 
 		} else {
 				if (!$qval) $where_clause="(".table('participants').".".$_REQUEST['field_bezug']."='' OR ".table('participants').".".$_REQUEST['field_bezug']." IS NULL)";
                 else $where_clause=table('participants').".".$_REQUEST['field_bezug']." like '%".$qval."%'";
 		};
-		break;
-
+		break; 
+		
 
 	case "pform":
 		if (!isset($_REQUEST[$fieldname.'_not'])) $_REQUEST[$fieldname.'_not']="";
@@ -475,7 +475,7 @@ switch ($module) {
 			}
 	    } else $where_clause="";
 		break;
-
+		
 	case "noshowups":
 		$where_clause=table('participants').".number_noshowup ".$_REQUEST['query_noshowups_sign'].
 					" '".$_REQUEST['query_noshowups']."'";
@@ -536,7 +536,7 @@ function query__get_participant_form_modules($query_modules,$experiment_id="") {
 					  ($experiment_id && $f['search_include_in_experiment_assign_query']=='y')
 					)  ) $return_array[]="pform:".$f['mysql_column_name'];
 			}
-		}
+		} 
 	}
 	return $return_array;
 }

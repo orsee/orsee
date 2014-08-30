@@ -22,14 +22,14 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 
 	script__part_reg_show();
 
-	$csorts=array();
+	$csorts=array(); 
 	foreach($columns as $c) if (count($csorts)<2 && $c['allow_sort']) $csorts[]=$c['sort_order'];
 	$csorts_string=implode(",",$csorts);
 
 	if ($sort) $order=$sort;
-	else {
+    	else { 
 			$order="session_start_year, session_start_month, session_start_day,
-			session_start_hour, session_start_minute";
+                	session_start_hour, session_start_minute";
             if ($csorts_string) $order.=",".$csorts_string;
     }
 
@@ -88,7 +88,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 	$table_headings[]="";
 	foreach($columns as $c) {
         $table_headings[]=$c['column_name'];
-    }
+    }	
 	$table_headings[]=$lang['noshowup'];
 	if ($assigned || $invited) $table_headings[]=$lang['invited_abbr'];
 	if ($registered || $shownup || $participated) {
@@ -109,8 +109,8 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 		$pnr++;
 		$row[]=$pnr;
 		foreach($columns as $c) {
-		if(preg_match("/(radioline|select_list|select_lang)/",$c['type']) && isset($c['lang'][$p[$c['mysql_column_name']]]))
-			$row[]=$c['lang'][$p[$c['mysql_column_name']]];
+          	if(preg_match("/(radioline|select_list|select_lang)/",$c['type']) && isset($c['lang'][$p[$c['mysql_column_name']]]))
+               		$row[]=$c['lang'][$p[$c['mysql_column_name']]];
             else $row[]=$p[$c['mysql_column_name']];
         }
 		$row[]=$p['number_noshowup'].'/'.$p['number_reg'];
@@ -141,8 +141,8 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 	$y=$pdf->ezTable($table_data,
                                 $table_headings,
                                 $table_title,
-                        array(	'gridlines'=>31,
-					'showHeadings'=>1,
+                        array(	'gridlines'=>31, 
+                        		'showHeadings'=>1,
                                 'shaded'=>2,
                                 'shadeCol'=>array(1,1,1),
                                 'shadeCol2'=>array(0.9,0.9,0.9),
@@ -203,8 +203,8 @@ function pdfoutput__make_calendar($caltime=0,$calyear=false,$admin=false,$forwar
 		$y=$pdf->ezTable($data,
               			$headings,
 				$title,
-			array( //'showLines'=>2,
-					'gridlines'=>31,
+              		array( //'showLines'=>2,
+              				'gridlines'=>31,                   	
                     		'showHeadings'=>1,
                     		'shaded'=>2,
                     		'shadeCol'=>array(1,1,1),

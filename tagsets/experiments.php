@@ -422,8 +422,8 @@ function experiment__get_experiment_class_names($id=-1) {
         global $lang;
 
 	if ($id==0) {
-		return "-";
-
+		return "-";	
+	
 	} elseif ($id) {
 		$query="SELECT *
                         FROM ".table('lang')."
@@ -439,8 +439,8 @@ function experiment__get_experiment_class_names($id=-1) {
                 	FROM ".table('lang')."
                 	WHERE content_type='experimentclass'
                 	ORDER BY ".$lang['lang'];
-		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-		while ($line = mysqli_fetch_assoc($result)) $names[$line['content_name']]=$line[$lang['lang']];
+        	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        	while ($line = mysqli_fetch_assoc($result)) $names[$line['content_name']]=$line[$lang['lang']];
 		return $names;
 		}
 }

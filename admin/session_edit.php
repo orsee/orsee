@@ -23,7 +23,7 @@ include ("header.php");
 		check_experiment_allowed($_REQUEST['experiment_id'],"admin/experiment_show.php?experiment_id=".$_REQUEST['experiment_id']);
 		}
 
-	if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
+	if (isset($_REQUEST['edit']) && $_REQUEST['edit']) { 
 
 		if (!isset($_REQUEST['session_finished']) || !$_REQUEST['session_finished']) $_REQUEST['session_finished']="n";
 
@@ -79,15 +79,15 @@ include ("header.php");
 	if (!$session_id) {
 		$addit=true;
 		$button_name=$lang['add'];
-
+					
 		if (isset($_REQUEST['copy']) && $_REQUEST['copy']) {
-			$edit=$_REQUEST;
+			$edit=$_REQUEST;		
 			$edit['session_id']=get_unique_id("sessions","session_id");
 			$edit['finished']='n';
 			$session_time=0;
 		} else {
-		$edit['experiment_id']=$_REQUEST['experiment_id'];
-		$edit['session_id']=get_unique_id("sessions","session_id");
+        	$edit['experiment_id']=$_REQUEST['experiment_id'];
+        	$edit['session_id']=get_unique_id("sessions","session_id");
 
 			$edit['laboratory_id']="";
 			$edit['session_remarks']="";
@@ -199,7 +199,7 @@ include ("header.php");
 				'.$lang['session_reminder_hours_before'].':
 			</TD>
 			<TD>';
-				if (isset($edit['session_reminder_sent']) && $edit['session_reminder_sent']=="y")
+				if (isset($edit['session_reminder_sent']) && $edit['session_reminder_sent']=="y") 
 					echo $edit['session_reminder_hours'].' ('.$lang['session_reminder_already_sent'].')';
 				   else 
 					helpers__select_numbers_relative("session_reminder_hours",$edit['session_reminder_hours'],0,
@@ -279,9 +279,9 @@ include ("header.php");
 				<INPUT name="edit" type="submit" value="'.$button_name.'">
 			</TD>
 		</TR>';
-
+	
 	if ($session_id) {
-
+	
 		if (isset($lang['copy_as_new_session'])) $copy_button=$lang['copy_as_new_session']; else $copy_button="Copy as new session";
 		echo '
 			<TR>
@@ -290,7 +290,7 @@ include ("header.php");
 				</TD>
 			</TR>';
 	}
-
+	
 	echo '
 	      </table>
 	</FORM>

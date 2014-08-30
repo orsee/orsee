@@ -38,9 +38,9 @@ a, A     { font-family: Arial, Helvetica, sans-serif;
       }
 
 
-.title1     { font-family: Arial, helvetica, sans-serif;
+.title1     { font-family: Arial, helvetica, sans-serif;	
 		font-size: 14pt;
-		text-decoration: none;
+        	text-decoration: none; 
 	  }
 
 

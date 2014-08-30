@@ -14,7 +14,7 @@ include ("header.php");
 			<H4>'.$lang['edit_language'].'</H4>
 		<BR>';
 
-	if (!isset($_REQUEST['el']) || !$_REQUEST['el']) {
+	if (!isset($_REQUEST['el']) || !$_REQUEST['el']) { 
 		
 		// load languages
 		$languages=get_languages();
@@ -43,14 +43,14 @@ include ("header.php");
 
                 	$lquery="select * from ".table('lang')."
                         	 where content_type='lang'
-				 and (content_name LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%'
-				 or ".$lang['lang']." LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%'
-				 or ".$edlang." LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%')
+                        	 and (content_name LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%'
+                        	 or ".$lang['lang']." LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%'
+                        	 or ".$edlang." LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%')
                         	 order by content_name";
                 	}
         	   else {
                 	$search="";
-			if (isset($_REQUEST['letter']) && $_REQUEST['letter']) $letter=$_REQUEST['letter']; else $letter='a';
+                	if (isset($_REQUEST['letter']) && $_REQUEST['letter']) $letter=$_REQUEST['letter']; else $letter='a';
                 	$lquery="select * from ".table('lang')."
                         	 where content_type='lang' and left(content_name,1)='".$letter."'
 				 order by content_name";
@@ -62,7 +62,7 @@ include ("header.php");
 			$newwords=$_REQUEST['symbols'];
 			foreach ($newwords as $symbol => $content) {
 				$query="UPDATE ".table('lang')." 
-					SET ".$edlang."='".mysqli_real_escape_string($GLOBALS['mysqli'],$content)."'
+					SET ".$edlang."='".mysqli_real_escape_string($GLOBALS['mysqli'],$content)."' 
 					WHERE content_name='".$symbol."'
 					AND content_type='lang'";
 				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));

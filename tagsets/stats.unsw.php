@@ -44,7 +44,7 @@ function stats__textstats_format_table($stat,$lines=true) {
 			else $stat['xtitle']='';
 		$i=1;
 		foreach ($stat['legend'] as $legval) {
-			$len[$i]=str_max_len($legval,$len[$i]);
+                       	$len[$i]=str_max_len($legval,$len[$i]);
 			$i++;
                         }
 		}
@@ -74,10 +74,10 @@ function stats__textstats_format_table($stat,$lines=true) {
 				$output.=str_pad("",$col_len[$i],"-");
 				$i=1;
 				foreach ($stat['legend'] as $legval) {
-					$output.="+-";
-					$output.=str_pad("",$col_len[$i],"-");
-					$i++;
-					}
+                                	$output.="+-";
+                                	$output.=str_pad("",$col_len[$i],"-");
+                                	$i++;
+                                	}
 				$output.="+\n";
 				}
 			}
@@ -159,7 +159,7 @@ function stats__htmlstats_format_table($stat,$lines=true,$stype='') {
 	$output.='>';
         if (is_array($stat['legend']) && count($stat['legend'])>0) {
                         $output.='<TR>
-					<TD>'.$stat['xtitle'].'</TD>';
+                        		<TD>'.$stat['xtitle'].'</TD>';
                         foreach ($stat['legend'] as $legval) {
                                 $output.='<TD>'.$legval.'</TD>';
                                 }
@@ -173,7 +173,7 @@ function stats__htmlstats_format_table($stat,$lines=true,$stype='') {
                         }
 		if ($stype=='subpool') {
 			$output.='<TD>';
-			if ($stat['subpool_ids'][$i] != $subpool_id)
+			if ($stat['subpool_ids'][$i] != $subpool_id) 
 				$output.='<A HREF="'.thisdoc().'?subpool_id='.$stat['subpool_ids'][$i].'">'.
 					$lang['restrict_stats_to_this_pool'].'</A>';
 			   else $output.='<A HREF="'.thisdoc().'">'.
@@ -237,7 +237,7 @@ function stats__system_htmlstats_all() {
 function stats__get_graphstats($stype) {
 	global $subpool_id;
 	$output='<TR>
-			<TD align=center>
+        		<TD align=center>
 				<IMG border=0 src="statistics_plot.php?stype='.$stype.'&subpool_id='.$subpool_id.'">
 			</TD>
                 </TR>';
@@ -372,12 +372,12 @@ function stats__array_participant_actions($months_backward=12) {
 	$limit=count($months) * (count($actions)+1);
 	$query="SELECT year, month, action, count(log_id) as nractions
                 FROM ".table('participants_log')."
-                GROUP by year, month, action
-		ORDER BY year DESC, month DESC, action
+                GROUP by year, month, action 
+		ORDER BY year DESC, month DESC, action 
 		LIMIT ".$limit;
 	$result=mysql_query($query) or die("Database error: " . mysql_error());
         while ($line=mysql_fetch_assoc($result))
-		$pre_data[$line['year'].'_'.$line['month'].'_'.$line['action']]=$line['nractions'];
+        	$pre_data[$line['year'].'_'.$line['month'].'_'.$line['action']]=$line['nractions'];
 
 	// fine: now write into array
 	$data=array();
@@ -385,7 +385,7 @@ function stats__array_participant_actions($months_backward=12) {
 	foreach ($months as $month) {
 		$data[$i][]=str_pad($months[$i],2,"0",STR_PAD_LEFT).'/'.$years[$i];
 		foreach ($actions as $action) {
-			if (isset($pre_data[$years[$i].'_'.$months[$i].'_'.$action]))
+             		if (isset($pre_data[$years[$i].'_'.$months[$i].'_'.$action])) 
 				$data[$i][]=$pre_data[$years[$i].'_'.$months[$i].'_'.$action];
 			   else $data[$i][]=0;
 			}
@@ -415,9 +415,9 @@ function stats__array_begin_of_studies() {
         $query="SELECT begin_of_studies, count(participant_id) as nrpart
                 FROM ".table('participants')."
                 WHERE deleted='n' ".
-		$qsubpool."
-		GROUP BY begin_of_studies
-		ORDER BY begin_of_studies DESC";
+		$qsubpool."  
+      		GROUP BY begin_of_studies
+      		ORDER BY begin_of_studies DESC";
         $result=mysql_query($query) or die("Database error: " . mysql_error());
 	$bgs=array();
 	while ($line=mysql_fetch_assoc($result)) {
@@ -483,12 +483,12 @@ function stats__array_field_of_studies() {
         $data[0][]='mmm';
         if ($subpool_id) $qsubpool=" AND subpool_id='".$subpool_id."'";
                 else $qsubpool="";
-        $query="SELECT field_of_studies, count(participant_id) as nrpart,
+        $query="SELECT field_of_studies, count(participant_id) as nrpart, 
 		".$lang['lang']." as study
                 FROM ".table('participants').", ".table('lang')."
                 WHERE deleted='n'
-		AND field_of_studies!='0'
-		AND field_of_studies=content_name
+		AND field_of_studies!='0'   
+		AND field_of_studies=content_name 
 		AND content_type='field_of_studies' ".
                 $qsubpool."
                 GROUP BY field_of_studies
@@ -555,7 +555,7 @@ function stats__array_profession() {
                 ".$lang['lang']." as prof
                 FROM ".table('participants').", ".table('lang')."
                 WHERE deleted='n'
-		AND profession!='0'
+		AND profession!='0' 
                 AND profession=content_name
                 AND content_type='profession' ".
                 $qsubpool."
@@ -589,7 +589,7 @@ function stats__array_country() {
                 ".$lang['lang']." as countryname
                 FROM ".table('participants').", ".table('lang')."
                 WHERE deleted='n'
-                AND country!='0'
+                AND country!='0' 
                 AND country=content_name
                 AND content_type='country' ".
                 $qsubpool."
@@ -623,7 +623,7 @@ function stats__array_firstlanguage() {
                 ".$lang['lang']." as flang
                 FROM ".table('participants').", ".table('lang')."
                 WHERE deleted='n'
-                AND firstlanguage!='0'
+                AND firstlanguage!='0' 
                 AND firstlanguage=content_name
                 AND content_type='firstlanguage' ".
                 $qsubpool."
@@ -740,9 +740,9 @@ function stats__array_noshows_by_month($months_backward=18) {
         $years=array(); $months=array();
         $i=0;
         $query="SELECT DISTINCT session_start_month, session_start_year
-		FROM ".table('sessions')."
-		WHERE session_finished='y'
-		ORDER by session_start_year DESC, session_start_month DESC
+      		FROM ".table('sessions')."
+      		WHERE session_finished='y' 
+      		ORDER by session_start_year DESC, session_start_month DESC
 		LIMIT ".$months_backward;
         $result=mysql_query($query) or die("Database error: " . mysql_error());
         while ($line=mysql_fetch_assoc($result)) {
@@ -766,15 +766,15 @@ function stats__array_noshows_by_month($months_backward=18) {
         $limit=$months_backward * 2;
         $query="SELECT session_start_year, session_start_month, shownup,
 		count(".table('participate_at').".participate_id) as number
-		FROM ".table('participants').", ".table('participate_at').", ".table('sessions')."
-		WHERE registered='y'
-		AND ".table('participate_at').".session_id=".table('sessions').".session_id
-		AND session_finished='y'
-		AND ".table('participate_at').".participant_id=".
+      		FROM ".table('participants').", ".table('participate_at').", ".table('sessions')."
+      		WHERE registered='y'
+        	AND ".table('participate_at').".session_id=".table('sessions').".session_id
+        	AND session_finished='y'  
+        	AND ".table('participate_at').".participant_id=".
 				table('participants').".participant_id ".
 		$qsubpool."
-		GROUP BY session_start_year, session_start_month, shownup
-		ORDER BY session_start_year DESC, session_start_month DESC, shownup
+        	GROUP BY session_start_year, session_start_month, shownup 
+        	ORDER BY session_start_year DESC, session_start_month DESC, shownup 
 		LIMIT ".$limit;
         $result=mysql_query($query) or die("Database error: " . mysql_error());
         while ($line=mysql_fetch_assoc($result))
@@ -819,15 +819,15 @@ function stats__array_activity_by_month() {
 
         // the data
         $query="SELECT FROM_UNIXTIME(last_activity,'%Y/%m') as month, count(*) as num
-		FROM ".table('participants')."
-		WHERE deleted='n'
+		FROM ".table('participants')." 
+		WHERE deleted='n' 
 		".$qsubpool."
 		GROUP BY month
 		ORDER BY month DESC";
         $result=mysql_query($query) or die("Database error: " . mysql_error());
 	$data=array(); $i=0; $sum=0;
         while ($line=mysql_fetch_assoc($result)) {
-		$data[$i][]=$line['month'];
+        	$data[$i][]=$line['month'];
 		$sum=$sum+$line['num'];
                 $data[$i][]=$sum;
                 $i++;
@@ -859,7 +859,7 @@ function stats__array_experiment_participations($months_backward=12) {
                 FROM ".table('participants').", ".table('participate_at').", ".table('sessions')."
                 WHERE participated='y'
                 AND ".table('participate_at').".session_id=".table('sessions').".session_id
-                AND session_finished='y'
+                AND session_finished='y'  
                 AND ".table('participate_at').".participant_id=".
                                 table('participants').".participant_id ".
                 $qsubpool."
@@ -895,12 +895,12 @@ function stats__array_nr_participations() {
         // the data
         //first get the stuff from the database
         $pre_data=array();
-        $query="SELECT ".table('participate_at').".participant_id,
+        $query="SELECT ".table('participate_at').".participant_id, 
                 count(".table('participate_at').".participate_id) as number
                 FROM ".table('participants').", ".table('participate_at').", ".table('sessions')."
                 WHERE participated='y'
                 AND ".table('participate_at').".session_id=".table('sessions').".session_id
-                AND session_finished='y'
+                AND session_finished='y' 
                 AND ".table('participate_at').".participant_id=".
                                 table('participants').".participant_id ".
                 $qsubpool."
@@ -921,7 +921,7 @@ function stats__array_nr_participations() {
 		$i++;
 		}
 
-
+	
         $stat['data']=$data;
         return $stat;
 }

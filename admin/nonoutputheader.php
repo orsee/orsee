@@ -6,7 +6,7 @@ include ("../config/requires.php");
 include ("../config/participant_form.php");
 
 	$document=thisdoc();
-	if ($settings__stop_admin_site=="y" && $document!="error_temporaly_disabled.php")
+	if ($settings__stop_admin_site=="y" && $document!="error_temporaly_disabled.php") 
 		redirect("errors/error_temporaly_disabled.php");
 
 	site__database_config();
@@ -23,7 +23,7 @@ include ("../config/participant_form.php");
 
 
 	// Check for login
-	if ((!(isset($expadmindata['adminname']) && $expadmindata['adminname'])) && $document!="admin_login.php")
+	if ((!(isset($expadmindata['adminname']) && $expadmindata['adminname'])) && $document!="admin_login.php") 
 		redirect ("admin/admin_login.php");
 
 	if (isset($_REQUEST['new_language'])) {
@@ -31,7 +31,7 @@ include ("../config/participant_form.php");
 		$_SESSION['expadmindata']=$expadmindata;
 		}
 
-	if (!isset($expadmindata['language']))
+	if (!isset($expadmindata['language'])) 
 		$expadmindata['language']=$settings['admin_standard_language'];
 
 	$authdata['language']=$expadmindata['language'];

@@ -74,7 +74,7 @@ include ("header.php");
 
 		if ((isset($_REQUEST['new_query']) && $_REQUEST['new_query']) || (!isset($_REQUEST['assign_select_query']) || !$_SESSION['assign_select_query'])) {
 			unset($_REQUEST['new_query']);
-		$where_clause=query__where_clause($query_modules,
+	       	$where_clause=query__where_clause($query_modules,
 							  $_REQUEST['use'],
 							  $_REQUEST['con'],$experiment_id);
 

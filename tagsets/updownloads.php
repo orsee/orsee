@@ -41,9 +41,9 @@ function downloads__list_files($experiment_id='',$showsize=false,$showtype=false
 			echo '<TR'.$bgcolor.'><TD>&nbsp;&nbsp;</TD><TD>';
 			if ($allow_dl) 
 //				echo '<A HREF="download_file.php?t=d&i='.$upload['upload_id'].'" target="_blank">';
-				echo '<A HREF="download_file.php'.
-						'/'.rawurlencode($upload['upload_name'].'.'.$upload['upload_suffix']).
-						'?t=d&i='.$upload['upload_id'].'">';
+ 				echo '<A HREF="download_file.php'.
+ 						'/'.rawurlencode($upload['upload_name'].'.'.$upload['upload_suffix']).
+ 						'?t=d&i='.$upload['upload_id'].'">';
 
 			echo $upload['upload_name'];
 			if ($allow_dl) echo '</A>';

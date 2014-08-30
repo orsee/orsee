@@ -8,9 +8,9 @@ echo '
 echo $lang['for_questions_contact_xxx']; 
 echo ' ';
 if ($settings['support_mail']) {
-	helpers__scramblemail($settings['support_mail']);
-	echo $settings['support_mail'];
-	echo '</A>';
+ 	helpers__scramblemail($settings['support_mail']);
+ 	echo $settings['support_mail'];
+ 	echo '</A>';
 }
 echo '.<BR><BR><BR>
 	</CENTER>';

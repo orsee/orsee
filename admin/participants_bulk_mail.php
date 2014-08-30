@@ -45,7 +45,7 @@ include ("header.php");
 					lang='".$inv_lang."',
 					bulk_subject='".mysqli_real_escape_string($GLOBALS['mysqli'],$bulk[$inv_lang.'_subject'])."',
 					bulk_text='".mysqli_real_escape_string($GLOBALS['mysqli'],$bulk[$inv_lang.'_body'])."'";
-				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 				}
 
 			$done=experimentmail__send_bulk_mail_to_queue($bulk_id,$plist_ids);

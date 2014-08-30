@@ -27,7 +27,7 @@ include ("../config/participant_form.php");
 	if (isset($_SESSION['expadmindata'])) $expadmindata=$_SESSION['expadmindata']; else $expadmindata=array();
 
 	// Check for login
-	if ((!(isset($expadmindata['adminname']) && $expadmindata['adminname'])) && $document!="admin_login.php")
+	if ((!(isset($expadmindata['adminname']) && $expadmindata['adminname'])) && $document!="admin_login.php") 
 		redirect ("admin/admin_login.php"); 
 
 
@@ -51,7 +51,7 @@ include ("../config/participant_form.php");
 	include ("../style/".$settings['style']."/html_header.php");
 
 	echo "<center>";
-
+	
 		show_message();
 
 	echo "</center>";

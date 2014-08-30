@@ -5,9 +5,9 @@ function subpools__select_field($postvarname,$var,$showvar,$selected,$hidden='')
 
 	$out='<SELECT name="'.$postvarname.'">';
     $query="SELECT *
-		FROM ".table('subpools')." as tsub, ".table('lang')." as tlang
-			WHERE tsub.subpool_id=tlang.content_name
-			AND tlang.content_type='subjectpool'
+    		FROM ".table('subpools')." as tsub, ".table('lang')." as tlang
+			WHERE tsub.subpool_id=tlang.content_name 
+			AND tlang.content_type='subjectpool' 
       		ORDER BY subpool_id";
 
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
@@ -28,8 +28,8 @@ function subpools__get_subpools() {
 
 	$sarr=array();
     $query="SELECT *
-		FROM ".table('subpools')."
-		ORDER BY subpool_id";
+    		FROM ".table('subpools')."  
+      		ORDER BY subpool_id";
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	while ($line = mysqli_fetch_assoc($result)) {
 		$sarr[]=$line['subpool_id'];
