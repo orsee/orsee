@@ -236,7 +236,7 @@ include("header.php");
 	// list output
 
 
-	$columns=participant__load_result_table_fields($type='session');
+	$columns=participant__load_result_table_fields('session');
 
 	if ($session_id) $session=orsee_db_load_array("sessions",$session_id,"session_id");
 

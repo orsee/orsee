@@ -16,7 +16,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 	if ($session_id) $session=orsee_db_load_array("sessions",$session_id,"session_id");
 		else $session=array();
 
-	$columns=participant__load_result_table_fields($type='sessionpdf');
+	$columns=participant__load_result_table_fields('sessionpdf');
 
 	if ($session_id) $session=orsee_db_load_array("sessions",$session_id,"session_id");
 
@@ -32,7 +32,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
                 	session_start_hour, session_start_minute";
             if ($csorts_string) $order.=",".$csorts_string;
     }
-
+  
 		$focuses=array('assigned','invited','registered','shownup','participated');
 		foreach($focuses as $f) { $$f=false; }
         if (!$focus) $focus="assigned";
@@ -81,8 +81,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 	$table_title=$experiment['experiment_public_name'];
 	if ($session_id) $table_title.=', '.$lang['session'].' '.session__build_name($session);
 	$table_title.=' - '.$title;
-
-
+	
 	// determine table headings
 	$table_headings=array();
 	$table_headings[]="";

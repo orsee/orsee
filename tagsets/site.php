@@ -76,9 +76,19 @@ global $site__database_host;
 global $site__database_admin_username;
 global $site__database_admin_password;
 global $site__database_database;
+global $site__database_port;
 
-$GLOBALS['mysqli'] = mysqli_connect($site__database_host,$site__database_admin_username,$site__database_admin_password,$site__database_database)
-       or die("Database connection failed.");
+	if (isset($site__database_port) && $site__database_port) {
+		$GLOBALS['mysqli'] = mysqli_connect($site__database_host,$site__database_admin_username,$site__database_admin_password,$site__database_database,$site__database_port) 
+			or die("Database connection failed.");
+    } elseif (preg_match("/^([^:]+):([0-9]+)$/",trim($site__database_host),$matches)) {
+    	$host=$matches[1]; $port=$matches[2];
+    	$GLOBALS['mysqli'] = mysqli_connect($host,$site__database_admin_username,$site__database_admin_password,$site__database_database,$port) 
+			or die("Database connection failed.");
+    } else {
+    	$GLOBALS['mysqli'] = mysqli_connect($site__database_host,$site__database_admin_username,$site__database_admin_password,$site__database_database) 
+			or die("Database connection failed.");
+    }
 }
 
 function clearpixel() {

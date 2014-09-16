@@ -1,4 +1,9 @@
 
+ORSEE 2.2.2:
+		Fixed documentation on #is_subjectpool_X#.
+		Fixed issue with regular tasks not working.
+		Added option to specify MySQL port if needed.
+
 ORSEE 2.2.1:
 		Fixed bug which had PDF session participant list ordered randomnly.
 
