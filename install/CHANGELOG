@@ -1,4 +1,8 @@
-
+ORSEE 2.2.3:
+		Fixed bug which resulted in session reminders not sent automatically
+		Fixed spurious output in cronjob PDF generation
+		Fixed bug in loading of experiment class names in tagsets/experiments.php
+		
 ORSEE 2.2.2:
 		Fixed documentation on #is_subjectpool_X#.
 		Fixed issue with regular tasks not working.

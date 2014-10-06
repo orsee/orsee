@@ -327,6 +327,7 @@ function cron__check_for_session_reminders() {
 			$done=false;
 			$disclaimer="";
 			switch ($line['send_reminder_on']) {
+				case '0':
 				case 'enough_participants_needed_plus_reserve':
 					if ($line['num_reg'] >= $line['part_needed'] + $line['part_reserve']) {
 						$number=experimentmail__send_session_reminders_to_queue($line);
@@ -336,6 +337,7 @@ function cron__check_for_session_reminders() {
 						$done=experimentmail__send_reminder_notice($line,$number,false,'part_reserve');
 						}
 					break;
+							case '1':
                         	case 'enough_participants_needed':
 					if ($line['num_reg'] >= $line['part_needed']) {
                                                 $number=experimentmail__send_session_reminders_to_queue($line);
@@ -346,6 +348,7 @@ function cron__check_for_session_reminders() {
                                                 $done=experimentmail__send_reminder_notice($line,$number,false,'part_needed');
 						}
 					break;
+							case '2':
                         	case 'in_any_case_dont_ask':
                                         $number=experimentmail__send_session_reminders_to_queue($line);
                                         $done=experimentmail__send_reminder_notice($line,$number,true);

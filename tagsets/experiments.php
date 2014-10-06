@@ -424,7 +424,7 @@ function experiment__get_experiment_class_names($id=-1) {
 	if ($id==0) {
 		return "-";	
 	
-	} elseif ($id) {
+	} elseif ($id>0) {
 		$query="SELECT *
                         FROM ".table('lang')."
                         WHERE content_type='experimentclass'

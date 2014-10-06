@@ -6,7 +6,7 @@ To create a new form field, do the following three steps:
 
 1. Add a new entry below. An entry starts with "$participantform[]=array(" and ends with ");" and has a number of options in between separated by commas, with each option in the format 'optionname'=>'optionvalue'. PHP will throw an error if there is a syntax error in this definition format. Order of entries does not matter for the participant form, but matters for the order of fields in the search form and in search results tables.
 
-2. Add your field as a column of the same name in the or_participants table of your mysql database. (Note: If you already have that field in your database and you are now upgrading, you can skip this step.) No matter whether the field contains numbers or text, I recommend to use a varchar column of sufficient size but no more than 250 characters (except when you need to create a column for a textarea field which is bigger). I.e.
+2. Add your field as a column of the same name in the or_participants table and the or_participanrts_temp table of your mysql database. (Note: If you already have that field in your database and you are now upgrading, you can skip this step.) No matter whether the field contains numbers or text, I recommend to use a varchar column of sufficient size but no more than 250 characters (except when you need to create a column for a textarea field which is bigger). I.e.
 
 mysql> ALTER TABLE or_participants ADD COLUMN mysql_column_name varchar(200) collate utf8_unicode_ci default NULL;
 
@@ -21,6 +21,8 @@ I also recommend to add an index for your new column, this will reduce query tim
 mysql> ALTER TABLE or_participants ADD INDEX mysql_column_name_index (mysql_column_name);
 
 3. Edit the participant form template in ftpl/participant_form.tpl. This template is very flexible and allows you do design your particiant form as you wish. (If you added a participant form field that is only available to experimenters/admins (option 'admin_only'=>'y'), then you will need to edit ftpl/participant_form_admin_addons.tpl instead.) ftpl/template_instructions.txt contains a short documentation of the template format.
+
+Note that you will have to apply exactly the same changes to the table or_participants_temp, both should look identical.
 
 --
 ORSEE allows for a range of form fields types which are described below. There are a number of options which are shared among the types, and some that are specific. If an option is not stated the field definition, then the default is assumed. Only the options 'mysql_column_name','name_lang',' and type' are compulsory and no default exists for them.

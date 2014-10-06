@@ -20,8 +20,6 @@ function pdfoutput__make_part_list($experiment_id,$session_id,$focus,$sort="",$f
 
 	if ($session_id) $session=orsee_db_load_array("sessions",$session_id,"session_id");
 
-	script__part_reg_show();
-
 	$csorts=array(); 
 	foreach($columns as $c) if (count($csorts)<2 && $c['allow_sort']) $csorts[]=$c['sort_order'];
 	$csorts_string=implode(",",$csorts);
@@ -324,7 +322,7 @@ function pdfoutput__calendar_get_month_table($time=0,$admin=false) {
 	   		$table_data[]=$las2;
 	   		$las1=array(); $las2=array(); $wday=1;
            		}
-        	$las1[$wday]=helpers__pad_number($i,2);
+        	$las1[$wday]=helpers__pad_number($i,2); $las2[$wday]="";
 		$nonempty=false;
 
         	foreach ($days[$i] as $entry) {
@@ -352,7 +350,7 @@ function pdfoutput__calendar_get_month_table($time=0,$admin=false) {
         		$cs__reg=experiment__count_participate_at($entry['experiment_id'],$entry['session_id']);
 
         		if ($cs__reg<$entry['part_needed']) $cs__status="not_enough_participants";
-        		  elseif ($cs__reg<$entry['part_needed']+$entry['part_reserve']) $cs__status=="not_enough_reserve";
+        		  elseif ($cs__reg<$entry['part_needed']+$entry['part_reserve']) $cs__status="not_enough_reserve";
         		  else $cs__status="complete";
 
 

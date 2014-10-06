@@ -214,9 +214,9 @@ include ("header.php");
 				'.$lang['send_reminder_on'].'
 			</TD>
 			<TD>';
-				$oparray=array('enough_participants_needed_plus_reserve',
-						'enough_participants_needed',
-						'in_any_case_dont_ask');
+				$oparray=array('enough_participants_needed_plus_reserve'=>'enough_participants_needed_plus_reserve',
+						'enough_participants_needed'=>'enough_participants_needed',
+						'in_any_case_dont_ask'=>'in_any_case_dont_ask');
 				helpers__select_text($oparray,"send_reminder_on",$edit['send_reminder_on']);
 				echo '
 			</TD>

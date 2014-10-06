@@ -673,9 +673,9 @@ include ("header.php");
                                         Experiment Session: default for "send session reminder on"-condition?
                                 </TD>
                                 <TD>';
-					$oparray=array('enough_participants_needed_plus_reserve',
-                                                	'enough_participants_needed',
-                                                	'in_any_case_dont_ask');
+				$oparray=array('enough_participants_needed_plus_reserve'=>'enough_participants_needed_plus_reserve',
+						'enough_participants_needed'=>'enough_participants_needed',
+						'in_any_case_dont_ask'=>'in_any_case_dont_ask');
                                 	helpers__select_text($oparray,"options[session_reminder_send_on_default]",
 							$options['session_reminder_send_on_default']);
 					echo '
