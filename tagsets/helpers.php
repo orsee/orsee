@@ -22,7 +22,8 @@ function multi_array_sort(&$data, $sortby) {
 
    	if (empty($sort_funcs[$sortby])) {
        		$code = "\$c=0;";
-       		foreach (split(',', $sortby) as $key) {
+       		$sortby_arr=explode(',', $sortby);
+       		foreach ($sortby_arr as $key) {
            		$code .= "if ( (\$c = strcasecmp(\$a['$key'],\$b['$key'])) != 0 ) return \$c;\n";
        			}
        		$code .= 'return $c;';

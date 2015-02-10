@@ -1,4 +1,16 @@
-This are upgrade instructions for ORSEE 2.2.0 from the last version ORSEE 2.0.2.
+UPGRADE TO ORSEE 2.2.4 FROM ORSEE 2.2.0 AND LATER
+
+To update to ORSEE 2.2.4, just copy the folders tagsets, admin, and public over your old ones, as well as the file config/system.php.
+
+% cp -r orsee-2.2.4/tagsets yourexistingorsee/
+% cp -r orsee-2.2.4/admin yourexistingorsee/
+% cp -r orsee-2.2.4/public yourexistingorsee/
+% cp orsee-2.2.4/config/system.php yourexistingorsee/config/system.php
+
+
+UPGRADE TO ORSEE 2.2.4 FROM ORSEE 2.0.2 AND EARLIER
+
+Below are upgrade instructions for ORSEE 2.2.0 from the last version ORSEE 2.0.2.
 
 ORSEE 2.2.0 is essentially a re-release of ORSEE 2.0.2. 
 

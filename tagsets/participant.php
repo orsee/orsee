@@ -454,30 +454,52 @@ function participantform__load() {
 	return $pform;
 }
 
+function template_replace_callbackA(array $m) {
+	global $tempout;
+	if ($m[1]=='!') {
+        if ((!(isset($tempout[$m[2]])) || (!$tempout[$m[2]]))) return $m[3];
+        else return '';
+    } else {
+        if (isset($tempout[$m[2]]) && $tempout[$m[2]]) return $m[3];
+        else return '';
+    }
+}
+
+function template_replace_callbackB(array $m) {
+	global $lang;
+	return $lang[$m[1]];
+}
+
 
 // processing the template
 function load_form_template($tpl_name,$out) {
 	global $lang, $settings__root_to_server, 
 		$settings__root_directory, $settings;
+		global $tempout;
+		$tempout = $out;
 
 	// get the template
         $tpl=file_get_contents($settings__root_to_server.
                                 $settings__root_directory.
                                 '/ftpl/'.$tpl_name.'.tpl');
 	// process conditionals
-	$pattern="/\{[^#\}]*#(!?)([^#!\}]+)#([^\}]+)\}/ie";
+	$pattern="/\{[^#\}]*#(!?)([^#!\}]+)#([^\}]+)\}/i";
     $replacement = "($1\$out['$2'])?\"$3\":''";
-    $tpl=preg_replace($pattern, $replacement, $tpl);
+    $tpl=preg_replace_callback($pattern, 
+    	'template_replace_callbackA', 
+    	$tpl);
+
 
 	// fill in the vars
 	foreach ($out as $k=>$o) $tpl=str_replace("#".$k."#",$o,$tpl);
 
 	// fill in language terms
-        $pattern="/lang\[([^\]]+)\]/ie";
+        $pattern="/lang\[([^\]]+)\]/i";
         $replacement = "\$lang['$1']";
-        //$replacement = "(isset(\$lang['$1']))?\"\$lang['$1']\":\"$1\"";  
-        $tpl=preg_replace($pattern, $replacement, $tpl);
-                                        
+        $tpl=preg_replace_callback($pattern, 
+    	'template_replace_callbackB', 
+    	$tpl);
+                                       
 	return $tpl;
 }
 

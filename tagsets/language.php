@@ -2,7 +2,7 @@
 // part of orsee. see orsee.org
 
 function load_language($language) {
-	$query="SELECT content_name, ".$language." as content_value FROM ".table('lang')." WHERE content_type='lang'";
+	$query="SELECT content_name, ".mysqli_real_escape_string($GLOBALS['mysqli'],$language)." as content_value FROM ".table('lang')." WHERE content_type='lang'";
 	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 	while ($line = mysqli_fetch_assoc($result)) {
         	$lang[$line['content_name']]=stripslashes($line['content_value']);

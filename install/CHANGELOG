@@ -1,3 +1,6 @@
+ORSEE 2.2.4:
+		Fixed deprecated function split (tagsets/helpers.php, line 25)
+
 ORSEE 2.2.3:
 		Fixed bug which resulted in session reminders not sent automatically
 		Fixed spurious output in cronjob PDF generation

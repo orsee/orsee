@@ -458,9 +458,13 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
 	// invitations
 	foreach ($invitations as $mail) {
 		$tlang=$parts[$mail['mail_recipient']]['language'];
-		$done=experimentmail__send_invitation_mail($mail,$parts[$mail['mail_recipient']],
-						$exps[$mail['experiment_id']],$inv_texts[$mail['experiment_id']][$tlang],
-						$slists[$mail['experiment_id']][$tlang],$footers[$tlang]);
+    	if ($exps[$mail['experiment_id']]['experiment_type']=='laboratory' && (!trim($slists[$mail['experiment_id']][$tlang]))) {
+    		$done=true;
+		} else {
+    		$done=experimentmail__send_invitation_mail($mail,$parts[$mail['mail_recipient']],
+        		$exps[$mail['experiment_id']],$inv_texts[$mail['experiment_id']][$tlang],
+        		$slists[$mail['experiment_id']][$tlang],$footers[$tlang]);
+		}
 		if ($done) {
 			$mails_sent++;
 			$deleted=experimentmail__delete_from_queue($mail['mail_id']);

@@ -1,7 +1,7 @@
 <?php
 // part of orsee. see orsee.org
 
-$system__version="2.2.3";
+$system__version="2.2.4";
 
 
 // implemented experiment types
