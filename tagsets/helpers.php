@@ -244,14 +244,14 @@ function url_cr_decode($value,$temp=false) {
 	$decoded=""; 
 	if ($temp) {
 		$query="SELECT participant_id FROM ".table('participants_temp')." 
-                	WHERE participant_id_crypt='".$value."'";
+			WHERE participant_id_crypt='".mysql_real_escape_string($value)."'";
 		$decarray=orsee_query($query);
 		$decoded=$decarray['participant_id'];
 	}
 
 	if (!$decoded) {
 		$query="SELECT participant_id FROM ".table('participants')." 
-                 	WHERE participant_id_crypt='".$value."'";
+			WHERE participant_id_crypt='".mysql_real_escape_string($value)."'";
 		$decarray=orsee_query($query);
 		$decoded=$decarray['participant_id'];
 		}
@@ -261,7 +261,7 @@ function url_cr_decode($value,$temp=false) {
 // Url-Decodec session id
 function url_cr_decode_session($value) {
 	$query="SELECT session_id FROM ".table('sessions')."
-                WHERE session_id_crypt='".$value."'";
+                WHERE session_id_crypt='".mysql_real_escape_string($value)."'";
 	$decarray=orsee_query($query);
         $decoded=$decarray['session_id'];
 	return $decoded;

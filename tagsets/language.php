@@ -2,7 +2,7 @@
 // language functions. part of orsee. see orsee.org
 
 function load_language($language) {
-	$query="SELECT content_name, ".$language." as content_value FROM ".table('lang')." WHERE content_type='lang'";
+	$query="SELECT content_name, ".mysql_real_escape_string($language)." as content_value FROM ".table('lang')." WHERE content_type='lang'";
 	$result=mysql_query($query);
 	while ($line = mysql_fetch_assoc($result)) {
         	$lang[$line['content_name']]=htmlentities(stripslashes($line['content_value']));

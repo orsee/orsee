@@ -10,7 +10,7 @@ function log__participant($action,$participant_id,$target="") {
 		month='".$darr['mon']."', 
 		day='".$darr['mday']."', 
 		action='".$action."',
-		target='".$target."',
+		target='".mysql_real_escape_string($target)."',
 		timestamp='".$darr[0]."'";
 	$done=mysql_query($query);
 }
@@ -24,7 +24,7 @@ function log__admin($action="unknown",$target="") {
                 month='".$darr['mon']."',
                 day='".$darr['mday']."',
                 action='".$action."',
-		target='".$target."',
+                target='".mysql_real_escape_string($target)."',
                 timestamp='".$darr[0]."'";
         $done=mysql_query($query);
 }
@@ -39,7 +39,7 @@ function log__cron_job($action="unknown",$target="",$now="",$id="") {
                 month='".$darr['mon']."',
                 day='".$darr['mday']."',
                 action='".$action."',
-                target='".mysql_escape_string($target)."',
+                target='".mysql_real_escape_string($target)."',
                 timestamp='".$now."'";
         $done=mysql_query($query);
 	return $done;

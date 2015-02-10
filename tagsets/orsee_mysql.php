@@ -30,7 +30,7 @@ function orsee_query($query,$funcname="") {
 }
 
 function orsee_db_load_array($table,$key,$keyname) {
-        $query="SELECT * FROM ".table($table)." where ".$keyname."='".$key."'";
+        $query="SELECT * FROM ".table($table)." where ".$keyname."='".mysql_real_escape_string($key)."'";
         $line=orsee_query($query);
         return $line;
 }
@@ -54,21 +54,21 @@ function orsee_db_save_array($array,$table,$key,$keyname) {
 	$first=true; $set_phrase="";
 	foreach ($fields_to_save as $field) {
 		if ($first) $first=false; else $set_phrase=$set_phrase.", ";
-		$set_phrase=$set_phrase.$field."='".mysql_escape_string($array[$field])."'";
+		$set_phrase=$set_phrase.$field."='".mysql_real_escape_string($array[$field])."'";
 		}
 
 	// check if already saved
-	$query="SELECT ".$keyname." FROM ".table($table)." WHERE ".$keyname."='".$key."'";
+	$query="SELECT ".$keyname." FROM ".table($table)." WHERE ".$keyname."='".mysql_real_escape_string($key)."'";
 	$result=mysql_query($query)
         	or die("Database error: " . mysql_error());
 	$num_rows = mysql_num_rows($result);
 
 	if ($num_rows>0) {
 		// update query
-        	$query="UPDATE ".table($table)." SET ".$set_phrase." WHERE ".$keyname."='".$key."'";
+		$query="UPDATE ".table($table)." SET ".$set_phrase." WHERE ".$keyname."='".mysql_real_escape_string($key)."'";
          } else {
 		// insert query
-        	$query="INSERT INTO ".table($table)." SET ".$keyname."='".$key."', ".$set_phrase;
+		$query="INSERT INTO ".table($table)." SET ".$keyname."='".mysql_real_escape_string($key)."', ".$set_phrase;
         }
 	$result=mysql_query($query)
 		or die("Database error: " . mysql_error());

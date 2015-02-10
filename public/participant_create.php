@@ -108,13 +108,13 @@ $form=true;
 	if ($_REQUEST['email'] && $continue) {
 
                 $query="SELECT participant_id FROM ".table('participants')." 
-                 	WHERE email='".$_REQUEST['email']."'";
+			WHERE email='".mysql_real_escape_string($_REQUEST['email'])."'";
 		$result=orsee_query($query);
 		$gibtsschon_part=$result['participant_id'];
 
                 if (!$gibtsschon_part) {
                 	$query="SELECT participant_id FROM ".table('participants_temp')." 
-                        WHERE email='".$_REQUEST['email']."'";
+						WHERE email='".mysql_real_escape_string($_REQUEST['email'])."'";
                 	$result=orsee_query($query);
                 	$gibtsschon_temp=$result['participant_id'];
                 }
