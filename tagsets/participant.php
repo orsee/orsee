@@ -479,9 +479,10 @@ function load_form_template($tpl_name,$out) {
 		$tempout = $out;
 
 	// get the template
-        $tpl=file_get_contents($settings__root_to_server.
-                                $settings__root_directory.
-                                '/ftpl/'.$tpl_name.'.tpl');
+    //    $tpl=file_get_contents($settings__root_to_server.
+    //                            $settings__root_directory.
+    //                            '/ftpl/'.$tpl_name.'.tpl');
+     $tpl=file_get_contents('../ftpl/'.$tpl_name.'.tpl');
 	// process conditionals
 	$pattern="/\{[^#\}]*#(!?)([^#!\}]+)#([^\}]+)\}/i";
     $replacement = "($1\$out['$2'])?\"$3\":''";

@@ -4,7 +4,7 @@ ob_start();
 $menu__area="public_register";
 include ("header.php");
 
-if (isset($_REQUEST['no'])) redirect("public/");
+//if (isset($_REQUEST['no'])) redirect("public/");
 echo '<BR><BR>';
 
 if (!(isset($_REQUEST['s'])) && !(isset($_REQUEST['r']))) {
@@ -21,7 +21,7 @@ $all_pool_ids[]=$alist['subpool_id'];
 
 $all_pool_ids=NULL;
 $query="SELECT * FROM ".table('subpools')." WHERE subpool_id > 1 AND show_at_registration_page='y'
- 	ORDER BY subpool_id";
+ 		ORDER BY subpool_id";
 orsee_query($query,"subpool__save_all_pool_ids");
 
 if (count($all_pool_ids)==1) redirect ("public/".thisdoc()."?s=".$all_pool_ids[0]);
@@ -89,6 +89,7 @@ $form=true; $errors__dataform=array();
 
 		if (!$_REQUEST['subpool_id']) $_REQUEST['subpool_id']=$settings['subpool_default_registration_id'];
         $subpool=orsee_db_load_array("subpools",$_REQUEST['subpool_id'],"subpool_id");
+        $_REQUEST['subpool_id'] = $subpool['subpool_id']; 
         if (!$subpool['subpool_id']) {
 			$subpool=orsee_db_load_array("subpools",$settings['subpool_default_registration_id'],"subpool_id");
 			$_REQUEST['subpool_id'] = $subpool['subpool_id'];
@@ -107,6 +108,7 @@ $form=true; $errors__dataform=array();
 		$response=participantform__check_unique($_REQUEST,"create");
 		if ($response['disable_form']) { $continue=false; $form=false; show_message(); }
 		elseif($response['problem']) { $continue=false; }
+
 		
 	if ($continue) {
         $participant=$_REQUEST;

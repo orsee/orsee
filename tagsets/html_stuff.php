@@ -214,7 +214,8 @@ function tab_menu($menu_items,$orientation="vertical",$current_user_data_box="",
 function get_style_array() {
 	global $settings__root_directory, $settings__root_to_server;
 
-	$path=$settings__root_to_server.$settings__root_directory."/style";
+	//$path=$settings__root_to_server.$settings__root_directory."/style";
+	$path="../style";
 
    	$dir_arr = array () ;
    	$handle=opendir($path);

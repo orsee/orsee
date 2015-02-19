@@ -328,4 +328,20 @@ function helpers__scramblemail($address) {
  	echo $result; 
 } 
 
+function strip_tags_array($array,$exempt=array()) {
+	foreach($array as $k=>$v) {
+		if (!in_array($k,$exempt)) {
+	   		if (is_array($v)) $array[$k]=strip_tags_array($v);
+    		else {
+    			$v=strip_tags($v);
+    			$v=str_replace(array('&','<','>','"',"'",'/'),
+    						array('&amp;','&lt;','&gt;','&quot;','&#x27;',' &#x2F;'),
+    						$v);
+    			$array[$k]=$v;
+    		}
+    	}
+	}
+    return $array;
+}
+
 ?>

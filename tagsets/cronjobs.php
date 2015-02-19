@@ -190,6 +190,7 @@ function cron__run_webalizer() {
 	// set webalizer vars
 	$web['log_file']=$settings['http_log_file_location'];
 	$web['output_dir']=$settings__root_to_server.$settings__root_directory."/usage";
+	//$web['output_dir']="../usage";
 	$web['report_title']=$lang['usage_statistics_for'];
 	$web['host_name']=$settings__server_url;
 	$web['public_area_url']=$settings__root_directory."/public/";

@@ -1,33 +1,33 @@
-UPGRADE TO ORSEE 2.2.4 FROM ORSEE 2.2.0 AND LATER
+UPGRADE TO ORSEE 2.2.x FROM ORSEE 2.2.0 AND LATER
 
-To update to ORSEE 2.2.4, just copy the folders tagsets, admin, and public over your old ones, as well as the file config/system.php.
+To update to ORSEE 2.2.x, just copy the folders tagsets, admin, and public over your old ones, as well as the file config/system.php.
 
-% cp -r orsee-2.2.4/tagsets yourexistingorsee/
-% cp -r orsee-2.2.4/admin yourexistingorsee/
-% cp -r orsee-2.2.4/public yourexistingorsee/
-% cp orsee-2.2.4/config/system.php yourexistingorsee/config/system.php
+% cp -r orsee-2.2.x/tagsets yourexistingorsee/
+% cp -r orsee-2.2.x/admin yourexistingorsee/
+% cp -r orsee-2.2.x/public yourexistingorsee/
+% cp orsee-2.2.x/config/system.php yourexistingorsee/config/system.php
 
 
-UPGRADE TO ORSEE 2.2.4 FROM ORSEE 2.0.2 AND EARLIER
+UPGRADE TO ORSEE 2.2.x FROM ORSEE 2.0.2 AND EARLIER
 
-Below are upgrade instructions for ORSEE 2.2.0 from the last version ORSEE 2.0.2.
+Below are upgrade instructions for ORSEE 2.2.x from the last version ORSEE 2.0.2.
 
-ORSEE 2.2.0 is essentially a re-release of ORSEE 2.0.2. 
+ORSEE 2.2 is essentially a re-release of ORSEE 2.0.2. 
 
 It fixes a series of bugs, brings ORSEE fully up to PHP5 and MySQL5 standards and adds  unicode/UTF-8 support, but it does not contain new features and keeps the same database structure, with one important exception: it now provides a very convenient way to add new fields in the participant form which are then automatically picked up in query forms (search, experiment assignments), query result tables, statistics, emails, etc.
 
 This makes it easy to upgrade if you have not made any functional changes to your ORSEE 2.0.2 installation (see A below) or when you only added fields in the participant form (see B below). Things are a little more complicated when you made further changes (see C below). 
 
-Please note that ORSEE 2.2.0 requires MySQL >=5 and PHP >=5 with php5-gd, php5-mysql, php5-mbstring.
+Please note that ORSEE 2.2.x requires MySQL >=5 and PHP >=5 with php5-gd, php5-mysql, php5-mbstring.
 
 A. UPGRADE WHEN *NO* *CUSTOMIZED* *CODE* HAS BEEN ADDED
 (I assume that your old installation is named orsee and your old database is named orseedb): 
-1. Install the new orsee-2.2.0 version in parallel to your old orsee version, only do NOT import the install.sql in mysql, instead configure config/settings.php to connect right away to your old database orseedb.
-2. Enter the new ORSEE version (e.g. on http://yourserv.er/orsee-2.2.0/admin) with your usual credentials. This will verify that you entered the configuration details correctly. Since the database has not been upgraded yet but unicode output is enforced, some characters (umlauts etc.) might look funny. 
+1. Install the new orsee-2.2.x version in parallel to your old orsee version, only do NOT import the install.sql in mysql, instead configure config/settings.php to connect right away to your old database orseedb.
+2. Enter the new ORSEE version (e.g. on http://yourserv.er/orsee-2.2.x/admin) with your usual credentials. This will verify that you entered the configuration details correctly. Since the database has not been upgraded yet but unicode output is enforced, some characters (umlauts etc.) might look funny. 
 3. Stop the public site of ORSEE installations (Options/General Settings/Stop public site) so subjects cannot change anything in the database.
 4. Upgrade your database to unicode/UTF-8 (recommended). See details below.
-6. Copy over your customized style from your old orsee/style folder to the new orsee-2.2.0/style folder. Select the respective style in Options/General Settings/Style for Public Area+Style for Administration Area. Copy over your usage/* content if you want to keep your old webalizer output.
-7. Once you verified that everything works, you switch completely to the the new version by a) renaming your orsee installation to orseeold, b) renaming the orsee-2.2.0 installation to orsee, c) updating the config/settings.php to point to orsee (rather than orsee-2.2.0), d) enabling the public site again (Options/General Settings/Stop public site).
+6. Copy over your customized style from your old orsee/style folder to the new orsee-2.2.x/style folder. Select the respective style in Options/General Settings/Style for Public Area+Style for Administration Area. Copy over your usage/* content if you want to keep your old webalizer output.
+7. Once you verified that everything works, you switch completely to the the new version by a) renaming your orsee installation to orseeold, b) renaming the orsee-2.2.x installation to orsee, c) updating the config/settings.php to point to orsee (rather than orsee-2.2.x), d) enabling the public site again (Options/General Settings/Stop public site).
 Done.
 
 UPGRADE THE DATABASE TO UNICODE
@@ -61,6 +61,6 @@ If you made further functional changes to your ORSEE 2.0.2 installation (other t
 % diff -rwB orsee-2.0.2 orsee 
 which will give you a list of all changes you made.
 
-2) You apply all differences between 2.0.2 and 2.2.0 to your own orsee installation. But I would seriously recommend against this procedure, simply because there were quite a lot of changes. In principle you can get a list of these changes by running, after downloading orsee-2.0.2,
-% diff -rwB orsee-2.0.2 orsee-2.2.0 
+2) You apply all differences between 2.0.2 and 2.2.x to your own orsee installation. But I would seriously recommend against this procedure, simply because there were quite a lot of changes. In principle you can get a list of these changes by running, after downloading orsee-2.0.2,
+% diff -rwB orsee-2.0.2 orsee-2.2.x 
 

@@ -1,3 +1,7 @@
+ORSEE 2.2.5:
+		Fixed use of deprecared mysql_ function in tagsets/logfunctions.php
+		Added html-tag stripping function to tagsets/helpers.php
+
 ORSEE 2.2.4:
 		Fixed deprecated function split (tagsets/helpers.php, line 25)
 

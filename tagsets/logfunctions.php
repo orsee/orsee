@@ -10,7 +10,7 @@ function log__participant($action,$participant_id,$target="") {
 		month='".$darr['mon']."', 
 		day='".$darr['mday']."', 
 		action='".$action."',
-		target='".mysql_real_escape_string($target)."',
+		target='".mysqli_real_escape_string($GLOBALS['mysqli'],$target)."',
 		timestamp='".$darr[0]."'";
 	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 }
@@ -24,7 +24,7 @@ function log__admin($action="unknown",$target="") {
                 month='".$darr['mon']."',
                 day='".$darr['mday']."',
                 action='".$action."',
-		target='".mysql_real_escape_string($target)."',
+		target='".mysqli_real_escape_string($GLOBALS['mysqli'],$target)."',
                 timestamp='".$darr[0]."'";
         $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
 }

@@ -17,6 +17,8 @@ session_set_save_handler("orsee_session_open", "orsee_session_close", "orsee_ses
 session_start();
 if (isset($_SESSION['authdata'])) $authdata=$_SESSION['authdata']; else $authdata=array();
 
+$_REQUEST=strip_tags_array($_REQUEST);
+
 if (isset($_REQUEST['language'])) {
 	$langarray=lang__get_public_langs();
 	if (in_array($_REQUEST['language'],$langarray)) {

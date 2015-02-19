@@ -78,7 +78,7 @@ include ("../style/".$settings['style']."/help_html_header.php");
   			echo '	<TR>
 					<TD></TD>
         				<TD>
-						<A HREF="'.thisdoc().'?eval=true&id='.$_REQUEST['id'].'">'.
+						<A HREF="'.thisdoc().'?eval=true&id='.strip_tags($_REQUEST['id']).'">'.
 						$lang['this_faq_answered_my_question'].'</A>
   					</TD>
 				</TR>';
