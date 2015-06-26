@@ -3,19 +3,19 @@
 ob_start();
 
 $menu__area="mainpage";
-$title="Welcome";
+$title="welcome";
 
 include("header.php");
-
-	echo '<BR><BR><center>
-		';
+if ($proceed) {
+	echo '<center>';
 
 	show_message();
 
 	echo content__get_content("admin_mainpage");
 
 	echo '</center><BR><BR>';
-
+	
+}
 include("footer.php");
 
 ?>

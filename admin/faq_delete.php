@@ -2,64 +2,77 @@
 // part of orsee. see orsee.org
 ob_start();
 
-$title="delete faq";
+$title="delete_faq";
+$menu__area="options_main";
 include ("header.php");
+if ($proceed) {
 
 	if (isset($_REQUEST['faq_id'])) $faq_id=$_REQUEST['faq_id']; else $faq_id="";
 
-        if (isset($_REQUEST['betternot']) && $_REQUEST['betternot'])
+    if (isset($_REQUEST['betternot']) && $_REQUEST['betternot'])
                 redirect ('admin/faq_edit.php?faq_id='.$faq_id);
+}
 
-        if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
-                        else $reallydelete=false;
+if ($proceed) {
+    if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
+    else $reallydelete=false;
 
 	$allow=check_allow('faq_delete','faq_edit.php?faq_id='.$faq_id);
+}
 
-        $question=faq__load_question($faq_id);
-        $answer=faq__load_answer($faq_id);
+if ($proceed) {
+    $question=faq__load_question($faq_id);
+    $answer=faq__load_answer($faq_id);
 
-        // load languages
-        $languages=get_languages();
+    // load languages
+    $languages=get_languages();
 
-        echo '<center><BR>
-                        <h4>'.$lang['delete_faq'].' "'.$question[$lang['lang']].'"</h4>';
+    if ($reallydelete) {
 
+		$pars=array(':faq_id'=>$faq_id);
+    	$query="DELETE FROM ".table('lang')."
+                WHERE content_type='faq_question'
+				AND content_name= :faq_id";
+        $result=or_query($query,$pars);
 
-        if ($reallydelete) {
+        $query="DELETE FROM ".table('lang')."
+                WHERE content_type='faq_answer'
+                AND content_name= :faq_id";
+        $result=or_query($query,$pars);
 
-                $query="DELETE FROM ".table('lang')."
-                        WHERE content_type='faq_question'
-			AND content_name='".$faq_id."'";
-                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        $query="DELETE FROM ".table('faqs')."
+                WHERE faq_id= :faq_id";
+        $result=or_query($query,$pars);
 
-                $query="DELETE FROM ".table('lang')."
-                        WHERE content_type='faq_answer'
-                        AND content_name='".$faq_id."'";
-                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-
-                $query="DELETE FROM ".table('faqs')."
-                        WHERE faq_id='".$faq_id."'";
-                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-
-                message ($lang['faq_deleted']);
+        message (lang('faq_deleted'));
 		log__admin("faq_delete","faq_id:".$faq_id);
-                redirect ('admin/faq_main.php');
-                }
+        redirect ('admin/faq_main.php');
+    }
+}
 
-        // form
+if ($proceed) {
 
-        echo '  <CENTER>
-                <FORM action="faq_delete.php">
+     // form
+
+    echo '     <center>
+               <FORM action="faq_delete.php">
                 <INPUT type=hidden name="faq_id" value="'.$faq_id.'">
 
-                <TABLE>
-                        <TR>
-                                <TD colspan=2>
-                                        '.$lang['do_you_really_want_to_delete'].'
+                <TABLE class="or_formtable">
+					<TR><TD colspan="2">
+						<TABLE width="100%" border=0 class="or_panel_title"><TR>
+								<TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'" align="center">
+									"'.$question[lang('lang')].'"
+								</TD>
+						</TR></TABLE>
+					</TD></TR>
+                    <TR>
+						<TD colspan="2">
+                                        <B>'.lang('do_you_really_want_to_delete').'</B>
                                         <BR><BR>
 					<TABLE>';
-				foreach ($languages as $language) {
-					echo '	<TR>
+	foreach ($languages as $language) {
+		echo '	<TR>
 							<TD align=right>
 								'.$language.'
 							</TD>
@@ -74,17 +87,19 @@ include ("header.php");
 								'.stripslashes($answer[$language]).'
 							</TD>
 						</TR>';
-					}
-				echo '
+	}
+	echo '
 					</TABLE>
                                 </TD>
                         </TR>
                         <TR>
                                 <TD align=left>
-                                        <INPUT type=submit name=reallydelete value="'.$lang['yes_delete'].'">
-                                </TD>
-                                <TD align=right>
-                                        <INPUT type=submit name=betternot value="'.$lang['no_sorry'].'">
+                                '.button_link('faq_delete.php?faq_id='.$faq_id.'&reallydelete=true',
+								lang('yes_delete'),'check-square biconred').'
+								</TD>
+								<TD align=right>
+								'.button_link('faq_delete.php?faq_id='.$faq_id.'&betternot=true',
+								lang('no_sorry'),'undo bicongreen').'
                                 </TD>
                         </TR>
                 </TABLE>
@@ -92,6 +107,6 @@ include ("header.php");
                 </FORM>
                 </center>';
 
+}
 include ("footer.php");
-
 ?>

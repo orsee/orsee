@@ -1,124 +1,222 @@
 <?php
 // part of orsee. see orsee.org
 
-function downloads__list_files($experiment_id='',$showsize=false,$showtype=false,$showdate=false) {
+function downloads__list_files_general($showsize=false,$showtype=false,$showdate=false) {
 	global $lang, $color;
+	$out='';
 
-	$allow_dl=check_allow('download_download');
+	$continue=true;
+	if ($continue) {
+			if(!check_allow('file_view_general')) $continue=false;
+	}
 
-	if ($experiment_id!='') $where_clause=" WHERE experiment_id='".$experiment_id."' ";
-		else $where_clause='';
+	if ($continue) {
+		$allow_dl=check_allow('file_download_general');
+		$allow_delete=check_allow('file_delete_general');
+		$allow_edit=check_allow('file_edit_general');
 
-	$uptype='';
-	$cols=3;
-	if ($showsize) $cols++;
-	if ($showtype) $cols++;
-	if ($showdate) $cols++;
-
-     	$query="SELECT *
-      		FROM ".table('uploads')." ".
-		$where_clause.
-		" ORDER BY upload_type, upload_name, upload_id";
-
-	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-	if (mysqli_num_rows($result) > 0) {
-		$shade=true;
-		echo '<TABLE width="100%" border=0>';
-		while ($upload = mysqli_fetch_assoc($result)) {
-			if ($shade) {
-                        	$bgcolor=' bgcolor="'.$color['list_shade1'].'"';
-                        	$shade=false;
-                        	}
-                   	else {
-                        	$bgcolor=' bgcolor="'.$color['list_shade2'].'"';
-                        	$shade=true;
-                        	}
-			if ($upload['upload_type']!=$uptype) {
-				$uptype=$upload['upload_type'];
-				echo '<TR bgcolor="'.$color['list_options_background'].'">
-					<TD colspan='.$cols.'>'.$lang[$uptype].'</TD></TR>';
+	
+ 		$query="SELECT *
+	      		FROM ".table('uploads')." 
+				WHERE experiment_id = 0
+		 		ORDER BY upload_type, upload_name, upload_id";
+		$result=or_query($query);
+		if (pdo_num_rows($result) > 0) {
+			$shade=true;
+			$categories=lang__load_lang_cat('file_upload_category');
+			$uptype='';
+			$cols=2;
+			if ($showsize) $cols++;
+			if ($showtype) $cols++;
+			if ($showdate) $cols++;
+			if ($allow_edit) $cols++;
+			if ($allow_delete) $cols++;
+			$out.= '<TABLE width="100%" border=0 cellspacing="0">';
+			while ($upload = pdo_fetch_assoc($result)) {
+				if ($shade) { $bgcolor=' bgcolor="'.$color['list_shade1'].'"'; $shade=false; }
+                else { $bgcolor=' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
+				if ($upload['upload_type']!=$uptype) {
+					$uptype=$upload['upload_type'];
+					$out.= '<TR bgcolor="'.$color['list_shade_subtitle'].'">
+						<TD colspan='.$cols.'>';
+					if (isset($categories[$uptype])) $out.=$categories[$uptype];
+					else $out.='???';
+					$out.='</TD></TR>';
 				}
-			echo '<TR'.$bgcolor.'><TD>&nbsp;&nbsp;</TD><TD>';
-			if ($allow_dl) 
-//				echo '<A HREF="download_file.php?t=d&i='.$upload['upload_id'].'" target="_blank">';
- 				echo '<A HREF="download_file.php'.
+				$out.= '<TR'.$bgcolor.'><TD>&nbsp;&nbsp;</TD><TD>';
+				if ($allow_dl) $out.= '<A HREF="download_file.php'.
  						'/'.rawurlencode($upload['upload_name'].'.'.$upload['upload_suffix']).
  						'?t=d&i='.$upload['upload_id'].'">';
-
-			echo $upload['upload_name'];
-			if ($allow_dl) echo '</A>';
-			echo '</TD>';
-			if ($showsize) {
-				echo '<TD>'.number_format(round($upload['upload_filesize']/1024),0).' KB</TD>';
+				$out.= $upload['upload_name'];
+				if ($allow_dl) $out.= '</A>';
+				$out.= '</TD>';
+				if ($showsize) $out.= '<TD>'.number_format(round($upload['upload_filesize']/1024),0).' KB</TD>';
+				if ($showtype) $out.= '<TD>'.$upload['upload_suffix'].'</TD>';
+				if ($showdate) $out.= '<TD>'.ortime__format($upload['upload_id'],'',lang('lang')).'</TD>';			
+				if ($allow_edit) {
+					$out.= '<TD>';
+					$out.= '<A HREF="download_edit.php?file='.$upload['upload_id'].
+							'"><FONT class="small">['.lang('edit').']</FONT></A>';
+					$out.= '</TD>';
 				}
-			if ($showtype) {
-				echo '<TD>'.$upload['upload_suffix'].'</TD>';
-				}
-			if ($showdate) {
-				echo '<TD>'.
-				time__format($lang['lang'],"",false,false,true,false,$upload['upload_id']).
-				'</TD>';
-				}
-			echo '	<TD>';
-			if (($experiment_id==0 && check_allow('download_general_delete')) ||
-				($experiment_id!=0 && check_allow('download_experiment_delete'))) {
-				echo '	<A HREF="download_delete.php?dl='.$upload['upload_id'];
-					if ($experiment_id) echo '&experiment_id='.$experiment_id;
-					echo '"><FONT class="small">['.$lang['delete'].']</FONT></A>';
-				}
-			echo '	</TD>';
-			echo '</TR>';
+				if ($allow_delete) {
+					$out.= '<TD>';
+					$out.= '<A HREF="download_delete.php?dl='.$upload['upload_id'].
+							'"><FONT class="small">['.lang('delete').']</FONT></A>';
+					$out.= '</TD>';
+				}				
+				$out.= '</TR>';
 			}
-		echo '</TABLE>';
+			$out.= '</TABLE>';
 		}
+	}
+	return $out;
 }
 
-function downloads__files_downloadable($experiment_id=0) {
+function downloads__list_files_experiment($experiment_id,$showsize=false,$showtype=false,$showdate=false) {
+	global $lang, $color, $expadmindata;
+	$out='';
 
-        if ($experiment_id>0) $where_clause=" WHERE experiment_id='".$experiment_id."' ";
-                else $where_clause='';
+	$continue=true;
+	if ($continue) {
+		$experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
+		if (!isset($experiment['experiment_id'])) $continue=false;
+	}
 
-     	$query="SELECT experiment_id
-      		FROM ".table('uploads')." ".
-		$where_clause.
-		" LIMIT 1";
-	$result=orsee_query($query);
-	if (isset($result['experiment_id']))
-		return true;
-	   else return false;
+	if ($continue) {
+		$experimenters=db_string_to_id_array($experiment['experimenter']);
+		if (! ((in_array($expadmindata['admin_id'],$experimenters) && check_allow('file_view_experiment_my'))
+					|| check_allow('file_view_experiment_all')) ) $continue=false;
+	}
+
+	if ($continue) {
+		if (check_allow('file_download_experiment_all')) $allow_dl=true;
+		elseif (in_array($expadmindata['admin_id'],$experimenters) && check_allow('file_download_experiment_my'))  $allow_dl=true;
+		else  $allow_dl=false;
+		if (check_allow('file_delete_experiment_all')) $allow_delete=true;
+		elseif (in_array($expadmindata['admin_id'],$experimenters) && check_allow('file_delete_experiment_my'))  $allow_delete=true;
+		else  $allow_delete=false;
+		if (check_allow('file_edit_experiment_all')) $allow_edit=true;
+		elseif (in_array($expadmindata['admin_id'],$experimenters) && check_allow('file_edit_experiment_my'))  $allow_edit=true;
+		else  $allow_edit=false;		
+	
+    	$query="SELECT ".table('uploads').".*, ".table('sessions').".session_start
+	      		FROM ".table('uploads')." LEFT JOIN ".table('sessions')."
+				ON ".table('uploads').".session_id = ".table('sessions').".session_id
+				WHERE ".table('uploads').".experiment_id= :experiment_id
+		 		ORDER BY session_start, upload_type, upload_name, upload_id";
+		$pars=array(':experiment_id'=>$experiment_id);
+		$result=or_query($query,$pars);
+		if (pdo_num_rows($result) > 0) {
+			$shade=true;
+			$categories=lang__load_lang_cat('file_upload_category');
+			$uptype=-1; $tsession_id=-1;
+			$cols=3;
+			if ($showsize) $cols++;
+			if ($showtype) $cols++;
+			if ($showdate) $cols++;
+			if ($allow_edit) $cols++;
+			if ($allow_delete) $cols++;
+			$out.= '<TABLE width="100%" border=0 cellspacing="0">';
+			while ($upload = pdo_fetch_assoc($result)) {
+				if ($shade) { $bgcolor=' bgcolor="'.$color['list_shade1'].'"'; $shade=false; }
+				else { $bgcolor=' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
+				if ($upload['session_id']!=$tsession_id) {
+					$tsession_id=$upload['session_id'];
+					$uptype=0;
+					$out.= '<TR bgcolor="'.$color['list_shade_subtitle'].'">
+						<TD colspan='.$cols.'>';
+					if ($upload['session_id']>0) $out.='<i>'.lang('session').' '.ortime__format(ortime__sesstime_to_unixtime($upload['session_start'])).'</i>'; 
+					else $out.='<i>'.lang('no_session').'</i>';
+					$out.='</TD></TR>';
+				}
+				if ($upload['upload_type']!=$uptype) {
+					$uptype=$upload['upload_type'];
+					$out.= '<TR bgcolor="'.$color['list_shade_subtitle'].'">
+						<TD>&nbsp;</TD>
+						<TD colspan='.($cols-1).'>';
+					if (isset($categories[$uptype])) $out.=$categories[$uptype];
+					else $out.='???';
+					$out.='</TD></TR>';
+				}
+				$out.= '<TR'.$bgcolor.'><TD>&nbsp;&nbsp;</TD><TD>';
+				if ($allow_dl) $out.= '<A HREF="download_file.php'.
+							'/'.rawurlencode($upload['upload_name'].'.'.$upload['upload_suffix']).
+							'?t=d&i='.$upload['upload_id'].'">';
+				$out.= $upload['upload_name'];
+				if ($allow_dl) $out.= '</A>';
+				$out.= '</TD>';
+				if ($showsize) $out.= '<TD>'.number_format(round($upload['upload_filesize']/1024),0).' KB</TD>';
+				if ($showtype) $out.= '<TD>'.$upload['upload_suffix'].'</TD>';
+				if ($showdate) $out.= '<TD>'.ortime__format($upload['upload_id'],'',lang('lang')).'</TD>';
+				if ($allow_edit) {
+					$out.= '	<TD>';
+					$out.= '	<A HREF="download_edit.php?file='.$upload['upload_id'].
+								'"><FONT class="small">['.lang('edit').']</FONT></A>';
+					$out.= '	</TD>';
+				}		
+				if ($allow_delete) {
+					$out.= '	<TD>';
+					$out.= '	<A HREF="download_delete.php?dl='.$upload['upload_id'].
+								'"><FONT class="small">['.lang('delete').']</FONT></A>';
+					$out.= '	</TD>';
+				}
+				$out.= '</TR>';
+			}
+			$out.= '</TABLE>';
+		}	
+	}
+	return $out;
 }
 
 function downloads__list_experiments($showsize=false,$showtype=false,$showdate=false) {
-	global $lang, $color;
-	echo '<TABLE width=100% border=0>';
+	global $lang, $color, $expadmindata;
 
-	$query="SELECT DISTINCT ".table('experiments').".*, ".table('uploads').".*
-      		FROM ".table('experiments').", ".table('uploads')."
-      		WHERE ".table('experiments').".experiment_id=".table('uploads').".experiment_id
-		GROUP BY ".table('experiments').".experiment_id
-		ORDER BY experiment_name";
-	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-	$shade=true;
-	while ($exp = mysqli_fetch_assoc($result)) {
-		if ($shade) {
-			$bgcolor=' bgcolor="'.$color['list_shade1'].'"';
-			$shade=false;
-			}
-		   else {
-			$bgcolor=' bgcolor="'.$color['list_shade2'].'"';
+	$out='';
+	$continue=true;
+	if (check_allow('file_view_experiment_all')) {
+		$experimenter_clause = '';
+		$pars=array();
+	} elseif (check_allow('file_view_experiment_my')) {
+		$experimenter_clause = " AND ".table('experiments').".experimenter LIKE :experimenter ";
+		$pars=array(':experimenter'=>'%|'.$expadmindata['admin_id'].'|%');
+	} else $continue=false;
+	
+	if ($continue) {
+		$query="SELECT ".table('experiments').".*, 
+				min(".table('sessions').".session_start) as first_session_date,
+				max(".table('sessions').".session_start) as last_session_date 
+				FROM ".table('experiments').", ".table('sessions')."
+				WHERE ".table('experiments').".experiment_id IN 
+				(SELECT DISTINCT experiment_id FROM ".table('uploads').")
+				".$experimenter_clause." 
+				AND ".table('experiments').".experiment_id = ".table('sessions').".experiment_id
+				GROUP BY ".table('experiments').".experiment_id
+				ORDER BY last_session_date DESC";
+		$result=or_query($query,$pars); $experiments=array();
+		while ($line = pdo_fetch_assoc($result)) {
+			$experiments[]=$line;
+		}	
+		if (count($experiments)>0) {
+			$out.='<TABLE width=100% border=0>';
 			$shade=true;
+			foreach($experiments as $exp) {
+				if ($shade) { $bgcolor=' bgcolor="'.$color['list_shade1'].'"'; $shade=false; } 
+				else { $bgcolor=' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
+				$out.='<TR'.$bgcolor.'><TD>';
+				$out.=$exp['experiment_name'].'</TD><TD>(';
+				$out.=lang('from').' '.ortime__format(ortime__sesstime_to_unixtime($exp['first_session_date']),'hide_time:true').' ';
+				$out.=lang('to').' '.ortime__format(ortime__sesstime_to_unixtime($exp['last_session_date']),'hide_time:true');
+				$out.=')</TD><TD>';
+				$out.=experiment__list_experimenters($exp['experimenter'],true,true);
+				$out.='</TD><TD><A HREF="download_main.php?experiment_id='.$exp['experiment_id'].'">'.
+					lang('show_files').'</A>';
+				$out.='</TD></TR>';
 			}
-		echo '<TR'.$bgcolor.'><TD>';
-		echo $exp['experiment_name'].'</TD><TD>(';
-                	echo $lang['from'].' '.sessions__get_first_date($exp['experiment_id']).' ';
-                	echo $lang['to'].' '.sessions__get_last_date($exp['experiment_id']);
-		echo ')</TD><TD>by ';
-		echo experiment__list_experimenters($exp['experimenter'],true,true);
-		echo '</TD><TD><A HREF="download_main.php?experiment_id='.$exp['experiment_id'].'">'.
-			$lang['show_files'].'</A>';
-		echo '</TD></TR>';
+			$out.='</TABLE>';
 		}
-	echo '</TABLE>';
+	}
+	return $out;
 }
 
 function downloads__mime_type($extension) {

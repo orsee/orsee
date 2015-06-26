@@ -3,160 +3,145 @@
 ob_start();
 
 $menu__area="options";
-$title="edit language";
+$title="edit_language";
 include ("header.php");
-
+if ($proceed) {
 	$allow=check_allow('lang_symbol_edit','lang_main.php');
+}
 
-	echo '<center>
-		<BR><BR>
+if ($proceed) {
+	echo '<center>';
 
-			<H4>'.$lang['edit_language'].'</H4>
-		<BR>';
+	// load languages
+	$languages=get_languages();
 
-	if (!isset($_REQUEST['el']) || !$_REQUEST['el']) { 
-		
-		// load languages
-		$languages=get_languages();
+	if (isset($_REQUEST['el']) && $_REQUEST['el'] && in_array($_REQUEST['el'],$languages)) {
+		$el=$_REQUEST['el'];
+	} else {
+		$el=$settings['admin_standard_language'];
+	}
+	
+	if (isset($_REQUEST['search']) && $_REQUEST['search']) $search=$_REQUEST['search']; else $search=''; 
+	
+	if (isset($_REQUEST['letter']) && $_REQUEST['letter']) $letter=$_REQUEST['letter']; else $letter='a';
 
-		// show languages
-		foreach ($languages as $language) { 
-			echo '	<A HREF="lang_edit.php?el='.$language.'">'.$language.'</A>
-				<BR><BR>';
-			}
-
-		echo '	<BR><BR>
-			<FORM action="lang_symbol_edit.php">
-			<INPUT type=submit name=go value="'.$lang['add_symbol'].'">
-			</FORM>';
-
+	if (isset($_REQUEST['alter_lang']) && $_REQUEST['alter_lang'] && isset($_REQUEST['symbols']) && is_array($_REQUEST['symbols'])) {
+		$pars=array();
+		foreach ($_REQUEST['symbols'] as $symbol => $content) {
+			$pars[]=array(':content'=>trim($content),':symbol'=>$symbol);
 		}
-	   else {
+		$query="UPDATE ".table('lang')." 
+				SET ".$el."= :content 
+				WHERE content_name= :symbol 
+				AND content_type='lang'";
+		$done=or_query($query,$pars);
+		message(lang('changes_saved'));
+		log__admin("language_edit_symbols","language:".$edlang);
+		redirect ('admin/lang_edit.php?el='.$el.'&letter='.$letter.'&search='.$search);
+	}
+}
 
-		$query_exclusion=" AND content_name NOT IN ('lang','lang_name')";
+if ($proceed) {
 
-		$edlang=$_REQUEST['el'];
-
-		if (isset($_REQUEST['search']) && $_REQUEST['search']) {
-                	$letter="";
-                	$search=$_REQUEST['search'];
-
-                	$lquery="select * from ".table('lang')."
-                        	 where content_type='lang'
-                        	 and (content_name LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%'
-                        	 or ".$lang['lang']." LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%'
-                        	 or ".$edlang." LIKE '%".mysqli_real_escape_string($GLOBALS['mysqli'],$search)."%')
-                        	 order by content_name";
-                	}
-        	   else {
-                	$search="";
-                	if (isset($_REQUEST['letter']) && $_REQUEST['letter']) $letter=$_REQUEST['letter']; else $letter='a';
-                	$lquery="select * from ".table('lang')."
-                        	 where content_type='lang' and left(content_name,1)='".$letter."'
-				 order by content_name";
-                	} 
-
-
-		if (isset($_REQUEST['alter_lang']) && $_REQUEST['alter_lang']) {
-
-			$newwords=$_REQUEST['symbols'];
-			foreach ($newwords as $symbol => $content) {
-				$query="UPDATE ".table('lang')." 
-					SET ".$edlang."='".mysqli_real_escape_string($GLOBALS['mysqli'],$content)."' 
-					WHERE content_name='".$symbol."'
-					AND content_type='lang'";
-				$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-				}
-			message($lang['changes_saved']);
-			log__admin("language_edit_symbols","language:".$edlang);
-			redirect ('admin/lang_edit.php?el='.$edlang.'&letter='.$letter.'&search='.$search);
-			}
+	if ($search) {
+        $letter="";
+        $lpars=array(':search1'=>'%'.$search.'%',
+        			':search2'=>'%'.$search.'%',
+        			':search3'=>'%'.$search.'%');
+      	$lquery="select * from ".table('lang')."
+        		where content_type='lang'
+        		and (content_name LIKE :search1
+                or ".lang('lang')." LIKE :search2
+                or ".$el." LIKE :search3)
+                AND content_name NOT IN ('lang','lang_name','lang_icon_base64') 
+                order by content_name";
+    } else {
+        $search="";   
+        $lpars=array(':letter'=>$letter);      	
+        $lquery="select * from ".table('lang')."
+        		where content_type='lang' 
+        		and left(content_name,1)= :letter 
+        		AND content_name NOT IN ('lang','lang_name','lang_icon_base64')
+				order by content_name";
+    } 
 
 	echo '<FORM action="lang_edit.php">
-		<INPUT type=hidden name="el" value="'.$edlang.'">
+		<INPUT type=hidden name="el" value="'.$el.'">
+		<INPUT type=hidden name="letter" value="'.$letter.'">
 		<INPUT type=text name="search" size=20 maxlength=200 value="'.$search.'">
-		<INPUT type=submit name=dosearch value="'.$lang['search'].'">
+		<INPUT class="button" type=submit name=dosearch value="'.lang('search').'">
 		</FORM><BR>';
 
 
-        $query="select left(content_name,1) as letter, count(lang_id) as number, content_name 
-		from ".table('lang')." 
-		where content_type='lang' GROUP BY letter";
-        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-	while ($line=mysqli_fetch_assoc($result)) {
-		if ($line['letter']!=$letter) 
-			echo '<A HREF="lang_edit.php?el='.$edlang.'&letter='.$line['letter'].'">'.$line['letter'].'</A>&nbsp; ';
-		   else echo $letter.'&nbsp; ';
-		}
+    $query="select left(content_name,1) as letter, 
+    		count(lang_id) as number, 
+    		content_name 
+			from ".table('lang')." 
+			where content_type='lang' GROUP BY letter";
+    $result=or_query($query);
+	while ($line=pdo_fetch_assoc($result)) {
+		if ($line['letter']!=$letter) echo '<A HREF="lang_edit.php?el='.$el.'&letter='.$line['letter'].'">'.$line['letter'].'</A>&nbsp; ';
+		else echo $letter.'&nbsp; ';
+	}
+	
+	$result=or_query($lquery,$lpars);
+	$number=pdo_num_rows($result);
 
-	$result=mysqli_query($GLOBALS['mysqli'],$lquery) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-	$number=mysqli_num_rows($result);
-
-	echo '<BR><BR>'.$lang['symbols'].': '.$number.'<BR><BR>
+	echo '<BR><BR>'.lang('symbols').': '.$number.'<BR><BR>
 
 		<FORM action="lang_edit.php" method=post>
-		<INPUT type=hidden name="el" value="'.$edlang.'">
+		<INPUT type=hidden name="el" value="'.$el.'">
 		<INPUT type=hidden name="letter" value="'.$letter.'">
 		<INPUT type=hidden name="search" value="'.$search.'">
-		<TABLE with=100% border=1>
-			<TR>
-				<TD colspan=3 align=center>
-					<INPUT type=submit name="alter_lang" value="'.$lang['change'].'">
+		<TABLE class="or_listtable" style="width: 95%;"><thead>
+			<TR style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">
+				<TD colspan=4 align=center>
+					<INPUT class="button" type=submit name="alter_lang" value="'.lang('change').'">
 				</TD>
 			</TR>
-			<TR>
-				<TD>
-					SYMBOL
-				</TD>
-				<TD>
-					'.$lang['lang'].'
-				</TD>
-				<TD>
-					'.$edlang.'
-				</TD>
-				<TD>
-				</TD>
-			</TR>';
+			<TR  style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">
+				<TD><B>'.lang('symbol').'</B></TD>
+				<TD><B>'.lang('lang').'</B></TD>
+				<TD><B>'.$el.'</B></TD>
+				<TD></TD>
+			</TR>
+			</thead>
+			<tbody>';
 
-	while ($line=mysqli_fetch_assoc($result)) {
-
-		echo '	<TR>
-				<TD>
-					'.$line['content_name'].'
-				</TD>
-				<TD>
-					'.$lang[$line['content_name']].'
-				</TD>
+	$shade=false;
+	while ($line=pdo_fetch_assoc($result)) {
+		echo '	<TR';
+		if ($shade) { echo ' bgcolor="'.$color['list_shade1'].'"'; $shade=false; }
+		else { echo ' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
+		echo '>
+				<TD>'.$line['content_name'].'</TD>
+				<TD>'.$lang[$line['content_name']].'</TD>
 				<TD>
 					<textarea rows=2 cols=30 wrap=virtual name="symbols['.$line['content_name'].']">'.
-						trim(stripslashes($line[$edlang])).'</textarea>
+						trim(stripslashes($line[$el])).'</textarea>
 				</TD>
 				<TD>
-					<A HREF="lang_symbol_edit.php?lang_id='.$line['lang_id'].'">'.$lang['edit'].'</A>
+					<A HREF="lang_symbol_edit.php?lang_id='.$line['lang_id'].'">'.lang('edit').'</A>
 				</TD>
 			</TR>
 			';
-		}
+	}
 
-	echo '		<TR>
+	echo '		</tbody>
+				<tfoot><TR>
 				<TD colspan=3 align=center>
-					<INPUT type=submit name=alter_lang value="'.$lang['change'].'">
+					<INPUT class="button" type=submit name=alter_lang value="'.lang('change').'">
 				</TD>
-			</TR>
+			</TR></tfoot>
 		</TABLE>
 		</FORM>';
 
-                echo '  <BR><BR>
-                        <FORM action="lang_symbol_edit.php">
-                        <INPUT type=submit name=go value="'.$lang['add_symbol'].'">
-                        </FORM>';
-
-		}
+    echo '  <BR><BR>'.button_link('lang_symbol_edit.php?go=true',
+						lang('add_symbol'),'plus-circle');
 
 	echo '<BR><BR>
-                <A href="lang_main.php">'.icon('back').' '.$lang['back'].'</A><BR><BR>
+                <A href="lang_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>
                 </center>';
-
+}
 include ("footer.php");
-
 ?>

@@ -15,7 +15,7 @@ HTMLPre include("../admin/header.php");
 HTMLPre $allow=check_allow('statistics_server_usage_show','statistics_main.php'); /*
 HTMLBody */ ?><BR><BR><center><table width=90%><TR><TD align=center>
 HTMLEnd </td></tr></table><BR><BR><A href="../admin/statistics_main.php">
-HTMLEnd	<?php echo icon('back').' '.$lang['back']; ?></A></center><BR>
+HTMLEnd	<?php echo icon('back').' '.lang('back'); ?></A></center><BR>
 HTMLEnd <?php include("../admin/footer.php"); ?>
 #Quiet          yes
 #ReallyQuiet    no

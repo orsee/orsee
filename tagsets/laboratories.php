@@ -17,14 +17,14 @@ function laboratories__strip_lab_address($lab_text="") {
 function laboratories__select_field($postvarname,$selected) {
 	global $lang;
 	echo '<SELECT name="'.$postvarname.'">';
-     	$query="SELECT *
-      		FROM ".table('lang')."
-		WHERE content_type='laboratory' 
-		AND enabled='y' 
-      		ORDER BY content_name";
-	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-	while ($line = mysqli_fetch_assoc($result)) {
-		$labname=laboratories__strip_lab_name(stripslashes($line[$lang['lang']]));
+     $query="SELECT *
+     		FROM ".table('lang')."
+			WHERE content_type='laboratory' 
+			AND enabled='y' 
+      		ORDER BY order_number, content_name";
+	$result=or_query($query);
+	while ($line = pdo_fetch_assoc($result)) {
+		$labname=laboratories__strip_lab_name(stripslashes($line[lang('lang')]));
 		echo '<OPTION value="'.$line['content_name'].'"';
 		if ($line['content_name']==$selected) echo " SELECTED";
 		echo '>'.$labname.'</OPTION>';
@@ -34,26 +34,41 @@ function laboratories__select_field($postvarname,$selected) {
 
 function laboratories__get_laboratory_name($laboratory_id) {
      global $lang;
-     $query="SELECT * FROM ".table('lang')." WHERE content_type='laboratory' AND content_name='".$laboratory_id."'";
-     $lab=orsee_query($query);
-     return laboratories__strip_lab_name(stripslashes($lab[$lang['lang']]));
+     $pars=array(':laboratory_id'=>$laboratory_id);
+     $query="SELECT * FROM ".table('lang')." WHERE content_type='laboratory' AND content_name=:laboratory_id";
+     $lab=orsee_query($query,$pars);
+     return laboratories__strip_lab_name(stripslashes($lab[lang('lang')]));
 }
 
-function laboratories__get_laboratory_address($laboratory_id) {
-     global $lang;
-     $query="SELECT * FROM ".table('lang')." WHERE content_type='laboratory' AND content_name='".$laboratory_id."'";
-     $lab=orsee_query($query);
-     return laboratories__strip_lab_address(stripslashes($lab[$lang['lang']]));
-}
 
 function laboratories__get_laboratory_text($laboratory_id,$tlang="") {
-     if (!$tlang) {
-     		global $lang;
-		$tlang=$lang['lang'];
-		}
-     $query="SELECT * FROM ".table('lang')." WHERE content_type='laboratory' AND content_name='".$laboratory_id."'";
-     $lab=orsee_query($query);
-     return stripslashes($lab[$tlang]);
+    if (!$tlang) {
+     	global $lang;
+		$tlang=lang('lang');
+	}
+	$pars=array(':laboratory_id'=>$laboratory_id);
+    $query="SELECT * FROM ".table('lang')." WHERE content_type='laboratory' AND content_name=:laboratory_id";
+	$lab=orsee_query($query,$pars);
+    return stripslashes($lab[$tlang]);
 }
+
+function laboratories__get_laboratories($tlang="") {
+    if (!$tlang) {
+     	global $lang;
+		$tlang=lang('lang');
+	}
+	$labs=array();
+	$query="SELECT * FROM ".table('lang')." WHERE content_type='laboratory'
+			ORDER BY order_number ";
+	$result=or_query($query);
+	while ($lab = pdo_fetch_assoc($result)) {
+		$tlab=array();
+		$tlab['lab_name']=laboratories__strip_lab_name(stripslashes($lab[lang('lang')]));
+		$tlab['lab_address']=laboratories__strip_lab_address(stripslashes($lab[lang('lang')]));
+		$labs[$lab['content_name']]=$tlab;
+	}
+	return $labs;
+}
+
 
 ?>

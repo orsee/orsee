@@ -2,72 +2,49 @@
 // part of orsee. see orsee.org
 ob_start();
 $temp__nosession=true;
-
+$menu__area="public_register";
+$title="confirm_registration";
 include("header.php");
-
-	echo '<BR><BR>
-		<center><BR><BR><h4>'.$lang['confirm_registration'].'</h4>
-		';
-
-	$p=$_REQUEST['p'];
-	$geschickt__p=$p;
-	$p=url_cr_decode($p,true);
-	$continue=true;
-
-	if (!$p) {
-		message($lang['confirmation_error']);
+if ($proceed) {
+	if (isset($_REQUEST['c'])) $c=$_REQUEST['c']; else $c='';
+	if (!$c) {
+		message(lang('confirmation_error'));
 		redirect("public/");
+	}
+}
+if ($proceed) {
+	$participant_id=participant__participant_get_if_not_confirmed($c);
+	if (!$participant_id) {
+    	message(lang('already_confirmed_error'));
+    	redirect("public/");
+    } else {
+		// change status to active
+		$default_active_status=participant_status__get("is_default_active");
+		$pars=array(':participant_id'=>$participant_id,':default_active_status'=>$default_active_status);
+		if ($settings['allow_permanent_queries']=='y') {
+			$qadd=', apply_permanent_queries = 1 ';
+		} else $qadd='';
+		$query="UPDATE ".table('participants')." 
+				SET status_id= :default_active_status,
+				 confirmation_token = '' 
+				".$qadd." 
+	    		WHERE participant_id= :participant_id ";
+		$done=or_query($query,$pars);
+
+		echo '<center>';
+		if (!$done) {
+			message(lang('database_error'));
+			redirect("public/");
+		} else {
+			log__participant("confirm",$participant_id);
+			// load participant package
+			$mess=lang('registration_confirmed').'<BR><BR>';
+			$mess.=lang('thanks_for_registration');
+			message($mess);
+			show_message();
 		}
-
-	$already_confirmed=participant__participant_id_exists($p);
-
-        if ($already_confirmed) {
-                message($lang['already_confirmed_error']);
-                redirect("public/");
-                }
-
-
-	// copy from participants_temp to participants
-	$query="INSERT INTO ".table('participants')." SELECT * FROM ".table('participants_temp')." WHERE participant_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$p)."'";
-	$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-
-	if (!$done) {
-		message($lang['database_error']);
-		redirect("public/");
-		}
-
-	// delete old entry
-
-        $query="DELETE FROM ".table('participants_temp')." WHERE participant_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$p)."'";
-        $done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-
-
-	log__participant("confirm",$p);
-
-
-	// load participant package
-	$participant=orsee_db_load_array("participants",$p,"participant_id");
-
-	$mess=$lang['registration_confirmed'].'<BR><BR>
-		'.$lang['you_will_be_invited_to'].':<BR><BR>
-			<UL>';
-
-		$exptypes=explode(",",$participant['subscriptions']);
-		$typenames=load_external_experiment_type_names();
-
-		foreach ($exptypes as $type) {
-			$mess.='<LI>'.$typenames[$type].'</LI>';
-			}
-			$mess.='</UL>
-				<BR>
-				'.$lang['thanks_for_registration'];
-
-	message($mess);
-	show_message();
-
-	echo '</center>';
-
+		echo '</center>';
+	}
+}
 include("footer.php");
-
-
 ?>

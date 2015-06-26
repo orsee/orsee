@@ -1,0 +1,139 @@
+/*
+ * Dropit v1.1.0
+ * http://dev7studios.com/dropit
+ *
+ * Copyright 2012, Dev7studios
+ * Free to use and abuse under the MIT license.
+ * http://www.opensource.org/licenses/mit-license.php
+ */
+
+/* These styles assume you are using ul and li */
+.dropit {
+    list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.dropit .dropit-trigger { position: relative; }
+.dropit .dropit-submenu {
+    position: absolute;
+    top: 80%;
+    left: 30; /* dropdown left or right */
+    z-index: 1000;
+    display: none;
+    min-width: 370px;
+    list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.dropit .dropit-open .dropit-submenu { display: block; }
+
+.query_add ul { 
+	display: none; 
+	font: 14px/1.6em "Helvetica Neue", Helvetica, Arial, sans-serif;
+	}
+.query_add ul.dropit-submenu {
+	background-color: #FFFFFF;
+	border: 1px solid #B2B2B2;
+	padding: 6px 0;
+	margin: 3px 0 0 1px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+	box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+}
+.query_add ul.dropit-submenu a, .query_add ul.dropit-submenu a:visited {
+	display: block;
+	font-size: 14px;
+	line-height: 25px;
+	padding: 0 18px;
+	color: #777777;
+	font-weight: bold;
+  text-decoration: none;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  -ms-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
+  transition: all 0.2s linear;	
+}
+.query_add ul.dropit-submenu a:hover, .query_add ul.dropit-submenu a:active {
+	background: #29437B;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+.past_queries ul { 
+	display: none; 
+	font: 14px/1.6em "Helvetica Neue", Helvetica, Arial, sans-serif;
+	}
+.past_queries ul.dropit-submenu {
+	background-color: #FFFFFF;
+	border: 1px solid #B2B2B2;
+	padding: 6px 0;
+	margin: 3px 0 0 1px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+	box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+}
+.past_queries ul.dropit-submenu a, .query_add ul.dropit-submenu a:visited {
+	display: block;
+	font-size: 14px;
+	line-height: 25px;
+	padding: 0 18px;
+	color: #777777;
+	font-weight: bold;
+  text-decoration: none;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  -ms-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
+  transition: all 0.2s linear;	
+}
+.past_queries ul.dropit-submenu a:hover, .query_add ul.dropit-submenu a:active {
+	background: #CCCCCC;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+
+.bulkaction ul { 
+	display: none; 
+	font: 14px/1.6em "Helvetica Neue", Helvetica, Arial, sans-serif;
+	}
+.bulkaction ul.dropit-submenu {
+	background-color: #FFFFFF;
+	border: 1px solid #B2B2B2;
+	padding: 6px 0;
+	margin: 3px 0 0 1px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	border-radius: 3px;
+	-webkit-box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+	-moz-box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+	box-shadow: 0px 1px 3px rgba(0,0,0,0.15);
+}
+.bulkaction ul.dropit-submenu a, .bulkaction ul.dropit-submenu a:visited {
+	display: block;
+	font-size: 14px;
+	line-height: 25px;
+	padding: 0 18px;
+	color: #777777;
+	font-weight: bold;
+  text-decoration: none;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  -ms-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
+  transition: all 0.2s linear;	
+}
+.bulkaction ul.dropit-submenu a:hover, .bulkaction ul.dropit-submenu a:active {
+	background: #29437B;
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+  

@@ -1,4 +1,4 @@
-These are short installation notes for ORSEE 2.2.x
+These are short installation notes for ORSEE 3.0.0
 
 The ORSEE Wiki contains more details on ORSEE installation.
 
@@ -17,7 +17,7 @@ BASIC INSTALLATION
 1. Unpack ORSEE's tgz file in your webservers path. (Oh, you already did?)
 
 2. Rename the directory if needed
-   % mv orsee-2.2.x yourdirname
+   % mv orsee-3.0.0 yourdirname
 
 3. Cd to the 'install' directory.
    % cd yourdirname/install
@@ -30,15 +30,15 @@ BASIC INSTALLATION
    mysql> FLUSH PRIVILEGES;
    mysql> quit
 
-5. Import the default database structure. You have the choice between a recommended unicode version (install.UTF8.sql) ready for any international characters and an older charset version only allowing western characters (install.ISO8859-1.sql). I recommend the unicode version, and only switch to ISO if that does not work for a reason.
+5. Import the default database structure. 
 
-   % mysql orseedbname -uorseedbusername -porseeuserdbpassword < install.UTF8.sql
+   % mysql orseedbname -uorseedbusername -porseeuserdbpassword < install.sql
 
 6. Install the crontab named 'crontab-for-orsee'. Edit the settings
    in this file to match your needs.
    % crontab crontab-for-orsee
 
-7. Browse to the 'config' dir. Edit the few settings in 'settings.php'. Don't forget to change the $settings__charset option to 'ISO8859-1' if you use the ISO version of the database.
+7. Browse to the 'config' dir. Edit the few settings in 'settings.php'.
 
 8. Make sure that the 'usage' directory is writable for the user under which the cronjob is running. The webalizer output will be saved there by the server.
 
@@ -61,7 +61,7 @@ Just some notes:
 
 - Check whether all characters are correctly displayed on the site. To do so, just use the pre-installed German language with all its umlauts (click on Switch to Deutsch when on public/index.php).
 
-- If you want to add your own fields in the participant profile from, then please read the instructions in config/participant_form.php. 
+- If you want to add your own fields in the participant profile from, then please read the instructions in the wiki. 
 
 - Create your own style
   ->Copy the 'orsee' directory from the 'style' dir.
@@ -75,22 +75,17 @@ Just some notes:
 
 - Create Administrators.
 
-- Create Options/Laboratories.
+- Create Laboratories, Subjectpools, Experiment Types.
 
-- Create Options/Subjectpools.
-
-- Edit Options/External Experiment Types.
+- Review Options/Participant states and Options/Participation states.
 
 - Create Options/Experiment Classes.
 
-- Select your Options/Languages/Public Language.
+- Select your Languages/Public Languages.
 
-- Edit Public Content, FAQs, Fields of Studies, Professions, Default Emails, 
-  Default texts.
+- Edit Public Content, FAQs, E-mail templates.
 
 - You might want to edit the file 'webalizer.template' in the 'usage' dir.
-
-- Note that there is a new track function in ORSEE. It has been really hard for me to keep track of where ORSEE has been installed and which of these installations are active. So there is a tag included in the public/index.php which loads a small transparent image from www.orsee.org and at the same time tells orsee.org where the page is located. Other than the link to the page no information is transferred. This helps me keep track of active ORSEE installations. If you don't like this, you can include a "$settings__disable_orsee_stats=='n'" in your config/settings.php and the tracking will be disabled.
 
 
 Ready to start.

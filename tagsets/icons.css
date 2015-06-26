@@ -1,0 +1,97 @@
+
+.menuicon {
+	color: #ffffff;
+	padding-right: 0px;
+	font-size: 12pt;
+}
+
+.optionsicon {
+	color: #444444;
+	padding-right: 5px;
+}
+
+.option:hover {
+	background-color: #CCCCCC;
+}
+
+.languageicon:before {
+	height: 11px;
+	width: 16px;
+	padding-right: 3px;
+}
+
+.biconred:before {
+	color: red;
+}
+
+.bicongreen:before {
+	color: green;
+}
+
+
+
+	
+	/* Buttons and inputs */
+	
+	button.button, input.button 
+	{ 
+		cursor: pointer;
+		overflow: visible; /* removes extra side spacing in IE */
+	}
+	
+	/* removes extra inner spacing in Firefox */
+	input[type="reset"]::-moz-focus-inner, 
+	input[type="button"]::-moz-focus-inner, 
+	input[type="submit"]::-moz-focus-inner, 
+	input[type="file"] > input[type="button"]::-moz-focus-inner {
+		border: 0;
+		padding: 0;
+	}
+	
+	/* If line-height can't be modified, then fix Firefox spacing with padding */
+	 input::-moz-focus-inner 
+	{
+	  padding: .4em;
+	}
+
+	/* The disabled styles */
+	.button[disabled], .button[disabled]:hover, .button.disabled, .button.disabled:hover 
+	{
+		background: #eee;
+		color: #aaa;
+		border-color: #aaa;
+		cursor: default;
+		text-shadow: none;
+		position: static;
+		-moz-box-shadow: none;
+		-webkit-box-shadow: none;
+		box-shadow: none;		
+	}
+    
+select 
+	{
+		border: 1px solid #949CC1;
+		background: -moz-linear-gradient(19% 75% 90deg,#ededed, #fbfbfb);
+		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+		-moz-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+		-webkit-box-shadow: 0 1px 2px rgba(0,0,0,.05);
+		color: #222222;
+	}
+
+.session_status_planned { color: #FFA500; }
+.session_status_live { color: #008000; }
+.session_status_completed { color: #808080; }
+.session_status_balanced { color: #00008B; }
+.session_status_canceled { color: #CC3300; }
+
+.explist_link 
+	{
+		color: black;
+		text-decoration: none;
+	}
+
+.explist_link:hover 
+	{
+		text-decoration: underline;
+	}
+

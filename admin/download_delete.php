@@ -2,82 +2,101 @@
 // part of orsee. see orsee.org
 ob_start();
 
-$title="delete download";
+$title="delete_download";
 include("header.php");
+if ($proceed) {
+    if (isset($_REQUEST['dl']) && $_REQUEST['dl']) $upload_id=$_REQUEST['dl'];
+    else redirect ("admin/");
+}
 
-         if (isset($_REQUEST['dl']) && $_REQUEST['dl']) $upload_id=$_REQUEST['dl'];
-                else redirect ("admin/");
-
-	if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) {
-		$experiment__id=$_REQUEST['experiment_id'];
-		if (!check_allow('experiment_restriction_override'))
-			check_experiment_allowed($experiment_id,"admin/experiment_show.php?experiment_id=".$experiment_id);
-		}
-                else $experiment_id="";
-
-	$link= ($experiment_id) ? "download_main.php?experiment_id=".$experiment_id : "download_main.php";
-
-	if ($experiment_id) $allow=check_allow('download_experiment_delete',$link);
-		else $allow=check_allow('download_general_delete',$link);
-
-	if (isset($_REQUEST['betternot']) && $_REQUEST['betternot'])
-		redirect ('admin/'.$link);
-
-        if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
-                        else $reallydelete=false;
-
+if ($proceed) {
 	$upload=orsee_db_load_array("uploads",$upload_id,"upload_id");
+	if (!isset($upload['upload_id'])) redirect ('admin/download_main.php');
+}
 
-	echo '	<BR><BR>
-		<center>
-			<h4>'.$lang['delete_download'].'</h4>
-		</center>';
+if ($proceed) {
+	if ($upload['experiment_id']>0) {
+		$experiment_id=$upload['experiment_id'];
+		if (!check_allow('experiment_restriction_override')) 
+			check_experiment_allowed($experiment_id,"admin/experiment_show.php?experiment_id=".$experiment_id);
+	} else $experiment_id=0;
+}
 
+if ($proceed) {
+	if ($experiment_id>0) {
+		$experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
+		if (!isset($experiment['experiment_id'])) $experiment_id=0;
+	}
+}
+
+if ($proceed) {
+	if ($experiment_id>0) {
+		$experimenters=db_string_to_id_array($experiment['experimenter']);
+		if (! ((in_array($expadmindata['admin_id'],$experimenters) && check_allow('file_delete_experiment_my'))
+				|| check_allow('file_delete_experiment_all')) ) {
+			redirect('admin/experiment_show.php?experiment_id='.$experiment_id);
+		}
+	} else {
+		$allow=check_allow('file_delete_general','download_main.php');
+	}
+}
+
+
+if ($proceed) {
+	if (isset($_REQUEST['betternot']) && $_REQUEST['betternot']) {
+		if ($experiment_id) redirect ('admin/download_main.php?experiment_id='.urlencode($experiment_id));
+		else redirect ('admin/download_main.php');
+		$proceed=false;
+	}
+}
+
+if ($proceed) {
+
+    if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
+    else $reallydelete=false;
 
 	if ($reallydelete) { 
 
-        	$query="DELETE FROM ".table('uploads')." 
-         		WHERE upload_id='".$upload_id."'";
-		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-
+		$pars=array(':upload_id'=>$upload_id);
+       	$query="DELETE FROM ".table('uploads')." 
+         		WHERE upload_id= :upload_id";
+		$result=or_query($query,$pars);
 		$query="DELETE FROM ".table('uploads_data')."  
-                        WHERE upload_id='".$upload_id."'";
-                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+                WHERE upload_id= :upload_id";
+        $result=or_query($query,$pars);
 		$target= ($experiment_id) ? "experiment_id:".$experiment_id : "general";
 		log__admin("file_delete",$target);
-        	message ($lang['download_deleted']);
+        message (lang('download_deleted'));
+		redirect ('admin/download_main.php');
+		$proceed=false;
+	}
+}
 
-		redirect ('admin/'.$link);
-		}
+if ($proceed) {
 
 	// form
-
 	echo '	<CENTER>
-		<FORM action="download_delete.php">
-		<INPUT type=hidden name="dl" value="'.$upload_id.'">
-		<INPUT type=hidden name="experiment_id" value="'.$experiment_id.'">
-
-		<TABLE>
+		<TABLE class="or_formtable">
 			<TR>
 				<TD colspan=2>
-					'.$lang['do_you_really_want_to_delete'].'
+					'.lang('do_you_really_want_to_delete').'
 					<BR><BR>';
 					dump_array($upload); echo '
 				</TD>
 			</TR>
 			<TR>
 				<TD align=left>
-					<INPUT type=submit name=reallydelete value="'.$lang['yes_delete'].'">
+					'.button_link('download_delete.php?dl='.$upload_id.'&reallydelete=true',
+					lang('yes_delete'),'check-square biconred').'
 				</TD>
 				<TD align=right>
-					<INPUT type=submit name=betternot value="'.$lang['no_sorry'].'">
+					'.button_link('download_delete.php?dl='.$upload_id.'&betternot=true',
+					lang('no_sorry'),'undo bicongreen').'
 				</TD>
 			</TR>
 		</TABLE>
-
-		</FORM>
 		</center>';
 
+}
 include ("footer.php");
-
 ?>

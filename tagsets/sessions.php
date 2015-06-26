@@ -1,152 +1,221 @@
 <?php
 // part of orsee. see orsee.org
 
-function sessions__format_alist($session) {
-	global $lang, $color;
+function sessions__format_alist($session,$experiment) {
+	global $lang, $color, $settings, $sessionlinecolor, $preloaded_laboratories;
+	
+	if (!(is_array($preloaded_laboratories) && count($preloaded_laboratories)>0)) 
+		$preloaded_laboratories=laboratories__get_laboratories();
+		
   	extract($session);
-	$session_time_array=time__load_session_time($session);
-        $session_time=session__build_name($session);
+    $session_time=session__build_name($session);
 
-	$reg=experiment__count_participate_at($experiment_id,$session_id);
+	if (!isset($sessionlinecolor) || !$sessionlinecolor) {
+		$sessionlinecolor='empty';
+	} elseif ($sessionlinecolor=='empty') {
+		$sessionlinecolor='grey';
+	} else $sessionlinecolor='empty';
+
+	$reg=$regcount;
 	if ($reg < $part_needed) {
 		$regfontcolor=$color['session_not_enough_participants'];
-		}
-	  elseif ($reg < $part_needed + $part_reserve) {
+	}  elseif ($reg < $part_needed + $part_reserve) {
 		$regfontcolor=$color['session_not_enough_reserve'];
-		}
-	   else {
+	} else {
 		$regfontcolor=$color['session_complete'];
-		}
+	}
 
-        echo '	<tr>
-        		<td>
-				'.$session_time.'
-        		</td>
+   
+	if ($session_status=="live") {
+		$signup_time=session__get_signup_time_left($session);
+	    if ($signup_time) $reg_state=lang('signup_time_left').':&nbsp;'.$signup_time;
+        else $reg_state=lang('registration_deadline_passed');
+
+		if ($reminder_sent=="y") {
+			$reminder_state=lang('session_reminder_state__sent');
+			$reminder_statecolor=$color['session_reminder_state_sent_text'];
+		} elseif ($reminder_checked=="y" && $reminder_sent=="n") {
+			$reminder_state=lang('session_reminder_state__checked_but_not_sent');
+			$reminder_statecolor=$color['session_reminder_state_checked_text'];
+		} else {
+			$reminder_state=lang('session_reminder_state__waiting');
+			$reminder_statecolor=$color['session_reminder_state_waiting_text'];
+		}
+	} else {
+		$reminder_state='';
+		$reg_state='';	
+	}
+	
+	if ($settings['enable_payment_module']=="y" &&  check_allow('payments_view')
+        && ($session_status=='completed' || $session_status=='balanced')) {
+		if ($session_status=='balanced') $payments=lang('total_payment_abbr').': '.$total_payment;
+        else $payments=lang('total_payment_abbr').': '.lang('three_questionmarks');
+    } else {
+		$payments='';
+    }
+
+	$ssicons=array("planned"=>"wrench","live"=>"spinner fa-spin fa-fw","completed"=>"thumbs-o-up","balanced"=>"money");
+
+	if ($sessionlinecolor=='empty') $rowspec=' bgcolor="'.$color['list_shade2'].'"'; else $rowspec=' bgcolor="'.$color['list_shade1'].'"';
+
+	if ($settings['enable_ethics_approval_module']=='y') {
+		if ($experiment['ethics_by'] || $experiment['ethics_number']) {
+			if ($experiment['ethics_exempt']!='y' && $session_start>$experiment['ethics_expire_date']) {
+				$rowspec=' bgcolor="'.$color['ethics_approval_expired'].'"';
+			}
+		}
+	}
+
+	
+    echo '<tr'.$rowspec.'>
+       		<td><B>'.$session_time;
+			if (count($preloaded_laboratories)>1) {
+				echo ' '.$preloaded_laboratories[$laboratory_id]['lab_name'];
+			}
+			echo '</B></td>
 			<td>
+				'.lang('session_status').': <B><span class="session_status_'.$session_status.'">'.
+					'<i class="fa fa-'.$ssicons[$session_status].'"></i>&nbsp;'.
+					$lang['session_status_'.$session_status].'</span></B>
 			</td>
-			<td>
-				'.laboratories__get_laboratory_name($laboratory_id).'
-			</td>
-        		<td>';
-				if (check_allow('session_edit')) echo '
-        			<A HREF="session_edit.php?session_id='.$session_id.'">
-                			'.$lang['edit'].'
-                		</A>';
-        echo '		</td>
+			<td>';
+				if ($reg_state) echo $reg_state;
+			echo '</td>
+       		<td>';
+			if (check_allow('session_edit')) echo 
+       			button_link('session_edit.php?session_id='.$session_id,
+               			lang('edit'),'pencil-square-o','margin: 0; ').'
+               		</A>';
+     		echo '</td>
         	</tr>';
 
 	$allow_sp=check_allow('experiment_show_participants');
 
-	echo '	<TR>
+	
+	echo '	<TR'.$rowspec.'>
 			<TD>';
 				if ($allow_sp) echo '
 					<A HREF="experiment_participants_show.php?experiment_id='.
-						$experiment_id.'&focus=registered&session_id='.
-						$session_id.'">';
-				echo $lang['registered_subjects'];
+						$experiment_id.'&session_id='.$session_id.'">';
+				echo lang('registered_subjects');
 				if ($allow_sp) echo '</A>';
 				echo ': 
 				<FONT color="'.$regfontcolor.'">
-				'.$reg.' ('.$part_needed.','.$part_reserve.')</FONT> '.
-				help("shortcut_counts").'
+				'.$reg.' ('.$part_needed.','.$part_reserve.')</FONT>
 			</TD>
 			<TD>';
-				if ($session_finished!="y") {
-					if ($reminder_sent=="y") {
-						$state=$lang['session_reminder_state__sent'];
-						$statecolor=$color['session_reminder_state_sent_text'];
-						}
-					elseif ($reminder_checked=="y" && $reminder_sent=="n") {
-						$state=$lang['session_reminder_state__checked_but_not_sent'];
-						$statecolor=$color['session_reminder_state_checked_text'];
-						}
-					else {
-						$state=$lang['session_reminder_state__waiting'];
-						$statecolor=$color['session_reminder_state_waiting_text'];
-						}
-					echo '<FONT color="'.$statecolor.'">'.$lang['session_reminder'].': '.$state.'</FONT>';
-					}
+	if ($payments) echo $payments; 
 	echo '		</TD>
-			<TD colspan=2>';
-				if ($session_finished=="y")
-					echo '<font color="'.$color['session_finished'].'">
-						'.$lang['session_finished'].'</font>';
-		echo '	</TD>
+			<TD>';
+				if($reminder_state) echo '<FONT color="'.$reminder_statecolor.'">'.
+					'<I class="fa fa-bell" style="padding-right: 3px;"></I>'.
+					lang('session_reminder').': '.$reminder_state.'</FONT>';
+	echo '		</TD>
+			<TD>';
+	echo '	</TD>
 		</TR>';
 
-        echo '	<TR>
-			<TD colspan=3 class=small>
+    echo '	<TR'.$rowspec.'>
+			<TD colspan=4 class=small>
 				&nbsp;
 			</TD>
 		</TR>';
 }
 
+function session__get_signup_time_left($s) {
+        global $lang;
+        $sutime=ortime__sesstime_to_unixtime($s['session_start']);
+        $left_sec=$sutime-($s['registration_end_hours']*60*60)-time();
+        if ($left_sec>60*60*24*2)
+        	$t=floor($left_sec/(60*60*24)).lang('format_datetime_shortcut_days').
+        		round(($left_sec-(floor($left_sec/(60*60*24))*60*60*24))/(60*60)).
+                                        lang('format_datetime_shortcut_hours');
+        elseif ($left_sec>60*60*1.5) $t=round($left_sec/(60*60)).
+                                        lang('format_datetime_shortcut_hours');
+        elseif ($left_sec>0) $t=round($left_sec/60).lang('format_datetime_shortcut_minutes');
+        else $t='';
+        return $t;
+}
+
+function session__session_status_select($fieldname,$value='') {
+        global $lang, $settings;
+        $output="";
+        $states=array('planned','live','completed');
+        if (isset($settings['enable_payment_module']) && $settings['enable_payment_module']=='y') $states[]='balanced';
+        $output.='<SELECT name="'.$fieldname.'">';
+        foreach ($states as $state) {
+                $output.='<OPTION value="'.$state.'"';
+                if ($state==$value ||
+                        ((!$value) && $state==$settings['planned']))
+                        $output.=' selected';
+                $output.='>'.$lang['session_status_'.$state].'</OPTION>'."\n";
+        }
+        $output.='</SELECT>';
+        return $output;
+}
+
 function session__check_lab_time_clash($entry) {
         global $lang;
 
-	if (isset($entry['session_start_year'])) {
-		$notice=$lang['overlapping_sessions'];
-		$thistimearray=time__load_session_time($entry);
-                $this_start_time=time__time_package_to_unixtime($thistimearray);
-                $this_end_time = $this_start_time +
-                                    ( (int) $entry['session_duration_hour'] * 3600 ) +
-                                    ( (int) $entry['session_duration_minute'] * 60);
-		}
-	   else {
-		$notice=$lang['overlapping_lab_reservation'];
-                $thistimearray=time__get_timepack_from_pack ($entry,"space_start_");
-                $this_start_time=time__time_package_to_unixtime($thistimearray);
-		$thisendtimearray=time__get_timepack_from_pack ($entry,"space_stop_");
-                $this_end_time=time__time_package_to_unixtime($thisendtimearray);
-		}
+	if (isset($entry['session_start'])) {
+		$notice=lang('overlapping_sessions');
+        $this_start_time=$entry['session_start'];
+        $this_end_time = ortime__add_hourmin_to_sesstime($this_start_time,
+        					$entry['session_duration_hour'],$entry['session_duration_minute']);
+    } else {
+		$notice=lang('overlapping_lab_reservation');
+		$this_start_time=$entry['event_start'];
+		$this_end_time=$entry['event_stop'];
+	}
 
-		if (!isset($entry['space_id'])) $entry['space_id']='';
-		if (!isset($entry['session_id'])) $entry['session_id']='';
+	if (!isset($entry['event_id'])) $entry['event_id']='';
+	if (!isset($entry['session_id'])) $entry['session_id']='';
 
-        $query="SELECT unix_timestamp(concat(session_start_year,'-',session_start_month,'-',session_start_day,' ',
-					session_start_hour,':',session_start_minute,':0')) as start_time, 
-			unix_timestamp(concat(session_start_year,'-',session_start_month,'-',session_start_day,' ',
-                                        session_start_hour,':',session_start_minute,':0')) +
-					session_duration_hour*3600 + session_duration_minute*60 as stop_time,
+	$pars=array(':this_end_time'=>$this_end_time,
+				':this_start_time'=>$this_start_time,
+				':session_id'=>$entry['session_id'],
+				':laboratory_id'=>$entry['laboratory_id']);
+    $query="SELECT session_start,
+    		date_format(date_add(session_start*100, 
+    		INTERVAL concat(session_duration_hour,':',session_duration_minute) HOUR_MINUTE),'%Y%m%d%H%i') 
+    		as session_stop,
 			 ".table('experiments').".*, ".table('sessions').".*
-                FROM ".table('experiments').", ".table('sessions')."
-                WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
-                AND ".table('experiments').".experiment_type!='internet'
-                AND session_id!='".$entry['session_id']."'
-                AND laboratory_id='".$entry['laboratory_id']."' 
-		HAVING NOT (start_time >= '".$this_end_time."' OR stop_time <= '".$this_start_time."')
-		ORDER BY start_time";
-        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+    		FROM ".table('experiments').", ".table('sessions')."
+            WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
+            AND ".table('experiments').".experiment_type!='internet'
+            AND session_id!=:session_id
+            AND laboratory_id=:laboratory_id 
+			HAVING NOT (session_start >= :this_end_time OR session_stop <= :this_start_time)
+			ORDER BY session_start";
+    $result=or_query($query,$pars);
 
-        while ($osession=mysqli_fetch_assoc($result)) {
-        	message ('<UL><LI>'.
+    while ($osession=pdo_fetch_assoc($result)) {
+    	message ('<UL><LI>'.
                 	$notice.': <A HREF="session_edit.php?session_id='.$osession['session_id'].'">'.
-                        experiment__get_title($osession['experiment_id']).' - '.
-                        session__build_name($osession).'</A></UL>');
-                }
+					$osession['experiment_name'].' - '.
+					session__build_name($osession).'</A></UL>');
+    }
 
-	$query="SELECT unix_timestamp(concat(space_start_year,'-',space_start_month,'-',space_start_day,' ',
-                                        space_start_hour,':',space_start_minute,':0')) as start_time,
-                        unix_timestamp(concat(space_stop_year,'-',space_stop_month,'-',space_stop_day,' ',
-                                        space_stop_hour,':',space_stop_minute,':0')) as stop_time,
-                         ".table('lab_space').".*
-                FROM ".table('lab_space')." 
-                WHERE laboratory_id='".$entry['laboratory_id']."' 
-			AND space_id!='".$entry['space_id']."' 
-                HAVING NOT (start_time >= '".$this_end_time."' OR stop_time <= '".$this_start_time."')
-                ORDER BY start_time";
-        $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	$pars=array(':this_end_time'=>$this_end_time,
+				':this_start_time'=>$this_start_time,
+				':event_id'=>$entry['event_id'],
+				':laboratory_id'=>$entry['laboratory_id']);
+	$query="SELECT event_start, event_stop,
+           ".table('events').".*
+			FROM ".table('events')." 
+			WHERE laboratory_id=:laboratory_id 
+			AND event_id!=:event_id 
+			AND NOT (event_start >= :this_end_time OR event_stop <= :this_start_time)
+			ORDER BY event_start";
+	$result=or_query($query);
 
-        while ($osession=mysqli_fetch_assoc($result)) {
-		$ostart_time=time__get_timepack_from_pack ($osession,"space_start_");
-		$ostop_time=time__get_timepack_from_pack ($osession,"space_stop_");
-		$ostart_string=time__format($lang['lang'],$ostart_time);
-		$ostop_string=time__format($lang['lang'],$ostop_time);
-                message ('<UL><LI>'.
-                        $notice.': <A HREF="calendar_main.php?time='.$this_start_time.'">'.
-                        $osession['reason'].' - '.
-                        $ostart_string.' - '.$ostop_string.'</A></UL>');
-                }
+	while ($osession=pdo_fetch_assoc($result)) {
+		$ostart_string=ortime__format(ortime__sesstime_to_unixtime($osession['event_start']));
+		$ostop_string=ortime__format(ortime__sesstime_to_unixtime($osession['event_stop']));
+		message ('<UL><LI>'.
+					$notice.': <A HREF="events_edit.php?event_id='.$osession['event_id'].'">'.
+					$ostart_string.' - '.$ostop_string.'</A></UL>');
+	}
 }
 
 
@@ -174,124 +243,133 @@ function session__build_name($pack,$language="") {
 	global $lang, $settings;
 	if (!$language) {
         	if (isset($lang['lang'])) $thislang=$lang['lang'];
-                        else $thislang=$settings['public_standard_language'];
-		}
-		else {
+            else $thislang=$settings['public_standard_language'];
+	} else {
 		$thislang=$language;
-		}
-
-	$session_time=time__load_session_time($pack);
-	$duration=time__get_timepack_from_pack($pack,"session_duration_");
-        $end_time=time__add_packages($session_time,$duration);
-	$session_time_string=time__format($thislang,$session_time,false,false,true,false).'-'.
-			time__format($thislang,$end_time,true,false,true,true);
+	}
+	$start_time=$pack['session_start'];
+    $end_time = ortime__add_hourmin_to_sesstime($start_time,
+    				$pack['session_duration_hour'],$pack['session_duration_minute']);
+	$session_time_string=ortime__format(ortime__sesstime_to_unixtime($start_time),'hide_second:true',$thislang).'-'.
+						ortime__format(ortime__sesstime_to_unixtime($end_time),'hide_date:true,hide_second:true',$thislang);
 	return $session_time_string;
 }
 
 
-function sessions__get_first_date($experiment_id) {
-	global $expadmindata;
-     	$query="SELECT *
-      		FROM ".table('sessions')."
-      		WHERE experiment_id='".$experiment_id."'
-      		ORDER BY session_start_year, session_start_month, session_start_day
-		LIMIT 1";
-	$fsession=orsee_query($query);
-	if (isset($fsession['session_start_year'])) {
-		$ttime=time__load_session_time($fsession);
-		$dstr=time__format($expadmindata['language'],$ttime,false,true,true,false);
-		return $dstr;
-		}
-	   else {
-		return "???";
-		}
+function sessions__get_first_last_date($session_list) {
+	$first_d=0; $last_d=0;
+	foreach ($session_list as $s) {
+		if ($first_d==0 || $s['session_start']<$first_d) $first_d=$s['session_start'];
+		if ($last_d==0 || $s['session_start']>$last_d) $last_d=$s['session_start'];	
+	}
+	$first_s=($first_d==0)?'???':ortime__format(ortime__sesstime_to_unixtime($first_d),'hide_time:true');
+	$last_s=($last_d==0)?'???':ortime__format(ortime__sesstime_to_unixtime($last_d),'hide_time:true');
+	return array('first'=>$first_s,'last'=>$last_s);
 }
 
-function sessions__get_last_date($experiment_id) {
-        global $expadmindata;
-        $query="SELECT session_start_year, session_start_month, session_start_day
-      		FROM ".table('sessions')." 
-      		WHERE experiment_id='".$experiment_id."'
-      		ORDER BY session_start_year DESC, session_start_month DESC, session_start_day DESC
-        	LIMIT 1";
-        $fsession=orsee_query($query);
-        if (isset($fsession['session_start_year'])) {
-                $ttime=time__load_session_time($fsession);
-                $dstr=time__format($expadmindata['language'],$ttime,false,true,true,false);
-                return $dstr;
-                }
-           else {
-                return "???";
-                }
-}
 
 function sessions__get_registration_end($alist,$session_id="",$experiment_id="") {
 	if ($session_id) {
-		$query="SELECT * FROM ".table('sessions')." WHERE session_id='".$session_id."'";
-		$alist=orsee_query($query);
-		}
- 	elseif ($experiment_id) {
-		$query="SELECT ".table('sessions').".*,
-			session_start_year*100000000 +
-            session_start_month*1000000 +
-            session_start_day*10000 +
-            session_start_hour*100 +
-            session_start_minute as time
+		$pars=array(':session_id'=>$session_id);
+		$query="SELECT * FROM ".table('sessions')." WHERE session_id=:session_id";
+		$alist=orsee_query($query,$pars);
+	} elseif ($experiment_id) {
+		$pars=array(':experiment_id'=>$experiment_id);
+		$query="SELECT ".table('sessions').".* 
             FROM ".table('experiments').", ".table('sessions')."
             WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
             AND experiment_type='laboratory'
-			AND ".table('experiments').".experiment_id='".$experiment_id."'
-			ORDER BY time DESC
+			AND ".table('experiments').".experiment_id=:experiment_id
+			ORDER BY session_start DESC
 			LIMIT 1";
-		$alist=orsee_query($query);
-		}
-	$blist=time__load_session_time($alist);
-	$session_unixtime=time__time_package_to_unixtime($blist);
-	$diff = ((int) $alist['registration_end_hours']) * 3600;
-	$registration_end_unixtime=$session_unixtime-$diff;
-	return $registration_end_unixtime;
+		$alist=orsee_query($query,$pars);
+	}
+	$registration_end=ortime__add_hourmin_to_sesstime($alist['session_start'],0-$alist['registration_end_hours']);
+	return ortime__sesstime_to_unixtime($registration_end);
 }
+
+function sessions__get_cancellation_deadline($alist,$session_id="",$experiment_id="") {
+	global $settings;
+	if ($session_id) {
+		$pars=array(':session_id'=>$session_id);
+		$query="SELECT * FROM ".table('sessions')." WHERE session_id=:session_id";
+		$alist=orsee_query($query,$pars);
+	} elseif ($experiment_id) {
+		$pars=array(':experiment_id'=>$experiment_id);
+		$query="SELECT ".table('sessions').".* 
+            FROM ".table('experiments').", ".table('sessions')."
+            WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
+            AND experiment_type='laboratory'
+			AND ".table('experiments').".experiment_id=:experiment_id
+			ORDER BY session_start DESC
+			LIMIT 1";
+		$alist=orsee_query($query,$pars);
+	}
+	if (isset($settings['subject_cancellation_hours_before_start']) && $settings['subject_cancellation_hours_before_start']>0)
+		$deadline_hours=$settings['subject_cancellation_hours_before_start'];
+	else $deadline_hours=0;
+	$cancellation__deadline=ortime__add_hourmin_to_sesstime($alist['session_start'],0-$deadline_hours);
+	return ortime__sesstime_to_unixtime($cancellation__deadline);
+}
+
 
 function sessions__get_reminder_time($alist,$session_id="") {
 	if ($session_id) {
-		$query="SELECT * FROM ".table('sessions')." WHERE session_id='".$session_id."'";
-        	$alist=orsee_query($query);
-		}
-	$blist=time__load_session_time($alist);
-	$session_unixtime=time__time_package_to_unixtime($blist);
-	$diff = ((int) $alist['session_reminder_hours']) * 3600;
-	$reminder_unixtime=$session_unixtime-$diff;
-	return $reminder_unixtime;
-}
-
-function sessions__get_session_time($pack,$session_id="") {
-	if ($session_id) 
-        	$pack=orsee_db_load_array("sessions",$session_id,"session_id");
-
-	$session_time=time__load_session_time($pack);
-	$session_unixtime=time__time_package_to_unixtime($session_time);
-	return $session_unixtime;
+		$pars=array(':session_id'=>$session_id);
+		$query="SELECT * FROM ".table('sessions')." WHERE session_id=:session_id";
+       	$alist=orsee_query($query,$pars);
+	}
+	$reminder_time=ortime__add_hourmin_to_sesstime($alist['session_start'],0-$alist['session_reminder_hours']);
+	return ortime__sesstime_to_unixtime($reminder_time);
 }
 
 
 function sessions__session_full($session_id,$thissession=array()) {
-
-	if (!isset($thissession['session_id'])) 
-	 	$thissession=orsee_db_load_array("sessions",$session_id,"session_id");
+	if (!isset($thissession['session_id'])) $thissession=orsee_db_load_array("sessions",$session_id,"session_id");
 	$reg=experiment__count_participate_at($thissession['experiment_id'],$thissession['session_id']);
-	if ($reg < $thissession['part_needed'] + $thissession['part_reserve']) $session_full=false; else $session_full=true;
+	if ($reg < $thissession['part_needed'] + $thissession['part_reserve']) $session_full=false; 
+	else $session_full=true;
 	return $session_full;
 }
 
 
 
 function sessions__get_experiment_id($session_id) {
+	$pars=array(':session_id'=>$session_id);
 	$query="SELECT experiment_id
       		FROM ".table('sessions')." 
-      		WHERE session_id='".$session_id."'";
-	$res=orsee_query($query);
+      		WHERE session_id=:session_id";
+	$res=orsee_query($query,$pars);
 	if (isset($res['experiment_id'])) $experiment_id=$res['experiment_id']; else $experiment_id="";
 	return $experiment_id;
+}
+
+function sessions__get_sessions($experiment_id) {
+// load sessions of an experiment
+	$pars=array(':experiment_id'=>$experiment_id);
+	$query="SELECT *
+            FROM ".table('sessions')."
+			WHERE experiment_id= :experiment_id 
+            ORDER BY session_start";
+    $result=or_query($query,$pars); $sessions=array();
+	while ($line=pdo_fetch_assoc($result)) {
+    	$sessions[$line['session_id']]=$line;
+    }
+    return $sessions;
+}
+
+function sessions__load_sessions_for_ids($ids=array()) {
+	$sessions=array();
+	if (count($ids)>0) {
+		$par_array=id_array_to_par_array($ids);
+		$query="SELECT * FROM ".table('sessions')."
+				WHERE session_id IN (".implode(',',$par_array['keys']).")";
+		$result=or_query($query,$par_array['pars']);
+		while ($line=pdo_fetch_assoc($result)) {
+			$sessions[$line['session_id']]=$line;
+		}
+    }
+    return $sessions;
 }
 
 ?>

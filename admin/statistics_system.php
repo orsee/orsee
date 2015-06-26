@@ -3,32 +3,38 @@
 ob_start();
 
 $menu__area="statistics";
-$title="system statistics";
-
+$title="system_statistics";
 include("header.php");
-
+if ($proceed) {
 	$allow=check_allow('statistics_system_show','statistics_main.php');
+}
 
-	echo '<center>
-                <BR><BR>
-                        <h4>'.$lang['system_statistics'].'</h4>';
+if ($proceed) {
+	echo '<center>';
 
-	if ($settings['stats_type']=='text') {
-		echo '<TABLE><TR><TD><pre>';
-		echo stats__textstats_all();
-		echo '</pre></TD></TR></TABLE>';
-		}
-	elseif ($settings['stats_type']=='plots') {
-		echo stats__system_graphstats_all();
-		}
-	elseif ($settings['stats_type']=='both') {
-                echo stats__system_htmlgraphstats_all();
-                }
-	else {
-		echo stats__system_htmlstats_all();
-		}
-
-	echo '<BR><BR><A href="statistics_main.php">'.icon('back').' '.$lang['back'].'</A><BR><BR>';
+	$data['participant_actions']=stats__get_participant_action_data();
+	$_SESSION['stats_data']=$data; 
+	
+	$out=stats__stats_display_table($data['participant_actions']);
+	echo '<TABLE class="or_formtable" style="width: 90%">
+			<TR><TD colspan="2">
+				<TABLE width="100%" border=0 class="or_panel_title"><TR>
+					<TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'" align="center">
+						'.$data['participant_actions']['title'].'
+					</TD>
+				</TR></TABLE>
+			</TD></TR>';
+	echo '<TR>';
+	echo '<TD valign="top" align="left" style="width: 50%">'.$out.'</TD>';
+	echo '<TD valign="top" align="center" style="width: 50%">';
+		echo '<img border="0" src="statistics_graph.php?stype=participant_actions">';
+	echo '</td>';
+	echo '</TR>';
+	echo '</TABLE>';
+	
+	echo '<BR><BR><A href="statistics_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
 	echo '</center>';
 
+}
 include("footer.php");
+?>

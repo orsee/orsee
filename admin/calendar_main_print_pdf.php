@@ -3,11 +3,10 @@
 ob_start();
 include ("nonoutputheader.php");
 
-        if ($_REQUEST['time']) $caltime= (int) $_REQUEST['time']; else $caltime=time();
-        if ($_REQUEST['year']) $calyear=true; else $calyear=false;
+        if (isset($_REQUEST['displayfrom']) && $_REQUEST['displayfrom']) $displayfrom= (int) $_REQUEST['displayfrom']; else $displayfrom=time();
+        if (isset($_REQUEST['wholeyear']) && $_REQUEST['wholeyear']) $wholeyear=true; else $wholeyear=false;
 
-        pdfoutput__make_calendar($caltime,$calyear,true,1);
+        pdfoutput__make_pdf_calendar($displayfrom,$wholeyear,true,1);
 
-        //echo experimentmail__send_calendar();
 
 ?>

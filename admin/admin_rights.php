@@ -3,21 +3,17 @@
 ob_start();
 
 $menu__area="options";
-$title="my rights";
+$title="my_rights";
 include ("header.php");
-
-	echo '<center>
-		<BR><BR>
-			<h4>'.$lang['my_rights'].'</h4>
-		';
-
+if ($proceed) {
+	echo '<center>';
 	$rights=$expadmindata['rights'];
-
-	echo '<TABLE border=0>
-		<TR>
-			<TD>'.$lang['authorization'].'</TD>
-			<TD>'.$lang['description'].'</TD>
-		</TR>';
+	echo '<TABLE class="or_listtable"><thead>
+		<TR style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">
+			<TD>'.lang('authorization').'</TD>
+			<TD>'.lang('description').'</TD>
+		</TR></thead>
+		<tbody>';
 
 	$shade=true; $lastclass="";
 	foreach ($system__admin_rights as $right) {
@@ -27,25 +23,21 @@ include ("header.php");
 			if ($tclass!=$lastclass) {
 				echo '<TR><TD colspan=4>&nbsp;</TD></TR>';
 				$lastclass=$tclass; //$shade=true;
-				}
+			}
 			echo '	<TR bgcolor="';
-				if ($shade) echo $color['list_shade1']; else echo $color['list_shade2'];
-				echo '">
-					<TD class="small" align=left>
-                                        	'.$line[0].'
-                                	</TD>
-					<TD class="small">
-						'.$line[1].'
-					</TD>
+			if ($shade) echo $color['list_shade1']; else echo $color['list_shade2'];
+			echo '">
+					<TD class="small" align=left>'.$line[0].'</TD>
+					<TD class="small">'.$line[1].'</TD>
 			  </TR>';
 			if ($shade) $shade=false; else $shade=true;
-			}
 		}
-	echo '	</TABLE>
+	}
+	echo '	</tbody></TABLE>
 		</center>
 		<BR><BR>';
 
-
+}
 include ("footer.php");
 
 ?>

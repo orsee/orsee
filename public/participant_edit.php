@@ -3,15 +3,18 @@
 ob_start();
 
 $menu__area="my_data";
+$title="edit_participant_data";
 include("header.php");
-
+if ($proceed) {
 	$form=true;
-	
 	$errors__dataform=array(); 
-	
 	if (isset($_REQUEST['add']) && $_REQUEST['add']) {
 		$continue=true;
 		$_REQUEST['participant_id']=$participant['participant_id'];
+		if (isset($participant['pending_profile_update_request']) && $participant['pending_profile_update_request']=='y' &&
+			isset($participant['profile_update_request_new_pool']) && $participant['profile_update_request_new_pool']) {
+			$_REQUEST['subpool_id']=$participant['profile_update_request_new_pool'];
+		}
             
 		// checks and errors
 		foreach ($_REQUEST as $k=>$v) {
@@ -25,54 +28,61 @@ include("header.php");
 		if($response['problem']) { $continue=false; }
         
         if ($continue) {
+        	if (isset($participant['pending_profile_update_request']) && $participant['pending_profile_update_request']=='y') {
+				$_REQUEST['pending_profile_update_request']='n';
+				$_REQUEST['profile_update_request_new_pool']=NULL;
+				message(lang('profile_confirmed').'<BR>');
+			}
            	$participant=$_REQUEST;
 
+			$participant['last_profile_update']=time();
+			
 			$done=orsee_db_save_array($participant,"participants",$participant['participant_id'],"participant_id");
 
 	   		if ($done) {
-				message($lang['changes_saved']);
+				message(lang('changes_saved'));
 				log__participant("edit",$participant['participant_id']);
-				redirect("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
+				redirect("public/participant_edit.php".$token_string);
 			} else {
-				message($lang['database_error']);
-             	redirect ("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
+				message(lang('database_error'));
+             	redirect ("public/participant_edit.php".$token_string);
 	  		} 
 		}
 	} else {
     	$_REQUEST=$participant;
 	}
+}
 
-
-// form
-
-	if ($form) {
-
-		participant__show_form($_REQUEST,$lang['save'],$lang['edit_participant_data'],$errors__dataform,false);
-
-		echo '<CENTER>
-			<BR><BR>
-			<A HREF="participant_show.php?p='.url_cr_encode($_REQUEST['participant_id']).'">'.
-			$lang['click_to_experiment_registrations'].'</A>
-			<BR><BR>
-			<FORM action=participant_delete.php>
-			<INPUT type=hidden name="p" value="'.unix_crypt($_REQUEST['participant_id']).'">
-			<TABLE>
-			<TR>
-			<TD>
-			'.$lang['i_want_to_delete_my_data'].'<BR></TD>
-			</TR>
-			<TR><TD>
-			<center><INPUT type=submit name=delete value="'.$lang['unsubscribe'].'"></center>
-			</TD>
-			</TR>
-			</TABLE>
-			</FORM>
-			</center>';
-
+if ($proceed) {
+	if (isset($participant['pending_profile_update_request']) && $participant['pending_profile_update_request']=='y') {
+		message(lang('profile_update_request_message').'<BR>');
+		if (isset($participant['profile_update_request_new_pool']) && $participant['profile_update_request_new_pool']) {
+			$_REQUEST['subpool_id']=$participant['profile_update_request_new_pool'];
 		}
+	}
+}
 
-	echo '</CENTER>';
-
+if ($proceed) {
+// form
+	if ($form) {
+		echo '<CENTER>';
+		show_message();
+		echo '<TABLE class="or_formtable"><TR><TD>';
+		participant__show_form($_REQUEST,lang('save'),$errors__dataform,false);	
+		echo '</TD><TD align="right" valign="top">';		
+		echo '<TABLE border=0>';
+		echo '<TR><TD>'.button_link('participant_show.php'.$token_string,
+							lang('my_registrations'),'calendar-o').'</TD></TR>';
+		if ($settings['subject_authentication']!='token') {
+			echo '<TR><TD>'.button_link('participant_change_pw.php',
+							lang('change_my_password'),'key').'</TD></TR>';	
+		}
+		echo '<TR><TD>'.button_link('participant_delete.php'.$token_string,
+							lang('unsubscribe'),'minus-circle').'</TD></TR>';
+		echo '</TABLE>';
+		echo '</TD></TR></TABLE>';
+		echo '</CENTER>';
+	}
+}
 include("footer.php");
-
 ?>

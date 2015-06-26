@@ -1,32 +1,18 @@
-ORSEE 2.2.5:
-		Fixed use of deprecared mysql_ function in tagsets/logfunctions.php
-		Added html-tag stripping function to tagsets/helpers.php
 
-ORSEE 2.2.4:
-		Fixed deprecated function split (tagsets/helpers.php, line 25)
-
-ORSEE 2.2.3:
-		Fixed bug which resulted in session reminders not sent automatically
-		Fixed spurious output in cronjob PDF generation
-		Fixed bug in loading of experiment class names in tagsets/experiments.php
+ORSEE 3.0.0:
+	Too numerous to list.
 		
-ORSEE 2.2.2:
-		Fixed documentation on #is_subjectpool_X#.
-		Fixed issue with regular tasks not working.
-		Added option to specify MySQL port if needed.
-
 ORSEE 2.2.1:
-		Fixed bug which had PDF session participant list ordered randomnly.
+	Fixed bug which had PDF session participant list ordered randomnly.
 
 ORSEE 2.2.0:
-
-[2014-08-20]	Updated ORSEE to PHP5/MySQL5
-		Fixed all bugs reported on sourceforge bug tracker and elsewhere.
-		Updated all mysql function to mysqli.
-		Fixed all implicit variable definitions (undefined index / undefined variable notices).
-		Security: Real-escaped all posted vars in publicly accessible section.
-		Updated to newest version of PHPlot and ezPDF.
-		Updated ORSEE and MySQL database to full unicode/UTF-8 support.
-		Added participant form customization support.
+	Updated ORSEE to PHP5/MySQL5
+	Fixed all bugs reported on sourceforge bug tracker and elsewhere.
+	Updated all mysql function to mysqli.
+	Fixed all implicit variable definitions (undefined index / undefined variable notices).
+	Security: Real-escaped all posted vars in publicly accessible section.
+	Updated to newest version of PHPlot and ezPDF.
+	Updated ORSEE and MySQL database to full unicode/UTF-8 support.
+	Added participant form customization support.
 		
 

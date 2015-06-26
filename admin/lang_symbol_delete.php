@@ -3,69 +3,75 @@
 ob_start();
 
 $menu__area="options";
-$title="delete symbol";
+$title="delete_symbol";
 include("header.php");
+if ($proceed) {
+    if (isset($_REQUEST['lang_id']) && $_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id']; else $lang_id="";
+	if (!$lang_id) redirect ("admin/lang_main.php");
+}
 
-         if (isset($_REQUEST['lang_id']) && $_REQUEST['lang_id']) $lang_id=$_REQUEST['lang_id'];
-                else redirect ("admin/");
-
+if ($proceed) {
 	$allow=check_allow('lang_symbol_delete','lang_symbol_edit.php?lang_id='.$lang_id);
+}
 
-	if (isset($_REQUEST['betternot']) && $_REQUEST['betternot'])
-		redirect ('admin/lang_symbol_edit.php?lang_id='.$lang_id);
+if ($proceed) {
+	if (isset($_REQUEST['betternot']) && $_REQUEST['betternot']) redirect ('admin/lang_symbol_edit.php?lang_id='.$lang_id);
+}
 
-        if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
-                        else $reallydelete=false;
+if ($proceed) {
+	if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
+    else $reallydelete=false;
 
 	$symbol=orsee_db_load_array("lang",$lang_id,"lang_id");
+	if (!isset($symbol['lang_id'])) redirect ("admin/lang_main.php");
+}
 
-	echo '	<BR><BR>
-		<center>
-			<h4>'.$lang['delete_symbol'].' '.$symbol['content_name'].'</h4>
-		</center>';
+if ($proceed) {
 
+	if ($reallydelete) {
+		$pars=array(':lang_id'=>$lang_id);
+		$query="DELETE FROM ".table('lang')." 
+         		WHERE lang_id= :lang_id";
+		$result=or_query($query,$pars);
 
-	if ($reallydelete) { 
-
-        	$query="DELETE FROM ".table('lang')." 
-         		WHERE lang_id='".$lang_id."'";
-		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-
-        	message ($lang['symbol_deleted']);
+       	message (lang('symbol_deleted'));
 		log__admin("language_symbol_delete","lang_id:lang,".$symbol['content_name']);
 		redirect ('admin/lang_edit.php');
-		}
+	}
+}
 
+if ($proceed) {
 	// form
-
-	echo '	<CENTER>
-		<FORM action="lang_symbol_delete.php">
-		<INPUT type=hidden name="lang_id" value="'.$lang_id.'">
-
-		<TABLE>
+	echo '<center>';
+	echo '
+		<TABLE class="or_formtable">
+			<TR><TD colspan="2">
+				<TABLE width="100%" border=0 class="or_panel_title"><TR>
+						<TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'" align="center">
+							'.lang('delete_symbol').' '.$symbol['content_name'].'
+						</TD>
+				</TR></TABLE>
+			</TD></TR>
 			<TR>
 				<TD colspan=2>
-					'.$lang['do_you_really_want_to_delete'].'
+					'.lang('do_you_really_want_to_delete').'
 					<BR><BR>';
 					dump_array($symbol); echo '
 				</TD>
 			</TR>
 			<TR>
 				<TD align=left>
-					<INPUT type=submit name=reallydelete value="'.$lang['yes_delete'].'">
-				</TD>
-				<TD align=right>
-					<INPUT type=submit name=betternot value="'.$lang['no_sorry'].'">
+                        '.button_link('lang_symbol_delete.php?lang_id='.urlencode($lang_id).'&reallydelete=true',
+										lang('yes_delete'),'check-square biconred').'
+                </TD>
+                <TD align=right>
+                    	'.button_link('lang_symbol_delete.php?lang_id='.urlencode($lang_id).'&betternot=true',
+										lang('no_sorry'),'undo bicongreen').'
 				</TD>
 			</TR>
 		</TABLE>
-
-		</FORM>
 		</center>';
 
+}
 include ("footer.php");
-
 ?>
-
-
-

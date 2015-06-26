@@ -20,14 +20,19 @@ require "query.php";
 require "query_modules.php";
 require "formhelpers.php";
 require "experimentmail.php";
+require "mailqueue.php";
 require "calendar.php";
 require "cronjobs.php";
-require "onlinehelp.php";
+require "options.php";
 require "updownloads.php";
 require "subpools.php";
 require "expregister.php";
 require "pdfoutput.php";
+require "survey.php";
 require "faqs.php";
 require "stats.php";
+require "class.json.php";
+require "payments.php";
+require "email.php";
 
 ?>

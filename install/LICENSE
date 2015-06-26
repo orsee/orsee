@@ -17,10 +17,10 @@
        software's use by an appropriate citation of the following
        publication (or an updated version):
 
-         Ben Greiner: An Online Recruitment System for Economic Experiments.
-         In: Kurt Kremer, Volker Macho (Eds.): 
-         Forschung und wissenschaftliches Rechnen 2003. GWDG Bericht 63,
-         Goettingen : Ges. fuer Wiss. Datenverarbeitung, 79-93, 2004.
+         Ben Greiner (2015), Subject Pool Recruitment Procedures: Organizing 
+         Experiments with ORSEE, Journal of the Economic Science Association 1.
+         Forthcoming.
+         http://link.springer.com/article/10.1007/s40881-015-0004-4
 
     2. Redistributions of source code must retain the above copyright
        notice, this list of conditions and the following disclaimer.
@@ -50,4 +50,3 @@
     OF SUCH DAMAGE.
 
 */
-

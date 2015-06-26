@@ -1,125 +1,98 @@
 <?php
 // part of orsee. see orsee.org
 ob_start();
-
-$title="not confirmed registrations";
+$jquery=array('popup');
+$title="registered_but_not_confirmed_xxx";
+$menu__area="participants";
 include ("header.php");
-
+if ($proceed) {
 	$allow=check_allow('participants_unconfirmed_edit','participants_main.php');
+}
 
-	// delete one?
-	if (isset($_REQUEST['delete']) && $_REQUEST['delete'] && isset($_REQUEST['participant_id']) && $_REQUEST['participant_id']) {
-		$participant=orsee_db_load_array("participants_temp",$_REQUEST['participant_id'],"participant_id");
-        	$query="DELETE FROM ".table('participants_temp')." 
-         		WHERE participant_id='".$_REQUEST['participant_id']."'";
-		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-		message($lang['temp_participant_deleted'].': '.$participant['lname'].', '.$participant['fname']);
-		log__admin("participant_unconfirmed_delete","participant: ".$participant['lname'].', '.$participant['fname']);
-		redirect ("admin/participants_unconfirmed.php");
+if ($proceed) {
+	if (isset($_REQUEST['deleteall']) && $_REQUEST['deleteall']) $dall=true; else $dall=false;
+	if (isset($_REQUEST['deletesel']) && $_REQUEST['deletesel']) $dsel=true; else $dsel=false;
+
+	if ( $dall || $dsel ) {
+	
+		$ok=false;
+		if ($dsel) {
+			$dids=array();
+			if (isset($_REQUEST['sel']) && is_array($_REQUEST['sel'])) {
+				foreach($_REQUEST['sel'] as $k=>$v) {
+					if ($v=='y') $dids[]=$k;
+				}
+			}
+			if (count($dids)>0) {
+				$ok=true;
+				$i=0; $pars=array(); $parnames=array();
+				foreach ($dids as $id) {
+					$i++;
+					$pars[':participant_id'.$i]=$id;
+					$parnames[]=':participant_id'.$i;
+				}
+				$in_clause=" AND participant_id IN (".implode(",",$parnames).")";					
+       		}
+		} elseif ($dall) { 
+			$ok=true;
+			$pars=array();
+			$in_clause="";
+		} 
+		
+		if ($ok) {     
+       		$query="SELECT participant_id, email 
+					FROM ".table('participants')."
+					WHERE status_id='0' ".$in_clause;
+       		$result=or_query($query,$pars);
+       		while ($line=pdo_fetch_assoc($result)) $del_emails[$line['participant_id']]=$line['email'];
+       		       
+        	$query="DELETE FROM ".table('participants')." 
+        			WHERE status_id='0' ".$in_clause;        
+			$done=or_query($query,$pars);
+			$number=pdo_num_rows($done);
+			
+			message ($number.' '.lang('xxx_temp_participants_deleted'));
+			foreach ($del_emails as $participant_id=>$email) {
+				log__admin("participant_unconfirmed_delete","participant_id: ".$participant_id.', email: '.$email);
+			}
+			redirect ("admin/participants_unconfirmed.php");
 		}
+	}
+}
 
+if ($proceed) {
+	echo '<center>';
 
-	echo '<center><BR><BR><h4>'.$lang['registered_but_not_confirmed_xxx'].'</h4>';
+	echo '<FORM action="participants_unconfirmed.php" method="POST">';
 
+		$posted_query=array('query'=> array(0=> array("statusids_multiselect"=>array("not"=>"", "ms_status"=>"0"))));
+		$query_array=query__get_query_array($posted_query['query']);
+		$query=query__get_query($query_array,0,array(),'creation_time DESC',false);
 
 	echo '<BR>
-		<table border=0>
-		<TR>
-			<TD class="small">
-				'.$lang['date'].'
-			</TD>
-			<TD class="small">
-				'.$lang['id'].'
-			</TD>
-			<TD class="small">
-				'.$lang['lastname'].'
-			</TD>
-			<TD class="small">
-				'.$lang['firstname'].'
-			</TD>
-			<TD class="small">
-				'.$lang['email'].'
-			</TD>
-			<TD class="small">
-				'.$lang['subscriptions'].'
-			</TD>
-			<TD></TD>
-		</TR>';
-
-
-     	$query="SELECT *
-      		FROM ".table('participants_temp')." 
-      		ORDER BY creation_time, email";
-       	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
-	$emails=array(); $shade=false;
-	
-	$typenames=load_external_experiment_type_names();
-	
-	
- 	while ($line=mysqli_fetch_assoc($result)) {
-		$emails[]=$line['email'];
+		<TABLE width="80%" border="0">
+		<TR><TD>
+			<TABLE width="100%" border="0">
+			<TR><TD width="50%" align="right">
+			<input class="button" type=submit name="deleteall" value="'.lang('delete_all').'">
+			</TD><TD width="50%" align="right">
+			<input class="button" type=submit name="deletesel" value="'.lang('delete_selected').'">
+			</TD></TR>
+			</TABLE>						
+		</TD></TR>
+		<TR><TD colspan="2">';
 		
-		$line['field_of_studies']=language__get_item('field_of_studies',$line['field_of_studies']);       
-		$line['profession']=language__get_item('profession',$line['profession']);
-		$line['gender']=$lang['gender_'.$line['gender']];
-		$exptypes=explode(",",$line['subscriptions']);
-		$invnames=array();
-		foreach ($exptypes as $type) $invnames[]=$typenames[$type];
-		$line['invitations']=implode(", ",$invnames);
-		$line['registration_link']=$settings__root_url."/public/participant_confirm.php?p=".url_cr_encode($line['participant_id']);
+	$emails=query_show_query_result($query,"participants_unconfirmed",false);
 
-		$mailtext=load_mail("public_system_registration",$lang['lang']);
-		$message=process_mail_template($mailtext,$line);
-		$message=str_replace(" ","%20",$message);
-		$message=str_replace("\n\m","\n",$message);
-		$message=str_replace("\m\n","\n",$message);
-		$message=str_replace("\m","\n",$message);
-		$message=str_replace("\n","%0D%0A",$message);
-
-		$linktext='mailto:'.$line['email'].'?subject='.str_replace(" ","%20",$lang['registration_email_subject']).'&reply-to='.urlencode($settings['support_mail']).'&body='.$message;
-
-
-		echo '	<tr class="small"';
-		if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
-			else echo ' bgcolor="'.$color['list_shade2'].'"';
-		echo '>
-   				<td class="small">
-					'.time__format($lang['lang'],"",false,false,false,false,$line['creation_time']).'
-				</td>
-   				<td class="small">
-					'.$line['participant_id'].'
-				</td>
-   				<td class="small">
-					'.$line['lname'].'
-				</TD>
-   				<td class="small">
-					'.$line['fname'].'
-				</td>
-   				<td class="small">
-					<A class="small" HREF="'.$linktext.'">'.$line['email'].'</A>
-				</td>
-   				<td class="small">
-					'.$line['subscriptions'].'
-				</td>
-   				<TD>
-					<A HREF="participants_unconfirmed.php?participant_id='.$line['participant_id'].'&delete=true">'.
-						$lang['delete'].'</A>
-				</TD>
-   			</tr>';
-   		if ($shade) $shade=false; else $shade=true;
-		}
-
-
-
-	echo '</table>';
-
+	echo '</FORM>';
+	echo '</TD></TR></TABLE>';	
 
 	$emailstring=implode(",",$emails);
-        echo '<BR><BR><A HREF="mailto:'.$settings['support_mail'].'?bcc='.$emailstring.'">'.$lang['write_message_to_all_listed'].'</A>';
-	echo '<BR><BR><A href="participants_main.php">'.icon('back').' '.$lang['back'].'</A><BR><BR>';
+        echo '<BR><BR>'.button_link('mailto:'.$settings['support_mail'].'?bcc='.$emailstring,lang('write_message_to_all_listed'),'envelope');
+	echo '<BR><BR>'.button_link('participants_main.php',lang('back'),'level-up').'<BR><BR>';
 
 	echo '</CENTER>';
 
+}
 include ("footer.php");
-
 ?>

@@ -4,7 +4,6 @@
 include ("../config/settings.php");
 include ("../config/system.php");
 include ("../config/requires.php");
-include ("../config/participant_form.php");
 
 site__database_config();
 

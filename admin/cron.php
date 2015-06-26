@@ -3,9 +3,7 @@
 
 include ("cronheader.php");
 
-if (isset($_SERVER['SCRIPT_NAME']) && $_SERVER['SCRIPT_NAME']) redirect("admin/");
-
-$done=cron__run_cronjobs();
-
+if (php_sapi_name() == "cli") $done=cron__run_cronjobs();
+else redirect("admin/");
 
 ?>

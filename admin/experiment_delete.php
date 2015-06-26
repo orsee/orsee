@@ -2,81 +2,86 @@
 // part of orsee. see orsee.org
 ob_start();
 
-$title="delete experiment";
+$title="delete_experiment";
 include("header.php");
 
-         if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) $experiment_id=$_REQUEST['experiment_id'];
-                else redirect ("admin/");
-	if (isset($_REQUEST['betternot']) && $_REQUEST['betternot'])
-		rediRect ('admin/experiment_edit.php?experiment_id='.$experiment_id);
-        if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
-                        else $reallydelete=false;
+if ($proceed) {
+    if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) $experiment_id=$_REQUEST['experiment_id'];
+    else redirect ("admin/");
+}
+
+if ($proceed) {
+	if (isset($_REQUEST['betternot']) && $_REQUEST['betternot']) redirect ('admin/experiment_edit.php?experiment_id='.$experiment_id);
+}
+
+if ($proceed) {
+    if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
+    else $reallydelete=false;
 
 	$allow=check_allow('experiment_delete','experiment_edit.php?experiment_id='.$experiment_id);
+	if (!check_allow('experiment_restriction_override')) check_experiment_allowed($experiment,"admin/experiment_show.php?experiment_id=".$experiment_id);
+}
 
+if ($proceed) {
 	$experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
-
-	if (!check_allow('experiment_restriction_override'))
-		check_experiment_allowed($experiment,"admin/experiment_show.php?experiment_id=".$experiment_id);
-
-	echo '	<BR><BR>
-		<center>
-			<h4>'.$lang['delete_experiment'].' '.$experiment['experiment_name'].'</h4>
-		</center>';
 
 	if ($reallydelete) { 
 
-        	$query="DELETE FROM ".table('experiments')."
-         		WHERE experiment_id='".$experiment_id."'";
-		$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+		$pars=array(':experiment_id'=>$experiment_id);
+       	$query="DELETE FROM ".table('experiments')."
+         		WHERE experiment_id= :experiment_id";
+		$result=or_query($query,$pars);
 
-                $query="DELETE FROM ".table('sessions')."
-                        WHERE experiment_id='".$experiment_id."'";
-                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+        $query="DELETE FROM ".table('sessions')."
+         		WHERE experiment_id= :experiment_id";
+		$result=or_query($query,$pars);
 
 		$query="DELETE FROM ".table('participate_at')."
-         		WHERE experiment_id='".$experiment_id."'";
-                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+         		WHERE experiment_id= :experiment_id";
+		$result=or_query($query,$pars);
 
-                $query="DELETE FROM ".table('lang')."
+        $query="DELETE FROM ".table('lang')."
          		WHERE content_type='experiment_invitation_mail' 
-			AND content_name='".$experiment_id."'";
-                $result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+				AND content_name= :experiment_id";
+    	$result=or_query($query,$pars);
 
-
-       	message ($lang['experiment_deleted']);
-
+       	message (lang('experiment_deleted'));
 		log__admin("experiment_delete","experiment:".$experiment['experiment_name']);
 		redirect ('admin/experiment_main.php');
-		}
+	}
+}
 
+if ($proceed) {
 	// form
-
-	echo '	<CENTER>
-		<FORM action="experiment_delete.php">
-		<INPUT type=hidden name="experiment_id" value="'.$experiment_id.'">
-
-		<TABLE>
+	echo '<center>
+		<TABLE class="or_formtable">
+			<TR><TD colspan="2">
+				<TABLE width="100%" border=0 class="or_panel_title"><TR>
+						<TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'" align="center">
+							'.lang('delete_experiment').' '.$experiment['experiment_name'].'
+						</TD>
+				</TR></TABLE>
+			</TD></TR>
 			<TR>
 				<TD colspan=2>
-					'.$lang['really_delete_experiment'].'
+					'.lang('really_delete_experiment').'
 					<BR><BR>';
 					dump_array($experiment); echo '
 				</TD>
 			</TR>
 			<TR>
 				<TD align=left>
-					<INPUT type=submit name=reallydelete value="'.$lang['yes_delete'].'">
+					'.button_link('experiment_delete.php?experiment_id='.$experiment_id.'&reallydelete=true',
+					lang('yes_delete'),'check-square biconred').'
 				</TD>
 				<TD align=right>
-					<INPUT type=submit name=betternot value="'.$lang['no_sorry'].'">
+					'.button_link('experiment_delete.php?experiment_id='.$experiment_id.'&betternot=true',
+					lang('no_sorry'),'undo bicongreen').'
 				</TD>
 			</TR>
 		</TABLE>
-
-		</FORM>
 		</center>';
 
+}
 include ("footer.php");
-
 ?>

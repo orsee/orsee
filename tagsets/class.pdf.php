@@ -2041,7 +2041,7 @@
         $fp = fopen($this->tempPath.'/'.$cachedFile,'w'); // use the temp folder to write cached font data
         fwrite($fp,'<?php /* R&OS php pdf class font cache file */ return '.var_export($cachedFont,true).'; ?>');
         fclose($fp);
-        
+        $old = umask(0); chmod($this->tempPath.'/'.$cachedFile, 0777); umask($old);
         return true;
     }
 

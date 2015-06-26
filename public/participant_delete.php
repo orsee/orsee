@@ -1,56 +1,52 @@
 <?php
 // part of orsee. see orsee.org
 ob_start();
-
 $menu__area="my_data";
+$title="delete_participant";
 include("header.php");
+if ($proceed) {
+	if (isset($_REQUEST['betternot'])) redirect("public/participant_edit.php?p=".urlencode($participant['participant_id_crypt']));
+}
 
-	if (isset($_REQUEST['betternot'])) redirect("public/participant_edit.php?p=".url_cr_encode($participant['participant_id']));
-
+if ($proceed) {
 	$form=true;
-
-	if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']=="12345" && isset($_REQUEST['doit'])) {
- 
-
-                $query="UPDATE ".table('participants')." 
-		 	SET deleted='y'
-                 	WHERE participant_id='".mysqli_real_escape_string($GLOBALS['mysqli'],$participant_id)."'";
-		$done=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+	if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']=="12345" && isset($_REQUEST['doit'])) { 
+		$default_inactive_status=participant_status__get("is_default_inactive");
+		$pars=array(':participant_id'=>$participant_id,':default_inactive_status'=>$default_inactive_status);
+    	$query="UPDATE ".table('participants')." 
+			 	SET status_id= :default_inactive_status,
+			 	deletion_time='".time()."'  
+            	WHERE participant_id= :participant_id";
+		$done=or_query($query,$pars);
 		log__participant("delete",$participant_id);
 		$form=false;
-		message ($lang['removed_from_invitation_list']);
+		message (lang('removed_from_invitation_list'));
 		redirect("public/");
-		}	
+	}
+}	
 
+if ($proceed) {
 	if ($form) {
-
-		echo '<BR><BR>
-			<center>
-			<h4>'.$lang['delete_participant'].'</h4>
+		echo '<center>
 
 			<FORM action="participant_delete.php">
-			<INPUT type=hidden name="p" value="';
-		echo unix_crypt($participant_id);
-		echo '">
-			<TABLE>
+			<INPUT type=hidden name="p" value="'.$participant['participant_id_crypt'].'">
+			<TABLE class="or_formtable">
 			<TR>
 			<TD colspan=2><INPUT name=reallydelete type=hidden value="12345">
-			'.$lang['do_you_really_want_to_unsubscribe'].'<BR></TD>
+			'.lang('do_you_really_want_to_unsubscribe').'<BR></TD>
 			</TR>
 			<TR><TD>
-			<INPUT type=submit name=doit value="'.$lang['yes_i_want'].'">
+			<INPUT class="button" type=submit name=doit value="'.lang('yes_i_want').'">
 			</TD>
-			<TD><INPUT type=submit name=betternot value="'.$lang['no_sorry'].'">
+			<TD><INPUT class="button" type=submit name=betternot value="'.lang('no_sorry').'">
 			</TD>
 			</TR>
 			</TABLE>
 			</FORM>
 			</center>';
-		}
+	}
 
+}
 include("footer.php");
-
 ?>
-
-
-

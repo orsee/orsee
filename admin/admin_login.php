@@ -2,47 +2,45 @@
 // part of orsee. see orsee.org
 ob_start();
 
-$title="login";
-
+$title="admin_login_page";
 include("header.php");
+if ($proceed) {
 
+	echo '<center>';
 
-	echo '<center>
-		<BR><BR>';
-
-	if (isset($_REQUEST['logout']) && $_REQUEST['logout']) message($lang['logout']);
+	if (isset($_REQUEST['logout']) && $_REQUEST['logout']) message(lang('logout'));
 
 	if (isset($_REQUEST['pw']) && $_REQUEST['pw']) {
-		message($lang['logout']);
-		message ($lang['password_changed_log_in_again']);
-		}
+		message(lang('logout'));
+		message (lang('password_changed_log_in_again'));
+	}
 
 	show_message();
 
-	echo '	<H4>'.$lang['admin_login_page'].'</H4>
-		';
-
 	if (isset($_REQUEST['adminname']) && isset($_REQUEST['password'])) {
-		$password=unix_crypt($_REQUEST['password']);
-		$logged_in=admin__check_login($_REQUEST['adminname'],$password);
+		$logged_in=admin__check_login($_REQUEST['adminname'],$_REQUEST['password']);
 		if ($logged_in) {
 			$expadmindata['admin_id']=$_SESSION['expadmindata']['admin_id'];
 			log__admin("login");
-			if ($_REQUEST['redirect']) redirect($_REQUEST['redirect']);
-				else redirect("admin/index.php");
-			}
-		   else {
-			message($lang['error_password_or_username']);
-			redirect("admin/admin_login.php");
-			}
+			if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url']) redirect($_REQUEST['requested_url']);
+			else redirect("admin/index.php");
+		} else {
+			message(lang('error_password_or_username'));
+			$add=""; 
+			if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url']) 
+				$add="?requested_url=".urlencode($_REQUEST['requested_url']);
+			redirect("admin/admin_login.php".$add);
 		}
+		$proceed=false;
+	}
+}
 
-	check_options_exist();
+if ($proceed) {
 
 	admin__login_form();
 
 	echo '</center>';
-
+}
 include("footer.php");
 
 ?>

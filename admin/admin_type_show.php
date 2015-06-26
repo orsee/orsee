@@ -2,34 +2,34 @@
 // part of orsee. see orsee.org
 ob_start();
 
-$title="show admin types";
+$title="user_types_and_privileges";
 $menu__area="options";
 include ("header.php");
+if ($proceed) {
 
 	$allow=check_allow('admin_type_edit','options_main.php');
 
-	echo '<center><BR><br>
-        	<h4>'.$lang['admin_types'].'</h4>
-
-		<br>
+	echo '<center>
+		<BR>
 		<form action="admin_type_edit.php">
-		<input type=submit name="new" value="'.$lang['create_new'].'">
+		<input class="button" type=submit name="new" value="'.lang('create_new').'">
 		</form>';
 
 	echo '<br>
 
-		<table border=0 width=80%>
-			<tr>
-				<td class="small">'.$lang['name'].'</td>
-				<td class="small">'.$lang['rights'].'</td>
+		<table class="or_listtable" style="width: 90%;"><thead>
+			<tr style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">
+				<td>'.lang('name').'</td>
+				<td>'.lang('rights').'</td>
 				<td></td>
-			</tr>';
+			</tr></thead>
+			<tbody>';
 
-     	$query="SELECT * FROM ".table('admin_types')." ORDER BY type_name";
-	$result=mysqli_query($GLOBALS['mysqli'],$query) or die("Database error: " . mysqli_error($GLOBALS['mysqli']));
+     $query="SELECT * FROM ".table('admin_types')." ORDER BY type_name";
+	$result=or_query($query);
 
 	$shade=false;
-	while ($type=mysqli_fetch_assoc($result)) {
+	while ($type=pdo_fetch_assoc($result)) {
 
                 echo '<tr class="small"';
 			if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
@@ -43,18 +43,18 @@ include ("header.php");
                                 	'.str_replace(",",", ",$type['rights']).'
                         	</td>
                         	<td>
-                                	<a href="admin_type_edit.php?type_id='.$type['type_id'].'">'.$lang['edit'].'</a>
+                                	<a href="admin_type_edit.php?type_id='.$type['type_id'].'">'.lang('edit').'</a>
                         	</td>
                 	</tr>';
 
                 if ($shade) $shade=false; else $shade=true;
 		}
 
-	echo '</table>
+	echo '</tbody></table>
 
                 <br><br>
 		</center>';
 
-
+}
 include ("footer.php");
 ?>
