@@ -11,14 +11,14 @@ maintaining custom changes in the code that your organisation might have.
 
 For installation and usage manual see [wiki documentation](http://www.orsee.org/wiki/doku.php).
 
-Please use Sourceforge project [bug tracker](http://sourceforge.net/p/orsee/_list/tickets?source=navbar) for reporting issues.
+Please use the [ORSEE bug tracker](http://www.orsee.org/web/tracker.php) for reporting issues.
 
 License
 ------------
 
 ORSEE is released under terms of proprietary open source
 [License](http://www.orsee.org/web/license.php). It requires you to acknowledge
-the software usage by an appropriate citation.
+the software usage by an appropriate citation of this [article](http://link.springer.com/article/10.1007/s40881-015-0004-4).
 
 Useful links
 ------------
