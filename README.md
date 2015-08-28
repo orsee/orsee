@@ -24,4 +24,5 @@ Useful links
 ------------
 
 * [ORSEE website](http://www.orsee.org/)
+* [ORSEE Wiki](http://www.orsee.org/wiki)
 * [Sourceforge project](http://sourceforge.net/projects/orsee)
