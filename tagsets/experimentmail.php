@@ -864,7 +864,7 @@ function experimentmail__experiment_registration_mail($participant,$session) {
 	
 	$mailtext=false;
 	if ($settings['enable_enrolment_confirmation_customization']=='y')
-		$mailtext=experimentmail__get_customized_mailtext('experiment_enrolment_conf_mail',$experiment_id,$maillang);
+		$mailtext=experimentmail__get_customized_mailtext('experiment_enrolment_conf_mail',$session['experiment_id'],$maillang);
 	if (!isset($mailtext) || !$mailtext || !is_array($mailtext)) {
 		$mailtext['subject']=load_language_symbol('enrolment_email_subject',$maillang);
 		$mailtext['body']=load_mail("public_experiment_registration",$maillang);
