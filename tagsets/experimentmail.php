@@ -616,9 +616,9 @@ function experimentmail__send_participant_exclusion_mail($part) {
 
 function experimentmail__send_reminder_notice($line,$number,$sent,$disclaimer="") {
 	global $settings;
-	$experimenters=explode(",",$line['experimenter_mail']);
+	$experimenters=db_string_to_id_array($line['experimenter_mail']);
 	foreach ($experimenters as $experimenter) {
-		$mail=orsee_db_load_array("admin",$experimenter,"adminname");
+		$mail=orsee_db_load_array("admin",$experimenter,"admin_id");
 		$tlang= ($mail['language']) ? $mail['language'] : $settings['admin_standard_language'];
 		$lang=load_language($tlang);
 		$mail['session_name']=session__build_name($line,$tlang);
