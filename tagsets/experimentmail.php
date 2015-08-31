@@ -975,7 +975,7 @@ function experimentmail__send_calendar() {
 			$mail_subject=lang('experiment_calendar').' '.ortime__format($now,'hide_time:true',$maillang);
 			$cal_name=lang('experiment_calendar').' '.date("Y-m-d",$now);
     		$cal_filename=str_replace(" ","_",$cal_name).".pdf";
-			$cal_file=pdfoutput__make_calendar($now,false,true,$number_of_months,true);
+			$cal_file=pdfoutput__make_pdf_calendar($now,false,true,$number_of_months,true);
 		}
 		$mailtext=load_mail("admin_calendar_mailtext",$maillang)."\n".
 					experimentmail__get_admin_footer($maillang,$admin)."\n";
