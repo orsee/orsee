@@ -251,8 +251,8 @@ function experimentmail__set_reminder_checked($session_id) {
 }
 
 function experimentmail__set_noshow_warnings_checked($session_id) {
-        // update session table : reminder_checked
-        $pars=array(':session_id'=>$session['session_id']);
+        // update session table : noshow_warning_sent
+        $pars=array(':session_id'=>$session_id);
         $query="UPDATE ".table('sessions')." SET noshow_warning_sent='y' WHERE session_id= :session_id";
         $done=or_query($query,$pars);
         return $done;
