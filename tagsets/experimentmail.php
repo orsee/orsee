@@ -347,7 +347,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
 				$mailtext=experimentmail__get_customized_mailtext('experiment_session_reminder_mail',$texp,$tlang);
 			if (!isset($mailtext) || !$mailtext || !is_array($mailtext)) {
 				$mailtext['subject']=load_language_symbol('email_session_reminder_subject',$tlang);
-				$mailtext['body']=load_mail("public_session_reminder",$$tlang);
+				$mailtext['body']=load_mail("public_session_reminder",$tlang);
 			}
 			$reminder_text[$texp][$tlang]=$mailtext;
 		}
