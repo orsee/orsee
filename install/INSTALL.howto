@@ -67,6 +67,7 @@ Just some notes:
   ->Copy the 'orsee' directory from the 'style' dir.
   % cp -r orsee mystyle
   -> Edit the files in the directory.
+  -> Edit the colors in Options/Colors
   -> Select the style in Options/General Settings
 
 - Enable the Options/Regular Tasks (the cronjobs)
