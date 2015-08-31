@@ -244,7 +244,7 @@ function experimentmail__send_noshow_warnings_to_queue($session) {
 
 function experimentmail__set_reminder_checked($session_id) {
 	// update session table : reminder_checked
-	$pars=array(':session_id'=>$session['session_id']);
+	$pars=array(':session_id'=>$session_id);
     $query="UPDATE ".table('sessions')." SET reminder_checked='y' WHERE session_id = :session_id";
     $done=or_query($query,$pars);
 	return $done;
