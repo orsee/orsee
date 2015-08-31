@@ -909,7 +909,7 @@ function experimentmail__send_registration_notice($line) {
 	$experimenters=db_string_to_id_array($line['experimenter_mail']);
 
 	foreach ($experimenters as $experimenter) {
-	    $admin=orsee_db_load_array("admin",$experimenter,"adminname");
+	    $admin=orsee_db_load_array("admin",$experimenter,"admin_id");
 	    if (isset($admin['admin_id'])) {
 			$tlang= ($admin['language']) ? $admin['language'] : $settings['admin_standard_language'];
 			$lang=load_language($tlang);
