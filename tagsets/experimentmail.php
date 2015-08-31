@@ -74,8 +74,15 @@ function load_mail($mail_name,$lang) {
 			WHERE content_type='mail'
 			AND content_name= :mail_name";
 	$marr=orsee_query($query,$pars);
-	if (isset($marr[$lang])) $mailtext=$marr[$lang];
-		else $mailtext=$marr[$authdata['language']];
+	if (isset($marr[$lang])) {
+		$mailtext=$marr[$lang];
+	} elseif (isset($authdata['language'])) {
+		$mailtext=$marr[$authdata['language']];
+ 	} elseif (isset($marr['en'])) {
+ 		$mailtext=$marr['en'];
+ 	} else {
+ 		$mailtext='';
+ 	}
 	return $mailtext;
 }
 
