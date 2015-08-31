@@ -133,8 +133,8 @@ function participants__stat_laboratory($participant_id) {
 			echo '	</TD>
 				<TD>';
 				if ($p['sess_id']!='0') {
-					if (isset($laboratories[$p['laboratory_id']]['name']))
-						echo $laboratories[$p['laboratory_id']]['name'];
+					if (isset($laboratories[$p['laboratory_id']]['lab_name']))
+						echo $laboratories[$p['laboratory_id']]['lab_name'];
 					else echo 'undefined';
 				} else {
                     echo '-';
