@@ -1009,7 +1009,7 @@ function experimentmail__send_participant_statistics() {
 	// preload details with current language
     $maillang=$old_lang;
 	$statistics=stats__get_textstats_for_email();
-	$subject=load_language_symbol('subject_pool_statistics').' '.
+	$subject=load_language_symbol('subject_pool_statistics',$maillang).' '.
     				ortime__format($now,'hide_time:true');
 
     // get experimenters who want to receive the statistics
