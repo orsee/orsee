@@ -1,2 +1,3 @@
 config/settings.php
-README.md
+usage/*
+!usage/webalizer.template
