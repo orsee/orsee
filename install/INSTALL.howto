@@ -38,15 +38,19 @@ BASIC INSTALLATION
    in this file to match your needs.
    % crontab crontab-for-orsee
 
-7. Browse to the 'config' dir. Edit the few settings in 'settings.php'.
+7. Copy settings-dist.php to 'config' directory and rename to 'settings.php'.
+   % cp settings-dist.php ../config/settings.php
+   % cd ../config/
 
-8. Make sure that the 'usage' directory is writable for the user under which the cronjob is running. The webalizer output will be saved there by the server.
+8. Edit the few settings in 'settings.php'.
 
-9. Browse to your ORSEE installation: 'http://yourorseewebpath/admin'.
+9. Make sure that the 'usage' directory is writable for the user under which the cronjob is running. The webalizer output will be saved there by the server.
 
-10. Login with username 'orsee_install' and password 'install'.
+10. Browse to your ORSEE installation: 'http://yourorseewebpath/admin'.
 
-11. Done.
+11. Login with username 'orsee_install' and password 'install'.
+
+12. Done.
 
 
 POST-INSTALLATION
