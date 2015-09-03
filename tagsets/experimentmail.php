@@ -74,8 +74,15 @@ function load_mail($mail_name,$lang) {
 			WHERE content_type='mail'
 			AND content_name= :mail_name";
 	$marr=orsee_query($query,$pars);
-	if (isset($marr[$lang])) $mailtext=$marr[$lang];
-		else $mailtext=$marr[$authdata['language']];
+	if (isset($marr[$lang])) {
+		$mailtext=$marr[$lang];
+	} elseif (isset($authdata['language'])) {
+		$mailtext=$marr[$authdata['language']];
+ 	} elseif (isset($marr['en'])) {
+ 		$mailtext=$marr['en'];
+ 	} else {
+ 		$mailtext='';
+ 	}
 	return $mailtext;
 }
 
@@ -244,15 +251,15 @@ function experimentmail__send_noshow_warnings_to_queue($session) {
 
 function experimentmail__set_reminder_checked($session_id) {
 	// update session table : reminder_checked
-	$pars=array(':session_id'=>$session['session_id']);
+	$pars=array(':session_id'=>$session_id);
     $query="UPDATE ".table('sessions')." SET reminder_checked='y' WHERE session_id = :session_id";
     $done=or_query($query,$pars);
 	return $done;
 }
 
 function experimentmail__set_noshow_warnings_checked($session_id) {
-        // update session table : reminder_checked
-        $pars=array(':session_id'=>$session['session_id']);
+        // update session table : noshow_warning_sent
+        $pars=array(':session_id'=>$session_id);
         $query="UPDATE ".table('sessions')." SET noshow_warning_sent='y' WHERE session_id= :session_id";
         $done=or_query($query,$pars);
         return $done;
@@ -347,7 +354,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
 				$mailtext=experimentmail__get_customized_mailtext('experiment_session_reminder_mail',$texp,$tlang);
 			if (!isset($mailtext) || !$mailtext || !is_array($mailtext)) {
 				$mailtext['subject']=load_language_symbol('email_session_reminder_subject',$tlang);
-				$mailtext['body']=load_mail("public_session_reminder",$$tlang);
+				$mailtext['body']=load_mail("public_session_reminder",$tlang);
 			}
 			$reminder_text[$texp][$tlang]=$mailtext;
 		}
@@ -616,9 +623,9 @@ function experimentmail__send_participant_exclusion_mail($part) {
 
 function experimentmail__send_reminder_notice($line,$number,$sent,$disclaimer="") {
 	global $settings;
-	$experimenters=explode(",",$line['experimenter_mail']);
+	$experimenters=db_string_to_id_array($line['experimenter_mail']);
 	foreach ($experimenters as $experimenter) {
-		$mail=orsee_db_load_array("admin",$experimenter,"adminname");
+		$mail=orsee_db_load_array("admin",$experimenter,"admin_id");
 		$tlang= ($mail['language']) ? $mail['language'] : $settings['admin_standard_language'];
 		$lang=load_language($tlang);
 		$mail['session_name']=session__build_name($line,$tlang);
@@ -864,7 +871,7 @@ function experimentmail__experiment_registration_mail($participant,$session) {
 	
 	$mailtext=false;
 	if ($settings['enable_enrolment_confirmation_customization']=='y')
-		$mailtext=experimentmail__get_customized_mailtext('experiment_enrolment_conf_mail',$experiment_id,$maillang);
+		$mailtext=experimentmail__get_customized_mailtext('experiment_enrolment_conf_mail',$session['experiment_id'],$maillang);
 	if (!isset($mailtext) || !$mailtext || !is_array($mailtext)) {
 		$mailtext['subject']=load_language_symbol('enrolment_email_subject',$maillang);
 		$mailtext['body']=load_mail("public_experiment_registration",$maillang);
@@ -909,7 +916,7 @@ function experimentmail__send_registration_notice($line) {
 	$experimenters=db_string_to_id_array($line['experimenter_mail']);
 
 	foreach ($experimenters as $experimenter) {
-	    $admin=orsee_db_load_array("admin",$experimenter,"adminname");
+	    $admin=orsee_db_load_array("admin",$experimenter,"admin_id");
 	    if (isset($admin['admin_id'])) {
 			$tlang= ($admin['language']) ? $admin['language'] : $settings['admin_standard_language'];
 			$lang=load_language($tlang);
@@ -975,7 +982,7 @@ function experimentmail__send_calendar() {
 			$mail_subject=lang('experiment_calendar').' '.ortime__format($now,'hide_time:true',$maillang);
 			$cal_name=lang('experiment_calendar').' '.date("Y-m-d",$now);
     		$cal_filename=str_replace(" ","_",$cal_name).".pdf";
-			$cal_file=pdfoutput__make_calendar($now,false,true,$number_of_months,true);
+			$cal_file=pdfoutput__make_pdf_calendar($now,false,true,$number_of_months,true);
 		}
 		$mailtext=load_mail("admin_calendar_mailtext",$maillang)."\n".
 					experimentmail__get_admin_footer($maillang,$admin)."\n";
@@ -1002,7 +1009,7 @@ function experimentmail__send_participant_statistics() {
 	// preload details with current language
     $maillang=$old_lang;
 	$statistics=stats__get_textstats_for_email();
-	$subject=load_language_symbol('subject_pool_statistics').' '.
+	$subject=load_language_symbol('subject_pool_statistics',$maillang).' '.
     				ortime__format($now,'hide_time:true');
 
     // get experimenters who want to receive the statistics

@@ -468,7 +468,7 @@ if (!$allset) {
 		$result=or_query($squery); $pars=array();
 		while ($line=pdo_fetch_assoc($result)) {
 			$pars[]=array(':participant_id'=>$line['participant_id'],
-						':last_enrolment'=>ortime__sesstime_to_unixtime($line['participant_id'])
+						':last_enrolment'=>ortime__sesstime_to_unixtime($line['last_sess'])
 						);
 		}
 		$uquery="UPDATE ".$new_db_name.".".table('participants')." 

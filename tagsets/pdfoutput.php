@@ -156,7 +156,11 @@ function pdfoutput__make_pdf_calendar($displayfrom=0,$wholeyear=false,$admin=fal
 	
 	//start building calendar
 	$displayfrom_lower = $displayfrom;
-	$displayfrom_upper = date__skip_months($forward, $displayfrom_lower);
+	if ($forward > 0) {
+		$displayfrom_upper = date__skip_months($forward, $displayfrom_lower);
+	} else {
+		$displayfrom_upper=$displayfrom_lower;
+	}
 	if($wholeyear){
 		$displayfrom_upper = mktime(0, 0, 0, 1, 1, date('Y', $displayfrom)+1);
 	}

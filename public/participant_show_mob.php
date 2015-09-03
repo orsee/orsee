@@ -75,7 +75,7 @@ if ($proceed) {
 					"experiment_id:".$session['experiment_id']."\nsession_id:".$session_id);
 			message(lang('successfully_registered_to_experiment_xxx')." ".
 			 		experiment__get_public_name($session['experiment_id']).", ".
-			 		session__build_name($session_id).". ".
+			 		session__build_name($session).". ".
 			 		lang('this_will_be_confirmed_by_an_email'));
 			$redir="public/participant_show_mob.php".$token_string;
 			if ($token_string) $redir.="&"; else $redir.="?";

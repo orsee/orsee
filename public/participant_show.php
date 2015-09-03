@@ -99,10 +99,10 @@ if ($proceed) {
 					redirect($redir);
 				}
 			} else {
-				echo '<TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'">
+				echo '<center><TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'">
 						<TR><TD align="center">
 							'.lang('experiment_registration').'
-						</TD>';
+						</TD></TABLE>';
 			
 				echo '<BR><BR>
 					<form action="participant_show.php">
@@ -110,7 +110,7 @@ if ($proceed) {
 					
 				if ($token_string) echo '<INPUT type=hidden name="p" value="'.$participant['participant_id_crypt'].'">';
 				echo '<INPUT type=hidden name="register" value="true">
-					<TABLE style="outline: 1px solid black;">
+					<TABLE class="or_formtable">
 					<TR>
 						<TD colspan=2 align=center>
 							<B>'.lang('do_you_really_want_to_register_for_experiment').'</B>

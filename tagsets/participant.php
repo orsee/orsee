@@ -25,7 +25,7 @@ function participant__participant_get_if_not_confirmed($confirmation_token) {
 function participant__exclude_participant($participant) {
 	global $settings, $lang;
 	if (lang('lang')) $notice=lang('automatic_exclusion_by_system_due_to_noshows');
-	else $notice=load_language_symbol('automatic_exclusion_by_system_due_to_noshows',$sesstings['admin_standard_language']);
+	else $notice=load_language_symbol('automatic_exclusion_by_system_due_to_noshows',$settings['admin_standard_language']);
 	$remarks=$participant['remarks']."\n".$notice.' '.$participant['number_noshowup'];
 	$pars=array(':status_id'=>$settings['automatic_exclusion_to_participant_status'],
 				':deletion_time'=>time(),
@@ -133,8 +133,8 @@ function participants__stat_laboratory($participant_id) {
 			echo '	</TD>
 				<TD>';
 				if ($p['sess_id']!='0') {
-					if (isset($laboratories[$p['laboratory_id']]['name']))
-						echo $laboratories[$p['laboratory_id']]['name'];
+					if (isset($laboratories[$p['laboratory_id']]['lab_name']))
+						echo $laboratories[$p['laboratory_id']]['lab_name'];
 					else echo 'undefined';
 				} else {
                     echo '-';
