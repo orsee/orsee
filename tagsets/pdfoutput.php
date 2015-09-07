@@ -177,10 +177,12 @@ function pdfoutput__make_pdf_calendar($displayfrom=0,$wholeyear=false,$admin=fal
 		$calendar__weekdays=explode(",",$lang['format_datetime_weekday_abbr']);
 		for ($i3 = 1; $i3 <= 7; ++$i3) {
 			if (!isset($lang['format_datetime_firstdayofweek_0:Su_1:Mo']) || (!$lang['format_datetime_firstdayofweek_0:Su_1:Mo'])) {
-				$wdindex = $i3-2;
-				if ($wdindex<0) $wdindex=6;
-			} else {
 				$wdindex = $i3-1;
+			} else {
+				$wdindex = $i3;
+				if ($wdindex==7) {
+					$wdindex=0;
+				}
 			}
 			$table_headings[$i3]=$calendar__weekdays[$wdindex];		
 		}
