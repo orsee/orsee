@@ -936,7 +936,6 @@ function experimentmail__send_registration_notice($line) {
 			$list_name=lang('participant_list_filename').' '.date("Y-m-d",$now);
 			$list_filename=str_replace(" ","_",$list_name).".pdf";
 			$list_file=pdfoutput__make_part_list($line['experiment_id'],$line['session_id'],'registered','lname,fname',true,$tlang);
-			$list_file=pdfoutput__make_part_list($line['experiment_id'],$line['session_id'],"","","");
 			$done=experimentmail__mail_attach($recipient,$settings['support_mail'],$subject,$message,$list_filename,$list_file);
 		}
 	}
