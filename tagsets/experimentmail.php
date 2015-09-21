@@ -501,11 +501,13 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
 
 	// handle errors
 	$pars=array(); $mails_errors=count($errors);
-	foreach ($errors as $mail) $pars[]=array(':error'=>$mail['error'],':mail_id'=>$mail['mail_id']);
-	$query="UPDATE ".table('mail_queue')." 
-			SET error= :error  
-			WHERE mail_id= :mail_id";
-	$done=or_query($query,$pars);
+	if ($mails_errors>0) {
+		foreach ($errors as $mail) $pars[]=array(':error'=>$mail['error'],':mail_id'=>$mail['mail_id']);
+		$query="UPDATE ".table('mail_queue')." 
+				SET error= :error  
+				WHERE mail_id= :mail_id";
+		$done=or_query($query,$pars);
+	}
 	$mess['mails_sent']=$mails_sent;
 	$mess['mails_invmails_not_sent']=$invmails_not_sent;
 	$mess['mails_errors']=$mails_errors;
