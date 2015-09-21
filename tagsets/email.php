@@ -60,7 +60,9 @@ function email__retrieve_incoming() {
 				}
 				$to_adds=array(); $cc_adds=array();
 				foreach ($email['headers']['to'] as $to_add) $to_adds[]=$to_add['mailbox']."@".$to_add['host'];
-				foreach ($email['headers']['cc'] as $cc_add) $cc_adds[]=$cc_add['mailbox']."@".$cc_add['host'];
+				if (isset($email['headers']['cc']) && is_array($email['headers']['cc'])) {
+					foreach ($email['headers']['cc'] as $cc_add) $cc_adds[]=$cc_add['mailbox']."@".$cc_add['host'];
+				}
 				$pars=array();
 				$pars[':message_id']=$message['message_id'];
 				$pars[':message_type']='incoming';
