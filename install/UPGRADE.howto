@@ -1,6 +1,23 @@
-This are upgrade instructions for ORSEE 3.0.0 from previous versions.
 
-ORSEE 3.0.0 is a major new versions, with many changes to the database structure and to the code. For this reason, the procedure to upgrade includes two simple steps:
+*Upgrade from ORSEE 3.x.x versions to the current version*
+Since there have been no changes to the database structure, yet, upgrading is easy.
+
+- Unzip the .tgz / .zip file anywhere. Let's assume this is <my-unzip-path>.
+- Let's also assume your older version ORSEE 3.x.x is located in <my-orsee-path>
+- Then simply over the files from subdirectories 'tagsets', 'admin', 'public', and 'config', i.e.:
+cp -r <my-unzip-path>/tagsets/* <my-orsee-path>/tagsets/
+cp -r <my-unzip-path>/admin/* <my-orsee-path>/admin/
+cp -r <my-unzip-path>/public/* <my-orsee-path>/public/
+cp -r <my-unzip-path>/config/* <my-orsee-path>/config/
+
+That's it.
+
+Note that since ORSEE 3.0.1, there is no file settings.php in <my-unzip-path>/config/, such that your original settings.php in <my-orsee-path>/config/ will not be changed by this copying. There is a settings-dist.php in <my-unzip-path>/install/ which has to be copied over to config/settings.php when doing a new install.
+
+
+*Upgrade from ORSEE 2.x.x versions to an ORSEE 3.x.x version*
+
+ORSEE 3.0.0 was a major new versions, with many changes to the database structure and to the code. For this reason, the procedure to upgrade includes two simple steps:
 - install the new version as described in INSTALL.howto and the ORSEE3 wiki
 - import your previous data as described in the ORSEE3 wiki
 
