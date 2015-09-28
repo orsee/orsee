@@ -37,9 +37,11 @@ function email__retrieve_incoming() {
 			if (isset($settings['email_module_delete_emails_from_server']) && $settings['email_module_delete_emails_from_server']=='n') {
 				if (!isset($all_email_ids)) {
 					$query="SELECT message_id FROM ".table('emails');
-					$result = or_query($query);
+					$qresult = or_query($query);
 					$all_email_ids=array();
-					while ($m=pdo_fetch_assoc($result)) $all_email_ids[]=$m['message_id'];
+					while ($m=pdo_fetch_assoc($qresult)) {
+						$all_email_ids[]=$m['message_id'];
+					}
 				}
 				if (in_array($message['message_id'],$all_email_ids)) $continue=false;
 			}
