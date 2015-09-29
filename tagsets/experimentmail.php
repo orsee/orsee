@@ -501,11 +501,13 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
 
 	// handle errors
 	$pars=array(); $mails_errors=count($errors);
-	foreach ($errors as $mail) $pars[]=array(':error'=>$mail['error'],':mail_id'=>$mail['mail_id']);
-	$query="UPDATE ".table('mail_queue')." 
-			SET error= :error  
-			WHERE mail_id= :mail_id";
-	$done=or_query($query,$pars);
+	if ($mails_errors>0) {
+		foreach ($errors as $mail) $pars[]=array(':error'=>$mail['error'],':mail_id'=>$mail['mail_id']);
+		$query="UPDATE ".table('mail_queue')." 
+				SET error= :error  
+				WHERE mail_id= :mail_id";
+		$done=or_query($query,$pars);
+	}
 	$mess['mails_sent']=$mails_sent;
 	$mess['mails_invmails_not_sent']=$invmails_not_sent;
 	$mess['mails_errors']=$mails_errors;
@@ -936,7 +938,6 @@ function experimentmail__send_registration_notice($line) {
 			$list_name=lang('participant_list_filename').' '.date("Y-m-d",$now);
 			$list_filename=str_replace(" ","_",$list_name).".pdf";
 			$list_file=pdfoutput__make_part_list($line['experiment_id'],$line['session_id'],'registered','lname,fname',true,$tlang);
-			$list_file=pdfoutput__make_part_list($line['experiment_id'],$line['session_id'],"","","");
 			$done=experimentmail__mail_attach($recipient,$settings['support_mail'],$subject,$message,$list_filename,$list_file);
 		}
 	}

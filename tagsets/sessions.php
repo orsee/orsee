@@ -207,7 +207,7 @@ function session__check_lab_time_clash($entry) {
 			AND event_id!=:event_id 
 			AND NOT (event_start >= :this_end_time OR event_stop <= :this_start_time)
 			ORDER BY event_start";
-	$result=or_query($query);
+	$result=or_query($query,$pars);
 
 	while ($osession=pdo_fetch_assoc($result)) {
 		$ostart_string=ortime__format(ortime__sesstime_to_unixtime($osession['event_start']));
