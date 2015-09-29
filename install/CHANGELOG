@@ -1,4 +1,8 @@
 
+ORSEE 3.0.2:
+	Some critical bugfixes.
+	Updated install/UPGRADE.howto.
+
 ORSEE 3.0.1:
 	Many minor bugfixes.
 	config/settings.php is now in install/settings-dist.php
