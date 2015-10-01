@@ -22,17 +22,11 @@ BASIC INSTALLATION
 3. Cd to the 'install' directory.
    % cd yourdirname/install
 
-4. Enter mysql and create the mysql database. (You will need the privileges to add a database.)
-   % mysql 
-   
-   mysql> CREATE DATABASE orseedbname;
-   mysql> GRANT ALL PRIVILEGES ON orseedbname.* TO orseedbusername@localhost IDENTIFIED BY 'orseeuserdbpassword';
-   mysql> FLUSH PRIVILEGES;
-   mysql> quit
+4. Open the bash script initdb.sh and adapt the variables to your needs.
 
-5. Import the default database structure. 
+5. Run initdb.sh via
 
-   % mysql orseedbname -uorseedbusername -porseeuserdbpassword < install.sql
+       bash initdb.sh
 
 6. Install the crontab named 'crontab-for-orsee'. Edit the settings
    in this file to match your needs.
@@ -51,7 +45,6 @@ BASIC INSTALLATION
 11. Login with username 'orsee_install' and password 'install'.
 
 12. Done.
-
 
 POST-INSTALLATION
 
