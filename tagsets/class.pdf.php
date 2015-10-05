@@ -35,7 +35,7 @@
  * within the pdf 'file'.
  *
  * @category Documents
- * @package	 Cpdf
+ * @package  Cpdf
  * @version  $Id: Cpdf.php 274 2014-03-21 12:25:04Z ole1986 $
  * @author   Wayne Munro (inactive) <pdf@ros.co.nz>
  * @author   Lars Olesen <lars@legestue.net>
@@ -1017,36 +1017,36 @@
             $cid_widths = &$this->fonts[$fontFileName]['CIDWidths'];
             $res.= ' /W [';
             reset($cid_widths);
-			$opened = false;
-			while (list($k,$v) = each($cid_widths)) {
-				list($nextk, $nextv) = each($cid_widths);
-				//echo "\n$k ($v) == $nextk ($nextv)";
-				if(($k + 1) == $nextk){
-					if(!$opened){
-						$res.= " $k [$v";
-						$opened = true;
-					} else if($opened) {
-						$res.= ' '.$v;
-					}
-					prev($cid_widths);
-				} else {
-					if($opened){
-						$res.=" $v]";
-					} else {
-						$res.= " $k [$v]";
-					}
-					
-					$opened = false;
-					prev($cid_widths);
-				}
-			}
-			
-			if(isset($nextk) && isset($nextv)){
-				if($opened){
-					$res.= "]";
-				}
-				$res.= " $nextk [$nextv]";
-			}
+            $opened = false;
+            while (list($k,$v) = each($cid_widths)) {
+                list($nextk, $nextv) = each($cid_widths);
+                //echo "\n$k ($v) == $nextk ($nextv)";
+                if(($k + 1) == $nextk){
+                    if(!$opened){
+                        $res.= " $k [$v";
+                        $opened = true;
+                    } else if($opened) {
+                        $res.= ' '.$v;
+                    }
+                    prev($cid_widths);
+                } else {
+                    if($opened){
+                        $res.=" $v]";
+                    } else {
+                        $res.= " $k [$v]";
+                    }
+                    
+                    $opened = false;
+                    prev($cid_widths);
+                }
+            }
+            
+            if(isset($nextk) && isset($nextv)){
+                if($opened){
+                    $res.= "]";
+                }
+                $res.= " $nextk [$nextv]";
+            }
             
             $res.= ' ]';
           }
@@ -1939,10 +1939,10 @@
                         }
                     }
                 }
-				
-				if($this->isUnicode)
-					$cidtogid = str_pad('', 256*256*2, "\x00");
-				
+                
+                if($this->isUnicode)
+                    $cidtogid = str_pad('', 256*256*2, "\x00");
+                
                 $cachedFont['C'] = array();
                 foreach($charToGlyph as $char => $glyphIndex){
                     if(!empty($char)){
@@ -1963,8 +1963,8 @@
                 $this->debug('openFont: font file does not contain format 4 cmap', E_USER_WARNING);
             }
             
-			if(isset($cidtogid))
-            	$cachedFont['CIDtoGID'] = base64_encode($cidtogid);
+            if(isset($cidtogid))
+                $cachedFont['CIDtoGID'] = base64_encode($cidtogid);
             
         } else if(file_exists($fullFontPath.'.afm')){
             // use the core font program
@@ -2132,20 +2132,20 @@
                     $widths = array();
                     $cid_widths = array();
                     
-					if(!$font['isUnicode']){
-						for($i = 0; $i < 255; $i++){
-							if (isset($options['differences']) && isset($options['differences'][$i])){
-								// set the correct width of the diffence by using its name
-								$widths[] = $font['C'][$options['differences'][$i]];
-							} else if(isset($font['C'][$i]))
-								$widths[] = $font['C'][$i];
-							else
-								$widths[] = 0;
-						}
-						$firstChar = 0;
-						$lastChar = 255;
-					}
-					
+                    if(!$font['isUnicode']){
+                        for($i = 0; $i < 255; $i++){
+                            if (isset($options['differences']) && isset($options['differences'][$i])){
+                                // set the correct width of the diffence by using its name
+                                $widths[] = $font['C'][$options['differences'][$i]];
+                            } else if(isset($font['C'][$i]))
+                                $widths[] = $font['C'][$i];
+                            else
+                                $widths[] = 0;
+                        }
+                        $firstChar = 0;
+                        $lastChar = 255;
+                    }
+                    
                     // also need to adjust the widths for the differences array
                     /*if (isset($options['differences'])){
                         foreach ($options['differences'] as $charNum => $charName){
@@ -2310,19 +2310,19 @@
         }
     }
 
-	/**
-	 * get the current font name being used
-	 * @since 0.12-rc12
-	 * @param bool $withStyle force to receive the style font name, instead of the base font
-	 * @return string current font name
-	 */
-	public function getCurrentFont($withStyle = false){
-		if($withStyle){
-			return $this->currentFont;
-		}
-		return $this->currentBaseFont;
-	}
-	
+    /**
+     * get the current font name being used
+     * @since 0.12-rc12
+     * @param bool $withStyle force to receive the style font name, instead of the base font
+     * @return string current font name
+     */
+    public function getCurrentFont($withStyle = false){
+        if($withStyle){
+            return $this->currentFont;
+        }
+        return $this->currentBaseFont;
+    }
+    
     /**
      * function for the user to find out what the ID is of the first page that was created during
      * startup - useful if they wish to add something to it later.
@@ -2581,7 +2581,7 @@
         return $this->currentContents;
     }
 
-	/**
+    /**
      * return the pdf stream as a string returned from the function
      * This method is protect to force user to use ezOutput from Cezpdf.php
      */
@@ -2652,13 +2652,13 @@
         } else {
             $tmp = $this->output();
         }
-		
+        
         ob_start();
         echo $tmp;
-		
-		$length = ob_get_length();
-		
-		header("Content-Type: application/pdf");
+        
+        $length = ob_get_length();
+        
+        header("Content-Type: application/pdf");
         header("Content-Length: ".$length);
         $fileName = (isset($options['Content-Disposition'])?$options['Content-Disposition']:'file.pdf');
         if(isset($options['download']) && $options['download'] == 1)
@@ -2669,8 +2669,8 @@
         if (isset($options['Accept-Ranges']) && $options['Accept-Ranges']==1){
             header("Accept-Ranges: ".$length);
         }
-		
-		ob_end_flush();
+        
+        ob_end_flush();
     }
 
     /**
@@ -3155,10 +3155,10 @@
             
             // find space or minus for a clean line break
             if(in_array($cOrd2, $spaces) && $maxWidth > 0){
-            	$break=$i;
+                $break=$i;
                 $breakWidth = ($w-$this->fonts[$cf]['C'][$cOrd2])*$size/1000;
             } else if($cOrd2 == 45  && $maxWidth > 0){
-            	$break=$i;
+                $break=$i;
                 $breakWidth = $w*$size/1000;
             }
         }

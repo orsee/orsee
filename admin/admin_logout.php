@@ -5,11 +5,11 @@ ob_start();
 include ("nonoutputheader.php");
 if ($proceed) {
 
-	log__admin("logout");
-	admin__logout();
+    log__admin("logout");
+    admin__logout();
 
-	redirect("admin/admin_login.php?logout=true");
-	$proceed=false;
+    redirect("admin/admin_login.php?logout=true");
+    $proceed=false;
 
 }
 include ("footer.php");

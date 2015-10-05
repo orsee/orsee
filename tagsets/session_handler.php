@@ -27,25 +27,25 @@ function orsee_session_read( $aKey ) {
 }
 
 function orsee_session_write( $aKey, $aVal ) {
-	site__database_config();
-	$pars=array(':aKey'=>$aKey, ':aVal'=>$aVal);
+    site__database_config();
+    $pars=array(':aKey'=>$aKey, ':aVal'=>$aVal);
     $query = "UPDATE ".table('http_sessions')." SET DataValue = :aVal, LastUpdated = NOW() WHERE SessionID = :aKey";
     or_query($query,$pars);
     return true;
 }
 
 function orsee_session_destroy( $aKey ) {
-	site__database_config();
-	$pars=array(':aKey'=>$aKey);
+    site__database_config();
+    $pars=array(':aKey'=>$aKey);
     $query = "DELETE FROM ".table('http_sessions')." WHERE SessionID = :aKey";
     or_query($query,$pars);
     return true;
 }
 
 function orsee_session_gc( $aMaxLifeTime ) {
-	site__database_config();
-	if (!isset($aMaxLifeTime) || (!$aMaxLifeTime)) $aMaxLifeTime=60*60;
-	$pars=array(':aMaxLifeTime'=>$aMaxLifeTime);
+    site__database_config();
+    if (!isset($aMaxLifeTime) || (!$aMaxLifeTime)) $aMaxLifeTime=60*60;
+    $pars=array(':aMaxLifeTime'=>$aMaxLifeTime);
     $query = "DELETE FROM ".table('http_sessions')." WHERE UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(LastUpdated) > :aMaxLifeTime";
     or_query($query,$pars);
     return true;

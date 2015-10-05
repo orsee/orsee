@@ -1211,7 +1211,7 @@ class PHPlot
             return FALSE;
         }
 
-		//$which_font='../tagsets/fonts/FreeSans.ttf';
+        //$which_font='../tagsets/fonts/FreeSans.ttf';
         // Empty font name means use the default font.
         if (empty($which_font))
             $which_font = $this->GetDefaultTTFont();

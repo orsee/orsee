@@ -766,7 +766,7 @@ class Services_JSON
                                 $parts = array();
                                 
                                if (preg_match('/^\s*(["\'].*[^\\\]["\'])\s*:/Uis', $slice, $parts)) {
- 	                              // "name":value pair
+                                  // "name":value pair
                                     $key = $this->decode($parts[1]);
                                     $val = $this->decode(trim(substr($slice, strlen($parts[0])), ", \t\n\r\0\x0B"));
                                     if ($this->use & SERVICES_JSON_LOOSE_TYPE) {

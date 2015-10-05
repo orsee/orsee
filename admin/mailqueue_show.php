@@ -7,17 +7,17 @@ $title="mailqueue";
 $menu__area="statistics";
 include ("header.php");
 if ($proceed) {
-	$allow=check_allow('mailqueue_show_all','statistics_main.php');
+    $allow=check_allow('mailqueue_show_all','statistics_main.php');
 }
 
 if ($proceed) {
-	echo '<center>';
+    echo '<center>';
 
-	mailqueue__show_mailqueue();
+    mailqueue__show_mailqueue();
 
-	echo '<BR><BR><A href="statistics_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
+    echo '<BR><BR><A href="statistics_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
 
-	echo '</center>';
+    echo '</center>';
 
 }
 include ("footer.php");

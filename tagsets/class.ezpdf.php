@@ -776,7 +776,7 @@ define('EZ_GRIDLINE_COLUMNS', 1);
         $x1=0;
         $this->setStrokeColor($col[0],$col[1],$col[2]);
 
-// Vertical gridlines (including outline)		
+// Vertical gridlines (including outline)       
         $cnt=0;
         $n = count($pos);
         foreach ($pos as $x){
@@ -784,21 +784,21 @@ define('EZ_GRIDLINE_COLUMNS', 1);
             if ($x<$x0) $x0=$x;
             $cnt++;
             if ($cnt==1 || $cnt==$n) {
-				if (! ($gridlines & EZ_GRIDLINE_TABLE_V)) continue;
+                if (! ($gridlines & EZ_GRIDLINE_TABLE_V)) continue;
             $this->setLineStyle($outer);
             } else {
-				if (! ($gridlines & EZ_GRIDLINE_COLUMNS)) continue;
+                if (! ($gridlines & EZ_GRIDLINE_COLUMNS)) continue;
             $this->setLineStyle($inner);
         }
-			$this->line($x-$gap/2,$y0,$x-$gap/2,$y2);
+            $this->line($x-$gap/2,$y0,$x-$gap/2,$y2);
         }
 
-// Top and bottom outline		
+// Top and bottom outline       
         $this->setLineStyle($outer);
-		if ($gridlines & EZ_GRIDLINE_TABLE_H) {
-			$this->line($x0-$gap/2 - $outer/2,$y0, $x1 - $gap/2+$outer/2,$y0);
-			$this->line($x0-$gap/2 - $outer/2,$y2, $x1 - $gap/2+$outer/2,$y2);
-		}
+        if ($gridlines & EZ_GRIDLINE_TABLE_H) {
+            $this->line($x0-$gap/2 - $outer/2,$y0, $x1 - $gap/2+$outer/2,$y0);
+            $this->line($x0-$gap/2 - $outer/2,$y2, $x1 - $gap/2+$outer/2,$y2);
+        }
 
 // Header / data separator
         if ($y0!=$y1 && ($gridlines & EZ_GRIDLINE_HEADERONLY))
@@ -850,7 +850,7 @@ define('EZ_GRIDLINE_COLUMNS', 1);
             foreach ($cols as $colName=>$colHeading){
                 $this->ezSetY($y);
                 if (!empty($optionsAll['alignHeadings'])) {
- 					$justification = $optionsAll['alignHeadings'];
+                    $justification = $optionsAll['alignHeadings'];
                 } else if (isset($options[$colName]) && isset($options[$colName]['justification'])){
                     $justification = $options[$colName]['justification'];
                 } else {
@@ -1013,16 +1013,16 @@ define('EZ_GRIDLINE_COLUMNS', 1);
         // @deprecated Compatibility with 'showLines' option
         if(isset($options['showLines'])){
             switch ($options['showLines']) {
-				case 0:	$options['gridlines'] = 0; break;
-				case 1:	$options['gridlines'] = EZ_GRIDLINE_DEFAULT; break;
-				case 2:	$options['gridlines'] = EZ_GRIDLINE_HEADERONLY + EZ_GRIDLINE_ROWS; break;
-				case 3:	$options['gridlines'] = EZ_GRIDLINE_ROWS; break; 
-				case 4:	$options['gridlines'] = EZ_GRIDLINE_HEADERONLY; break;
-				default: 	$options['gridlines'] = EZ_GRIDLINE_TABLE + EZ_GRIDLINE_HEADERONLY + EZ_GRIDLINE_COLUMNS;
-			}
+                case 0: $options['gridlines'] = 0; break;
+                case 1: $options['gridlines'] = EZ_GRIDLINE_DEFAULT; break;
+                case 2: $options['gridlines'] = EZ_GRIDLINE_HEADERONLY + EZ_GRIDLINE_ROWS; break;
+                case 3: $options['gridlines'] = EZ_GRIDLINE_ROWS; break; 
+                case 4: $options['gridlines'] = EZ_GRIDLINE_HEADERONLY; break;
+                default:    $options['gridlines'] = EZ_GRIDLINE_TABLE + EZ_GRIDLINE_HEADERONLY + EZ_GRIDLINE_COLUMNS;
+            }
             unset($options['showLines']);
         }
-		
+        
         $options['gap']=2*$options['colGap'];
         // Use Y Position of Current Page position in Table
         if ($options['nextPageY']) $nextPageY = $this->y;
@@ -1356,7 +1356,7 @@ define('EZ_GRIDLINE_COLUMNS', 1);
                             $this->ezNewPage();
                             // and the margins may have changed, this is due to the possibility of the columns being turned on
                             // as the columns are managed by manipulating the margins
-                            $dm	= $this->ez['leftMargin']-$baseLeftMargin;
+                            $dm = $this->ez['leftMargin']-$baseLeftMargin;
                             foreach ($basePos as $k=>$v){
                                 $pos[$k]=$v+$dm;
                             }
@@ -1850,7 +1850,7 @@ define('EZ_GRIDLINE_COLUMNS', 1);
      */
     public function ezOutput($debug = FALSE){
         $this->cleanUp();
-		return $this->output($debug);
+        return $this->output($debug);
     }
 
     /**
