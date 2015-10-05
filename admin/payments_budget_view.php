@@ -20,7 +20,7 @@ if ($proceed) {
     }
 
     // get budgets
-    $query="SELECT * FROM ".table('budgets')." ".$restriction." 
+    $query="SELECT * FROM ".table('budgets')." ".$restriction."
             ORDER BY enabled DESC, budget_name";
     $result=or_query($query,$pars);
     $shade=false; $budgets=array(); $budget_ids=array();
@@ -38,20 +38,20 @@ if ($proceed) {
 if ($proceed) {
 
     //load summary stats
-    $query="SELECT sum(payment_amt) as total_payment, 
-            payment_budget, payment_type  
+    $query="SELECT sum(payment_amt) as total_payment,
+            payment_budget, payment_type
             FROM ".table('participate_at')."
-            WHERE payment_budget IN (".implode(",",$budget_ids).") 
+            WHERE payment_budget IN (".implode(",",$budget_ids).")
             AND session_id IN (
                 SELECT session_id FROM ".table('sessions')."
-                WHERE session_status='balanced') 
+                WHERE session_status='balanced')
             GROUP BY payment_budget, payment_type";
     $result=or_query($query);
     while ($line = pdo_fetch_assoc($result)) {
         $budgets[$line['payment_budget']]['payments'][$line['payment_type']]=$line['total_payment'];
     }
-    
-    
+
+
     echo '<center>';
 
     echo '<BR>
@@ -67,12 +67,12 @@ if ($proceed) {
     echo '
             </TR></thead>
             <tbody>';
-    
+
     $payment_types=payments__load_paytypes();
     $shade=false;
     foreach ($budgets as $line) {
         echo '  <tr class="small"';
-        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
+        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
         if (!$line['enabled']) echo ' style="font-style: italic;"';
         echo '>
@@ -98,10 +98,10 @@ if ($proceed) {
         if ($shade) $shade=false; else $shade=true;
     }
    echo '</tbody></table>';
-   
+
    echo '<BR><BR>
                 <A href="statistics_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
-   
+
    echo '</CENTER>';
 
 }

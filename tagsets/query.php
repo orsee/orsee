@@ -3,12 +3,12 @@
 
 function query__show_form($hide_modules,$experiment=array(),$load_query="",$button_title='Search and show',$saved_queries=array(),$status_query="",$formextra="") {
     global $lang, $color;
-    
+
     if (is_array($experiment) && isset($experiment['experiment_id']) && $experiment['experiment_id']) $experiment_id=$experiment['experiment_id']; else $experiment_id="";
 
     $prototypes = query__get_query_form_prototypes($hide_modules,$experiment_id,$status_query);
     //echo '<pre>'; var_dump($prototypes); echo '</pre>';
-    $done=query__echo_form_javascript($prototypes,$load_query);     
+    $done=query__echo_form_javascript($prototypes,$load_query);
     $pastitems = "";
     $pastitemsdata = "";
     $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
@@ -24,7 +24,7 @@ function query__show_form($hide_modules,$experiment=array(),$load_query="",$butt
         }
     }
     echo '<script>var pastQueries = [' . $pastitemsdata . '];</script>';
-    
+
     // display form table
     echo '  <form id="queryForm" action="'.thisdoc().'" method="POST">';
     if ($formextra) echo $formextra;
@@ -50,7 +50,7 @@ function query__show_form($hide_modules,$experiment=array(),$load_query="",$butt
                                 <button class="button fa-eraser" style="font-size: 8pt;" onclick="javascript:clearQuery(); return false;">'.lang('reset_query_form').'</button>
                             </TD>';
     if ($pastitemsdata) {
-        echo '              <TD align=right width="205">    
+        echo '              <TD align=right width="205">
                                 <ul id="savedDropdown" class="past_queries">
                                     <li>
                                         <A HREF="#" class="button fa-file-text">'.lang('load_saved_query').'</A>
@@ -65,22 +65,22 @@ function query__show_form($hide_modules,$experiment=array(),$load_query="",$butt
                     </TABLE>
                 </TD>
             </TR>';
-    
+
     echo '<TR><TD>
             <table id="queryTable" width="100%">';
-    
+
     echo '
                 <tbody>
 
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td colspan=4>      
+                        <td colspan=4>
                         </td>
                     </tr>
                 </tfoot>
             </table>
-            </TD></TR>';    
+            </TD></TR>';
     echo '      <TR>
                     <TD>
                     <TABLE border=0 width=100%><TR>';
@@ -111,7 +111,7 @@ function query__extract_string(&$string, $start, $end) {
 
 
 function query__echo_form_javascript($prototypes,$load_query="") {
-            
+
             function pos_prototype($icon='bars') {
                 $dragbuttonstyle=
                 $out='';
@@ -120,22 +120,22 @@ function query__echo_form_javascript($prototypes,$load_query="") {
                 $out.='" onclick="return false;"></button></td>\';';
                 return $out;
             }
-            
+
             echo '<script>
                     var position_index=0;
                     var logop_index=1;
                     var field_index=2;
                     var deletion_index=3;
             ';
-            if ($load_query) echo 'var jsonData = '.$load_query.'; 
+            if ($load_query) echo 'var jsonData = '.$load_query.';
             ';
-            echo '  var deletionPrototype = \'<td class="queryControl"><i class="fa fa-times-circle fa-lg" style="color: red;" onclick="javascript:removeFromQuery($(this).parent().parent());"></i></td>\';        
+            echo '  var deletionPrototype = \'<td class="queryControl"><i class="fa fa-times-circle fa-lg" style="color: red;" onclick="javascript:removeFromQuery($(this).parent().parent());"></i></td>\';
                     var positionPrototype = '.pos_prototype('bars').'
                     var positionPrototypeOpenBracket = '.pos_prototype('arrows').'
                     var positionPrototypeCloseBracket = '.pos_prototype('arrows-v').'
-                </script>'; 
+                </script>';
 
-        
+
         $tmp = array();
         foreach($prototypes as $proto){
             $htmlJs = query__extract_string($proto['content'], '<script type="text/javascript">', '</script>');
@@ -150,11 +150,11 @@ function query__echo_form_javascript($prototypes,$load_query="") {
         echo "<script type='text/javascript'>var Ptypes = ";
         $json = new Services_JSON();
         echo $json->encodeUnsafe($tmp);
-        echo "; 
+        echo ";
             buildDropdown();
             ";
         echo "</script>";
-        
+
 }
 
 function query__strip_ws_subqueries_recursively($subqueries) {
@@ -166,7 +166,7 @@ function query__strip_ws_subqueries_recursively($subqueries) {
 }
 
 function query__make_like_list($list,$columnname) {
-    $list_array=explode(",",$list); 
+    $list_array=explode(",",$list);
     $like_array=array(); $pars=array();
     $i=0;
     foreach ($list_array as $key=>$value) {
@@ -293,8 +293,8 @@ function query__display_pseudo_query($pseudo_query_array,$active=false) {
         }
         $pseudo_query_array[$key]['next_level']=$next_level;
         $pseudo_query_array[$key]['previous_level']=$previous_level;
-    }   
-    $out='';    
+    }
+    $out='';
     $out.='<TABLE border=0>';
     $numcol=$maxlevel+2+$maxlevel-1;
     if ($active) $select_phrase=lang('query_select_all_active'); else $select_phrase=lang('query_select_all');
@@ -305,9 +305,9 @@ function query__display_pseudo_query($pseudo_query_array,$active=false) {
         if ($entry['previous_level']=='') {
             $out.= '<TR>';
             for ($i=1; $i<=$entry['level']; $i++) {
-                $out.= '<TD></TD>'; $thiscol++;             
+                $out.= '<TD></TD>'; $thiscol++;
             }
-            $out.= '<TD>'.$entry['op_text'].'</TD>'; $thiscol++;    
+            $out.= '<TD>'.$entry['op_text'].'</TD>'; $thiscol++;
         }
         if ($entry['next_level']=='') {
             $span=$numcol-$thiscol;
@@ -315,7 +315,7 @@ function query__display_pseudo_query($pseudo_query_array,$active=false) {
             $out.= '</TR>';
             $thiscol=0;
         } else {
-            $out.= '<TD>'.$entry['text'].'</TD>'; $thiscol++;               
+            $out.= '<TD>'.$entry['text'].'</TD>'; $thiscol++;
         }
     }
     $out.='</TABLE>';
@@ -345,16 +345,16 @@ function query_show_query_result($query_arr,$type="participants_search_active",$
     elseif ($type=='participants_search_all') $cols=participant__get_result_table_columns('result_table_search_all');
     elseif ($type=='participants_unconfirmed') $cols=participant__get_result_table_columns('result_table_search_unconfirmed');
     else $cols=participant__get_result_table_columns('result_table_assign');
-    
-    
-    
+
+
+
     echo '<table class="or_listtable" style="width: 95%;">';
     echo '<thead>';
     echo '<TR style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">';
     echo participant__get_result_table_headcells($cols,$allow_sort);
     echo '</TR>';
     echo '</thead><tbody>';
-    
+
     $shade=false; $assign_ids=array();
     while ($p=pdo_fetch_assoc($result)) {
         if ($type=='participants_unconfirmed') $assign_ids[]=$p['email'];
@@ -368,14 +368,14 @@ function query_show_query_result($query_arr,$type="participants_search_active",$
         if ($shade) $shade=false; else $shade=true;
     }
     echo '</tbody></table>';
-    
+
     return $assign_ids;
 }
 
 function query__headcell($name,$sort="",$allow_sort=true) {
     global $color;
     $celltag='td';
-    
+
     $out='';
     if (!isset($_REQUEST['focus'])) $_REQUEST['focus']="";
     if (!isset($_REQUEST['experiment_id'])) $_REQUEST['experiment_id']="";
@@ -392,7 +392,7 @@ function query__headcell($name,$sort="",$allow_sort=true) {
         if ($_REQUEST['focus']) $out.= '&focus='.$_REQUEST['focus'];
         if ($_REQUEST['active']) $out.= '&active='.$_REQUEST['active'];
         $out.= '">';
-    } 
+    }
     $out.= '<FONT class="small"';
     if ($allow_sort && isset($_REQUEST['search_sort']) && $_REQUEST['search_sort']==$sort && $sort) $out.= ' style="color: '.$color['list_header_highlighted_textcolor'].';"';
     else $out.= ' style="color: '.$color['list_header_textcolor'].';"';
@@ -407,7 +407,7 @@ function query__headcell($name,$sort="",$allow_sort=true) {
 function query__headcell_new($name,$sort="",$allow_sort=true) {
     global $color;
     $celltag='td';
-    
+
     $out='';
     if (!isset($_REQUEST['focus'])) $_REQUEST['focus']="";
     if (!isset($_REQUEST['experiment_id'])) $_REQUEST['experiment_id']="";
@@ -420,7 +420,7 @@ function query__headcell_new($name,$sort="",$allow_sort=true) {
         if ($_REQUEST['focus']) $out.= '&focus='.$_REQUEST['focus'];
         if ($_REQUEST['active']) $out.= '&active='.$_REQUEST['active'];
         $out.= '" method=POST>';
-    } 
+    }
     $out.= '
         <'.$celltag.' class=small';
     if ($allow_sort && isset($_REQUEST['search_sort']) && $_REQUEST['search_sort']==$sort && $sort) $out.= ' style="background: '.$color['list_header_highlighted_background'].'; color: '.$color['list_header_highlighted_textcolor'].';"';
@@ -432,7 +432,7 @@ function query__headcell_new($name,$sort="",$allow_sort=true) {
         if ($_REQUEST['focus']) $out.= '&focus='.$_REQUEST['focus'];
         if ($_REQUEST['active']) $out.= '&active='.$_REQUEST['active'];
         $out.= '">';
-    } 
+    }
     $out.= '<FONT class="small"';
     if ($allow_sort && isset($_REQUEST['search_sort']) && $_REQUEST['search_sort']==$sort && $sort) $out.= ' color="'.$color['list_header_highlighted_textcolor'].'"';
     $out.= '>';
@@ -484,7 +484,7 @@ function query__get_sort($type,$search_sort,$experiment_id=0) {
             $search_ok=true;
         }
     }
-    
+
     if (!$search_ok) $search_sort=query__load_default_sort($type,$experiment_id);
     return $search_sort;
 }
@@ -493,7 +493,7 @@ function query__get_bulkactions() {
     global $color;
     $bulkactions=array();
     // don't use ' in text!
-    
+
     if (check_allow('participants_bulk_mail')) {
         // BULK EMAIL
         $display_text=lang('send_bulk_mail');
@@ -533,9 +533,9 @@ function query__get_bulkactions() {
                 </TABLE></center>';
         $bulkactions['bulkmail']=array('display_text'=>$display_text,'html'=>$html);
     }
-    
+
     if (check_allow('participants_bulk_participant_status')) {
-        // PARTICIPANT STATUS       
+        // PARTICIPANT STATUS
         $display_text=lang('set_participant_status');
         if (isset($_REQUEST['new_status'])) {
             $new_status=$_REQUEST['new_status'];
@@ -559,16 +559,16 @@ function query__get_bulkactions() {
                     <TD valign="top">'.lang('add_remark_to_profile').':</TD>
                     <TD><textarea class="bforminput" name="remark" rows="5" cols="30" wrap="virtual">'.$remark.'</textarea></TD>
                 </TR>
-            
-            
+
+
                 <TR><TD colspan="2" align="center"><INPUT id="popupsubmit" class="button" type="submit" name="popupsubmit" value="'.lang('set_status').'"></TD></TR>
                 </TABLE></center>
                 ';
         $bulkactions['status']=array('display_text'=>$display_text,'html'=>$html);
     }
-    
+
     if (check_allow('participants_bulk_profile_update')) {
-        // PROFILE UPDATE REQUEST   
+        // PROFILE UPDATE REQUEST
         $display_text=lang('set_profile_update_request');
         if (isset($_REQUEST['new_pool'])) {
             $new_pool=$_REQUEST['new_pool'];
@@ -590,25 +590,25 @@ function query__get_bulkactions() {
                 <TR>
                     <TD>'.lang('set_profile_update_request_status_equal_to').
                         ' <SELECT name="new_profile_update_status" class="bforminput">
-                            <OPTION value="y"'; 
-        if ($new_profile_update_status=='y') $html.=' SELECTED'; 
+                            <OPTION value="y"';
+        if ($new_profile_update_status=='y') $html.=' SELECTED';
         $html.='>'.lang('active').'</OPTION>
-                            <OPTION value="n"'; 
-        if ($new_profile_update_status!='y') $html.=' SELECTED'; 
+                            <OPTION value="n"';
+        if ($new_profile_update_status!='y') $html.=' SELECTED';
         $html.='>'.lang('inactive').'</OPTION>
                             </SELECT>
                     </TD>
                 </TR>
                 <TR>
-                    <TD><INPUT class="bforminput" type="checkbox" name="do_pool_transfer" value="y"'; 
-        if ($do_pool_transfer=='y') $html.=' CHECKED'; 
+                    <TD><INPUT class="bforminput" type="checkbox" name="do_pool_transfer" value="y"';
+        if ($do_pool_transfer=='y') $html.=' CHECKED';
         $html.='>'.lang('upon_profile_update_transfer_to_subject_pool').' '.$pool_select.'</TD>
                 </TR>
                 <TR><TD colspan="2" align="center"><INPUT id="popupsubmit" class="button" type="submit" name="popupsubmit" value="'.lang('set_status').'"></TD></TR>
                 </TABLE></center>
                 ';
         $bulkactions['profile_update']=array('display_text'=>$display_text,'html'=>$html);
-    }   
+    }
     return $bulkactions;
 }
 
@@ -623,7 +623,7 @@ function query__resulthead_participantsearch() {
         $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         echo '<div id="bulkPopupDiv" class="bulkpopupDiv" style=" background: '.$color['popup_bgcolor'].'; color: '.$color['popup_text'].';">
                 <div align="right"><button class="b-close button fa-backward popupBack">'.lang('back_to_results').'</button></div>
-                <div id="bulkPopupContent" style="margin-left: 20px; margin-top: 0px;"></div>       
+                <div id="bulkPopupContent" style="margin-left: 20px; margin-top: 0px;"></div>
             </div>
             <script type="text/javascript">
                 var bulkactions = ';
@@ -640,7 +640,7 @@ function query__resulthead_participantsearch() {
                 });
                 var bulkBpopup;
                 function bulkaction(act){
-                    var participant_count = $("input[name*=\'sel[\']:checked").length;                  
+                    var participant_count = $("input[name*=\'sel[\']:checked").length;
                     var parstr = participant_count + " '.lang('selected_participants').'";
                     var str = bulkactions[act].html;
                     str = str.replace("#xyz_participants#", parstr);
@@ -652,19 +652,19 @@ function query__resulthead_participantsearch() {
                         positionStyle: "fixed",
                         modalColor: "'.$color['popup_modal_color'].'",
                         opacity: 0.8
-                        });         
+                        });
                     $("#popupsubmit").click(function(){
                         event.preventDefault();
-                        $(".bforminput").each(function(){ 
+                        $(".bforminput").each(function(){
                             var $input = $( this );
                             var tval = "";
                             if ($input.is(":checkbox")) {
-                                if ($input.prop("checked")) tval="y"; 
-                                else tval="n"; 
+                                if ($input.prop("checked")) tval="y";
+                                else tval="n";
                             } else {
                                 tval=$input.val();
                             }
-                            var tstr = \'<input type="hidden" name="\'+$input.prop("name")+\'" value="\'+tval+\'" />\';                     
+                            var tstr = \'<input type="hidden" name="\'+$input.prop("name")+\'" value="\'+tval+\'" />\';
                             $("#bulkactionform").append($.parseHTML(tstr));
                         });
                         bulkBpopup.close();
@@ -678,7 +678,7 @@ function query__resulthead_participantsearch() {
                 <TD><ul id="bulkactionDropdown" class="bulkaction">
                         <li><A HREF="#" class="button fa-group">'.lang('do___').'</A>
                             <ul id="bulkDropdown">
-                
+
                             </ul>
                         </li>
                     </ul>
@@ -692,17 +692,17 @@ function query__resulthead_participantsearch() {
                 {
                     action: "mouseenter",
                     beforeShow: function(){
-                        $("#bulkactionDropdown .dropit-submenu").css("width", "250px"); 
+                        $("#bulkactionDropdown .dropit-submenu").css("width", "250px");
                     }
-                } 
+                }
             )
         });
         </script>';
         echo '</TD>';
     }
-    
+
     echo '<TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>';
-    
+
     // back to query form button
     $cgivars=array();
     if (isset($_REQUEST['active']) && $_REQUEST['active']) $cgivars[]='active=true';
@@ -711,7 +711,7 @@ function query__resulthead_participantsearch() {
     if (count($cgivars)>0) echo '?'.implode("&",$cgivars);
     echo '" class="button fa-backward" style="font-size: 8pt">'.lang('back_to_query_form').'</A>';
     echo '</TD>';
-    
+
     // save query button
     $cgivars=array();
     $cgivars[]="save_query=true";
@@ -722,7 +722,7 @@ function query__resulthead_participantsearch() {
     if (count($cgivars)>0) echo '?'.implode("&",$cgivars);
     echo '" class="button fa-floppy-o">'.lang('save_query').'</A>';
     echo '</TD>';
-    
+
     echo '</TR></TABLE>';
 
 }
@@ -730,7 +730,7 @@ function query__resulthead_participantsearch() {
 function query__resulthead_assign($type='assign') {
 
     echo '<TABLE border="0" width="95%">';
-    
+
     echo '<TR><TD>';
     // assign/deassign
     echo '<TABLE border="0" style="outline: 1px solid black;"><TR>';
@@ -739,14 +739,14 @@ function query__resulthead_assign($type='assign') {
         echo '<TD><INPUT class="button" type=submit name="addall" value="'.lang('assign_all_participants_in_list').'"></TD>';
     } else {
         echo '<TD><INPUT class="button" type=submit name="dropselected" value="'.lang('remove_only_marked_participants').'"></TD>';
-        echo '<TD><INPUT class="button" type=submit name="dropall" value="'.lang('remove_all_participants_in_list').'"></TD>';  
+        echo '<TD><INPUT class="button" type=submit name="dropall" value="'.lang('remove_all_participants_in_list').'"></TD>';
     }
     echo '</TR>';
-    echo '</TABLE>';        
+    echo '</TABLE>';
     echo '</TD>';
-    
+
     echo '<TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>';
-    
+
     // back to query form button
     $cgivars=array();
     if (isset($_REQUEST['active']) && $_REQUEST['active']) $cgivars[]='active=true';
@@ -755,7 +755,7 @@ function query__resulthead_assign($type='assign') {
     if (count($cgivars)>0) echo '?'.implode("&",$cgivars);
     echo '" class="button fa-backward" style="font-size: 8pt">Back to query form</A>';
     echo '</TD>';
-        
+
     echo '</TR></TABLE>';
 
 }
@@ -764,16 +764,16 @@ function query__get_permanent($experiment_id=0) {
     $perm_queries=array();
     if ($experiment_id) {
         $pars=array(':experiment_id'=>$experiment_id);
-        $query="SELECT * FROM ".table('queries')." 
-                WHERE experiment_id= :experiment_id 
+        $query="SELECT * FROM ".table('queries')."
+                WHERE experiment_id= :experiment_id
                 AND permanent = 1
                 ORDER BY query_time";
     } else {
         $pars=array();
-        $query="SELECT * FROM ".table('queries')." 
+        $query="SELECT * FROM ".table('queries')."
                 WHERE permanent = 1
                 AND experiment_id IN (
-                    SELECT experiment_id FROM ".table('experiments')." 
+                    SELECT experiment_id FROM ".table('experiments')."
                     WHERE experiment_finished='n')
                 ORDER BY query_time";
     }
@@ -788,9 +788,9 @@ function query__get_permanent($experiment_id=0) {
 function participant__get_permanent_query_participants() {
     $active_clause=participant_status__get_pquery_snippet("eligible_for_experiments");
     $participants=array();
-    $query="SELECT * FROM ".table('participants')." 
+    $query="SELECT * FROM ".table('participants')."
             WHERE apply_permanent_queries = 1
-            AND ".$active_clause." 
+            AND ".$active_clause."
             ORDER BY creation_time";
     $result=or_query($query);
     while ($p=pdo_fetch_assoc($result)) $participants[]=$p;
@@ -800,8 +800,8 @@ function participant__get_permanent_query_participants() {
 function query__apply_permanent_queries() {
     global $settings;
     $continue=true; $target='';
-    $num_queries=0; $num_p=0; $num_assigned=0; 
-    
+    $num_queries=0; $num_p=0; $num_assigned=0;
+
     if ($continue) {
         if ($settings['allow_permanent_queries']!='y') $continue=false;
     }
@@ -809,16 +809,16 @@ function query__apply_permanent_queries() {
     if ($continue) {
         $ppart=array();
         $ppart=participant__get_permanent_query_participants();
-        if (count($ppart)==0) $continue=false;  
-    }   
-    
+        if (count($ppart)==0) $continue=false;
+    }
+
     if ($continue) {
         $pqu=array();
         $pqu=query__get_permanent();
         if (count($pqu)==0) $continue=false;
         else $num_queries=count($pqu);
     }
-    
+
     if ($continue) {
         $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         $query_assigned=array();
@@ -855,7 +855,7 @@ function query__apply_permanent_queries() {
                         $pars=array(':experiment_id'=>$experiment['experiment_id'],
                                     ':now'=>time(),
                                     ':recipient'=>$p['participant_id']);
-                        $query="INSERT INTO ".table('mail_queue')." 
+                        $query="INSERT INTO ".table('mail_queue')."
                                 SET timestamp = :now,
                                 mail_type = 'invitation',
                                 mail_recipient = :recipient,
@@ -863,24 +863,24 @@ function query__apply_permanent_queries() {
                         $done=or_query($query,$pars);
                     }
                     if (!isset($query_assigned[$q['query_id']])) $query_assigned[$q['query_id']]=0;
-                    $query_assigned[$q['query_id']]++;              
+                    $query_assigned[$q['query_id']]++;
                 }
             }
             // done with participant, reset permanent status
             $pars=array(':participant_id'=>$p['participant_id']);
             $query="UPDATE ".table('participants')."
-                    SET apply_permanent_queries = 0 
+                    SET apply_permanent_queries = 0
                     WHERE participant_id = :participant_id";
             $done=or_query($query,$pars);
         }
-        
+
         // and now update permanent queries with assignment numbers
         foreach ($pqu as $q) {
             if (!isset($query_assigned[$q['query_id']])) $query_assigned[$q['query_id']]=0;
-            $done=query__update_permanent_query($q['query_id'],$query_assigned[$q['query_id']]); 
+            $done=query__update_permanent_query($q['query_id'],$query_assigned[$q['query_id']]);
         }
-        
-        
+
+
     }
     $target='Participants checked: '.$num_p;
     if ($num_p>0) $target.=', PermQueries found: '.$num_queries;
@@ -890,7 +890,7 @@ function query__apply_permanent_queries() {
 
 function query__update_permanent_query($query_id,$assigned) {
     $pars=array(':query_id'=>$query_id);
-    $query="SELECT * FROM ".table('queries')." 
+    $query="SELECT * FROM ".table('queries')."
             WHERE query_id= :query_id";
     $result=or_query($query,$pars);
     while ($q=pdo_fetch_assoc($result)) {
@@ -900,8 +900,8 @@ function query__update_permanent_query($query_id,$assigned) {
         $properties_string=property_array_to_db_string($properties);
         $newpars=array(':properties'=>$properties_string,
                         ':query_id'=>$q['query_id']);
-        $newquery="UPDATE ".table('queries')." 
-                    SET properties=:properties 
+        $newquery="UPDATE ".table('queries')."
+                    SET properties=:properties
                     WHERE query_id= :query_id";
         $done=or_query($newquery,$newpars);
     }
@@ -910,8 +910,8 @@ function query__update_permanent_query($query_id,$assigned) {
 
 function query__reset_permanent($experiment_id) {
     $pars=array(':experiment_id'=>$experiment_id);
-    $query="SELECT * FROM ".table('queries')." 
-            WHERE experiment_id= :experiment_id 
+    $query="SELECT * FROM ".table('queries')."
+            WHERE experiment_id= :experiment_id
             AND permanent = 1";
     $result=or_query($query,$pars);
     while ($q=pdo_fetch_assoc($result)) {
@@ -920,8 +920,8 @@ function query__reset_permanent($experiment_id) {
         $properties_string=property_array_to_db_string($properties);
         $newpars=array(':properties'=>$properties_string,
                         ':query_id'=>$q['query_id']);
-        $newquery="UPDATE ".table('queries')." 
-                    SET properties=:properties, 
+        $newquery="UPDATE ".table('queries')."
+                    SET properties=:properties,
                         permanent = 0
                     WHERE query_id= :query_id";
         $done=or_query($newquery,$newpars);
@@ -932,8 +932,8 @@ function query__reset_permanent($experiment_id) {
 
 function query__load_default_query($type,$experiment_id=0) {
     //type can be: participants_search_active, participants_search_all, assign, deassign
-    $pars=array(':query_type'=>'default_'.$type);       
-    $query="SELECT * FROM ".table('queries')." 
+    $pars=array(':query_type'=>'default_'.$type);
+    $query="SELECT * FROM ".table('queries')."
             WHERE query_type=:query_type
             LIMIT 1";
     $query_line=orsee_query($query,$pars);
@@ -946,9 +946,9 @@ function query__save_default_query($json_query,$type) {
     global $expadmin;
     if (isset($expadmindata['admin_id'])) $admin_id=$expadmindata['admin_id'];
     else $admin_id='';
-    
-    $pars=array(':query_type'=>$type);      
-    $query="SELECT * FROM ".table('queries')." 
+
+    $pars=array(':query_type'=>$type);
+    $query="SELECT * FROM ".table('queries')."
             WHERE query_type=:query_type
             LIMIT 1";
     $query_line=orsee_query($query,$pars);
@@ -959,18 +959,18 @@ function query__save_default_query($json_query,$type) {
                 ':admin_id'=>$admin_id
                 );
 
-    if (isset($query_line['query_id'])) {           
-        $query="UPDATE ".table('queries')." 
+    if (isset($query_line['query_id'])) {
+        $query="UPDATE ".table('queries')."
                 SET query_time=:query_time,
                 json_query=:json_query,
                 admin_id=:admin_id
                 WHERE query_type=:query_type";
     } else {
-        $query="INSERT INTO ".table('queries')." 
+        $query="INSERT INTO ".table('queries')."
                 SET query_time=:query_time,
                 json_query=:json_query,
                 admin_id=:admin_id,
-                query_type=:query_type";    
+                query_type=:query_type";
     }
     $done=or_query($query,$pars);
     message(lang('query_saved'));
@@ -980,32 +980,32 @@ function query__save_default_query($json_query,$type) {
 function query__save_query($json_query,$type,$experiment_id=0,$properties=array(),$permanent=false) {
 // type can be participants_search_active, participants_search_all, assign, deassign
     global $expadmin;
-    $now=time(); 
-    
+    $now=time();
+
     if ($experiment_id && $permanent) {
-        // if this query is supposed to be permanent, then reset current permanent query if any 
+        // if this query is supposed to be permanent, then reset current permanent query if any
         $done=query__reset_permanent($experiment_id);
         // for new query
-        $properties['is_permanent']=1;  
-        $properties['permanent_start_time']=time(); 
+        $properties['is_permanent']=1;
+        $properties['permanent_start_time']=time();
         $properties['assigned_count']=0;
         $addquery=", permanent=1";
         $addmessage=lang('activated_as_permanent_query');
     } else $addquery=", permanent=0";
-    
+
     $properties_string=property_array_to_db_string($properties);
-    
+
     $continue=true;
     if ($experiment_id==0) {
         // check if we already know this query, and if so, just update the record
         $pars=array(':json_query'=>$json_query);
-        $query="SELECT * FROM ".table('queries')." 
+        $query="SELECT * FROM ".table('queries')."
                 WHERE json_query= :json_query LIMIT 1";
         $line=orsee_query($query,$pars);
         if (isset($line['query_id'])) {
             $pars=array(':query_time'=>$now,
                         ':query_id'=>$line['query_id']);
-            $query="UPDATE ".table('queries')." 
+            $query="UPDATE ".table('queries')."
                     SET query_time= :query_time
                     WHERE query_id= :query_id";
             $done=or_query($query,$pars);
@@ -1024,13 +1024,13 @@ function query__save_query($json_query,$type,$experiment_id=0,$properties=array(
                     ':experiment_id'=>$experiment_id,
                     ':properties'=>$properties_string,
                     ':admin_id'=>$admin_id
-                    );      
-        $query="INSERT INTO ".table('queries')." 
+                    );
+        $query="INSERT INTO ".table('queries')."
                 SET query_time=:query_time,
                 json_query=:json_query,
                 query_type=:query_type,
                 experiment_id=:experiment_id,
-                admin_id=:admin_id, 
+                admin_id=:admin_id,
                 properties=:properties ".$addquery;
         $done=or_query($query,$pars);
         message(lang('query_saved'));
@@ -1050,9 +1050,9 @@ function query__load_saved_queries($type,$limit=-1,$experiment_id=0,$details=fal
         }
         $conditions[]="( ".implode(' OR ',$tqueries)." )";
     }
-    
+
     if ($experiment_id) $conditions[]="( experiment_id='".$experiment_id."' )";
-    
+
     $query="SELECT * FROM ".table('queries');
     if (count($conditions)>0) $query.=" WHERE ".implode(" AND ", $conditions);
     $query.=" ORDER BY ".$order;

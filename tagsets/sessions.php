@@ -3,10 +3,10 @@
 
 function sessions__format_alist($session,$experiment) {
     global $lang, $color, $settings, $sessionlinecolor, $preloaded_laboratories;
-    
-    if (!(is_array($preloaded_laboratories) && count($preloaded_laboratories)>0)) 
+
+    if (!(is_array($preloaded_laboratories) && count($preloaded_laboratories)>0))
         $preloaded_laboratories=laboratories__get_laboratories();
-        
+
     extract($session);
     $session_time=session__build_name($session);
 
@@ -25,7 +25,7 @@ function sessions__format_alist($session,$experiment) {
         $regfontcolor=$color['session_complete'];
     }
 
-   
+
     if ($session_status=="live") {
         $signup_time=session__get_signup_time_left($session);
         if ($signup_time) $reg_state=lang('signup_time_left').':&nbsp;'.$signup_time;
@@ -43,9 +43,9 @@ function sessions__format_alist($session,$experiment) {
         }
     } else {
         $reminder_state='';
-        $reg_state='';  
+        $reg_state='';
     }
-    
+
     if ($settings['enable_payment_module']=="y" &&  check_allow('payments_view')
         && ($session_status=='completed' || $session_status=='balanced')) {
         if ($session_status=='balanced') $payments=lang('total_payment_abbr').': '.$total_payment;
@@ -66,7 +66,7 @@ function sessions__format_alist($session,$experiment) {
         }
     }
 
-    
+
     echo '<tr'.$rowspec.'>
             <td><B>'.$session_time;
             if (count($preloaded_laboratories)>1) {
@@ -82,7 +82,7 @@ function sessions__format_alist($session,$experiment) {
                 if ($reg_state) echo $reg_state;
             echo '</td>
             <td>';
-            if (check_allow('session_edit')) echo 
+            if (check_allow('session_edit')) echo
                 button_link('session_edit.php?session_id='.$session_id,
                         lang('edit'),'pencil-square-o','margin: 0; ').'
                     </A>';
@@ -91,7 +91,7 @@ function sessions__format_alist($session,$experiment) {
 
     $allow_sp=check_allow('experiment_show_participants');
 
-    
+
     echo '  <TR'.$rowspec.'>
             <TD>';
                 if ($allow_sp) echo '
@@ -99,12 +99,12 @@ function sessions__format_alist($session,$experiment) {
                         $experiment_id.'&session_id='.$session_id.'">';
                 echo lang('registered_subjects');
                 if ($allow_sp) echo '</A>';
-                echo ': 
+                echo ':
                 <FONT color="'.$regfontcolor.'">
                 '.$reg.' ('.$part_needed.','.$part_reserve.')</FONT>
             </TD>
             <TD>';
-    if ($payments) echo $payments; 
+    if ($payments) echo $payments;
     echo '      </TD>
             <TD>';
                 if($reminder_state) echo '<FONT color="'.$reminder_statecolor.'">'.
@@ -176,15 +176,15 @@ function session__check_lab_time_clash($entry) {
                 ':session_id'=>$entry['session_id'],
                 ':laboratory_id'=>$entry['laboratory_id']);
     $query="SELECT session_start,
-            date_format(date_add(session_start*100, 
-            INTERVAL concat(session_duration_hour,':',session_duration_minute) HOUR_MINUTE),'%Y%m%d%H%i') 
+            date_format(date_add(session_start*100,
+            INTERVAL concat(session_duration_hour,':',session_duration_minute) HOUR_MINUTE),'%Y%m%d%H%i')
             as session_stop,
              ".table('experiments').".*, ".table('sessions').".*
             FROM ".table('experiments').", ".table('sessions')."
             WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
             AND ".table('experiments').".experiment_type!='internet'
             AND session_id!=:session_id
-            AND laboratory_id=:laboratory_id 
+            AND laboratory_id=:laboratory_id
             HAVING NOT (session_start >= :this_end_time OR session_stop <= :this_start_time)
             ORDER BY session_start";
     $result=or_query($query,$pars);
@@ -202,9 +202,9 @@ function session__check_lab_time_clash($entry) {
                 ':laboratory_id'=>$entry['laboratory_id']);
     $query="SELECT event_start, event_stop,
            ".table('events').".*
-            FROM ".table('events')." 
-            WHERE laboratory_id=:laboratory_id 
-            AND event_id!=:event_id 
+            FROM ".table('events')."
+            WHERE laboratory_id=:laboratory_id
+            AND event_id!=:event_id
             AND NOT (event_start >= :this_end_time OR event_stop <= :this_start_time)
             ORDER BY event_start";
     $result=or_query($query,$pars);
@@ -260,7 +260,7 @@ function sessions__get_first_last_date($session_list) {
     $first_d=0; $last_d=0;
     foreach ($session_list as $s) {
         if ($first_d==0 || $s['session_start']<$first_d) $first_d=$s['session_start'];
-        if ($last_d==0 || $s['session_start']>$last_d) $last_d=$s['session_start']; 
+        if ($last_d==0 || $s['session_start']>$last_d) $last_d=$s['session_start'];
     }
     $first_s=($first_d==0)?'???':ortime__format(ortime__sesstime_to_unixtime($first_d),'hide_time:true');
     $last_s=($last_d==0)?'???':ortime__format(ortime__sesstime_to_unixtime($last_d),'hide_time:true');
@@ -275,7 +275,7 @@ function sessions__get_registration_end($alist,$session_id="",$experiment_id="")
         $alist=orsee_query($query,$pars);
     } elseif ($experiment_id) {
         $pars=array(':experiment_id'=>$experiment_id);
-        $query="SELECT ".table('sessions').".* 
+        $query="SELECT ".table('sessions').".*
             FROM ".table('experiments').", ".table('sessions')."
             WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
             AND experiment_type='laboratory'
@@ -296,7 +296,7 @@ function sessions__get_cancellation_deadline($alist,$session_id="",$experiment_i
         $alist=orsee_query($query,$pars);
     } elseif ($experiment_id) {
         $pars=array(':experiment_id'=>$experiment_id);
-        $query="SELECT ".table('sessions').".* 
+        $query="SELECT ".table('sessions').".*
             FROM ".table('experiments').", ".table('sessions')."
             WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
             AND experiment_type='laboratory'
@@ -327,7 +327,7 @@ function sessions__get_reminder_time($alist,$session_id="") {
 function sessions__session_full($session_id,$thissession=array()) {
     if (!isset($thissession['session_id'])) $thissession=orsee_db_load_array("sessions",$session_id,"session_id");
     $reg=experiment__count_participate_at($thissession['experiment_id'],$thissession['session_id']);
-    if ($reg < $thissession['part_needed'] + $thissession['part_reserve']) $session_full=false; 
+    if ($reg < $thissession['part_needed'] + $thissession['part_reserve']) $session_full=false;
     else $session_full=true;
     return $session_full;
 }
@@ -337,7 +337,7 @@ function sessions__session_full($session_id,$thissession=array()) {
 function sessions__get_experiment_id($session_id) {
     $pars=array(':session_id'=>$session_id);
     $query="SELECT experiment_id
-            FROM ".table('sessions')." 
+            FROM ".table('sessions')."
             WHERE session_id=:session_id";
     $res=orsee_query($query,$pars);
     if (isset($res['experiment_id'])) $experiment_id=$res['experiment_id']; else $experiment_id="";
@@ -349,7 +349,7 @@ function sessions__get_sessions($experiment_id) {
     $pars=array(':experiment_id'=>$experiment_id);
     $query="SELECT *
             FROM ".table('sessions')."
-            WHERE experiment_id= :experiment_id 
+            WHERE experiment_id= :experiment_id
             ORDER BY session_start";
     $result=or_query($query,$pars); $sessions=array();
     while ($line=pdo_fetch_assoc($result)) {

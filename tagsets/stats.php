@@ -15,7 +15,7 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
     $pform_fields=array(); $pform_types=array();
     foreach ($formfields as $f) {
         if( (!preg_match("/(textline|textarea)/i",$f['type'])) &&
-            isset($f['include_in_statistics']) && 
+            isset($f['include_in_statistics']) &&
             ($f['include_in_statistics']=='pie' || $f['include_in_statistics']=='bars')) {
                 $pform_fields[]=$f['mysql_column_name'];
                 $pform_types[$f['mysql_column_name']]=$f;
@@ -32,9 +32,9 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
         $exists=array_search('rules_signed',$statfields);
         if ($exists) unset($statfields[$exists]);
     }
-        
+
     if ($type=='stats') foreach (array('number_reg','number_noshowup','last_enrolment',
-                        'last_profile_update','last_activity') as $field) 
+                        'last_profile_update','last_activity') as $field)
                                 if (!in_array($field,$statfields)) $statfields[]=$field;
     $query="SELECT * from ".table('participants');
     $query_conditions="";
@@ -50,14 +50,14 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
     $result=or_query($query,$pars);
     $counts=array(); $pids=array();
     while ($line=pdo_fetch_assoc($result)) {
-        // check whether we should count this participant and (for monthly stats) use this value 
+        // check whether we should count this participant and (for monthly stats) use this value
         $p_restrict=false;
         foreach ($statfields as $c) {
             $value=$line[$c];
             if (in_array($c,array('last_enrolment','last_profile_update','last_activity'))) {
                 if (!$value) $value=0;
                 if ($value==0) $value='-';
-                else $value=date('Ym',$value);  
+                else $value=date('Ym',$value);
             }
             $value=db_string_to_id_array($value);
             if (count($value)>0) {
@@ -69,7 +69,7 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
             } else {
                 $value='-';
                 if (isset($restrict[$c][$value])) $p_restrict=true;
-            } 
+            }
         }
         if (!$p_restrict) {
             $pids[]=$line['participant_id'];
@@ -91,13 +91,13 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
                         }
                     } else {
                         $value='-';
-                        if (!isset($counts[$c][$value])) $counts[$c][$value]=0;         
+                        if (!isset($counts[$c][$value])) $counts[$c][$value]=0;
                         $counts[$c][$value]++;
                     }
                 }
             }
         }
-    }  
+    }
 
     $count_pids=count($pids);
     $pid_condition="";
@@ -112,17 +112,17 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
     $statfields[]='experience_avg_experimentclass';
     if ($count_pids>0) {
         $participated_clause=expregister__get_pstatus_query_snippet("participated");
-        $query="SELECT count(*) as num, experiment_class 
+        $query="SELECT count(*) as num, experiment_class
                 FROM ".table('participate_at')." as p, ".table('experiments')." as e
-                WHERE p.session_id>0 ".$pid_condition." 
+                WHERE p.session_id>0 ".$pid_condition."
                 AND e.experiment_id=p.experiment_id
-                AND e.experiment_class !='' 
-                AND ".$participated_clause." "; 
+                AND e.experiment_class !=''
+                AND ".$participated_clause." ";
         if (is_array($options) && isset($options['upper_experience_limit'])) {
-            $query.=" AND session_id IN (SELECT session_id FROM ".table('sessions')." 
+            $query.=" AND session_id IN (SELECT session_id FROM ".table('sessions')."
                         WHERE session_start < ".ortime__unixtime_to_sesstime($options['upper_experience_limit'])."
                         AND session_status IN ('completed','balanced') ) ";
-        }       
+        }
         $query.="GROUP BY experiment_class";
         $result=or_query($query,$pars);
         while ($line=pdo_fetch_assoc($result)) {
@@ -131,8 +131,8 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
                 if ($v>0) {
                     if (!isset($counts['experience_avg_experimentclass'][$v])) $counts['experience_avg_experimentclass'][$v]=0;
                     $counts['experience_avg_experimentclass'][$v]+=round($line['num']/$count_pids,2);
-                }   
-            }   
+                }
+            }
         }
     }
     if ($type=='report') {
@@ -141,13 +141,13 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
     }
     if ($count_pids>0 && $type=='report') {
         $query="SELECT count(*) as num, pstatus_id
-                FROM ".table('participate_at')." 
+                FROM ".table('participate_at')."
                 WHERE session_id>0 ".$pid_condition;
         if (is_array($options) && isset($options['upper_experience_limit'])) {
-            $query.=" AND session_id IN (SELECT session_id FROM ".table('sessions')." 
-                    WHERE session_start < ".ortime__unixtime_to_sesstime($options['upper_experience_limit'])." 
+            $query.=" AND session_id IN (SELECT session_id FROM ".table('sessions')."
+                    WHERE session_start < ".ortime__unixtime_to_sesstime($options['upper_experience_limit'])."
                     AND session_status IN ('completed','balanced') ) ";
-        }       
+        }
         $query.="GROUP BY pstatus_id";
         $result=or_query($query,$pars);
         while ($line=pdo_fetch_assoc($result)) {
@@ -158,19 +158,19 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
         // by pstatus: pstatus count // really needed? we have no_noshows, num_reg ...
         // by month: pstatus
         $statfields[]='bymonth_pstatus';
-        $statfields[]='bymonth_noshowrate';                 
+        $statfields[]='bymonth_noshowrate';
     }
     if ($count_pids>0 && $type=='stats') {
         $first_month=date('Ym000000',strtotime("-".$settings['stats_months_backward']." month",time()));
         $noshow_statuses=expregister__get_specific_pstatuses("noshow");
-        $query="SELECT date_format(s.session_start*100,'%Y%m') as sessionmonth, 
+        $query="SELECT date_format(s.session_start*100,'%Y%m') as sessionmonth,
                 pstatus_id, count(p.participate_id) as num
                 FROM ".table('participate_at')." as p, ".table('sessions')." as s
-                WHERE p.session_id>0 
+                WHERE p.session_id>0
                 AND p.session_id=s.session_id
                 AND s.session_status IN ('completed','balanced')
                 AND s.session_start>".$first_month." ".$pid_condition."
-                GROUP BY sessionmonth, pstatus_id 
+                GROUP BY sessionmonth, pstatus_id
                 ORDER BY sessionmonth, pstatus_id ";
         $result=or_query($query,$pars); $noshowperc_data=array();
         while ($line=pdo_fetch_assoc($result)) {
@@ -208,7 +208,7 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
             'experience_avg_pstatus'=>lang('average_participation_experience')
             );
 
-            
+
     // prepare all-containing arrray to return
     $data_temparray=array();
     foreach ($counts as $c=>$nums) {
@@ -259,7 +259,7 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
             if ($c=='experience_avg_experimentclass') {
                 $d['value_names']=experiment__load_experimentclassnames();
             } else {
-                $pstatuses=expregister__get_participation_statuses(); 
+                $pstatuses=expregister__get_participation_statuses();
                 foreach ($pstatuses as $k=>$s) {
                     $d['value_names'][$k]=$s['internal_name'];
                 }
@@ -341,7 +341,7 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
             $tarr=explode("_",$c);
             $status=$tarr[2];
             if (!isset($data_temparray['bymonth_pstatus'])) {
-                $pstatuses=expregister__get_participation_statuses(); 
+                $pstatuses=expregister__get_participation_statuses();
                 $d['charttype']='multibars';
                 $d['wide']=true;
                 $d['type_of_data']='count';
@@ -368,7 +368,7 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
             $data_temparray['bymonth_pstatus']['value_names']=$d['value_names'];
         }
     }
-    
+
     // prepare all-containing array to return
     $data_array=array();
 
@@ -386,23 +386,23 @@ function stats__get_data($condition=array(),$type='stats',$restrict=array(),$opt
 
 function stats__report_display_table($table1,$table1_name,$table2=array(),$table2_name="",$table3=array(),$table3_name="") {
     global $settings, $color;
-    
-    $num_tables=1; 
-    $has_table2=false; $has_table3=false; 
+
+    $num_tables=1;
+    $has_table2=false; $has_table3=false;
     if(is_array($table2) && count($table2)>0) { $has_table2=true; $num_tables++; }
     if(is_array($table3) && count($table3)>0) { $has_table3=true; $num_tables++; }
 
-    $has_data1=true; $has_data2=true; $has_data3=true; 
+    $has_data1=true; $has_data2=true; $has_data3=true;
     if(!$table1['data']) { $has_data1=false; }
     if(!$table2['data']) { $has_data2=false; }
     if(!$table3['data']) { $has_data3=false; }
-    
+
     // order keys
     $allvals=array();
     foreach ($table1['data'] as $k=>$v) $allvals[$k]=$v;
-    if ($has_data2) foreach ($table2['data'] as $k=>$v) 
+    if ($has_data2) foreach ($table2['data'] as $k=>$v)
         if (!isset($allvals[$k]) || $v>$allvals[$k]) $allvals[$k]=$v;
-    if ($has_data3) foreach ($table3['data'] as $k=>$v) 
+    if ($has_data3) foreach ($table3['data'] as $k=>$v)
         if (!isset($allvals[$k]) || $v>$allvals[$k]) $allvals[$k]=$v;
     arsort($allvals);
     $usevals=array(); $i=0;
@@ -410,7 +410,7 @@ function stats__report_display_table($table1,$table1_name,$table2=array(),$table
         if($i<$settings['stats_report_rows_limit']) $usevals[]=$k;
         $i++;
     }
-    
+
     $out="";
     $out.= '<TABLE class="or_orr_spstatstable"><TR>';
     $out.= '<TD colspan="'.($num_tables+1).'" class="orr_header_title">'.$table1['title'].'</TD></TR>';
@@ -516,7 +516,7 @@ function stats__stats_get_table_array($table) {
         $multi=true;
         foreach ($table['data'] as $k=>$arr) foreach($arr as $k=>$value) $allvals[]=$k;
         $allvals=array_unique($allvals);
-        rsort($allvals);        
+        rsort($allvals);
     } else {
         $multi=false;
         foreach($table['data'] as $k=>$value) $allvals[]=$k;
@@ -573,7 +573,7 @@ function stats__stats_display_table($table,$browsable=false,$restrict=array()) {
         if ($shade) { $out.= ' bgcolor="'.$color['list_shade1'].'"'; $shade=false; }
         else { $out.= ' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
         if ($browsable && isset($restrict[$table['name']][$k])) {
-            $tr=true; 
+            $tr=true;
             $style_sn=' style="background: #8B8B8B; font-style: italic;"';
         } else {
              $tr=false;
@@ -582,9 +582,9 @@ function stats__stats_display_table($table,$browsable=false,$restrict=array()) {
         $out.='>';
         if ($browsable) {
             $out.='<TD '.$style_sn.'>'.lang('n').
-                    '<INPUT type="radio" name="restrict['.$table['name'].']['.$k.']" value="n"'; 
+                    '<INPUT type="radio" name="restrict['.$table['name'].']['.$k.']" value="n"';
             if (!$tr) $out.=' CHECKED';
-            $out.='><INPUT type="radio" name="restrict['.$table['name'].']['.$k.']" value="y"'; 
+            $out.='><INPUT type="radio" name="restrict['.$table['name'].']['.$k.']" value="y"';
             if ($tr) $out.=' CHECKED';
             $out.='>'.lang('y').'</TD>';
         }
@@ -601,7 +601,7 @@ function stats__stats_display_table($table,$browsable=false,$restrict=array()) {
             else $out.='<TD>'.$k.'</TD>';
             if ($table['charttype']=='multibars') foreach ($table['column_names'] as $c=>$col) $out.='<TD>-</TD>';
             else $out.='<TD>-</TD>';
-            $out.= '</TR>';         
+            $out.= '</TR>';
         }
     }
     $out.= '</tbody></TABLE>';
@@ -654,21 +654,21 @@ function stats__generate_graph_data_multibars($d) {
 
     // titles ect ...
     $stat['xtitle']=$d['xname'];
-    $stat['ytitle']=$d['yname'];    
+    $stat['ytitle']=$d['yname'];
     $stat['title']=''; //$d['title'];
     $stat['graphtype']='bars';
     $stat['xsize']=600;
     $stat['legend']=array();
     foreach($d['column_names'] as $k=>$col) $stat['legend'][]=$col;
     //$stat['legend_y']='';
-    
+
     $data=array();
     $allvals=array();
     foreach ($d['data'] as $k=>$arr) {
         foreach($arr as $k=>$value) $allvals[]=$k;
     }
     $allvals=array_unique($allvals);
-    rsort($allvals); 
+    rsort($allvals);
     $i=0;
     //foreach ($allvals as $val) {
     foreach($d['value_names'] as $val=>$dname) {
@@ -679,37 +679,37 @@ function stats__generate_graph_data_multibars($d) {
                 else $data[$i][]=0;
             }
             $i++;
-        }       
+        }
     }
     $stat['data']=$data;
-    return $stat;   
+    return $stat;
 }
 
 function stats__generate_graph_data($d) {
         global $lang, $settings;
         $stat=array();
-    
+
         // titles ect ...
         if ($d['charttype']=='pie') {
             $stat['xtitle']='';
             $stat['ytitle']='';
         } else {
             $stat['xtitle']=$d['xname'];
-            $stat['ytitle']=$d['yname'];    
+            $stat['ytitle']=$d['yname'];
         }
         $stat['title']=''; //$d['title'];
         $stat['graphtype']=$d['charttype'];
         $stat['legend']=array();
         $stat['legend_y']='';
         if (isset($d['wide']) && $d['wide']) $stat['xsize']=600;
-        
+
         $data=array();
         if($d['charttype']=='pie') $data[0][]='mmm';
         $names=$d['value_names'];
         $values=$d['data']; $i=0;
         foreach ($values as $k=>$v) {
             $i++;
-            //if ($d['charttype']!='bars' || //$i<=$settings['stats_stats_rows_limit'] || 
+            //if ($d['charttype']!='bars' || //$i<=$settings['stats_stats_rows_limit'] ||
             //  (isset($d['limit_not_apply']) && $d['limit_not_apply'])) {
                 $tname=$k;
                 $tname=(isset($names[$k]))?$names[$k]:$k;
@@ -739,16 +739,16 @@ function stats__get_participant_action_data($months_backward=12) {
     $d['type_of_data']='count';
     $d['column_names']=array();
     foreach ($actions as $action) $d['column_names'][$action]=lang($action);
-    
+
     // the data
     //first get the stuff from the database
     $nums=array();
     $first_date_unixtime=strtotime("-".$months_backward." month",time());
     $query="SELECT action, date_format(FROM_UNIXTIME(timestamp),'%Y%m') as yearmonth,
-            count(log_id) as nractions  
+            count(log_id) as nractions
             FROM ".table('participants_log')."
-            WHERE date_format(FROM_UNIXTIME(timestamp),'%Y%m')>=date_format(FROM_UNIXTIME(".$first_date_unixtime."),'%Y%m') 
-            AND action IN ('".implode("','",$actions)."') 
+            WHERE date_format(FROM_UNIXTIME(timestamp),'%Y%m')>=date_format(FROM_UNIXTIME(".$first_date_unixtime."),'%Y%m')
+            AND action IN ('".implode("','",$actions)."')
             GROUP BY action, yearmonth
             ORDER BY timestamp DESC";
     $result=or_query($query);
@@ -770,7 +770,7 @@ function stats__get_participant_action_data($months_backward=12) {
 
 function stats__get_textstats_for_email() {
     $condition=array('clause'=>participant_status__get_pquery_snippet('eligible_for_experiments'),'pars'=>array());
-    $stats_data=stats__get_data($condition,'stats',array()); 
+    $stats_data=stats__get_data($condition,'stats',array());
     $tout='';
     foreach ($stats_data as $k=>$table) $tout.=stats__stats_display_textstats($table)."\n\n";
     return $tout;

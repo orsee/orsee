@@ -16,7 +16,7 @@ if ($proceed) {
                 'locked'=>0,'last_login_attempt'=>0,'failed_login_attempts'=>0,'pw_update_requested'=>0);
     }
 
-    if ((!$admin_id) ||  $admin_id!=$expadmindata['admin_id']) 
+    if ((!$admin_id) ||  $admin_id!=$expadmindata['admin_id'])
         $allow=check_allow('admin_edit','admin_show.php');
 
     if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
@@ -67,7 +67,7 @@ if ($proceed) {
         if ($continue) {
             foreach (array('fname','lname','adminname') as $k) $_REQUEST[$k]=trim($_REQUEST[$k]);
             $pars=array(':adminname'=>$_REQUEST['adminname']);
-            $query="SELECT admin_id FROM ".table('admin')." 
+            $query="SELECT admin_id FROM ".table('admin')."
                     WHERE adminname = :adminname";
             $existing_admin=orsee_query($query,$pars);
             if (isset($existing_admin['admin_id']) && $existing_admin['admin_id']!=$admin_id) {
@@ -75,7 +75,7 @@ if ($proceed) {
                 message(lang('error_username_exists'));
             }
         }
-        
+
         if ($continue) {
             if ($_REQUEST['password']) {
                 // no password strength checks when account created by super-admin?
@@ -96,8 +96,8 @@ if ($proceed) {
             foreach ($admin as $k=>$v) if (isset($_REQUEST[$k])) $admin[$k]=$_REQUEST[$k];
         }
     }
-} 
- 
+}
+
 if ($proceed) {
 
     echo '  <center>';
@@ -128,7 +128,7 @@ if ($proceed) {
                 </td>
                 <td>&nbsp;&nbsp;</td>
                             <td>';
-                    if (check_allow('admin_edit')) 
+                    if (check_allow('admin_edit'))
                                         echo '<input name="adminname" type="text" size="20" maxlength="40" value="'.
                             $admin['adminname'].'">';
                     else echo $admin['adminname'];
@@ -173,13 +173,13 @@ if ($proceed) {
                                 </td>
                                 <td>&nbsp;&nbsp;</td>
                                 <td>';
-                    if ($admin['admin_type']) $selected=$admin['admin_type']; 
+                    if ($admin['admin_type']) $selected=$admin['admin_type'];
                         else $selected=$settings['default_admin_type'];
                     echo admin__select_admin_type("admin_type",$selected);
                         echo '  </td>
                         </tr>
             ';
-            
+
             echo '
                         <tr>
                                 <td align=right>
@@ -290,7 +290,7 @@ if ($proceed) {
             echo '
                         </td>
                 </tr>
-                
+
             <tr>
                 <td align=right>
                     '.lang('last_login_attempt').':
@@ -303,7 +303,7 @@ if ($proceed) {
             echo '
                 </td>
             </tr>
-            
+
             <tr>
                 <td align=right>
                     '.lang('failed_login_attempts').':
@@ -313,7 +313,7 @@ if ($proceed) {
                     '.$admin['failed_login_attempts'].'
                 </td>
             </tr>
-            
+
             <tr>
                     <td align=right>
                             '.lang('request_passwort_update').':
@@ -328,7 +328,7 @@ if ($proceed) {
                                     echo '>'.lang('no').'&nbsp;&nbsp;
                     </td>
             </tr>
-                
+
             <tr>
                 <td align=right>
                     '.lang('new_password').':
@@ -389,7 +389,7 @@ if ($proceed) {
             echo '<TR><TD bgcolor="lightgrey">'.lang('if_you_want_to_export_own_calendar').'<TD></TR>';
             echo '<TR><TD bgcolor="white">'.$settings__root_url.'/admin/calendar_ics.php?cal='.'p'.calendar__gen_ics_token($admin['admin_id'],$admin['password_crypt']).'</TD></TR>';
             echo '<TR><TD>&nbsp;</TD></TR>';
-        } 
+        }
         if (check_allow('calendar_export_all')) {
             echo '<TR><TD bgcolor="lightgrey">'.lang('if_you_want_to_export_full_calendar').'<TD></TR>';
             echo '<TR><TD bgcolor="white">'.$settings__root_url.'/admin/calendar_ics.php?cal='.'a'.calendar__gen_ics_token($admin['admin_id'],$admin['password_crypt']).'</TD></TR>';

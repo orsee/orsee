@@ -20,9 +20,9 @@ if ($proceed) {
     } else {
         $el=$settings['admin_standard_language'];
     }
-    
-    if (isset($_REQUEST['search']) && $_REQUEST['search']) $search=$_REQUEST['search']; else $search=''; 
-    
+
+    if (isset($_REQUEST['search']) && $_REQUEST['search']) $search=$_REQUEST['search']; else $search='';
+
     if (isset($_REQUEST['letter']) && $_REQUEST['letter']) $letter=$_REQUEST['letter']; else $letter='a';
 
     if (isset($_REQUEST['alter_lang']) && $_REQUEST['alter_lang'] && isset($_REQUEST['symbols']) && is_array($_REQUEST['symbols'])) {
@@ -30,9 +30,9 @@ if ($proceed) {
         foreach ($_REQUEST['symbols'] as $symbol => $content) {
             $pars[]=array(':content'=>trim($content),':symbol'=>$symbol);
         }
-        $query="UPDATE ".table('lang')." 
-                SET ".$el."= :content 
-                WHERE content_name= :symbol 
+        $query="UPDATE ".table('lang')."
+                SET ".$el."= :content
+                WHERE content_name= :symbol
                 AND content_type='lang'";
         $done=or_query($query,$pars);
         message(lang('changes_saved'));
@@ -53,17 +53,17 @@ if ($proceed) {
                 and (content_name LIKE :search1
                 or ".lang('lang')." LIKE :search2
                 or ".$el." LIKE :search3)
-                AND content_name NOT IN ('lang','lang_name','lang_icon_base64') 
-                order by content_name";
-    } else {
-        $search="";   
-        $lpars=array(':letter'=>$letter);       
-        $lquery="select * from ".table('lang')."
-                where content_type='lang' 
-                and left(content_name,1)= :letter 
                 AND content_name NOT IN ('lang','lang_name','lang_icon_base64')
                 order by content_name";
-    } 
+    } else {
+        $search="";
+        $lpars=array(':letter'=>$letter);
+        $lquery="select * from ".table('lang')."
+                where content_type='lang'
+                and left(content_name,1)= :letter
+                AND content_name NOT IN ('lang','lang_name','lang_icon_base64')
+                order by content_name";
+    }
 
     echo '<FORM action="lang_edit.php">
         <INPUT type=hidden name="el" value="'.$el.'">
@@ -73,17 +73,17 @@ if ($proceed) {
         </FORM><BR>';
 
 
-    $query="select left(content_name,1) as letter, 
-            count(lang_id) as number, 
-            content_name 
-            from ".table('lang')." 
+    $query="select left(content_name,1) as letter,
+            count(lang_id) as number,
+            content_name
+            from ".table('lang')."
             where content_type='lang' GROUP BY letter";
     $result=or_query($query);
     while ($line=pdo_fetch_assoc($result)) {
         if ($line['letter']!=$letter) echo '<A HREF="lang_edit.php?el='.$el.'&letter='.$line['letter'].'">'.$line['letter'].'</A>&nbsp; ';
         else echo $letter.'&nbsp; ';
     }
-    
+
     $result=or_query($lquery,$lpars);
     $number=pdo_num_rows($result);
 

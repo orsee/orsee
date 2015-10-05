@@ -40,14 +40,14 @@ if ($proceed) {
         $done=orsee_db_save_array($t,"objects",$t['item_id'],"item_id");
         log__admin("pform_templates_activate","item_name:".$t['item_name']);
         message (lang('template_draft_activated'));
-        redirect ('admin/options_profile_template_edit.php?item_name='.$item_name.'&subpool_id='.$subpool_id);  
+        redirect ('admin/options_profile_template_edit.php?item_name='.$item_name.'&subpool_id='.$subpool_id);
     }
 }
 
 if ($proceed) {
     if (!isset($t['item_details']['current_template'])) $t['item_details']['current_template']='';
     if (!isset($t['item_details']['current_draft'])) $t['item_details']['current_draft']=$t['item_details']['current_template'];
-    
+
     echo '<center>
             <TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'; width: 98%">
                 <TR><TD align="center">'.lang('edit_participant_profile_form_template').' '.$t['item_name'].'</TD></TR></TABLE>
@@ -63,15 +63,15 @@ if ($proceed) {
             '<INPUT class="button" id="change_subpool" name="change_subpool" type="submit" value="'.lang('apply').'">
         </TD></TR></TABLE></FORM>
     ';
-    
+
     $edit=array();
     if (isset($subpool_id)) $edit['subpool_id']=$subpool_id;
-    
+
     // form
     echo '  <FORM action="options_profile_template_edit.php" METHOD=POST>
         <INPUT type=hidden name="item_name" value="'.$item_name.'">
         <INPUT type=hidden name="subpool_id" value="'.$subpool_id.'">
-        
+
         <TABLE class="or_formtable" style="max-width: 98%; width: 98%; padding: 0px;">
             <TR>
                 <TD></TD>
@@ -90,7 +90,7 @@ if ($proceed) {
                     <TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'; width: 95%">
                     <TR><TD align="center">'.lang('current_template_draft').'</TD></TR></TABLE>
                 </TD>
-            </TR>       
+            </TR>
             <TR>
                 <TD valign="top" bgcolor="'.$color['list_shade1'].'">';
     if ($item_name=='profile_form_public') participant__show_inner_form($edit,array(),false,'current_template');
@@ -118,7 +118,7 @@ if ($proceed) {
     echo '<script type="text/javascript">
             $("#current_draft").bind("input propertychange", function() {
                   $("#activate_button").attr("disabled","disabled").attr("value","'.lang('activate_template_draft').' ('.lang('first_save').')");
-                  $("#change_subpool").attr("disabled","disabled").attr("value","'.lang('apply').' ('.lang('first_save').')");        
+                  $("#change_subpool").attr("disabled","disabled").attr("value","'.lang('apply').' ('.lang('first_save').')");
             });
             </script>';
 
@@ -129,7 +129,7 @@ if ($proceed) {
 }
 
 /*
-The participant profile form template contains HTML code that define the layout of the participant profile form, and placeholders to be filled by ORSEE in runtime. 
+The participant profile form template contains HTML code that define the layout of the participant profile form, and placeholders to be filled by ORSEE in runtime.
 
 It is recommended that the template defines a table. Otherwise, your are free in the layout you choose.
 

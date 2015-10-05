@@ -21,8 +21,8 @@ if ($proceed) {
 
 if ($proceed) {
 
-    if (isset($_REQUEST['add']) && $_REQUEST['add']) { 
-        
+    if (isset($_REQUEST['add']) && $_REQUEST['add']) {
+
         // check for errors
         $continue=true;
 
@@ -34,12 +34,12 @@ if ($proceed) {
         // add language
         if ($continue) {
             $pars=array(':lang_name'=>$_REQUEST['lang_name']);
-            $query="UPDATE ".table('lang')." SET ".$tlang."= :lang_name  
+            $query="UPDATE ".table('lang')." SET ".$tlang."= :lang_name
                     WHERE content_type='lang' AND content_name='lang_name'";
             $done=or_query($query,$pars);
 
             $pars=array(':lang_icon_base64'=>$_REQUEST['lang_icon_base64']);
-            $query="UPDATE ".table('lang')." SET ".$tlang."= :lang_icon_base64  
+            $query="UPDATE ".table('lang')." SET ".$tlang."= :lang_icon_base64
                     WHERE content_type='lang' AND content_name='lang_icon_base64'";
             $done=or_query($query,$pars);
 
@@ -74,7 +74,7 @@ if ($proceed) {
                     <INPUT type=text name="lang_name" size=20 maxlength=50 value="'.$tlang_name.'">
                 </TD>
             </TR>';
-            
+
     echo    '<TR>
                 <TD align="right" valign="top">
                     '.lang('language_icon_in_base64').':&nbsp;&nbsp;
@@ -95,13 +95,13 @@ if ($proceed) {
     echo '<TABLE width="80%" border=0>
         <TR>
             <TD width="50%" align=center>';
-                if (check_allow('lang_lang_export')) echo           
+                if (check_allow('lang_lang_export')) echo
                 button_link('lang_lang_export.php?lang_id='.urlencode($tlang),
                                         lang('export_language'),'cloud-upload');
 
     echo '      </TD>
             <TD width=50% align=center>';
-                if (check_allow('lang_lang_import')) echo 
+                if (check_allow('lang_lang_import')) echo
                 button_link('lang_lang_import.php?lang_id='.urlencode($tlang),
                                         lang('import_language'),'cloud-download');
     echo '      </TD>

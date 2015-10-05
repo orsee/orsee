@@ -11,17 +11,17 @@ if ($proceed) {
     $languages=get_languages();
     $lang_names=lang__get_language_names();
 
-    if (isset($settings['language_enabled_participants']) && $settings['language_enabled_participants']) 
+    if (isset($settings['language_enabled_participants']) && $settings['language_enabled_participants'])
         $enabled_part=explode(",",$settings['language_enabled_participants']);
     else $enabled_part=array();
-    if (isset($settings['language_enabled_public']) && $settings['language_enabled_public']) 
+    if (isset($settings['language_enabled_public']) && $settings['language_enabled_public'])
         $enabled_pub=explode(",",$settings['language_enabled_public']);
     else $enabled_pub=array();
 
 
     if (isset($_REQUEST['change_def']) && $_REQUEST['change_def']) {
         $allow=check_allow('lang_avail_edit','lang_main.php');
-        
+
         if ($proceed) {
             $parts=array(); $pubs=array();
             foreach ($languages as $language) {
@@ -36,13 +36,13 @@ if ($proceed) {
             $result=orsee_query($query); $now=time();
             if (isset($result['option_id'])) {
                 $pars=array(':pubs_string'=>$pubs_string);
-                $query="UPDATE ".table('options')." SET option_value= :pubs_string  
+                $query="UPDATE ".table('options')." SET option_value= :pubs_string
                         WHERE option_type='general' AND option_name='language_enabled_public'";
                 $done=or_query($query,$pars);
             } else {
                 $pars=array(':pubs_string'=>$pubs_string,
                             ':option_id'=>$now+1);
-                $query="INSERT INTO ".table('options')." 
+                $query="INSERT INTO ".table('options')."
                         SET option_id=:option_id,
                         option_type='general',
                         option_name='language_enabled_public',
@@ -55,13 +55,13 @@ if ($proceed) {
             $result2=orsee_query($query);
             if (isset($result2['option_id'])) {
                 $pars=array(':parts_string'=>$parts_string);
-                $query="UPDATE ".table('options')." SET option_value= :parts_string 
+                $query="UPDATE ".table('options')." SET option_value= :parts_string
                         WHERE option_type='general' AND option_name='language_enabled_participants'";
                 $done=or_query($query,$pars);
             } else {
                 $pars=array(':parts_string'=>$parts_string,
                             ':option_id'=>$now+2);
-                $query="INSERT INTO ".table('options')." 
+                $query="INSERT INTO ".table('options')."
                         SET option_id=:option_id,
                         option_type='general',
                         option_name='language_enabled_participants',
@@ -115,7 +115,7 @@ if ($proceed) {
             <tbody>';
 
     $shade=false;
-    foreach ($languages as $language) { 
+    foreach ($languages as $language) {
         echo '<TR';
         if ($shade) { echo ' bgcolor="'.$color['list_shade1'].'"'; $shade=false; }
         else { echo ' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }

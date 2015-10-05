@@ -39,7 +39,7 @@ if ($proceed) {
                         SET admin_type= :d
                         WHERE admin_id= :a";
                 $done=or_query($query,$pars);
-            }               
+            }
                 log__admin("admin_show_edit");
                 message(lang('changes_saved'));
                 redirect("admin/admin_show.php");
@@ -56,10 +56,10 @@ if ($proceed) {
     echo '<br>
 
         <FORM action="'.thisdoc().'" method="POST">';
-        
-        
+
+
     echo '<table class="or_listtable"><thead>';
-    
+
     if (check_allow('admin_edit')) {
         echo '<tr style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">
                 <td colspan="5"></td>
@@ -67,8 +67,8 @@ if ($proceed) {
                 <td></td>
             </tr>';
     }
-        
-    echo '  
+
+    echo '
             <tr style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">
                 <td>'.lang('firstname').'</td>
                 <td>'.lang('lastname').'</td>
@@ -81,7 +81,7 @@ if ($proceed) {
             </thead>
             <tbody>';
 
-    $query="SELECT * FROM ".table('admin')." 
+    $query="SELECT * FROM ".table('admin')."
             ORDER BY disabled, lname, fname";
     $result=or_query($query);
 
@@ -111,13 +111,13 @@ if ($proceed) {
                             </td>
                             <td>';
                                 if (check_allow('admin_edit')) {
-                                    echo admin__select_admin_type('admin_type['.$admin['admin_id'].']',$admin['admin_type']);               
+                                    echo admin__select_admin_type('admin_type['.$admin['admin_id'].']',$admin['admin_type']);
                                 } else {
-                                    echo $admin['admin_type'];  
+                                    echo $admin['admin_type'];
                                 }
                     echo '  </td>
                             <td>
-                            ';              
+                            ';
                                     if (check_allow('admin_edit')) {
                                         echo '<input name="experimenter_list['.$admin['admin_id'].']" type=radio value="y"';
                                                 if ($admin['experimenter_list']=='y') echo ' CHECKED';
@@ -126,8 +126,8 @@ if ($proceed) {
                                                 if ($admin['experimenter_list']!='y') echo ' CHECKED';
                                                 echo '>'.lang('no');
                                     } else {
-                                        if ($admin['experimenter_list']=='n') echo lang('n'); else echo lang('y'); 
-                                    }                           
+                                        if ($admin['experimenter_list']=='n') echo lang('n'); else echo lang('y');
+                                    }
                             echo '</td>
                                 <td>';
                                     if (check_allow('admin_edit')) {

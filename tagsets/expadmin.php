@@ -20,10 +20,10 @@ function admin__login_form() {
 function admin__check_login($username,$password) {
     global $lang;
     $pars=array(':adminname'=>$username);
-    $query="SELECT * FROM ".table('admin')." 
+    $query="SELECT * FROM ".table('admin')."
             WHERE adminname= :adminname";
     $admin=orsee_query($query,$pars);
-    
+
     $continue=true;
     $not_allowed=false; $locked=false;
     if ($continue) {
@@ -43,7 +43,7 @@ function admin__check_login($username,$password) {
             //message('locked');
         }
     }
-    
+
     if ($continue) {
         $check_pw=crypt_verify($password,$admin['password_crypt']);
         if (!$check_pw) {
@@ -64,7 +64,7 @@ function admin__check_login($username,$password) {
             //message('not_allowed');
         }
     }
-    
+
     if ($continue) {
         $_SESSION['expadmindata']=$expadmindata;
         $done=admin__track_successful_login($admin);
@@ -98,8 +98,8 @@ function admin__track_unsuccessful_login($admin) {
     if (isset($settings['lockout_period_minutes_after_failed_logins']) && $settings['lockout_period_minutes_after_failed_logins']>0)
     $lockout_minutes=$settings['lockout_period_minutes_after_failed_logins'];
     else $lockout_minutes=20;
-    
-    $last_login_attempt=time(); 
+
+    $last_login_attempt=time();
     $failed_login_attempts=$admin['failed_login_attempts']+1;
     if ($failed_login_attempts>=$limit) {
         $locked=1;
@@ -171,9 +171,9 @@ function admin__logout() {
 function admin__set_password($password,$userid) {
     $pars=array(':admin_id'=>$userid,
                 ':password'=>unix_crypt($password));
-    $query="UPDATE ".table('admin')." 
+    $query="UPDATE ".table('admin')."
             SET password_crypt= :password,
-            pw_update_requested = 0 
+            pw_update_requested = 0
             WHERE admin_id= :admin_id";
     $done=or_query($query,$pars);
 }

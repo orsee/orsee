@@ -6,7 +6,7 @@ $menu__area="options";
 $title="edit_participation_status";
 include ("header.php");
 if ($proceed) {
-    if (isset($_REQUEST['pstatus_id'])) $pstatus_id=$_REQUEST['pstatus_id']; 
+    if (isset($_REQUEST['pstatus_id'])) $pstatus_id=$_REQUEST['pstatus_id'];
     if (isset($pstatus_id)) $allow=check_allow('participationstatus_edit','participation_status_main.php');
     else $allow=check_allow('participationstatus_add','participation_status_main.php');
 }
@@ -39,8 +39,8 @@ if ($proceed) {
     $continue=true;
 
     if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
-        
-        $pstatus_internal_name=$_REQUEST['pstatus_internal_name']; 
+
+        $pstatus_internal_name=$_REQUEST['pstatus_internal_name'];
         foreach ($languages as $language) {
             if (!$pstatus_internal_name[$language]) {
                     message (lang('missing_language').': "'.lang('internal_name').'" - '.$language);
@@ -67,16 +67,16 @@ if ($proceed) {
                 $pstatus_internal_name_lang['content_type']="participation_status_internal_name";
                 $pstatus_internal_name_lang['content_name']=$pstatus_id;
                 $pstatus_display_name_lang['content_type']="participation_status_display_name";
-                $pstatus_display_name_lang['content_name']=$pstatus_id; 
+                $pstatus_display_name_lang['content_name']=$pstatus_id;
             } else {
                 $new=false;
                 $pars=array(':pstatus_id'=>$pstatus_id);
-                $query="SELECT * from ".table('lang')." 
-                    WHERE content_type='participation_status_internal_name' 
+                $query="SELECT * from ".table('lang')."
+                    WHERE content_type='participation_status_internal_name'
                     AND content_name= :pstatus_id";
                 $pstatus_internal_name_lang=orsee_query($query,$pars);
-                $query="SELECT * from ".table('lang')." 
-                    WHERE content_type='participation_status_display_name' 
+                $query="SELECT * from ".table('lang')."
+                    WHERE content_type='participation_status_display_name'
                     AND content_name= :pstatus_id";
                 $pstatus_display_name_lang=orsee_query($query,$pars);
             }
@@ -85,7 +85,7 @@ if ($proceed) {
                 $pstatus_internal_name_lang[$language]=$pstatus_internal_name[$language];
                 $pstatus_display_name_lang[$language]=$pstatus_display_name[$language];
             }
-            
+
             if ($new) {
                 $pstatus_internal_name['lang_id']=lang__insert_to_lang($pstatus_internal_name_lang);
                 $pstatus_display_name['lang_id']=lang__insert_to_lang($pstatus_display_name_lang);
@@ -119,7 +119,7 @@ if ($proceed) {
     echo '
             <FORM action="participation_status_edit.php">';
     if (isset($pstatus_id)) echo '<INPUT type=hidden name="pstatus_id" value="'.$pstatus_id.'">';
-        
+
     echo '
         <TABLE class="or_formtable">';
     if (isset($pstatus_id)) {
@@ -129,7 +129,7 @@ if ($proceed) {
                     <TD>'.$pstatus_id.'</TD>
                 </TR>';
     }
-            
+
     echo '
             <TR>
                 <TD valign="top">'.lang('internal_name').':</TD>
@@ -146,7 +146,7 @@ if ($proceed) {
     echo '</TABLE>
                 </TD>
             </TR>';
-        
+
     echo '
                 <TR>
                 <TD valign="top">
@@ -165,11 +165,11 @@ if ($proceed) {
     echo '</TABLE>
         </TD></TR>';
 
-    if ($not_assigned) {        
+    if ($not_assigned) {
         echo '
                 <TR>
                 <TD valign=top>'.lang('counts_as_participated').'</TD>
-                    <TD>                            
+                    <TD>
                             <INPUT type=radio name="participated" value="1"';
                             if ($pstatus['participated']) echo ' CHECKED';
                             echo '>'.lang('yes').'
@@ -179,11 +179,11 @@ if ($proceed) {
                             echo '>'.lang('no').'
                     </TD>
                 </TR>';
-        
+
         echo '
                 <TR>
                 <TD valign=top>'.lang('counts_as_noshow').'</TD>
-                    <TD>                            
+                    <TD>
                             <INPUT type=radio name="noshow" value="1"';
                             if ($pstatus['noshow']) echo ' CHECKED';
                             echo '>'.lang('yes').'
@@ -193,13 +193,13 @@ if ($proceed) {
                             echo '>'.lang('no').'
                     </TD>
                 </TR>';
-                
+
         echo '
                 <TR>
                 <TD valign=top>
                     '.lang('allows_to_participate_again').'
                 </TD>
-                    <TD>                            
+                    <TD>
                             <INPUT type=radio name="participateagain" value="1"';
                             if ($pstatus['participateagain']) echo ' CHECKED';
                             echo '>'.lang('yes').'
@@ -209,7 +209,7 @@ if ($proceed) {
                             echo '>'.lang('no').'
                     </TD>
                 </TR>';
-        
+
     }
     echo '
             <TR>
@@ -235,7 +235,7 @@ if ($proceed) {
                     <TD>
                 </TR>
                 </table>';
-        
+
     }
 
         echo '<BR><BR>

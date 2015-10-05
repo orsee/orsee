@@ -24,10 +24,10 @@ if ($proceed) {
         if ($settings['allow_permanent_queries']=='y') {
             $qadd=', apply_permanent_queries = 1 ';
         } else $qadd='';
-        $query="UPDATE ".table('participants')." 
+        $query="UPDATE ".table('participants')."
                 SET status_id= :default_active_status,
-                 confirmation_token = '' 
-                ".$qadd." 
+                 confirmation_token = ''
+                ".$qadd."
                 WHERE participant_id= :participant_id ";
         $done=or_query($query,$pars);
 

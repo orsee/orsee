@@ -36,39 +36,39 @@ if ($proceed) {
 
     // load status names from lang table
     $status_names=lang__load_lang_cat('participant_status_name');
-        
+
     // load participant numbers
-    $query="SELECT count(*) as status_count, status_id 
+    $query="SELECT count(*) as status_count, status_id
             FROM ".table('participants')."
             GROUP BY status_id";
     $result=or_query($query); $status_counts=array();
     while ($line=pdo_fetch_assoc($result)) {
         $status_counts[$line['status_id']]=$line['status_count'];
     }
-        
+
     $query="SELECT *
-            FROM ".table('participant_statuses')." 
+            FROM ".table('participant_statuses')."
             ORDER BY status_id";
     $result=or_query($query);
     $shade=false;
     while ($line=pdo_fetch_assoc($result)) {
         echo '  <tr class="small"';
-        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
+        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
         echo '>
                 <TD>'.$line['status_id'].'</TD>
                 <td valign=top>'.$status_names[$line['status_id']].'</td>
-                <TD>'.$line['access_to_profile'].'</TD>                     
+                <TD>'.$line['access_to_profile'].'</TD>
                 <TD>'.$line['eligible_for_experiments'].'</TD>
                 <TD>';
-        if ($line['is_default_active']=='y') echo '<B>'.lang('y').'</B>'; 
+        if ($line['is_default_active']=='y') echo '<B>'.lang('y').'</B>';
         echo '</TD>
-                <TD>'; 
-        if ($line['is_default_inactive']=='y') echo '<B>'.lang('y').'</B>'; 
+                <TD>';
+        if ($line['is_default_inactive']=='y') echo '<B>'.lang('y').'</B>';
         echo '</TD>
                 <TD>';
         if (isset($status_counts[$line['status_id']])) echo $status_counts[$line['status_id']];
-        else echo '0'; 
+        else echo '0';
         echo '</TD>';
         if (check_allow('participantstatus_edit')) {
             echo '<td valign=top>';
@@ -79,10 +79,10 @@ if ($proceed) {
         if ($shade) $shade=false; else $shade=true;
     }
    echo '</tbody></table>';
-   
+
    echo '<BR><BR>
                 <A href="options_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
-   
+
    echo '</CENTER>';
 
 

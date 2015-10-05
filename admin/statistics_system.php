@@ -13,8 +13,8 @@ if ($proceed) {
     echo '<center>';
 
     $data['participant_actions']=stats__get_participant_action_data();
-    $_SESSION['stats_data']=$data; 
-    
+    $_SESSION['stats_data']=$data;
+
     $out=stats__stats_display_table($data['participant_actions']);
     echo '<TABLE class="or_formtable" style="width: 90%">
             <TR><TD colspan="2">
@@ -31,7 +31,7 @@ if ($proceed) {
     echo '</td>';
     echo '</TR>';
     echo '</TABLE>';
-    
+
     echo '<BR><BR><A href="statistics_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
     echo '</center>';
 

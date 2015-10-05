@@ -19,11 +19,11 @@ if ($proceed) {
     $settings['style']=$settings['orsee_admin_style'];
     $color=load_colors();
 
-    session_set_save_handler("orsee_session_open", 
-                 "orsee_session_close", 
-                 "orsee_session_read", 
-                 "orsee_session_write", 
-                 "orsee_session_destroy", 
+    session_set_save_handler("orsee_session_open",
+                 "orsee_session_close",
+                 "orsee_session_read",
+                 "orsee_session_write",
+                 "orsee_session_destroy",
                  "orsee_session_gc");
 
     session_start();
@@ -53,7 +53,7 @@ if ($proceed) {
         $_SESSION['expadmindata']=$expadmindata;
     }
 
-    if (!isset($expadmindata['language'])) 
+    if (!isset($expadmindata['language']))
         $expadmindata['language']=$settings['admin_standard_language'];
 
     $authdata['language']=$expadmindata['language'];
@@ -74,5 +74,5 @@ if ($proceed) {
 
     echo "</center>";
 }
-    
+
 ?>

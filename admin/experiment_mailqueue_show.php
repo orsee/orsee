@@ -24,13 +24,13 @@ if ($proceed) {
 
 if ($proceed) {
     echo '<center>';
-    
+
         echo '<TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'">
             <TR><TD align="center">
             '.$experiment['experiment_name'].'
             </TD>';
     echo '</TR></TABLE>';
-    
+
     mailqueue__show_mailqueue($experiment_id);
 
 

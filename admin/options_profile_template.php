@@ -62,7 +62,7 @@ if ($proceed) {
                 participant__show_inner_form($edit,array(),false,'current_draft');
             echo '</TD><TD valign="top">'.button_link('options_profile_template_edit.php?item_name='.
                             $t['item_name'],lang('edit'),'pencil-square-o').'
-                    </TD></TR>';            
+                    </TD></TR>';
         } elseif ($t['item_name']=='profile_form_admin_part') {
             echo '<TR><TD valign="top">'.lang('profile_form_admin_part').'</TD>
                     <TD valign="top" bgcolor="'.$color['list_shade1'].'">';
@@ -76,11 +76,11 @@ if ($proceed) {
                     </TD></TR>';
         }
     }
-    
+
     echo '</TABLE>';
 
     echo '<BR><BR><A href="options_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
-    
+
     echo '</CENTER>';
 
 }

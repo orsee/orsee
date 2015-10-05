@@ -2,7 +2,7 @@
 // part of orsee. see orsee.org
 
 
-//returns an array of every day of the month. first dimension 
+//returns an array of every day of the month. first dimension
 //represents the week, second dimension represents the weekday
 function days_in_month($month, $year){
     global $lang;
@@ -16,11 +16,11 @@ function days_in_month($month, $year){
     $firstdays = 1;
     for($i = 1; $i <= date("t", $time); $i++){
         $time = mktime(0,0,0,$month,$i,$year);
-        //subtract 'weeks up to this month' from 'weeks up to 
+        //subtract 'weeks up to this month' from 'weeks up to
         //previous month' to get the number of weeks in this month
         //$weekNum = date("W", $time) - date("W",  strtotime(date("Y-m-01", $time))) + 1;
         //$weekNum = date("W", $time) - date("W", strtotime(date("Y-m-01", $time))) + 1;
-        
+
         //count the number of firstdays( Weeks )
         if(date('N', $time) == $firstdayofweek && $i == 1){
             $firstdays = 0;
@@ -67,12 +67,12 @@ function calendar__days_in_month($month, $year){
 
 
 function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $admin_id = false, $split_events=false){
-    $events = array();  
+    $events = array();
     global $lang, $settings, $settings__root_url, $color;
-    
+
     $labs=laboratories__get_laboratories();
     $sessions=array(); $signed_up=array(); $lines=array();
-    
+
     //build query to get all sessions
     $query="SELECT * FROM ".table('sessions').", ".table('experiments').
             " WHERE ".table('sessions').".experiment_id=".table('experiments').".experiment_id";
@@ -83,12 +83,12 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
     //only events between start and end time parameters
     $pars=array(':end_time'=>date("Ym320000", $end_time), // lowerr than "32nd day" of end time month
                 ':start_time'=>date("Ym000000", $start_time)); // larger than "0st day" of start time month
-    $query .= " AND session_start <= :end_time "; 
-    $query .= " AND session_start >= :start_time "; 
+    $query .= " AND session_start <= :end_time ";
+    $query .= " AND session_start >= :start_time ";
     if ($admin_id) {
         $query.=" AND ".table('experiments').".experimenter LIKE :admin_id ";
         $pars[':admin_id']='%|".$admin_id."|%';
-    } 
+    }
 
     $result=or_query($query,$pars);
     $exp_colors = array();
@@ -98,9 +98,9 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
         $lines[]=$line;
         $sessions[]=$line['session_id'];
     }
-    
+
     if(count($sessions)>0) {
-        $query="SELECT session_id, COUNT(*) as regcount FROM ".table('participate_at')." 
+        $query="SELECT session_id, COUNT(*) as regcount FROM ".table('participate_at')."
                 WHERE session_id IN (".implode(",",$sessions).")
                 GROUP BY session_id";
         $result=or_query($query);
@@ -108,7 +108,7 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
             $signed_up[$line['session_id']]=$line['regcount'];
         }
     }
-    
+
     foreach ($lines as $line) {
         $tmp_new_event = array();
         //get colour
@@ -150,7 +150,7 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
         $tmp_new_event['participants_registered'] = $participating;
         //uid (unique identifier) for use by ICS
         $tmp_new_event['uid'] = "session_" . $line['session_id'] . "@" .  $settings__root_url;
-        $tmp_new_event['type'] = "experiment_session";  
+        $tmp_new_event['type'] = "experiment_session";
         if($participating < $line['part_needed']){
             $tmp_new_event['status'] = "not_enough_participants";
         }elseif($participating < ($line['part_needed'] + $line['part_reserve'])){
@@ -159,23 +159,23 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
             $tmp_new_event['status'] = "complete";
         }
         $tmp_new_event['experimenters'] = $line['experimenter'];
-        
+
         $tmp_new_event['id'] = $line['session_id'];
-        
+
         $events[date("Y",$tmp_new_event['start_time'])*10000+date("n",$tmp_new_event['start_time'])*100+date("j",$tmp_new_event['start_time'])][] = $tmp_new_event;
     }
-    
+
     //non-experimental laboratory booking events
     $event_categories=lang__load_lang_cat('events_category');
     $pars=array(':end_time'=>date("Ym320000", $end_time), // lowerr than "32nd day" of end time month
                 ':start_time'=>date("Ym000000", $start_time)); // larger than "0st day" of start time month
     $query = "SELECT *  FROM ".table('events').
-            " WHERE event_start <= :end_time  
-              AND event_stop >= :start_time"; 
+            " WHERE event_start <= :end_time
+              AND event_stop >= :start_time";
     if ($admin_id) {
         $query.=" AND ".table('events').".experimenter LIKE :admin_id ";
         $pars[':admin_id']='%|".$admin_id."|%';
-    } 
+    }
     $result=or_query($query,$pars);
     $exp_colors = array();
     $exp_colors_used = 0;
@@ -204,7 +204,7 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
                 $tmp_new_event['location'] = $lang['unknown_laboratory'];
             }
             $tmp_new_event['type'] = "location_reserved";
-            if ($admin) { 
+            if ($admin) {
                 $tmp_new_event['title'] = $line['reason'];
                 if (trim($line['reason_public'])) $tmp_new_event['title'] .= ' ('.$line['reason_public'].')';
                 if ($line['event_category'] && isset($event_categories[$line['event_category']])) {
@@ -237,14 +237,14 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
                     $tmp_new_event['display_time'] = ortime__format($tmp_new_event['start_time'],'hide_date:true,hide_second:true',lang('lang')).'-'.
                                             ortime__format($tmp_new_event['end_time'],'hide_date:true,hide_second:true',lang('lang'));
                     $events[date("Y",$today)*10000+date("n",$today)*100+date("j",$today)][] = $tmp_new_event;
-                    $today=strtotime("+1 day", $today);                                                
+                    $today=strtotime("+1 day", $today);
                 }
             } else {
                 $events[date("Y",$tmp_new_event['start_time'])*10000+date("n",$tmp_new_event['start_time'])*100+date("j",$tmp_new_event['start_time'])][] = $tmp_new_event;
             }
         }
     }
-    
+
     return $events;
 }
 
@@ -277,7 +277,7 @@ function calendar__display_calendar($admin = false){
             border-collapse: separate;
         }
 
-        /* head of calendar */      
+        /* head of calendar */
         .calendarTable thead  {
             background: '.$calendar_month_background.';
             color: '.$calendar_month_font.';
@@ -317,7 +317,7 @@ function calendar__display_calendar($admin = false){
         }
         .calendarTable>tbody>tr .calendarCellRealDate{
             border: 2px solid #C5C5C5;
-        }       
+        }
         .calendarTable>tbody>tr>td .calendarCellHead {
             padding: 0;
             padding-left: 3px;
@@ -370,7 +370,7 @@ function calendar__display_calendar($admin = false){
 
     </style>
     ';
-    
+
     $statusdata = array("not_enough_participants" => array(
             "color" => ($admin) ? $color['session_not_enough_participants'] : $color['session_public_free_places'],
             "message" => ($admin) ? $lang["not_enough_participants"] : lang('free_places')
@@ -386,7 +386,7 @@ function calendar__display_calendar($admin = false){
     );
 
     echo '<div id="calendarContainer">';
-    
+
     //start building calendar
     $displayfrom_lower = $displayfrom;
     $displayfrom_upper = date__skip_months(1, $displayfrom_lower);
@@ -396,7 +396,7 @@ function calendar__display_calendar($admin = false){
     $results = calendar__get_events($admin, $displayfrom_lower, $displayfrom_upper, false, true);
     $buttons1="";
     $buttons2="";
-    
+
     if ($admin) {
         $buttons1.="<TABLE border=0 width=100%>";
         $buttons1.='<TR>';
@@ -407,7 +407,7 @@ function calendar__display_calendar($admin = false){
         }
         $buttons1.='<TD align="center">'.button_link('events_edit.php',lang('create_event'),'plus-circle').'<BR>
                 <FONT class="small">'.lang('for_session_time_reservation_please_use_experiments').'</FONT></TD>';
-        $buttons1.='<TD align="right">'.button_link('calendar_main_print_pdf.php?displayfrom='.$displayfrom.'&wholeyear='.$wholeyear,  
+        $buttons1.='<TD align="right">'.button_link('calendar_main_print_pdf.php?displayfrom='.$displayfrom.'&wholeyear='.$wholeyear,
                     lang('print_version'),'print','font-size: 8pt;','target="_blank"').'</TD>';
         $buttons1.='</TR></TABLE>';
     }
@@ -436,11 +436,11 @@ function calendar__display_calendar($admin = false){
                     $wdindex = $i3;
                     if ($wdindex==7) $wdindex=0;
                 }
-                echo '<th>' . $calendar__weekdays[$wdindex] . '</th>';      
+                echo '<th>' . $calendar__weekdays[$wdindex] . '</th>';
             }
         echo '</tr></thead>';
         echo '<tbody>';
-        for($i2 = 1; $i2 <= count($weeks); ++$i2){ 
+        for($i2 = 1; $i2 <= count($weeks); ++$i2){
             echo '<tr>';
             for ($i3 = 1; $i3 <= 7; ++$i3){
                 if(isset($weeks[$i2][$i3])){
@@ -483,11 +483,11 @@ function calendar__display_calendar($admin = false){
                                     echo '<a style="font-size: 11;" href="' . $item['edit_link'] . '">[' . lang('edit') . ']</a>';
                                 }
                                 echo '</span>';
-                                
+
                             }elseif($item['type'] == "experiment_session"){
 
                                 echo '<span style="color: ' . $statusdata[$item['status']]['color'] . ';">';
-            
+
                                     if($admin){
                                         echo " " . $item['participants_registered'] . " (" . $item['participants_needed']. "," . $item['participants_reserve'] . ")";
                                     } else {

@@ -10,7 +10,7 @@ ORSEE 3.0.1:
 
 ORSEE 3.0.0:
     Too numerous to list.
-        
+
 ORSEE 2.2.1:
     Fixed bug which had PDF session participant list ordered randomnly.
 
@@ -23,5 +23,5 @@ ORSEE 2.2.0:
     Updated to newest version of PHPlot and ezPDF.
     Updated ORSEE and MySQL database to full unicode/UTF-8 support.
     Added participant form customization support.
-        
+
 

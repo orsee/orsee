@@ -35,7 +35,7 @@ if ($proceed) {
             echo lang('experiment').' '.$exp['experiment_name'].', ';
             echo lang('from').' '.$first_last['first'].' ';
             echo lang('to').' '.$first_last['last'];
-            echo ', '.experiment__list_experimenters($exp['experimenter'],true,true);           
+            echo ', '.experiment__list_experimenters($exp['experimenter'],true,true);
             echo '</TD>';
             echo '</TR></TABLE>
                 </TD></TR>';
@@ -45,7 +45,7 @@ if ($proceed) {
             echo '  </TABLE>';
             echo '<BR><BR><a href="experiment_show.php?experiment_id='.$exp['experiment_id'].'">'.icon('back').' '.
             lang('mainpage_of_this_experiment').'</A>';
-            echo '<BR><BR><A href="download_main.php">'.icon('back').' '.lang('back').'</A>';       
+            echo '<BR><BR><A href="download_main.php">'.icon('back').' '.lang('back').'</A>';
         }
     } else {
         if (check_allow('file_download_general')) {

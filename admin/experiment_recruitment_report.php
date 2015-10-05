@@ -11,7 +11,7 @@ if ($proceed) {
     else $experiment_id=$_REQUEST['experiment_id'];
 }
 
-if ($proceed) { 
+if ($proceed) {
     $allow=check_allow('experiment_recruitment_report_show','experiment_show.php?experiment_id='.$experiment_id);
 }
 
@@ -52,13 +52,13 @@ if ($proceed) {
         $pars=array(':experiment_id'=>$experiment['experiment_id']);
         $query="SELECT *
                 FROM ".table('sessions')."
-                WHERE experiment_id= :experiment_id 
+                WHERE experiment_id= :experiment_id
                 ORDER BY session_start";
         $result=or_query($query,$pars); $min=0; $max=0; $sids=array();
         while ($s=pdo_fetch_assoc($result)) {
             $sessions[$s['session_id']]=$s;
             $sesstime=$s['session_start'];
-            if ($min==0) { 
+            if ($min==0) {
                 $min=$sesstime; $max=$sesstime;
             } else {
                 if ($sesstime < $min) $min=$sesstime;
@@ -69,11 +69,11 @@ if ($proceed) {
         // get pstatus counts
         if (count($sids)>0) {
             $pars=array(':experiment_id'=>$experiment['experiment_id']);
-            $query="SELECT session_id, pstatus_id,  
-                    COUNT(*) as num 
-                    FROM ".table('participate_at')."  
-                    WHERE experiment_id= :experiment_id 
-                    AND session_id>0 
+            $query="SELECT session_id, pstatus_id,
+                    COUNT(*) as num
+                    FROM ".table('participate_at')."
+                    WHERE experiment_id= :experiment_id
+                    AND session_id>0
                     GROUP BY session_id, pstatus_id";
             $result=or_query($query,$pars);
             while ($s=pdo_fetch_assoc($result)) {
@@ -98,11 +98,11 @@ if ($proceed) {
             <TR><TD align="center">
             '.$experiment['experiment_name'].'
             </TD></TR></TABLE><BR>';
-    
+
     echo '<TABLE width="90%">';
-    
-    
-    /////////////////////////////       
+
+
+    /////////////////////////////
     /// EXPERIMENT
     /////////////////////////////
     echo '<TR><TD>';
@@ -111,12 +111,12 @@ if ($proceed) {
             </TD></TR></TABLE>';
     echo '</TD></TR>
             <TR><TD>';
-            
+
     echo '<TABLE class="or_orr_section_content">
                     <TR>
                         <TD>'.lang('id').':</TD><TD>'.$experiment['experiment_id'].'</TD>
                         <TD>'.lang('type').':</TD>';
-    if (!isset($exptypes[$experiment['experiment_ext_type']]['exptype_name'])) 
+    if (!isset($exptypes[$experiment['experiment_ext_type']]['exptype_name']))
             $exptypes[$experiment['experiment_ext_type']]['exptype_name']='type undefined';
     echo '<TD>'.$lang[$experiment['experiment_type']].' ('.$exptypes[$experiment['experiment_ext_type']]['exptype_name'].')</TD>
                     </TR>
@@ -133,13 +133,13 @@ if ($proceed) {
     // CONDITIONAL EXPERIMENT FIELDS
     $conditional_fields=array();
 
-    if ($experiment['experiment_description']) 
+    if ($experiment['experiment_description'])
         $conditional_fields[]='<TD>'.lang('internal_description').':</TD><TD>'.$experiment['experiment_description'].'</TD>';
-    if ($experiment['public_experiment_note']) 
+    if ($experiment['public_experiment_note'])
         $conditional_fields[]='<TD>'.lang('public_experiment_note').':</TD><TD>'.$experiment['public_experiment_note'].'</TD>';
-    if ($settings['enable_editing_of_experiment_sender_email']=='y') 
+    if ($settings['enable_editing_of_experiment_sender_email']=='y')
         $conditional_fields[]='<TD>'.lang('email_sender_address').':</TD><TD>'.$experiment['sender_mail'].'</TD>';
-    
+
 
 
     $i=0;
@@ -151,9 +151,9 @@ if ($proceed) {
             else echo '<TD></TD>';
             echo '</TR>';
         }
-        $i++;   
+        $i++;
     }
-    
+
     // ETHICS APPROVAL - IF ENABLED
     if ($settings['enable_ethics_approval_module']=='y') {
         $ethics=experiment__get_ethics_approval_desc($experiment);
@@ -161,19 +161,19 @@ if ($proceed) {
     }
     echo '</TABLE>';
     echo '</TD></TR>';
-    
+
     if ($experiment['experiment_type']=="laboratory") {
-    /////////////////////////////       
+    /////////////////////////////
     /// SESSIONS
     /////////////////////////////
     echo '<TR><TD>';
     echo '<TABLE class="or_orr_section_head"><TR><TD align="center" valign="middle">
             '.lang('sessions');
-    if ($min>0) echo ' '.lang('from').' '.ortime__format(ortime__sesstime_to_unixtime($min),'hide_time').' 
+    if ($min>0) echo ' '.lang('from').' '.ortime__format(ortime__sesstime_to_unixtime($min),'hide_time').'
                     '.lang('to').' '.ortime__format(ortime__sesstime_to_unixtime($max),'hide_time');
     echo '  </TD></TR></TABLE>';
     echo '</TD></TR><TR><TD>';
-    
+
     echo '<table class="or_orr_section_content">';
     $shade=false;
     $num_cols=count($pstatuses);
@@ -200,7 +200,7 @@ if ($proceed) {
                     if (isset($s['num_status'.$pstatus_id])) echo $s['num_status'.$pstatus_id];
                     else echo '0';
                     if ($pstatus['participated']) echo '</B>';
-                    echo '</TD>';       
+                    echo '</TD>';
                 }
         echo '</TR>';
         if ($s['public_session_note']) {
@@ -221,7 +221,7 @@ if ($proceed) {
     }
 
 
-    /////////////////////////////       
+    /////////////////////////////
     /// ASSIGNMENTS
     /////////////////////////////
     echo '<TR><TD>';
@@ -230,12 +230,12 @@ if ($proceed) {
             </TD></TR></TABLE>';
     echo '</TD></TR>
             <TR><TD>';
-    
+
     echo '<table class="or_orr_section_content">';
-    
+
     $queries=query__load_saved_queries('assign,deassign',-1,$experiment_id,true,"query_time ASC");
     $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
-    
+
     $shade=false;
     foreach ($queries as $q) {
         if ($shade) { $rowspec=' class="or_orr_list_shade_even""'; $shade=false; }
@@ -281,12 +281,12 @@ if ($proceed) {
         echo '</TD>';
         echo '</TR>';
     }
-    echo '</table>';    
+    echo '</table>';
     echo '</TD></TR>';
 
 
 
-    /////////////////////////////       
+    /////////////////////////////
     /// SUBJECT POOL STATISTICS
     /////////////////////////////
     echo '<TR><TD>';
@@ -298,7 +298,7 @@ if ($proceed) {
 
     $pars=array(':experiment_id'=>$experiment['experiment_id']);
     $query="SELECT max(session_start) as max_time, min(session_start) as min_time
-            FROM ".table('sessions')." 
+            FROM ".table('sessions')."
             WHERE experiment_id = :experiment_id";
     $line=orsee_query($query,$pars);
     $min_session_time=ortime__sesstime_to_unixtime($line['min_time']);
@@ -307,27 +307,27 @@ if ($proceed) {
     $total_data=array();
     // pool
     $options=array('upper_experience_limit'=>$min_session_time);
-    $condition=array('clause'=>" status_id > 0 AND creation_time < '".$max_session_time."' AND  
+    $condition=array('clause'=>" status_id > 0 AND creation_time < '".$max_session_time."' AND
                   (deletion_time=0 OR deletion_time > '".$min_session_time."') ",
                     'pars'=>array()
                     );
-    $total_data['pool']=stats__get_data($condition,'report',array(),$options); 
+    $total_data['pool']=stats__get_data($condition,'report',array(),$options);
     // experiment eligible
     $options=array('upper_experience_limit'=>$min_session_time,'condition_only_on_pid'=>true);
-    $condition=array('clause'=>"participant_id IN (SELECT participant_id FROM ".table('participate_at')." 
+    $condition=array('clause'=>"participant_id IN (SELECT participant_id FROM ".table('participate_at')."
                                 WHERE experiment_id= :experiment_id )",
                     'pars'=>array(':experiment_id'=>$experiment_id)
                     );
-    $total_data['exp']=stats__get_data($condition,'report',array(),$options); 
-    
-    // participated 
+    $total_data['exp']=stats__get_data($condition,'report',array(),$options);
+
+    // participated
     $options=array('upper_experience_limit'=>$min_session_time,'condition_only_on_pid'=>true);
     $participated_clause=expregister__get_pstatus_query_snippet("participated");
-    $condition=array('clause'=>"participant_id IN (SELECT participant_id FROM ".table('participate_at')." 
+    $condition=array('clause'=>"participant_id IN (SELECT participant_id FROM ".table('participate_at')."
                                 WHERE experiment_id= :experiment_id AND session_id > 0 AND ".$participated_clause.")",
                     'pars'=>array(':experiment_id'=>$experiment_id)
                     );
-    $total_data['part']=stats__get_data($condition,'report',array(),$options); 
+    $total_data['part']=stats__get_data($condition,'report',array(),$options);
 
     echo '<TABLE class="or_orr_section_content">';
     $i=0; $cols=2;  $out=array();
@@ -339,7 +339,7 @@ if ($proceed) {
             if (count($out)==$cols) {
                 echo '<TR><TD valign="top" align="center">'.implode('</TD><TD valign="top" align="center">',$out).'</TD></TR>';
                 echo '<TR><TD colspan="'.$cols.'">&nbsp;</TD></TR>';
-                $out=array();       
+                $out=array();
             }
         }
     }
@@ -351,11 +351,11 @@ if ($proceed) {
     echo '</TABLE>';
 
     echo '</TD></TR>';
-    
+
 
 
     echo '</TABLE>';
-    
+
 //  echo '<pre>';
 //  var_dump($total_data);
 //  echo '</pre>';

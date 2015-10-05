@@ -28,7 +28,7 @@ function script__open_faq_new() {
     global $color;
     echo '<div id="bulkPopupDiv" class="bulkpopupDiv" style=" background: '.$color['popup_bgcolor'].'; color: '.$color['popup_text'].';">
             <div align="right"><button class="b-close button fa-backward popupBack">'.lang('back_to_results').'</button></div>
-            <div id="bulkPopupContent" style="margin-left: 20px; margin-top: 0px;"></div>       
+            <div id="bulkPopupContent" style="margin-left: 20px; margin-top: 0px;"></div>
         </div>
         <script type="text/javascript">
             var bulkactions = ';
@@ -45,7 +45,7 @@ function script__open_faq_new() {
                 });
                 var bulkBpopup;
                 function bulkaction(act){
-                    var participant_count = $("input[name*=\'sel[\']:checked").length;                  
+                    var participant_count = $("input[name*=\'sel[\']:checked").length;
                     var parstr = participant_count + " '.lang('selected_participants').'";
                     var str = bulkactions[act].html;
                     str = str.replace("#xyz_participants#", parstr);
@@ -57,19 +57,19 @@ function script__open_faq_new() {
                         positionStyle: "fixed",
                         modalColor: "'.$color['popup_modal_color'].'",
                         opacity: 0.8
-                        });         
+                        });
                     $("#popupsubmit").click(function(){
                         event.preventDefault();
-                        $(".bforminput").each(function(){ 
+                        $(".bforminput").each(function(){
                             var $input = $( this );
                             var tval = "";
                             if ($input.is(":checkbox")) {
-                                if ($input.prop("checked")) tval="y"; 
-                                else tval="n"; 
+                                if ($input.prop("checked")) tval="y";
+                                else tval="n";
                             } else {
                                 tval=$input.val();
                             }
-                            var tstr = \'<input type="hidden" name="\'+$input.prop("name")+\'" value="\'+tval+\'" />\';                     
+                            var tstr = \'<input type="hidden" name="\'+$input.prop("name")+\'" value="\'+tval+\'" />\';
                             $("#bulkactionform").append($.parseHTML(tstr));
                         });
                         bulkBpopup.close();
@@ -200,7 +200,7 @@ function get_multi_picker($name,$data,$selected=array(),$options=array()) {
                     itemManager: {
                         stringToItem: function(str)
                         {
-                            var thisindex = -1; var thisvalue = '';               
+                            var thisindex = -1; var thisvalue = '';
                             for (index = 0; index < ".$name."_myitems.length; index++) {
                                 if (".$name."_myitems[index].show==str) {
                                    thisindex = index;
@@ -208,7 +208,7 @@ function get_multi_picker($name,$data,$selected=array(),$options=array()) {
                                 }
                             }
                             if (thisindex>-1) { thisvalue = ".$name."_myitems[thisindex].value; }
-                            return { show: str, value: thisvalue }; 
+                            return { show: str, value: thisvalue };
                         },
                         itemToString: function(item)
                         {
@@ -224,7 +224,7 @@ function get_multi_picker($name,$data,$selected=array(),$options=array()) {
         if ($op['show_picker']) {
             $out.="
                 function ".$name."_updateTagField (avalue,ashow,ah) {
-                    var thisindex = -1; var thisshow = '';               
+                    var thisindex = -1; var thisshow = '';
                     for (index = 0; index < ".$name."_myitems.length; index++) {
                         if (".$name."_myitems[index].value==avalue) {
                            thisindex = index;
@@ -233,7 +233,7 @@ function get_multi_picker($name,$data,$selected=array(),$options=array()) {
                     }
                     if (thisindex>-1) { thisshow = ".$name."_myitems[thisindex].show; }
                     $('#".$name."_textarea').textext()[0].tags().addTags([ {show: thisshow, value: avalue } ]);
-                }   
+                }
                 $('#".$name."_picker').arraypick({
                     numcols: ".$op['picker_numcols'].",
                     maxnumcols: ".$op['picker_maxnumcols'].",
@@ -247,12 +247,12 @@ function get_multi_picker($name,$data,$selected=array(),$options=array()) {
         $out.="
                 if(typeof multiDefaults !== 'undefined'){
                     for(p = 0; p < multiDefaults.length; p++){
-                        ".$name."_updateTagField (multiDefaults[p],'',0);  
+                        ".$name."_updateTagField (multiDefaults[p],'',0);
                     }
                     multiDefaults = [];
                 }
-            "; 
-        
+            ";
+
         $out.="
             </script>
             ";
@@ -298,7 +298,7 @@ function javascript__edit_popup() {
                         modalColor: "'.$color['popup_modal_color'].'",
                         opacity: 0.8
                     });
-            }   
+            }
             $(document).ready(function(){
                 $("#popupIframe").load(function(){
                     $("#popupIframe").fadeIn(100);
@@ -307,7 +307,7 @@ function javascript__edit_popup() {
                         var data = $.parseJSON($("#popupIframe").contents().find("[data-edited-item]").attr("data-edited-item"));
                         for(var i = 0; i < data.columns.length; i++){
                             $("[data-participant-id=\'" + data.id + "\']").find("td").eq(i).html(data.columns[i]);
-                        }               
+                        }
                     }
                 });
                 $("#popupIframe").bind("beforeunload", function(){
@@ -343,7 +343,7 @@ function javascript__email_popup() {
                         modalColor: "'.$color['popup_modal_color'].'",
                         opacity: 0.8
                     });
-            }   
+            }
             $(document).ready(function(){
                 $("#popupIframe").load(function(){
                     $("#popupIframe").fadeIn(100);
@@ -375,7 +375,7 @@ function javascript__selectall_checkbox_script() {
                             this.checked = false;
                         });
                     }
-                }); 
+                });
             </script>';
     return $out;
 }

@@ -31,7 +31,7 @@ if ($proceed) {
 
         $rquestion=$_REQUEST['question'];
         $ranswer=$_REQUEST['answer'];
- 
+
         foreach ($languages as $language) {
             if (!$rquestion[$language]) {
                 message (lang('missing_question_in_language').": ".$language);
@@ -51,7 +51,7 @@ if ($proceed) {
         if ($continue) {
             if (!$faq_id) {
                 $new_faq_id=time();
-            
+
                 $faq['faq_id']=$new_faq_id;
                 $faq['evaluation']=0;
                 $done=orsee_db_save_array($faq,"faqs",$faq['faq_id'],"faq_id");

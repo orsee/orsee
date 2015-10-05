@@ -29,7 +29,7 @@ if ($proceed) {
 if ($proceed) {
         echo '<center><BR>';
 
-    if (check_allow('regular_tasks_add')) 
+    if (check_allow('regular_tasks_add'))
         echo button_link('cronjob_edit.php?addit=true',lang('create_new'),'plus-circle').'<BR>';
 
 
@@ -47,7 +47,7 @@ if ($proceed) {
                 <tbody>';
 
         $query="SELECT *
-                FROM ".table('cron_jobs')." 
+                FROM ".table('cron_jobs')."
                 ORDER BY job_name";
         $result=or_query($query);
 
@@ -55,21 +55,21 @@ if ($proceed) {
     $allow_edit=check_allow('regular_tasks_edit');
 
     $shade=true;
-    
+
     while ($line=pdo_fetch_assoc($result)) {
 
         echo '  <tr';
         if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
         if ($shade) $shade=false; else $shade=true;
-        if ($line['enabled']=='n') echo ' style="color: #888"'; 
+        if ($line['enabled']=='n') echo ' style="color: #888"';
         echo '>
             <td valign=top>';
         if (isset($lang['cron_job_'.$line['job_name']])) echo $lang['cron_job_'.$line['job_name']];
         else echo $line['job_name'];
         echo '  </td>
                 <TD>';
-        if ($line['enabled']=='y') echo '<FONT color="green">'.lang('yes').'</FONT>'; 
+        if ($line['enabled']=='y') echo '<FONT color="green">'.lang('yes').'</FONT>';
         else echo lang('no');
         echo '  </TD>
                 <TD>';
@@ -81,7 +81,7 @@ if ($proceed) {
         else echo ortime__format($line['job_last_exec'],'hide_second:false',lang('lang'));
         echo '  </TD>
                 <TD>';
-        if ($allow_edit) 
+        if ($allow_edit)
         echo '<A HREF="cronjob_edit.php?job_name='.$line['job_name'].'">'.lang('edit').'</A>';
         echo '  </TD>';
         echo '<TD>';

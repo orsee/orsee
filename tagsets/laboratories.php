@@ -19,8 +19,8 @@ function laboratories__select_field($postvarname,$selected) {
     echo '<SELECT name="'.$postvarname.'">';
      $query="SELECT *
             FROM ".table('lang')."
-            WHERE content_type='laboratory' 
-            AND enabled='y' 
+            WHERE content_type='laboratory'
+            AND enabled='y'
             ORDER BY order_number, content_name";
     $result=or_query($query);
     while ($line = pdo_fetch_assoc($result)) {

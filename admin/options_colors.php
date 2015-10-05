@@ -18,16 +18,16 @@ if ($proceed) {
 
 if ($proceed) {
     if (isset($_REQUEST['style']) && $_REQUEST['style'] ) {
-        $style=trim($_REQUEST['style']); 
+        $style=trim($_REQUEST['style']);
     } else $style="";
 
     if (!$style && isset($settings['orsee_admin_style']) && $settings['orsee_admin_style'])
         $style=$settings['orsee_admin_style'];
-    
+
     if ($style && !in_array($style,explode(',',$styles))) $style='orsee';
-    
+
     if (!$style) {
-        if (isset($color_styles[0]) && $color_styles[0]) $style=$color_styles[0]; 
+        if (isset($color_styles[0]) && $color_styles[0]) $style=$color_styles[0];
         else $style='orsee';
     }
 }
@@ -51,11 +51,11 @@ if ($proceed) {
                         '<INPUT class="button" type="submit" value="'.lang('go').'"></FORM>
             </TD>
             </TR></TABLE>';
-            
+
     $pars=array(':style'=>$style);
     $query="select * from ".table('options')."
-            where option_type='color' 
-            and option_style= :style 
+            where option_type='color'
+            and option_style= :style
             order by option_name";
     $result=or_query($query,$pars);
     $mycolors=array();
@@ -80,8 +80,8 @@ if ($proceed) {
             }
         }
         if (count($pars_update)>0) {
-            $query="UPDATE ".table('options')." 
-                    SET option_value= :value 
+            $query="UPDATE ".table('options')."
+                    SET option_value= :value
                     WHERE option_name= :name
                     AND option_style= :style
                     AND option_type= 'color'";
@@ -95,7 +95,7 @@ if ($proceed) {
                 option_style= :style,
                 option_type= 'color'";
             $done=or_query($query,$pars_new);
-        }       
+        }
         message(lang('changes_saved'));
         log__admin("options_colors_edit","style:".$style);
         redirect ('admin/options_colors.php?style='.$style);
@@ -127,13 +127,13 @@ if ($proceed) {
             </TR>';
     echo '</TABLE>';
     if (check_allow('settings_edit_colors')) echo '</FORM>';
-    
+
     echo "<script type='text/javascript'>
             $('.colorpickerinput').colpick({
                 layout:'hex',
                 colorScheme:'dark',
                 onChange:function(hsb,hex,rgb,el,bySetColor) {
-                    /* $(el).css('border-color','#'+hex); 
+                    /* $(el).css('border-color','#'+hex);
                         seems to be confusing to change color on spot*/
                 },
                 onSubmit:function(hsb,hex,rgb,el) {
@@ -146,11 +146,11 @@ if ($proceed) {
                 }
             }).keyup(function(){
                 $(this).colpickSetColor(this.value);
-            }); ";      
+            }); ";
 
-    if (!check_allow('settings_edit_colors')) echo ' 
-            $(":input").attr("disabled", true); 
-            $("#styleform :input").attr("disabled", false); 
+    if (!check_allow('settings_edit_colors')) echo '
+            $(":input").attr("disabled", true);
+            $("#styleform :input").attr("disabled", false);
             ';
 
     echo "</script>";

@@ -36,7 +36,7 @@
                                             <IMG src="../style/orsee/clearpixel.gif" border="0" height="10" width="10">
                                         </TD>
                                         <TD width="140" valign="top" align="center" style="border-radius: 0px 20px 20px 0px; background: #html_header_menu_background#;">
-                                            <IMG src="../style/orsee/clearpixel.gif" border="0" height="1" width="140">         
+                                            <IMG src="../style/orsee/clearpixel.gif" border="0" height="1" width="140">
                                             #navigation#
                                             <BR><BR>
                                         </TD>
@@ -61,7 +61,6 @@
                     </TD></TR>
                     <TR><TD style="border-radius: 20px 20px 20px 20px; background: #content_background_color#;">
                     <BR>
-                    
-                    
-                
-                    
+
+
+

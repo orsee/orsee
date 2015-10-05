@@ -13,7 +13,7 @@ if ($proceed) {
 
     if (isset($_REQUEST['logout']) && $_REQUEST['logout']) message(lang('logout'));
 
-    if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url']) 
+    if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url'])
         $_SESSION['requested_url']=$_REQUEST['requested_url'];
 
     if (isset($_REQUEST['login']) && isset($_REQUEST['email']) && isset($_REQUEST['password'])) {
@@ -54,22 +54,22 @@ if ($proceed) {
             <div data-role="fieldcontain">
                 <label for="email" class="ui-hidden-accessible">'.lang('email').'</label>
                 <input type="text" value="" name="email" id="email" placeholder="'.lang('email').'"/>
-            </div>                                  
-            <div data-role="fieldcontain">                                      
+            </div>
+            <div data-role="fieldcontain">
                 <label for="password" class="ui-hidden-accessible">'.lang('password').'</label>
-                <input type="password" value="" name="password" id="password" placeholder="'.lang('password').'"/> 
+                <input type="password" value="" name="password" id="password" placeholder="'.lang('password').'"/>
             </div>
             <input type="submit" data-theme="b" name="login" id="login" value="'.lang('login').'">
         </fieldset>
         </form>';
-        
+
     echo '<br/><br/><center><A HREF="participant_reset_pw.php" data-ajax="false">'.lang('forgot_your_password?').'</A></center>';
-    
+
     echo '
         </div>';
-    
+
     echo $footer;
-  
+
     html__mobile_footer();
 }
 ?>

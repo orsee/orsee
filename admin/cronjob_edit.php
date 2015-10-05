@@ -40,7 +40,7 @@ if ($proceed) {
             $job=$_REQUEST;
         }
     }
-    
+
 }
 
 
@@ -97,7 +97,7 @@ if ($proceed) {
                 </TD>
                 <TD>
                     ';
-    cron__job_time_select_field($job['job_time']); 
+    cron__job_time_select_field($job['job_time']);
     echo '  </TD>
             </TR>
 

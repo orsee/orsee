@@ -17,7 +17,7 @@ if ($proceed) {
 if ($proceed) {
     if ($upload['experiment_id']>0) {
         $experiment_id=$upload['experiment_id'];
-        if (!check_allow('experiment_restriction_override')) 
+        if (!check_allow('experiment_restriction_override'))
             check_experiment_allowed($experiment_id,"admin/experiment_show.php?experiment_id=".$experiment_id);
     } else $experiment_id=0;
 }
@@ -49,10 +49,10 @@ if ($proceed) {
         if (!$_REQUEST['upload_name']) {
             $continue=false;
             message (lang('error_no_upload_file_name'));
-        } 
-        
+        }
+
         if ($continue) {
-            $upload['session_id']=$_REQUEST['session_id'];  
+            $upload['session_id']=$_REQUEST['session_id'];
             $upload['upload_type']=$_REQUEST['upload_type'];
             $upload['upload_name']=$_REQUEST['upload_name'];
 
@@ -74,7 +74,7 @@ if ($proceed) {
 if ($proceed) {
 
     //form for editing file
-    
+
 
     echo '<center>';
 
@@ -118,9 +118,9 @@ if ($proceed) {
             </TR>
         </TABLE>
         </form>';
-    
+
     if ($experiment_id) echo '<A href="download_main.php?experiment_id='.urlencode($experiment_id).'">'.icon('back').' '.lang('back').'</A>';
-    else echo '<A href="download_main.php">'.icon('back').' '.lang('back').'</A>';  
+    else echo '<A href="download_main.php">'.icon('back').' '.lang('back').'</A>';
 
 
     echo '

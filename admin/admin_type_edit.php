@@ -8,7 +8,7 @@ include ("header.php");
 if ($proceed) {
 
     $allow=check_allow('admin_type_edit','admin_type_show.php');
-    
+
 }
 
 if ($proceed) {
@@ -43,7 +43,7 @@ if ($proceed) {
             if (!$type_id) {
                 $pars=array(':type_name'=>$type['type_name'],
                             ':rights'=>$type['rights']);
-                $query="INSERT INTO ".table('admin_types')." 
+                $query="INSERT INTO ".table('admin_types')."
                     SET type_name= :type_name,
                     rights= :rights";
                 $done=or_query($query,$pars);
@@ -109,7 +109,7 @@ if ($proceed) {
     echo '          </TD>';
     echo '</TR></TABLE>';
 
-    echo '      
+    echo '
         <TABLE class="or_listtable" style="width: 90%;"><thead>
         <TR style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">
             <TD></TD>
@@ -140,9 +140,9 @@ if ($proceed) {
                 </TD>
                 <TD class="small" align=left';
                 $bgcolor="";
-                if (in_array($line[0],$required)) 
+                if (in_array($line[0],$required))
                     $bgcolor=' bgcolor="'.$color['admin_type_required_by_error'].'"';
-                if (in_array($line[0],$errors)) 
+                if (in_array($line[0],$errors))
                     $bgcolor=' bgcolor="'.$color['admin_type_error_missing_required'].'"';
                 echo $bgcolor;
                 echo '>
@@ -153,9 +153,9 @@ if ($proceed) {
                 </TD>
                 <TD class="small"';
                                 $bgcolor="";
-                                if (in_array($line[0],$required)) 
+                                if (in_array($line[0],$required))
                     $bgcolor=' bgcolor="'.$color['admin_type_error_missing_required'].'"';
-                                if (in_array($line[0],$errors)) 
+                                if (in_array($line[0],$errors))
                     $bgcolor=' bgcolor="'.$color['admin_type_required_by_error'].'"';
                 echo $bgcolor;
                                 echo '>

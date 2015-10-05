@@ -37,13 +37,13 @@ if ($proceed) {
             $merge_with=$_REQUEST['merge_with'];
             // transaction?
 
-            // update paticipate_at         
+            // update paticipate_at
             $pars=array(':budget_id'=>$budget_id,':merge_with'=>$merge_with);
-            $query="UPDATE ".table('participate_at')." 
-                    SET payment_budget= :merge_with 
+            $query="UPDATE ".table('participate_at')."
+                    SET payment_budget= :merge_with
                     WHERE payment_budget= :budget_id";
             $done=or_query($query,$pars);
-            
+
             // update sessions
             $upars=array();
             $pars=array(':payment_budget'=>'%|'.$budget_id.'|%');
@@ -60,11 +60,11 @@ if ($proceed) {
                             ':payment_budgets'=>id_array_to_db_string($ids)
                                 );
             }
-            $query="UPDATE ".table('sessions')." 
-                    SET payment_budgets= :payment_budgets 
-                    WHERE session_id= :session_id";         
+            $query="UPDATE ".table('sessions')."
+                    SET payment_budgets= :payment_budgets
+                    WHERE session_id= :session_id";
             $done=or_query($query,$upars);
-   
+
             // update experiments
                         $upars=array();
             $pars=array(':payment_budget'=>'%|'.$budget_id.'|%');
@@ -81,14 +81,14 @@ if ($proceed) {
                             ':payment_budgets'=>id_array_to_db_string($ids)
                                 );
             }
-            $query="UPDATE ".table('experiments')." 
-                    SET payment_budgets= :payment_budgets 
-                    WHERE experiment_id= :experiment_id";       
+            $query="UPDATE ".table('experiments')."
+                    SET payment_budgets= :payment_budgets
+                    WHERE experiment_id= :experiment_id";
             $done=or_query($query,$upars);
-            
+
             // delete from budgets
             $pars=array(':budget_id'=>$budget_id);
-            $query="DELETE FROM ".table('budgets')." 
+            $query="DELETE FROM ".table('budgets')."
                     WHERE budget_id= :budget_id";
             $result=or_query($query,$pars);
 
@@ -122,9 +122,9 @@ if ($proceed) {
                 <TR>
                 <TD align=left colspan=2>
                 '.lang('merge_budget_with').'
-                '.payments__budget_selectfield('merge_with','',array($budget_id)).' 
+                '.payments__budget_selectfield('merge_with','',array($budget_id)).'
                 <BR>
-                <INPUT class="button" type=submit name=reallydelete value="'.lang('yes_delete').'">     
+                <INPUT class="button" type=submit name=reallydelete value="'.lang('yes_delete').'">
                 </TD>
             </TR>
             <TR>

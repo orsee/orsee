@@ -26,11 +26,11 @@ if ($proceed) {
             $allow_cat='pform_lang_field';
         }
     }
-    
+
     $allow=check_allow($allow_cat.'_edit','options_main.php');
 }
 
-if ($proceed) {    
+if ($proceed) {
     if (!$done) {
         switch($sent_item) {
             case 'public_content':
@@ -136,7 +136,7 @@ if ($proceed) {
                 break;
             }
     }
-    
+
     //var_dump($_REQUEST);
     if ($allow_order && isset($_REQUEST['save_order']) && $_REQUEST['save_order']) {
         if(isset($_REQUEST['langitem_order']) && is_array($_REQUEST['langitem_order']) && count($_REQUEST['langitem_order'])>0) {
@@ -144,7 +144,7 @@ if ($proceed) {
             message(lang('new_order_saved'));
             redirect('admin/lang_item_main.php?item='.urlencode($item));
         }
-    } 
+    }
 }
 
 if ($proceed) {
@@ -168,34 +168,34 @@ if ($proceed) {
     // $item already sanitized above
     if ($show_part_stats) {
         $num_p=array();
-        $query="SELECT ".$item." as type_p, 
-            count(*) as num_p 
-            FROM ".table('participants')." 
+        $query="SELECT ".$item." as type_p,
+            count(*) as num_p
+            FROM ".table('participants')."
             GROUP BY ".$item;
         $result=or_query($query);
         while ($line=pdo_fetch_assoc($result)) {
             $num_p[$line['type_p']]=$line['num_p'];
         }
     }
-    
-    
+
+
     $query="SELECT *
             FROM ".table('lang')."
-            WHERE content_type='".$item."' 
+            WHERE content_type='".$item."'
             ".$where."
             ORDER BY ".$order;
     $result=or_query($query);
-    
+
     $rows=array();
     while ($line=pdo_fetch_assoc($result)) {
         $row='';
-        if ($show_id) { 
+        if ($show_id) {
             $row.=' <td class="small" valign=top>
                         '.$line['content_name'].'
                     </td>';
         }
-        foreach ($languages as $language) { 
-            $row.='<td>';       
+        foreach ($languages as $language) {
+            $row.='<td>';
             if (isset($chnl2br) && $chnl2br) $row.= nl2br(stripslashes($line[$language]));
             else $row.=stripslashes($line[$language]);
             $row.='</td>';
@@ -203,7 +203,7 @@ if ($proceed) {
         if ($show_part_stats) {
             if (isset($num_p[$line['content_name']])) $np=$num_p[$line['content_name']]; else $np=0;
             $row.='<td class="small">'.$np.'</td>';
-        }          
+        }
         $row.='<TD valign="top">';
         //$row.='<A HREF="lang_item_edit.php?item='.$item.'&id='.$line['lang_id'].'">'.lang('edit').'</A>';
         $row.=button_link('lang_item_edit.php?item='.$item.'&id='.$line['lang_id'],lang('edit'),'pencil-square-o');
@@ -224,8 +224,8 @@ if ($proceed) {
         $table_head.='<td class="small">'.lang('participants').'</td>'; $thc++;
     }
     $table_head.='<TD></TD>'; $thc++;
-    
-        
+
+
     if (count($rows)==0) {
         echo '<table class="or_listtable" style="min-width: 30%; max-width: 90%;"><thead>';
         echo '<tr style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">';
@@ -260,18 +260,18 @@ if ($proceed) {
             <tbody>';
         $shade=false;
         foreach($rows as $k=>$row) {
-            echo '<tr class="small"'; 
+            echo '<tr class="small"';
             if ($shade) { echo ' bgcolor="'.$color['list_shade1'].'"'; $shade=false; }
             else { echo ' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
             echo '>';
             echo $row['text'];
             echo '</TR>';
         }
-        echo '</tbody></table>';    
-    } 
+        echo '</tbody></table>';
+    }
 
     echo '<BR><BR><A href="options_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
-    
+
     echo '</CENTER>';
 
 }

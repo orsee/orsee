@@ -48,7 +48,7 @@ if ($proceed) {
 }
 
 if ($proceed) {
-    
+
     $pars=array();
     $pars[':query_type']=$type;
     $query="SELECT * FROM ".table('queries')."
@@ -97,7 +97,7 @@ if ($proceed) {
                             this.checked = false;
                         });
                     }
-                }); 
+                });
             </script>
         </TD>';
     }
@@ -120,7 +120,7 @@ if ($proceed) {
         if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
 
-        echo '>     
+        echo '>
             <TD>'.ortime__format($line['query_time'],'hide_second:false',lang('lang')).'</TD>
             <TD>'.$pseudo_query_display.'</TD>';
         $reference=array();

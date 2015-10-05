@@ -7,7 +7,7 @@ $title="edit_participant_status";
 include ("header.php");
 if ($proceed) {
 
-    if (isset($_REQUEST['status_id'])) $status_id=$_REQUEST['status_id']; 
+    if (isset($_REQUEST['status_id'])) $status_id=$_REQUEST['status_id'];
 
     if (isset($status_id)) $allow=check_allow('participantstatus_edit','participant_status_main.php');
     else $allow=check_allow('participantstatus_add','participant_status_main.php');
@@ -40,14 +40,14 @@ if ($proceed) {
     $continue=true;
 
     if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
-    
+
         if ($not_unconfirmed && $_REQUEST['is_default_active']=="y" && $_REQUEST['is_default_inactive']=="y") {
             message(lang('error_participant_status_cannot_be_default_for_both_active_and_inactive'));
             $_REQUEST['is_default_active']="n"; $_REQUEST['is_default_inactive']="n";
             $continue=false;
         }
 
-        $status_name=$_REQUEST['status_name']; 
+        $status_name=$_REQUEST['status_name'];
         foreach ($languages as $language) {
             if (!$status_name[$language]) {
                     message (lang('missing_language').': "'.lang('name').'" - '.$language);
@@ -76,7 +76,7 @@ if ($proceed) {
                 $status_name_lang['content_type']="participant_status_name";
                 $status_name_lang['content_name']=$status_id;
                 $status_error_lang['content_type']="participant_status_error";
-                $status_error_lang['content_name']=$status_id;  
+                $status_error_lang['content_name']=$status_id;
             } else {
                 $new=false;
                 $pars=array(':status_id'=>$status_id);
@@ -92,7 +92,7 @@ if ($proceed) {
                 $status_name_lang[$language]=$status_name[$language];
                 if ($not_unconfirmed) $status_error_lang[$language]=$status_error[$language];
             }
-            
+
             if ($new) {
                 $status_name['lang_id']=lang__insert_to_lang($status_name_lang);
                 $status_error['lang_id']=lang__insert_to_lang($status_error_lang);
@@ -136,7 +136,7 @@ if ($proceed) {
     echo '
             <FORM action="participant_status_edit.php">';
     if (isset($status_id)) echo '<INPUT type=hidden name="status_id" value="'.$status_id.'">';
-        
+
     echo '
         <TABLE class="or_formtable">
             <TR><TD colspan="2">
@@ -148,7 +148,7 @@ if ($proceed) {
                         </TD>
                 </TR></TABLE>
             </TD></TR>';
-        
+
         if (isset($status_id)) {
             echo '
                 <TR>
@@ -160,14 +160,14 @@ if ($proceed) {
                     </TD>
                 </TR>';
         }
-            
+
         echo '
             <TR>
                 <TD valign="top">
                     '.lang('name').':
                 </TD>
                 <TD>';
-                
+
                     echo '<TABLE border=0>';
                     foreach ($languages as $language) {
                         if (!isset($status_name[$language])) $status_name[$language]='';
@@ -180,7 +180,7 @@ if ($proceed) {
                     echo '</TABLE>
                 </TD>
             </TR>';
-        
+
     if ($not_unconfirmed) {
         echo '
                 <TR>
@@ -203,7 +203,7 @@ if ($proceed) {
                     }
         echo '      </TD>
                 </TR>';
-                
+
         echo '
                 <TR>
                 <TD valign=top>
@@ -297,7 +297,7 @@ if ($proceed) {
                     <TD>
                 </TR>
                 </table>';
-        
+
     }
 
         echo '<BR><BR>

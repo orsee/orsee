@@ -8,7 +8,7 @@ $jquery=array();
 include ("header.php");
 if ($proceed) {
     $user_columns=participant__userdefined_columns();
-    if (!isset($_REQUEST['mysql_column_name']) || !isset($user_columns[$_REQUEST['mysql_column_name']])) 
+    if (!isset($_REQUEST['mysql_column_name']) || !isset($user_columns[$_REQUEST['mysql_column_name']]))
         redirect('admin/options_participant_profile.php');
     else $field_name=$_REQUEST['mysql_column_name'];
 }
@@ -25,7 +25,7 @@ if ($proceed) {
         $field=array('mysql_column_name'=>$field_name,
                     'enabled'=>'y',
                     'name_lang'=>$field_name,
-                    'type'=>'select_lang');         
+                    'type'=>'select_lang');
     } else {
         $new=false;
         $prop=db_string_to_property_array($field['properties']); unset($field['properties']);
@@ -33,7 +33,7 @@ if ($proceed) {
     }
     foreach ($allvalues as $k=>$v) if (!isset($field[$k])) $field[$k]=$v;
 }
-    
+
 if ($proceed) {
     if ($field_name=='email') {
         $restrict_to=array('size','maxlength','error_message_if_empty_lang',
@@ -61,9 +61,9 @@ if ($proceed) {
                 if (in_array($k,$restrict_to) && isset($_REQUEST[$k])) {
                     if (is_array($_REQUEST[$k])) {
                         foreach ($_REQUEST[$k] as $tk=>$tv) {
-                            if ($tv) $_REQUEST[$k][$tk]=trim($tv); 
+                            if ($tv) $_REQUEST[$k][$tk]=trim($tv);
                             else unset($_REQUEST[$k][$tk]);
-                        } 
+                        }
                         $prop_array[$k]=implode(',',$_REQUEST[$k]);
                     } else $prop_array[$k]=trim($_REQUEST[$k]);
                 } else {
@@ -79,11 +79,11 @@ if ($proceed) {
 }
 
 
-if ($proceed) { 
+if ($proceed) {
     echo '<center>';
 
     javascript__tooltip_prepare();
-    
+
     echo '<FORM action="'.thisdoc().'" method="POST">';
     echo '<INPUT type="hidden" name="mysql_column_name" value="'.$field_name.'">';
     echo '<TABLE class="or_formtable">
@@ -94,13 +94,13 @@ if ($proceed) {
                     </TD>
                 </TR></TABLE>
             </TD></TR>';
-    
+
     echo '<TR><TD valign="top" width="50%">';
-    
+
     echo '<TABLE width="100%" border=0>';
-    
+
     echo '<TR class="tooltip" title="Name of the mysql column in which data for this field is stored"><TD>MySQL column name:</TD><TD>'.$field_name.'</TD></TR>';
-    
+
     $field['enabled']=($field['enabled'])?'y':'n';
     echo '<TR class="tooltip" title="Whether ORSEE should just use this field or ignore just the respective datbase column."><TD>'.lang('enabled?').'</TD>
             <TD>'.pform_options_yesnoradio('enabled',$field).'</TD></TR>';
@@ -116,7 +116,7 @@ if ($proceed) {
     if (in_array('type',$restrict_to)) {
         echo '<script type="text/javascript">
                 $(document).ready(function () {
-                    toggle_form_fields(); 
+                    toggle_form_fields();
                     $("#type_select").change(function () {
                         toggle_form_fields();
                     });
@@ -131,15 +131,15 @@ if ($proceed) {
     } else {
         echo '<script type="text/javascript">
                 $(document).ready(function () {
-                    toggle_form_fields(); 
+                    toggle_form_fields();
                 });
                 function toggle_form_fields() {
                     $(".condfield").hide();
                     $(".'.$field['type'].'").show();
                 }
-            </script>'; 
+            </script>';
     }
-    
+
     echo '<TR class="condfield select_lang"><TD colspan="2" style="background: '.$color['list_header_highlighted_background'].'; color: '.$color['list_header_highlighted_textcolor'].';">
             A select list with a number of options. Options can be freely configured in "Options/Items for profile fields of type select_lang/radioline_lang".
             </TD></TR>';
@@ -147,11 +147,11 @@ if ($proceed) {
     echo '<TR class="condfield radioline_lang"><TD colspan="2" style="background: '.$color['list_header_highlighted_background'].'; color: '.$color['list_header_highlighted_textcolor'].';">
             A list of radio buttons. Options can be freely configured in "Options/Items for profile fields of type select_lang/radioline_lang".
             </TD></TR>';
-            
+
     echo '<TR class="condfield select_numbers"><TD colspan="2" style="background: '.$color['list_header_highlighted_background'].'; color: '.$color['list_header_highlighted_textcolor'].';">
         A select list with numbers. You can use code within the options, e.g. for a year of birth that allows all years from current-17 to current-100 you could use as Start value <span style="background: white; white-space:nowrap;">func:(int) date("Y")-100</span> and as End value <span style="background: white; white-space:nowrap;">func:(int) date("Y")-17</span>.
             </TD></TR>';
-            
+
     echo '<TR class="condfield textline"><TD colspan="2" style="background: '.$color['list_header_highlighted_background'].'; color: '.$color['list_header_highlighted_textcolor'].';">
             Asks for a line of text.
             </TD></TR>';
@@ -163,7 +163,7 @@ if ($proceed) {
     echo '<TR class="condfield select_list"><TD colspan="2" style="background: '.$color['list_header_highlighted_background'].'; color: '.$color['list_header_highlighted_textcolor'].';">
     This type is only provided for backward compatibility and import (e.g. of the default gender field in ORSEE<=2.3). For new fields, please use &quot;select_lang&quot;.
             </TD></TR>';
-            
+
     echo '<TR class="condfield radioline"><TD colspan="2" style="background: '.$color['list_header_highlighted_background'].'; color: '.$color['list_header_highlighted_textcolor'].';">
     This type is only provided for backward compatibility and import (e.g. of the default gender field in ORSEE 2). For new fields, please use &quot;radioline_lang&quot;.
             </TD></TR>';
@@ -176,7 +176,7 @@ if ($proceed) {
             <TD>Order values</TD>
             <TD>'.pform_options_selectfield('order_select_lang_values',array('alphabetically','fixed_order'),$field).'</TD></TR>';
 
-    
+
     echo '<TR class="condfield radioline_lang tooltip" title="Whether to sort values of this field by the order predetermined in &quot;Options/Items for profile fields of type select_lang/radioline_lang&quot; or alphabetically in the respective language.">
             <TD>Order values</TD>
             <TD>'.pform_options_selectfield('order_select_lang_values',array('alphabetically','fixed_order'),$field).'</TD></TR>';
@@ -222,7 +222,7 @@ if ($proceed) {
         <TD valign="top"><TABLE width="100%" border=0>';
 
     // settings
-    
+
     echo '<TR><TD colpsan="2"><B>Field properties</B></TD></TR>';
 
 
@@ -236,11 +236,11 @@ if ($proceed) {
     echo '<TR class="tooltip" title="The default value of this form field (i.e. the pre-filled value on the participant profile creation form)."><TD>Default value
             </TD><TD>'.pform_options_inputtext("default_value",$field).'
             </TD></TR>';
-    
+
     echo '<TR class="tooltip" title="If set to pie or bars, then the field is automatically included in the participant statistics, as a pie or bar chart, respectively. This only makes sense for fields that can be aggregated (like fields of study etc.), but not for heterogenous fields like names (unless you want to see the distributions of first names in your subject pool).">
             <TD>Include in statistics</TD>
             <TD>'.pform_options_selectfield('include_in_statistics',array('n','pie','bars'),$field).'</TD></TR>';
-        
+
     echo '<TR><TD colpsan="2"><B>Search properties</B></TD></TR>';
 
     echo '<TR class="tooltip" title="Whether this participant field should be included as a search field in the participant query (on Participants/Edit participants).">
@@ -258,9 +258,9 @@ if ($proceed) {
 
     echo '<TR class="tooltip" title="Whether the content of this field should be interpreted as an email address such that it will be displayed with an email link when displayed in a results table."><TD>Link as email in result lists</TD>
             <TD>'.pform_options_yesnoradio('link_as_email_in_lists',$field).'</TD></TR>';
-                
+
     echo '<TR><TD colpsan="2"><B>Checks</B></TD></TR>';
-    
+
     echo '<TR class="tooltip" title="Whether this form field is compulsory (must be non-empty) or not."><TD>Compulsory?</TD>
             <TD>'.pform_options_yesnoradio('compulsory',$field).'</TD></TR>';
 
@@ -277,7 +277,7 @@ if ($proceed) {
             </TD></TR>';
 
     echo '<TR><TD colpsan="2"><B>Uniqueness</B></TD></TR>';
-    
+
     echo '<TR class="tooltip" title="Whether, when a subject registers with the database, the entry in this field has to be unique across the whole participant subjectpool, or not. When unqiueness is required, and a value is submitted that already exists, then the registration will not be accepted.">
             <TD>Field must be unique on profile creation page</TD>
             <TD>'.pform_options_yesnoradio('require_unique_on_create_page',$field).'</TD></TR>';
@@ -290,7 +290,7 @@ if ($proceed) {
     echo '<TR class="tooltip" title="Whether, when a subject creates a profile and submits a value that already exists for a field required to be unique, the system should check whether this corresponds to a subject that has a status that does not allow the subject to access a profile page, and if so it should issue an error message in this regard.">
             <TD>If not unique, tell if profile unsubscribed</TD>
             <TD>'.pform_options_yesnoradio('unique_on_create_page_tell_if_deleted',$field).'</TD></TR>';
-            
+
     echo '<TR class="tooltip" title="Only applies if subject authentication method is TOKEN. Whether, when a subject creates a profile and submits a value that already exists for a field required to be unqiue, and the corresponding profile has a status that is allowed to access the subject profile, the system should resend the confirmation email (when subject had not confirmed yet) or an email with a link to the profile (when the subject had confirmed) to the registered email address.">
             <TD>If not unique, email profile access link</TD>
             <TD>'.pform_options_yesnoradio('unique_on_create_page_email_regmail_confmail_again',$field).'</TD></TR>';
@@ -303,13 +303,13 @@ if ($proceed) {
             <TD>Not unique on profile change- Error language symbol
             </TD><TD>'.pform_options_inputtext("unique_on_edit_page_error_message_if_exists_lang",$field).'
             </TD></TR>';
-            
 
-            
-        
-        
+
+
+
+
     echo '</TABLE></TD></TR>
-    
+
         <TR><TD colspan="2" align="center">
             <INPUT class="button" type="submit" name="save" value="'.lang('save').'">
         </TD></TR>

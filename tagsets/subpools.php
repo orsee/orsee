@@ -46,7 +46,7 @@ function subpools__get_subpools() {
     } else {
         $subpools=array();
         $query="SELECT *
-                FROM ".table('subpools')."  
+                FROM ".table('subpools')."
                 ORDER BY subpool_id";
         $result=or_query($query);
         while ($line = pdo_fetch_assoc($result)) {

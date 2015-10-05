@@ -3,7 +3,7 @@
 
 
 function log__participant($action,$participant_id,$target="") {
-    $darr=getdate();    
+    $darr=getdate();
     $pars=array(':participant_id'=>$participant_id,
                 ':year'=>$darr['year'],
                 ':month'=>$darr['mon'],
@@ -12,7 +12,7 @@ function log__participant($action,$participant_id,$target="") {
                 ':target'=>$target,
                 ':timestamp'=>$darr[0]
                 );
-    $query="INSERT INTO ".table('participants_log')." 
+    $query="INSERT INTO ".table('participants_log')."
             SET id= :participant_id,
             year= :year,
             month= :month,
@@ -36,7 +36,7 @@ function log__admin($action="unknown",$target="") {
                 ':target'=>$target,
                 ':timestamp'=>$darr[0]
                 );
-    $query="INSERT INTO ".table('admin_log')." 
+    $query="INSERT INTO ".table('admin_log')."
             SET id= :admin_id,
             year= :year,
             month= :month,
@@ -59,7 +59,7 @@ function log__cron_job($action="unknown",$target="",$now="",$id="") {
                 ':target'=>$target,
                 ':timestamp'=>$darr[0]
                 );
-    $query="INSERT INTO ".table('cron_log')." 
+    $query="INSERT INTO ".table('cron_log')."
             SET id= :id,
             year= :year,
             month= :month,
@@ -104,7 +104,7 @@ function log__show_log($log) {
     global $lang, $color;
 
     $pars=array();
-    
+
     if (isset($_REQUEST['action']) && $_REQUEST['action']) {
         $aquery=" AND action=:action ";
         $pars[':action']=$_REQUEST['action'];
@@ -160,7 +160,7 @@ function log__show_log($log) {
     $query="SELECT * FROM ".$logtable.$secondtable."
         WHERE id IS NOT NULL ".
         $aquery.$idquery.$tquery.
-        " ORDER BY timestamp DESC 
+        " ORDER BY timestamp DESC
         LIMIT :offset , :limit ";
     $result=or_query($query,$pars);
     $num_rows=pdo_num_rows($result);
@@ -170,7 +170,7 @@ function log__show_log($log) {
     //echo '<FONT class="small">'.lang('query').': '.$query.'</FONT><BR><BR>';
     echo '</TD>
         <TD align=right width=50%>';
-    
+
     if (check_allow('log_file_'.$log.'_delete')) {
         echo '
             <FORM action="statistics_show_log.php">
@@ -212,7 +212,7 @@ function log__show_log($log) {
     } elseif ($log=='experimenter_actions' || $log=='regular_tasks') {
         echo lang('experimenter');
     }
-    if (isset($_REQUEST['id']) && $_REQUEST['id']) 
+    if (isset($_REQUEST['id']) && $_REQUEST['id'])
         echo ' '.log__link('id=','os=0').'<FONT class="small">['.lang('unrestrict').']</FONT></A>';
     echo '  </TD><TD>'.lang('action');
     if (isset($_REQUEST['action']) && $_REQUEST['action'])
@@ -224,7 +224,7 @@ function log__show_log($log) {
             </thead>
             <tbody>';
 
-    $shade=false;   
+    $shade=false;
     while ($line=pdo_fetch_assoc($result)) {
         echo '<tr class="small"';
             if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
@@ -242,7 +242,7 @@ function log__show_log($log) {
         }
         if (!isset($_REQUEST['id']) || $_REQUEST['id']!=$line['id']) echo ' '.log__restrict_link('id',$line['id']);
         echo '  </TD><TD>'.$line['action'];
-        if (!isset($_REQUEST['action']) || $_REQUEST['action']!=$line['action']) 
+        if (!isset($_REQUEST['action']) || $_REQUEST['action']!=$line['action'])
             echo ' '.log__restrict_link('action',$line['action']);
         echo '  </TD><TD>'.nl2br(stripslashes($line['target']));
         if (!isset($_REQUEST['target']) || $_REQUEST['target']!=$line['target'] && $log!='regular_tasks')

@@ -28,7 +28,7 @@ if ($proceed) {
     while ($line=pdo_fetch_assoc($result)) {
         if ($shade) $shade=false; else $shade=true;
         $table_text.='<TR';
-        if ($shade) $table_text.=' bgcolor="'.$color['list_shade1'].'"'; 
+        if ($shade) $table_text.=' bgcolor="'.$color['list_shade1'].'"';
         else $table_text.=' bgcolor="'.$color['list_shade2'].'"';
         $table_text.='>
             <TD>
@@ -45,7 +45,7 @@ if ($proceed) {
                         <TR><TD valign="top"><B>'.lang('answer').'</B></TD><TD valign="top">'.$answers[$line['faq_id']][lang('lang')].'</TD></TR>';
         if (!(isset($_SESSION['vote'][$line['faq_id']]) && $_SESSION['vote'][$line['faq_id']])) $this_faq_div.='<TR><TD></TD><TD>
                         '.button_link('#',lang('this_faq_answered_my_question'),'check-square bicongreen','',' id="faq_vote"').'</TD></TR>';
-        $faq_divs[$line['faq_id']]=$this_faq_div;   
+        $faq_divs[$line['faq_id']]=$this_faq_div;
     }
 
     $faq_html = '
@@ -68,7 +68,7 @@ if ($proceed) {
     echo '
         <div id="faqPopupDiv" class="faqpopupDiv" style=" background: '.$color['popup_bgcolor'].'; color: '.$color['popup_text'].';">
             <div align="right"><button class="b-close button fa-backward popupBack">'.lang('back').'</button></div>
-            <div id="faqPopupContent" style="margin: 0px;"></div>       
+            <div id="faqPopupContent" style="margin: 0px;"></div>
         </div>
         <script type="text/javascript">
             var faq_divs = ';
@@ -79,7 +79,7 @@ if ($proceed) {
     echo $json->encodeUnsafe($faq_html);
     echo ';
                 function open_faq(faq_id){
-                    var faq_question = faq_divs[faq_id];        
+                    var faq_question = faq_divs[faq_id];
                     var str = faq_html;
                     str = str.replace("#faq_question#", faq_question);
                     $("#faqPopupContent").html("");
@@ -90,7 +90,7 @@ if ($proceed) {
                         positionStyle: "fixed",
                         modalColor: "'.$color['popup_modal_color'].'",
                         opacity: 0.8
-                        }); 
+                        });
                     $("#faq_vote").click(function(){
                         event.preventDefault();
                         var vote_url="faq_vote.php?eval=true&id=" + faq_id;
@@ -98,9 +98,9 @@ if ($proceed) {
                             url: vote_url
                         });
                         faqBpopup.close();
-                    });     
+                    });
                 }
-                
+
             </script>';
 
     echo '<center>
@@ -114,7 +114,7 @@ if ($proceed) {
                 </TD>
             </TR></thead>
             <tbody>';
-            
+
     echo $table_text;
 
     echo '  </tbody></TABLE>

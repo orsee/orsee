@@ -32,13 +32,13 @@ if ($proceed) {
             </TR></thead>
                 <tbody>';
 
-    $query="SELECT * FROM ".table('budgets')." 
+    $query="SELECT * FROM ".table('budgets')."
             ORDER BY enabled DESC, budget_name";
     $result=or_query($query);
     $shade=false;
     while ($line = pdo_fetch_assoc($result)) {
         echo '  <tr class="small"';
-        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
+        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
         if (!$line['enabled']) echo ' style="font-style: italic;"';
         echo '>
@@ -56,10 +56,10 @@ if ($proceed) {
         if ($shade) $shade=false; else $shade=true;
     }
    echo '</tbody></table>';
-   
+
    echo '<BR><BR>
                 <A href="options_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
-   
+
    echo '</CENTER>';
 
 

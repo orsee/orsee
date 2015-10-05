@@ -66,9 +66,9 @@ function helpers__select_numbers_relative($name,$prevalue,$begin,$end,$fillzeros
         echo '<option value="'.$i.'"';
         if ($i== (int) $prevalue) echo ' SELECTED';
                 echo '>';
-        echo helpers__pad_number($i,$fillzeros); 
+        echo helpers__pad_number($i,$fillzeros);
         if ($current_time > 0) {
-            $utime=$current_time - ($i * 60 * 60); 
+            $utime=$current_time - ($i * 60 * 60);
             echo ' ('.ortime__format($utime,'',$authdata['language']).')';
             }
         echo '</option>
@@ -94,9 +94,9 @@ function experiment_ext_types__checkboxes($postvarname,$showvar,$checked=array()
 // select field for sessions
 function select__sessions($preval,$varname,$sessions,$hide_nosession=false,$with_exp=false) {
     global $lang, $expadmindata;
-    if (!$preval) $preval=0; 
+    if (!$preval) $preval=0;
     if (!$varname) $varname="session";
-    
+
     $out='';
     $out.='<SELECT name="'.$varname.'">';
     if (!$hide_nosession) {
@@ -125,18 +125,18 @@ function select__sessions($preval,$varname,$sessions,$hide_nosession=false,$with
 function formhelpers__pick_date($field, $selected_date=0, $years_backward=0, $years_forward=0) {
     global $settings, $lang;
     $out="";
-    
+
     if (!$selected_date) $selected_date=ortime__unixtime_to_sesstime();
     if (!$years_backward) $years_backward=$settings['session_start_years_backward'];
     if (!$years_forward) $years_forward=$settings['session_start_years_forward'];
     $sda=ortime__sesstime_to_array($selected_date);
-    
+
     $year_start=$sda['y']-$years_backward;
     $year_stop=$sda['y']+$years_forward;
     if (date("Y")>=$year_stop) $year_stop=date("Y")+1;
-    
+
     $tformat=lang('format_datetime_date');
-    
+
     $day_field=helpers__select_number($field."_d",$sda['d'],1,31,2,1,false);
     $month_field=helpers__select_number($field."_m",$sda['m'],1,12,2,1,false);
     $year_field=helpers__select_number($field."_y",$sda['y'],$year_start,$year_stop,4,1,false);
@@ -153,7 +153,7 @@ function formhelpers__pick_date($field, $selected_date=0, $years_backward=0, $ye
                 months: ["'.implode('","',$months).'"],
                 monthsShort: ["'.implode('","',$monthsShort).'"] }';
     $out.='
-                <i class="fa fa-calendar fa-lg '.$field.'_datepicker"></i> 
+                <i class="fa fa-calendar fa-lg '.$field.'_datepicker"></i>
                 <script type="text/javascript">
                 $(".'.$field.'_datepicker").pickmeup({
                     position        : "right",
@@ -161,8 +161,8 @@ function formhelpers__pick_date($field, $selected_date=0, $years_backward=0, $ye
                     format          : "Y-m-d",
                     date            : "'.$sda['y'].'-'.$sda['m'].'-'.$sda['d'].'",
                     locale          : '.$locale.',
-                    first_day       : '.lang('format_datetime_firstdayofweek_0:Su_1:Mo').', 
-                    change          : function (selectedDate) {                         
+                    first_day       : '.lang('format_datetime_firstdayofweek_0:Su_1:Mo').',
+                    change          : function (selectedDate) {
                                         selectedDate = new Date(selectedDate);
                                         var d = selectedDate.getDate();
                                         var m = selectedDate.getMonth();
@@ -208,19 +208,19 @@ function helpers__select_hour($name,$prevalue,$begin,$end,$steps=1,$military=tru
 
 function formhelpers__pick_time($field, $selected_time=0,$minute_steps=0) {
     global $settings, $lang;
-    
+
     if (!$selected_time) $selected_time=ortime__unixtime_to_sesstime();
     if (!$minute_steps) $minute_steps=$settings['session_duration_minute_steps'];
-    
+
     $tformat=lang('format_datetime_time_no_sec');
     $is_mil_time=is_mil_time($tformat);
     $is_mil_time_str=($is_mil_time)?'true':'false';
     $tformat=str_replace("%a","",$tformat);
-    
+
     $minutedivisions=round(60/$minute_steps);
     if (!($minutedivisions>1)) $minutedivisions=4;
     $sda=ortime__sesstime_to_array($selected_time);
-    
+
     $hour_field=helpers__select_hour($field."_h",$sda['h'],0,23,1,$is_mil_time);
     $minute_field=helpers__select_number($field."_i",$sda['i'],0,59,2,$settings['session_duration_minute_steps']);
 
@@ -234,7 +234,7 @@ function formhelpers__pick_time($field, $selected_time=0,$minute_steps=0) {
     function updateTimeSelects_'.$field.' (time) {
         console.log(time);
         var cpos = time.indexOf( ":", 0 );
-        if(cpos<2) { 
+        if(cpos<2) {
             var h = Number(time.substr(0,1));
             var i = Number(time.substr(2,2));
         } else {
@@ -253,7 +253,7 @@ function formhelpers__pick_time($field, $selected_time=0,$minute_steps=0) {
         ($("#'.$field.'_h")).val(h);
         ($("#'.$field.'_i")).val(i);
     }
-            
+
     $("#'.$field.'_clockpicker").clockpick({
     starthour: 8,
     endhour: 20,
@@ -264,11 +264,11 @@ function formhelpers__pick_time($field, $selected_time=0,$minute_steps=0) {
     layout: "vertical",
     hoursopacity: 1.0,
     minutesopacity: 1.0
-    }, updateTimeSelects_'.$field.'); 
+    }, updateTimeSelects_'.$field.');
     });
     </script>
     ';
-    
+
     $out=trim($tformat).$cp;
     return $out;
 }
@@ -310,9 +310,9 @@ function formhelpers__orderlist($listID, $formName, $rows, $no_add_button=false,
     $out.='<TD></TR></TABLE>';
     return $out;
 }
-        
-        
-        
+
+
+
 
 function headcell($value,$sort="",$focus="") {
     global $color;

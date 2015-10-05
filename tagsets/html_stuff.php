@@ -49,7 +49,7 @@ function html__mobile_header() {
             });
         </script>
         <script src="../tagsets/jquery/jquery.mobile.js"></script>
-    
+
     </head>
     <body>';
 
@@ -121,7 +121,7 @@ if (isset($jquery) && is_array($jquery)) {
         include_jquery('bpopup');
     }
 }
-   
+
     echo '<style type="text/css">';
     if (isset($lang_icons_prepare) && $lang_icons_prepare) {
         lang_icons_prepare();
@@ -194,10 +194,10 @@ function html__show_style_header($area='public',$title="") {
     // fill in language terms if any
         $pattern="/lang\[([^\]]+)\]/i";
         $replacement = "\$lang['$1']";
-        $tpl=preg_replace_callback($pattern, 
-        'template_replace_callbackB', 
+        $tpl=preg_replace_callback($pattern,
+        'template_replace_callbackB',
         $tpl);
-                                        
+
     echo $tpl;
 }
 
@@ -212,10 +212,10 @@ function html__show_style_footer($area='public') {
     // fill in language terms if any
         $pattern="/lang\[([^\]]+)\]/i";
         $replacement = "\$lang['$1']";
-        $tpl=preg_replace_callback($pattern, 
-        'template_replace_callbackB', 
+        $tpl=preg_replace_callback($pattern,
+        'template_replace_callbackB',
         $tpl);
-                                        
+
     echo $tpl;
 }
 
@@ -223,7 +223,7 @@ function html__show_style_footer($area='public') {
 
 function html__get_admin_menu() {
     global $settings;
-    $menu=array(); 
+    $menu=array();
     $menu[]=    array(
                             'menu_area'=>'current_user_data_box',
                             'entrytype'=>'head',
@@ -415,8 +415,8 @@ if ($settings['subject_authentication']!='token') {
                             'show_if_not_logged_in'=>1,
                             'show_if_logged_in'=>0
                             );
-}   
-                            
+}
+
     $menu[]=        array(
                             'menu_area'=>'my_data',
                             'entrytype'=>'link',
@@ -515,9 +515,9 @@ function html__build_menu($menu,$logged_in,$current_user_data_box,$orientation="
     if (in_array($settings['subject_authentication'],array('token','migration'))) {
         if (isset($_REQUEST['p']) && !(in_array(thisdoc(),$ignore_p))) $addp="?p=".urlencode($_REQUEST['p']);
     }
-    
-    $list='';   
-    
+
+    $list='';
+
     $final_menu=array();
     foreach ($menu as $item) {
         $continue=true;
@@ -548,7 +548,7 @@ function html__build_menu($menu,$logged_in,$current_user_data_box,$orientation="
                 if (preg_match("/^".$item['menu_area']."/i",$menu__area)) $item['bg']=' bgcolor="'.$color['menu_item_highlighted_background'].'"';
                 else $item['bg']="";
                 if (!isset($item['link'])) $link='';
-                elseif (substr($item['link'],0,1)=='/') $link=$settings__root_url.$item['link'].$addp; 
+                elseif (substr($item['link'],0,1)=='/') $link=$settings__root_url.$item['link'].$addp;
                 else $link=$item['link'];
                 if ($item['entrytype']=='link') $item['content']='<A HREF="'.$link.'" class="menu_item"><FONT color="'.$color['menu_item'].'">';
                 elseif ($item['entrytype']=='headlink') $item['content']='<A HREF="'.$link.'" class="menu_title"><FONT color="'.$color['menu_title'].'">';
@@ -568,7 +568,7 @@ function html__build_menu($menu,$logged_in,$current_user_data_box,$orientation="
         $list.='<TABLE border=0>';
         foreach ($final_menu as $item) {
             if (!isset($item['link'])) $link='';
-            elseif (substr($item['link'],0,1)=='/') $link=$settings__root_url.$item['link'].$addp; 
+            elseif (substr($item['link'],0,1)=='/') $link=$settings__root_url.$item['link'].$addp;
             else $link=$item['link'];
             if ($item['entrytype']=='head') $list.='<tr><td colspan="3">&nbsp;</td></tr>';
             $list.='<TR>';
@@ -585,7 +585,7 @@ function html__build_menu($menu,$logged_in,$current_user_data_box,$orientation="
         $list1=''; $list2=''; $head_up=false;
         foreach ($final_menu as $item) {
             if (!isset($item['link'])) $link='';
-            elseif (substr($item['link'],0,1)=='/') $link=$settings__root_url.$item['link'].$addp; 
+            elseif (substr($item['link'],0,1)=='/') $link=$settings__root_url.$item['link'].$addp;
             else $link=$item['link'];
             if ($item['menu_area']=='current_user_data_box') {
 //              if ($head_up) $list2.='<TD colspan=2></TD>';
@@ -620,12 +620,12 @@ function get_style_array() {
 
     // $path=$settings__root_to_server.$settings__root_directory."/style";
     $path="../style";
-    
+
     $dir_arr = array () ;
     $handle=opendir($path);
-    while ($file = readdir($handle)) {            
-            if ($file != "." && $file != ".." && is_dir($path."/".$file)) {                    
-                $dir_arr[] = $file ;        
+    while ($file = readdir($handle)) {
+            if ($file != "." && $file != ".." && is_dir($path."/".$file)) {
+                $dir_arr[] = $file ;
                 }
         }
     return $dir_arr ;

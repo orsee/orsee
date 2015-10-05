@@ -25,7 +25,7 @@ if ($proceed) {
             $allow_cat='pform_lang_field';
         }
     }
-    
+
     if (!$id) $allow=check_allow($allow_cat.'_edit','lang_item_main.php?item='.$item);
     else $allow=check_allow($allow_cat.'_edit','options_main.php');
 }
@@ -35,7 +35,7 @@ if ($proceed) {
 
         switch($item) {
             case 'experimentclass':
-                if ($id) $header=lang('edit_experiment_class'); 
+                if ($id) $header=lang('edit_experiment_class');
                 else $header=lang('add_experiment_class');
                 $new_id='time';
                 $check_allow_content_shortcut=false;
@@ -139,13 +139,13 @@ if ($proceed) {
             if (!$id) $new=true; else $new=false;
 
             if ($new && $new_id=="time") $sitem['content_name']=time();
-            if ($new_id=="content_shortcut") $sitem['content_name']=trim($_REQUEST['content_shortcut']); 
+            if ($new_id=="content_shortcut") $sitem['content_name']=trim($_REQUEST['content_shortcut']);
 
             if ($new) { $id=lang__insert_to_lang($sitem); $done=true; }
             else $done=orsee_db_save_array($sitem,"lang",$id,"lang_id");
 
             if (!$new && $new_id=="time") $sitem['content_name']=trim($_REQUEST['content_shortcut']);
-            
+
             if ($done) {
                 log__admin($item."_edit","lang_id:".$sitem['content_type'].','.$sitem['content_name']);
                 message (lang('changes_saved'));
@@ -203,9 +203,9 @@ if ($proceed) {
             echo $titem['content_name'].
             '<INPUT type=hidden name="content_shortcut" value="'.$titem['content_name'].'">';
         }
-    } elseif ($id) { 
+    } elseif ($id) {
                 echo $titem['content_name'].
-                    '<INPUT type=hidden name="content_shortcut" value="'.$titem['content_name'].'">'; 
+                    '<INPUT type=hidden name="content_shortcut" value="'.$titem['content_name'].'">';
     } else echo '???';
         echo '      </TD>
             </TR>';
@@ -247,8 +247,8 @@ if ($proceed) {
             '.button_link('lang_item_delete.php?id='.urlencode($id).'&item='.urlencode($item),
                             lang('delete'),'trash-o').'
             ';
-    } 
-    
+    }
+
     echo '<BR><BR>
         <A href="lang_item_main.php?item='.$item.'"><i class="fa fa-level-up fa-lg" style="padding-right: 3px;"></i>'.lang('back').'</A><BR><BR>
         </center>';

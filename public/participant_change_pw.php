@@ -16,12 +16,12 @@ if ($proceed) {
         // password tests
         $continue=true;
 
-        if ($continue) {    
-            if (!$passold) { 
+        if ($continue) {
+            if (!$passold) {
                 message (lang('error_please_fill_in_all_fields'));
                 $continue=false;
             }
-        }   
+        }
         if ($continue) {
             if (!crypt_verify($passold,$participant['password_crypted'])) {
                 message(lang('error_old_password_wrong'));
@@ -53,9 +53,9 @@ if ($proceed) {
 if ($proceed) {
     echo '  <center>';
             show_message();
-    
+
     echo '<TABLE border=0><TR><TD align="center">';
-    echo '<form action="participant_change_pw.php" method="POST">'; 
+    echo '<form action="participant_change_pw.php" method="POST">';
     echo '<table class="or_formtable" style="width: 50%;">
             <tr><td>'.lang('old_password').'<BR>
                 <input type="password" name="passold" size="20" max-length="30">
@@ -66,14 +66,14 @@ if ($proceed) {
             </td></tr>
         </table>
         </form>';
-    echo '</TD><TD align="right" valign="top">';        
+    echo '</TD><TD align="right" valign="top">';
     echo '<TABLE border=0>';
     echo '<TR><TD>'.button_link('participant_edit.php',
                             lang('edit_your_profile'),'pencil-square-o').'</TD></TR>';
     echo '<TR><TD>'.button_link('participant_show.php',
                             lang('my_registrations'),'calendar-o').'</TD></TR>';
     echo '</TABLE>';
-    
+
     echo '</TD><TR></TABLE>';
     echo '</center>';
 }

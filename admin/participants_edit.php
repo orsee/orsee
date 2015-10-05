@@ -27,13 +27,13 @@ if ($proceed) {
     $statuses=participant_status__get_statuses();
     $continue=true; $errors__dataform=array();
 
-    if (isset($_REQUEST['add']) && $_REQUEST['add']) { 
+    if (isset($_REQUEST['add']) && $_REQUEST['add']) {
 
         // checks and errors
         foreach ($_REQUEST as $k=>$v) {
             if(!is_array($v)) $_REQUEST[$k]=trim($v);
         }
-        $errors__dataform=participantform__check_fields($_REQUEST,true);        
+        $errors__dataform=participantform__check_fields($_REQUEST,true);
         $error_count=count($errors__dataform);
         if ($error_count>0) $continue=false;
 
@@ -49,7 +49,7 @@ if ($proceed) {
                 else $participant['subpool_id']=$settings['subpool_default_registration_id'];
                 if (!isset($participant['language']) || !$participant['language']) $participant['language']=$settings['public_standard_language'];
             }
-            
+
             if (isset($participant['status_id'])) $sid=$participant['status_id']; else $sid='';
             if (isset($participant['old_status_id'])) $osid=$participant['old_status_id']; else $osid='';
             if ($sid!='' && $osid!='' && $osid!=$sid) {
@@ -57,18 +57,18 @@ if ($proceed) {
                 $osid_e=$statuses[$osid]['eligible_for_experiments'];
                 if ($osid_e == 'y' && $sid_e=='n') $participant['deletion_time']=time();
                 elseif ($osid_e == 'n' && $sid_e=='y') $participant['deletion_time']=0;
-            } 
+            }
 
             $done=orsee_db_save_array($participant,"participants",$participant['participant_id'],"participant_id");
             if ($done) message(lang('changes_saved'));
-            
+
             if (isset($_REQUEST['register_session']) && $_REQUEST['register_session']=='y') {
                 $session=orsee_db_load_array("sessions",$_REQUEST['session_id'],"session_id");
                 if ($session['session_id']) {
                     $pars=array(':participant_id'=>$participant['participant_id'],
                                 ':experiment_id'=>$session['experiment_id']);
-                    $query="SELECT * FROM ".table('participate_at')." 
-                            WHERE participant_id= :participant_id 
+                    $query="SELECT * FROM ".table('participate_at')."
+                            WHERE participant_id= :participant_id
                             AND experiment_id= :experiment_id";
                     $line=orsee_query($query,$pars);
                     if (isset($line['participate_id'])) {
@@ -82,26 +82,26 @@ if ($proceed) {
                             $pars=array(':participant_id'=>$participant['participant_id'],
                                         ':session_id'=>$session['session_id'],
                                         ':experiment_id'=>$session['experiment_id']);
-                            $query="UPDATE ".table('participate_at')." 
-                                    SET session_id= :session_id, 
-                                    pstatus_id=0 
-                                    WHERE participant_id= :participant_id 
+                            $query="UPDATE ".table('participate_at')."
+                                    SET session_id= :session_id,
+                                    pstatus_id=0
+                                    WHERE participant_id= :participant_id
                                     AND experiment_id= :experiment_id";
-                            $done2=or_query($query,$pars);                      
-                        }                       
-                    } else {                            
+                            $done2=or_query($query,$pars);
+                        }
+                    } else {
                         $pars=array(':participant_id'=>$participant['participant_id'],
                                     ':session_id'=>$session['session_id'],
                                     ':experiment_id'=>$session['experiment_id']);
-                        $query="INSERT into ".table('participate_at')." 
+                        $query="INSERT into ".table('participate_at')."
                                 SET participant_id= :participant_id,
-                                session_id= :session_id, 
+                                session_id= :session_id,
                                 experiment_id= :experiment_id,
                                 pstatus_id=0";
                         $done2=or_query($query,$pars);
                     }
                     if (isset($done2) && $done2) {
-                        message(lang('registered_participant_for').' 
+                        message(lang('registered_participant_for').'
                                 <A HREF="experiment_participants_show.php?experiment_id='.
                                 $session['experiment_id'].'&session_id='.$session['session_id'].'">'.
                                 session__build_name($session).'</A>.');
@@ -135,13 +135,13 @@ if ($proceed) {
     }
 
     $button_title = ($participant_id) ? lang('save') : lang('add');
-    
+
     echo '<CENTER>';
     show_message();
     participant__show_admin_form($_REQUEST,$button_title,$errors__dataform,true);
     echo '<CENTER>';
     if ($participant_id) participants__get_statistics($participant_id);
-    
+
     if ($settings['enable_email_module']=='y' && isset($_REQUEST['participant_id'])) {
         $nums=email__get_privileges('participant',$_REQUEST,'read',true);
         if ($nums['allowed'] && $nums['num_all']>0) {
@@ -151,11 +151,11 @@ if ($proceed) {
                     </TD></TR></TABLE>';
             echo javascript__email_popup();
             $url_string='participant_id='.$participant_id;
-            if ($hide_header) $url_string.='&hide_header=true'; 
+            if ($hide_header) $url_string.='&hide_header=true';
             email__list_emails('participant',$_REQUEST['participant_id'],$nums['rmode'],$url_string,false);
         }
     }
-    
+
     echo "</CENTER>";
 
 }

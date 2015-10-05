@@ -7,7 +7,7 @@ $title="budget_report";
 include ("header.php");
 if ($proceed) {
 
-    if (isset($_REQUEST['budget_id'])) $budget_id=$_REQUEST['budget_id']; 
+    if (isset($_REQUEST['budget_id'])) $budget_id=$_REQUEST['budget_id'];
     else redirect('admin/statistics_main.php');
 }
 
@@ -26,7 +26,7 @@ if ($proceed) {
     }
 
     // get budgets
-    $query="SELECT * FROM ".table('budgets')." ".$restriction." 
+    $query="SELECT * FROM ".table('budgets')." ".$restriction."
             ORDER BY enabled DESC, budget_name";
     $result=or_query($query,$pars);
     $shade=false; $budgets=array(); $budget_ids=array();
@@ -46,18 +46,18 @@ if ($proceed) {
     //load data
     $pars=array(':budget_id'=>$budget_id);
     $query="SELECT * FROM ".table('participate_at')." as p,
-            ".table('sessions')." as s, ".table('experiments')." as e  
-            WHERE p.payment_budget = :budget_id 
+            ".table('sessions')." as s, ".table('experiments')." as e
+            WHERE p.payment_budget = :budget_id
             AND p.session_id=s.session_id
-            AND s.session_status='balanced' 
-            AND p.experiment_id=e.experiment_id 
+            AND s.session_status='balanced'
+            AND p.experiment_id=e.experiment_id
             ORDER BY s.session_start, p.payment_type";
     $result=or_query($query,$pars); $payments=array();
     while ($line = pdo_fetch_assoc($result)) {
         $payments[$line['experiment_id']][$line['session_id']][$line['payment_type']][]=$line;
     }
-    
-    
+
+
     echo '<center>';
 
     echo '<TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'; width: auto;">
@@ -68,8 +68,8 @@ if ($proceed) {
 
     echo '<BR>
         <table class="or_listtable" style="width: auto;">';
-        
-    $payment_types=payments__load_paytypes(); 
+
+    $payment_types=payments__load_paytypes();
     $cexp_id=''; $csess_id=''; $cpaytype_id='';
     $sum_exp=0; $sum_sess=0; $sum_paytype=0; $pid=0;
     foreach ($payments as $exp_id=>$exp) {
@@ -138,10 +138,10 @@ if ($proceed) {
         $sum_exp=0;
    }
    echo '</table>';
-   
+
    echo '<BR><BR>
                 <A href="payments_budget_view.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
-   
+
    echo '</CENTER>';
 
 }

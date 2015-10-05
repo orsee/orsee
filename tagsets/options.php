@@ -3,24 +3,24 @@
 
 function load_settings() {
     global $system__options_general, $system__options_defaults;
-    
-    $query="SELECT * FROM ".table('options')." 
+
+    $query="SELECT * FROM ".table('options')."
     WHERE option_type='general' OR option_type='default'";
     $result=or_query($query);
     while ($line = pdo_fetch_assoc($result)) {
         $settings[$line['option_name']]=stripslashes($line['option_value']);
     }
-    
-    foreach ($system__options_general as $option) { 
-        if (isset($option['type']) && ($option['type']=='line' || $option['type']=='comment')) { 
+
+    foreach ($system__options_general as $option) {
+        if (isset($option['type']) && ($option['type']=='line' || $option['type']=='comment')) {
         } else {
             if (!isset($settings[$option['option_name']])) {
                 $settings[$option['option_name']]=$option['default_value'];
             }
         }
     }
-    foreach ($system__options_defaults as $option) { 
-        if (isset($option['type']) && ($option['type']=='line' || $option['type']=='comment')) { 
+    foreach ($system__options_defaults as $option) {
+        if (isset($option['type']) && ($option['type']=='line' || $option['type']=='comment')) {
         } else {
             if (!isset($settings[$option['option_name']])) {
                 $settings[$option['option_name']]=$option['default_value'];
@@ -36,8 +36,8 @@ function load_colors() {
 
     $pars=array(':style'=>$settings['style']);
     $query="select * from ".table('options')."
-            where option_type='color' 
-            and option_style= :style 
+            where option_type='color'
+            and option_style= :style
             order by option_name";
     $result=or_query($query,$pars);
     while ($line=pdo_fetch_assoc($result)) $color[$line['option_name']]=$line['option_value'];
@@ -45,15 +45,15 @@ function load_colors() {
     // what if this does not exist? Then load default orsee colors
     if (count($color)==0) {
         $query="select * from ".table('options')."
-                where option_type='color' 
-                and option_style= 'orsee' 
+                where option_type='color'
+                and option_style= 'orsee'
                 order by option_name";
         $result=or_query($query);
         while ($line=pdo_fetch_assoc($result)) $color[$line['option_name']]=$line['option_value'];
     }
-    
-    foreach ($system__colors as $c) { 
-        if (isset($c['type']) && ($c['type']=='line' || $c['type']=='comment')) { 
+
+    foreach ($system__colors as $c) {
+        if (isset($c['type']) && ($c['type']=='line' || $c['type']=='comment')) {
         } else {
             if (!isset($color[$c['color_name']])) {
                 $color[$c['color_name']]=$c['default_value'];
@@ -133,7 +133,7 @@ function option__display_option($text,$field,$colspan=false) {
     if ($colspan) {
     echo '<TR>
               <TD colspan="2">'.$text.'</TD>
-           </TR>';  
+           </TR>';
     } else {
     echo '<TR>
               <TD>'.$text.'</TD>
@@ -148,7 +148,7 @@ function options__line() {
 
 function options__get_color_styles() {
     global $preloaded_color_styles;
-    if (isset($preloaded_color_styles) && is_array($preloaded_color_styles) 
+    if (isset($preloaded_color_styles) && is_array($preloaded_color_styles)
         && count($preloaded_color_styles)>0)
             return $preloaded_color_styles;
     else {
@@ -166,7 +166,7 @@ function options__get_color_styles() {
 
 function options__save_item_order($item_type,$order_array,$details=array()) {
     $pars=array(':item_type'=>$item_type);
-    $query="DELETE FROM ".table('objects')." 
+    $query="DELETE FROM ".table('objects')."
             WHERE item_type= :item_type";
     $done=or_query($query,$pars);
 
@@ -179,8 +179,8 @@ function options__save_item_order($item_type,$order_array,$details=array()) {
                     ':order_number'=>$k,
                     ':item_details'=>$detstr);
     }
-    $query="INSERT INTO ".table('objects')." 
-            SET order_number = :order_number,  
+    $query="INSERT INTO ".table('objects')."
+            SET order_number = :order_number,
             item_type = :item_type,
             item_name = :item_name,
             item_details = :item_details";
@@ -190,8 +190,8 @@ function options__save_item_order($item_type,$order_array,$details=array()) {
 
 function options__ordered_lists_get_current($poss_cols,$saved_cols,$sortby_radio=false) {
     // filter out non-draggable at begin and end
-    $first_draggable=false; 
-    $first=array(); $num_first=0; $last=array(); $num_last=0; 
+    $first_draggable=false;
+    $first=array(); $num_first=0; $last=array(); $num_last=0;
     $draggable=array();
     foreach ($poss_cols as $k=>$arr) {
         if (isset($arr['allow_drag']) && $arr['allow_drag']==false) {
@@ -199,14 +199,14 @@ function options__ordered_lists_get_current($poss_cols,$saved_cols,$sortby_radio
                 $num_last--;
                 $arr['fixed_position']=$num_last;
                 if (isset($arr['allow_remove']) && $arr['allow_remove']==false) $arr['on_list']=true;
-                else $arr['on_list']=false;     
+                else $arr['on_list']=false;
                 $last[$k]=$arr;
                 unset($poss_cols[$k]);
             } else {
                 $num_first++;
                 $arr['fixed_position']=$num_first;
                 if (isset($arr['allow_remove']) && $arr['allow_remove']==false) $arr['on_list']=true;
-                else $arr['on_list']=false;         
+                else $arr['on_list']=false;
                 $first[$k]=$arr;
                 unset($poss_cols[$k]);
             }
@@ -283,7 +283,7 @@ function pform_options_yesnoradio($varname,$field) {
         $out.=($field[$varname]=='y')?lang('y'):lang('n');
     }
     return $out;
-} 
+}
 
 function pform_options_inputtext($varname,$field,$size=25) {
     global $restrict_to;
@@ -291,7 +291,7 @@ function pform_options_inputtext($varname,$field,$size=25) {
     if (in_array($varname,$restrict_to)) {
         $out='<INPUT type="text" name="'.$varname.'" size="'.$size.'" maxlength="200" value="'.htmlentities($field[$varname], ENT_QUOTES).'">';
      } else {
-        $out=htmlentities($field[$varname], ENT_QUOTES); 
+        $out=htmlentities($field[$varname], ENT_QUOTES);
      }
     return $out;
 }
@@ -306,7 +306,7 @@ function pform_options_vallanglist($varname_val,$varname_lang,$field) {
         $langs=explode(",",$field[$varname_lang]);
         foreach ($vals as $k=>$v) {
             $out.='<TR><TD>';
-            if (in_array($varname_val,$restrict_to)) {  
+            if (in_array($varname_val,$restrict_to)) {
                 $out.='<INPUT type="text" name="'.$varname_val.'['.$i.']" size="10" maxlength="200" value="'.trim($v).'">';
             } else {
                 $out.=trim($v);
@@ -336,7 +336,7 @@ function options__load_object($item_type,$item_name) {
     $pars=array(':item_type'=>$item_type,
                 ':item_name'=>$item_name);
     $query="select * from ".table('objects')."
-            where item_type= :item_type 
+            where item_type= :item_type
             and item_name= :item_name";
     $object=orsee_query($query,$pars);
     $object['item_details']=db_string_to_property_array($object['item_details']);

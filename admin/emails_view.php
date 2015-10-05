@@ -18,11 +18,11 @@ if ($hide_header) {
 if ($proceed) {
     if ($settings['enable_email_module']!='y') redirect ('admin/index.php');
 }
-if ($proceed) {          
+if ($proceed) {
     //$allow=check_allow('emails_show_all','emails_main.php');
 }
 
-if ($proceed) { 
+if ($proceed) {
     if (isset($_REQUEST['message_id']) && $_REQUEST['message_id']) $message_id=$_REQUEST['message_id']; else $message_id='';
     if (!$message_id) redirect('admin/emails_main.php');
 }
@@ -32,7 +32,7 @@ if ($proceed) {
     if (!isset($email['message_id'])) redirect('admin/emails_main.php');
 }
 
-if ($proceed) { 
+if ($proceed) {
     if (isset($_REQUEST['update']) && $_REQUEST['update']) {
         $action='update';
     } elseif (isset($_REQUEST['send']) && $_REQUEST['send']) {

@@ -7,15 +7,15 @@ $title="edit_experiment";
 $jquery=array('arraypicker','textext','datepicker');
 include ("header.php");
 if ($proceed) {
-            
+
     if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) {
         $allow=check_allow('experiment_edit','experiment_show.php?experiment_id='.$_REQUEST['experiment_id']);
         if ($proceed) {
             $edit=orsee_db_load_array("experiments",$_REQUEST['experiment_id'],"experiment_id");
             $edit['experiment_show_type']=$edit['experiment_type'].','.$edit['experiment_ext_type'];
-            if (!check_allow('experiment_restriction_override')) 
+            if (!check_allow('experiment_restriction_override'))
                 check_experiment_allowed($edit,"admin/experiment_show.php?experiment_id=".$edit['experiment_id']);
-        }   
+        }
     } else {
         $allow=check_allow('experiment_edit','experiment_main.php');
     }
@@ -35,11 +35,11 @@ if ($proceed) {
 
         if ($settings['enable_payment_module']=='y' ) {
             if (isset($_REQUEST['payment_types']))
-                $_REQUEST['payment_types']=id_array_to_db_string(multipicker_json_to_array($_REQUEST['payment_types']));        
+                $_REQUEST['payment_types']=id_array_to_db_string(multipicker_json_to_array($_REQUEST['payment_types']));
             if (isset($_REQUEST['payment_budgets']))
                 $_REQUEST['payment_budgets']=id_array_to_db_string(multipicker_json_to_array($_REQUEST['payment_budgets']));
         }
-            
+
         if (!$_REQUEST['experiment_public_name']) {
             message(lang('error_you_have_to_give_public_name'));
             $continue=false;
@@ -77,31 +77,31 @@ if ($proceed) {
             if (!isset($_REQUEST['hide_in_cal']) ||!$_REQUEST['hide_in_cal']) $_REQUEST['hide_in_cal']="n";
 
             if (!isset($_REQUEST['access_restricted']) ||!$_REQUEST['access_restricted']) $_REQUEST['access_restricted']="n";
-    
+
 
 
             $exptypes=explode(",",$_REQUEST['experiment_show_type']);
             $_REQUEST['experiment_type']=trim($exptypes[0]);
             $_REQUEST['experiment_ext_type']=trim($exptypes[1]);
 
-            $edit=$_REQUEST; 
+            $edit=$_REQUEST;
 
             $done=orsee_db_save_array($edit,"experiments",$edit['experiment_id'],"experiment_id");
-    
+
             if ($done) {
                 message (lang('changes_saved'));
                 redirect ("admin/experiment_edit.php?experiment_id=".$edit['experiment_id']);
             } else {
                 message (lang('database_error'));
                 redirect ("admin/experiment_edit.php?experiment_id=".$edit['experiment_id']);
-            }       
+            }
 
-        } 
+        }
 
         $edit=$_REQUEST;
 
     }
-    
+
 }
 
 if ($proceed) {
@@ -147,14 +147,14 @@ if ($proceed) {
 
     echo '      <TR>
                 <TD>'.lang('public_name').':</TD>
-                <TD><INPUT name=experiment_public_name type=text size=40 maxlength=100 
+                <TD><INPUT name=experiment_public_name type=text size=40 maxlength=100
                     value="'.stripslashes($edit['experiment_public_name']).'"></TD>
             </TR>';
 
 
     echo '      <TR>
                 <TD>'.lang('internal_description').':</TD>
-                <TD><textarea name=experiment_description rows=3 cols=30 
+                <TD><textarea name=experiment_description rows=3 cols=30
                     wrap=virtual>'.stripslashes($edit['experiment_description']).'</textarea></TD>
             </TR>';
 
@@ -236,9 +236,9 @@ if ($proceed) {
                         else echo $settings['support_mail'];
                     echo '"></TD>
             </TR>';
-            
+
     }
-    
+
 
     if ($settings['enable_ethics_approval_module']=='y' && check_allow('experiment_edit_ethics_approval_details')) {
     echo '      <TR>
@@ -251,21 +251,21 @@ if ($proceed) {
                                     value="'.$edit['ethics_number'].'"></TD>
                         </TR><TR>
                             <TD colspan="2"><INPUT name="ethics_exempt" type="radio" value="y"';
-    
+
     if ($edit['ethics_exempt']=='y') echo ' CHECKED';
     echo '>'.lang('ethics_exempt_or').'&nbsp;<INPUT name="ethics_exempt" type="radio" value="n"';
     if($edit['ethics_exempt']!='y') echo ' CHECKED';
     echo '>'.lang('ethics_expires_on').'&nbsp;&nbsp;';
     echo formhelpers__pick_date('ethics_expire_date',$edit['ethics_expire_date'],$settings['session_start_years_backward'],$settings['session_start_years_forward']);
-    
+
     echo '          </TD>
                         </TR>
-                    </TABLE>                    
+                    </TABLE>
                     </TD>
             </TR>';
-            
+
     }
-    
+
     if ($settings['enable_payment_module']=='y' ) {
         $payment_types=payments__load_paytypes();
         if ($edit['payment_types'] || is_array($payment_types) && count($payment_types)>1) $show_payment_types=true;
@@ -273,12 +273,12 @@ if ($proceed) {
         $payment_budgets=payments__load_budgets();
         if ($edit['payment_budgets'] || is_array($payment_budgets) && count($payment_budgets)>1) $show_payment_budgets=true;
         else $show_payment_budgets=false;
-    
+
             if ($show_payment_budgets) {
                 echo '<TR>
                         <TD valign="top">'.lang('possible_budgets').'</TD>
                         <TD>';
-                echo payments__budget_multiselectfield("payment_budgets",db_string_to_id_array($edit['payment_budgets'])); 
+                echo payments__budget_multiselectfield("payment_budgets",db_string_to_id_array($edit['payment_budgets']));
                 echo '</TD>
                     </TR>';
             }
@@ -286,7 +286,7 @@ if ($proceed) {
                 echo '<TR>
                         <TD valign="top">'.lang('possible_payment_types').'</TD>
                         <TD>';
-                echo payments__paytype_multiselectfield("payment_types",db_string_to_id_array($edit['payment_types'])); 
+                echo payments__paytype_multiselectfield("payment_types",db_string_to_id_array($edit['payment_types']));
                 echo '<BR></TD>
                     </TR>';
             }
@@ -302,7 +302,7 @@ if ($proceed) {
 
     echo '      <TR>
                 <TD>'.lang('hide_in_stats?').'</TD>
-                <TD><INPUT name="hide_in_stats" type="checkbox" value="y"'; 
+                <TD><INPUT name="hide_in_stats" type="checkbox" value="y"';
     if ($edit['hide_in_stats']=="y") echo " CHECKED";
     echo '>     </TD>
             </TR>';
@@ -337,7 +337,7 @@ if ($proceed) {
         <BR>';
 
     if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id'] && check_allow('experiment_delete')) {
-        echo '  
+        echo '
             <table>
                 <TR>
                     <TD>
@@ -348,11 +348,11 @@ if ($proceed) {
             </table>';
         }
 
-    if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id']) 
+    if (isset($_REQUEST['experiment_id']) && $_REQUEST['experiment_id'])
         echo '  <BR><BR>
             <a href="experiment_show.php?experiment_id='.$_REQUEST['experiment_id'].'"><i class="fa fa-level-up fa-lg" style="padding-right: 3px;"></i>'.
             lang('mainpage_of_this_experiment').'</A>';
-    
+
     echo '</center>';
 
 }

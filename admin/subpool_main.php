@@ -11,7 +11,7 @@ if ($proceed) {
 
 if ($proceed) {
     echo '<center>';
-    
+
     if (check_allow('subjectpool_add')) {
         echo '<BR>'.button_link('subpool_edit.php?addit=true',
                         lang('create_new'),'plus-circle');
@@ -27,19 +27,19 @@ if ($proceed) {
                 <TD></TD>
             </TR></thead>
             <tbody>';
- 
+
     $part_counts=array();
     $query="SELECT count(*) as part_count, subpool_id FROM ".table('participants')." GROUP BY subpool_id";
     $result=or_query($query);
     while ($line=pdo_fetch_assoc($result)) $part_counts[$line['subpool_id']]=$line['part_count'];
-                        
+
     $query="SELECT * FROM ".table('subpools')." ORDER BY subpool_id";
     $result=or_query($query);
 
     $shade=false;
     while ($line=pdo_fetch_assoc($result)) {
         echo '  <tr class="small"';
-        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
+        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
         echo '>
                     <TD>'.$line['subpool_id'].'</TD>

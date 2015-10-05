@@ -18,7 +18,7 @@ if ($proceed) {
 }
 
 if ($proceed) {
-    if ($settings['stop_public_site']=="y" && !isset($expadmindata['adminname']) && !(thisdoc()=="disabled.php")) 
+    if ($settings['stop_public_site']=="y" && !isset($expadmindata['adminname']) && !(thisdoc()=="disabled.php"))
         redirect("public/disabled.php");
 }
 
@@ -55,7 +55,7 @@ if ($proceed) {
         $langarray=lang__get_public_langs();
         if (in_array($_REQUEST['language'],$langarray)) {
             $_SESSION['pauthdata']['language']=$_REQUEST['language'];
-        } 
+        }
     }
     $lang=load_language($_SESSION['pauthdata']['language']);
 }
@@ -106,9 +106,9 @@ if ($proceed) {
                             $pars=array(':token'=>$participant['pwreset_token'],
                                     ':participant_id'=>$participant['participant_id'],
                                     ':now'=>time());
-                            $query="UPDATE ".table('participants')." 
+                            $query="UPDATE ".table('participants')."
                                     SET pwreset_token = :token,
-                                    pwreset_request_time = :now 
+                                    pwreset_request_time = :now
                                     WHERE participant_id= :participant_id";
                             $done=or_query($query,$pars);
                             $_SESSION['pw_reset_token']=$participant['pwreset_token'];
@@ -120,12 +120,12 @@ if ($proceed) {
                 // and if we only allow username/passsword, send to login page
                     if (isset($mobile) && $mobile) redirect("public/participant_login_mob.php");
                     else redirect("public/participant_login.php");
-                } 
+                }
             } else {
-            
-            
+
+
             }
-        }   
+        }
         if ($proceed) {
             // do some other checks when we are logged in
             $statuses=participant_status__get_statuses();
@@ -141,7 +141,7 @@ if ($proceed) {
 
 if ($proceed) {
     $pagetitle=$settings['default_area'];
-    
+
     if (!isset($title)) $title="";
     if ($title) $title=lang($title);
     $pagetitle=$pagetitle.': '.$title;

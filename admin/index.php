@@ -14,7 +14,7 @@ if ($proceed) {
     echo content__get_content("admin_mainpage");
 
     echo '</center><BR><BR>';
-    
+
 }
 include("footer.php");
 

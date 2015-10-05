@@ -52,12 +52,12 @@ if ($proceed) {
         // prepare lang stuff
         foreach ($inv_langs as $inv_lang) {
             $sitem[$inv_lang]=$sitem[$inv_lang.'_subject']."\n".$sitem[$inv_lang.'_body'];
-        }   
+        }
 
         // well: just to be sure: for all other languages, copy the public default lang
         foreach ($installed_langs as $inst_lang) {
             if (!in_array($inst_lang,$inv_langs)) $sitem[$inst_lang]=$sitem[$settings['public_standard_language']];
-        }   
+        }
 
         // is unknown or known?
         if (!$id) $done=lang__insert_to_lang($sitem);
@@ -72,13 +72,13 @@ if ($proceed) {
             // send mails!
 
             $allow=check_allow('experiment_invite_participants','experiment_mail_participants.php?experiment_id='.$experiment_id);
-    
+
             if ($allow) {
                 $whom= ($sendall) ? "all" : "not-invited";
                 $measure_start=getmicrotime();
                 $sent=experimentmail__send_invitations_to_queue($experiment_id,$whom);
                 message ($sent.' '.lang('xxx_inv_mails_added_to_mail_queue'));
-                $measure_end=getmicrotime();    
+                $measure_end=getmicrotime();
                 message(lang('time_needed_in_seconds').': '.round(($measure_end-$measure_start),5));
                 log__admin("experiment_send_invitations","experiment:".$experiment['experiment_name']);
                 redirect ("admin/experiment_mail_participants.php?experiment_id=".$experiment_id);
@@ -94,11 +94,11 @@ if ($proceed) {
 
 if ($proceed) {
     $pars=array(':experiment_id'=>$experiment_id);
-    $query="SELECT * from ".table('lang')." 
-            WHERE content_type='experiment_invitation_mail' 
+    $query="SELECT * from ".table('lang')."
+            WHERE content_type='experiment_invitation_mail'
             AND content_name= :experiment_id";
     $experiment_mail=orsee_query($query,$pars);
-    
+
     if (!isset($experiment_mail['lang_id'])) {
         $experiment_mail=array('lang_id'=>'');
         foreach ($inv_langs as $inv_lang) $experiment_mail[$inv_lang]='';
@@ -188,11 +188,11 @@ if ($proceed) {
                     <TD colspan=3>'.lang('inv_mails_in_mail_queue').': ';
                     $qmails=experimentmail__mails_in_queue("invitation",$experiment_id);
                     echo $qmails;
-                    
+
         if (check_allow('mailqueue_show_experiment')) {
                 echo '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'.button_link('experiment_mailqueue_show.php?experiment_id='.
                         $experiment['experiment_id'],lang('monitor_experiment_mail_queue'),'envelope-square');
-        }           
+        }
             echo '</TD></TR></TABLE>
                 </TD>
             </TR>';

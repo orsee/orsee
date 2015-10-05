@@ -26,8 +26,8 @@ if ($proceed) {
         'reverse_data'=>true,
         'background_color'=>$color['stats_graph_background']
         );
-        
-    $stats_data=$_SESSION['stats_data']; 
+
+    $stats_data=$_SESSION['stats_data'];
      if(isset($_REQUEST['stype']) && $_REQUEST['stype'] && isset($stats_data[$_REQUEST['stype']])) {
         $stype= $_REQUEST['stype'];
         if ($stats_data[$stype]['charttype']=='multibars') {
@@ -81,8 +81,8 @@ if ($proceed) {
 
     // Remember that angles other than 90 are taken as 0 when working with fixed fonts.
     if(isset($stat['x_label_angle'])) {
-        $graph->SetXLabelAngle($stat['x_label_angle']); 
-    } else { 
+        $graph->SetXLabelAngle($stat['x_label_angle']);
+    } else {
         $graph->SetXLabelAngle(0);
     }
     $graph->SetYLabelAngle(0);

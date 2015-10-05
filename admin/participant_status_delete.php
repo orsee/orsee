@@ -57,13 +57,13 @@ if ($proceed) {
             $merge_with=$_REQUEST['merge_with'];
             // transaction?
             $pars=array(':status_id'=>$status_id,':merge_with'=>$merge_with);
-            $query="UPDATE ".table('participants')." 
-                    SET status_id= :merge_with 
+            $query="UPDATE ".table('participants')."
+                    SET status_id= :merge_with
                     WHERE status_id= :status_id";
             $result=or_query($query,$pars);
-        
+
             $pars=array(':status_id'=>$status_id);
-            $query="DELETE FROM ".table('participant_statuses')." 
+            $query="DELETE FROM ".table('participant_statuses')."
                     WHERE status_id= :status_id";
             $result=or_query($query,$pars);
 
@@ -71,7 +71,7 @@ if ($proceed) {
                     WHERE content_name= :status_id
                     AND content_type='participant_status_name'";
             $result=or_query($query,$pars);
-        
+
             $query="DELETE FROM ".table('lang')."
                     WHERE content_name= :status_id
                     AND content_type='participant_status_error'";
@@ -107,9 +107,9 @@ if ($proceed) {
                 <TR>
                 <TD align=left colspan=2>
                 '.lang('merge_participant_status_with').'
-                '.participant_status__select_field('merge_with','',array(0,$status_id)).' 
+                '.participant_status__select_field('merge_with','',array(0,$status_id)).'
                 <BR>
-                <INPUT class="button" type=submit name=reallydelete value="'.lang('yes_delete').'">     
+                <INPUT class="button" type=submit name=reallydelete value="'.lang('yes_delete').'">
                 </TD>
             </TR>
             <TR>

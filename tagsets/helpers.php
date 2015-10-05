@@ -136,14 +136,14 @@ function ortime__array_ampm_time_to_array_mil_time ($a) { // unused?
     return $r;
 }
 
-function ortime__format($unixtime,$options='',$language='') { 
+function ortime__format($unixtime,$options='',$language='') {
     // possible options: hide_time hide_second hide_date hide_year
     global $lang;
-    
+
     $op=array('hide_second'=>true);
-    $opa=explode(",",$options); 
+    $opa=explode(",",$options);
     foreach ($opa as $o) { $to=explode(":",trim($o)); if (isset($to[1]) && trim($to[1])=="false") unset($op[$to[0]]); else $op[$to[0]]=true; }
-        
+
     $arr=ortime__sesstime_to_array(ortime__unixtime_to_sesstime($unixtime));
     $p=ortime__array_mil_time_to_array_ampm_time($arr);
     $arr['h12']=$p['h'];
@@ -168,7 +168,7 @@ function ortime__format($unixtime,$options='',$language='') {
         $dformat=load_language_symbol('format_datetime_'.$fd,$language);
         $tformat=load_language_symbol('format_datetime_'.$ft,$language);
     }
-    
+
     $f="";
     if(!isset($op['hide_date'])) $f.=$dformat;
     if (!isset($op['hide_date']) && !isset($op['hide_time'])) $f.=" ";
@@ -208,7 +208,7 @@ function mult_strpos($haystack,$needle,$sort=true) {
 function date__parse_string($string,$format) { // unused?
     // check for existence and position of %Y, %m, %d
     $vars=mult_strpos($format,array('%Y','%m','%d'));
-    
+
     // check whether there are delimiters, and choose relaxed or strict format
     if (preg_match("/(".implode(").+(",$vars).")/i",$format)) {
         $ye='([0-9]{2,4})'; $me='([0-9]{1,2})'; $de='([0-9]{1,2})'; // relaxed format

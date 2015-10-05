@@ -13,8 +13,8 @@ if ($proceed) {
     if (isset($_REQUEST['save_data'])) {
 
 
-        redirect('admin/'.thisdoc());       
-    } 
+        redirect('admin/'.thisdoc());
+    }
 }
 
 if ($proceed) {
@@ -45,10 +45,10 @@ if ($proceed) {
 
         if (count($columns)==0) {
             message(lang('no_data_columns_selected'));
-            redirect('admin/'.thisdoc());       
-        } else { 
+            redirect('admin/'.thisdoc());
+        } else {
             $query="SELECT count(*) as num_matches, ".implode(', ',$columns)."
-                    FROM ".table('participants')." 
+                    FROM ".table('participants')."
                     GROUP BY ".implode(', ',$columns)."
                     HAVING num_matches>1
                     ORDER BY num_matches DESC";
@@ -58,10 +58,10 @@ if ($proceed) {
             }
             if (check_allow('participants_edit')) {
                 echo javascript__edit_popup();
-            }           
+            }
             $part_statuses=participant_status__get_statuses();
             $cols=participant__get_result_table_columns('result_table_search_duplicates');
-            
+
             echo '<TABLE class="or_listtable"><thead>';
             echo '<TR style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">';
             echo '<TD>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>';
@@ -78,7 +78,7 @@ if ($proceed) {
                 }
                 echo '<TR><TD colspan="'.$num_cols.'"><B>'.implode(", ",$mvals).'</B></TD></TR>';
                 $query="SELECT * FROM ".table('participants')."
-                        WHERE ".implode(" AND ",$qclause)." 
+                        WHERE ".implode(" AND ",$qclause)."
                         ORDER BY creation_time";
                 $result=or_query($query,$pars); $shade=false;
                 while ($p = pdo_fetch_assoc($result)) {
@@ -95,16 +95,16 @@ if ($proceed) {
             echo '</tbody></TABLE>';
         }
     } else {
-        
+
         $pform_fields=participantform__load();
         $field_names=array();
         foreach ($pform_fields as $f) {
             $field_names[$f['mysql_column_name']]=lang($f['name_lang']);
         }
-        
+
         echo '<FORM action="participants_duplicates.php" method="POST">';
         echo '<B></B>';
-        
+
         echo '<TABLE class="or_formtable"><TR><TD>
                 <TABLE width="100%" border=0 class="or_panel_title"><TR>
                         <TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'" align="center">
@@ -116,19 +116,19 @@ if ($proceed) {
         $num_cols=4; $c=0;
         echo '<TABLE><TR>';
         foreach ($field_names as $m=>$n) {
-            $c++; 
+            $c++;
             if ($c>$num_cols) {
                 echo '</TR><TR>';
                 $c=1;
             }
-            echo '<TD><INPUT type="checkbox" name="search_for['.$m.']" value="y">'.$n.'</TD>'; 
+            echo '<TD><INPUT type="checkbox" name="search_for['.$m.']" value="y">'.$n.'</TD>';
         }
         if ($c<$num_cols) for($i=$c; $i<$num_cols; $i++) echo '<TD></TD>';
         echo '</TR><TR><TD align="center" colspan="'.$num_cols.'">
                 <INPUT class="button" type="submit" name="search" value="'.lang('search').'">
-                </TD></TR>';        
-        echo '</TABLE>'; 
-        echo '</TD></TR></TABLE>';  
+                </TD></TR>';
+        echo '</TABLE>';
+        echo '</TD></TR></TABLE>';
         echo '</FORM>';
     }
 }

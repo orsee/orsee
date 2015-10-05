@@ -28,7 +28,7 @@ if ($proceed) {
             '.$experiment['experiment_name'].'
             </TD>';
     echo '</TR></TABLE>';
-        
+
     if ((isset($_REQUEST['dropselected']) && $_REQUEST['dropselected']) || (isset($_REQUEST['dropall']) && $_REQUEST['dropall'])) {
 
         // data base queries for assign ...
@@ -44,23 +44,23 @@ if ($proceed) {
             }
             $assign_ids=$selected_ids; unset($selected_ids);
         }
-        
+
         $instring=implode("','",$assign_ids);
         if (count($assign_ids)>0) {
             foreach ($assign_ids as $id) {
                 $pars[]=array(':participant_id'=>$id,':experiment_id'=>$experiment_id);
             }
-            $query="DELETE FROM ".table('participate_at')."  
-                    WHERE experiment_id= :experiment_id  
-                    AND session_id=0 AND pstatus_id = 0 
+            $query="DELETE FROM ".table('participate_at')."
+                    WHERE experiment_id= :experiment_id
+                    AND session_id=0 AND pstatus_id = 0
                     AND participant_id= :participant_id";
             $done=or_query($query,$pars);
             $assigned_count=count($assign_ids);
-            log__admin("experiment_delete_assigned_participants","experiment:".$experiment['experiment_name'].", count:".$assigned_count);      
+            log__admin("experiment_delete_assigned_participants","experiment:".$experiment['experiment_name'].", count:".$assigned_count);
             $done=query__save_query($_SESSION['lastquery_deassign_'.$experiment_id],'deassign',$experiment_id,array('assigned_count'=>$assigned_count,'selected'=>$selected,'totalcount'=>$totalcount));
         } else {
             $assigned_count=0;
-        }   
+        }
 
         $_SESSION['deassign_ids_'.$experiment_id]=array();
         message($assigned_count.' '.lang('xxx_participants_removed'));
@@ -70,17 +70,17 @@ if ($proceed) {
         $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         if(isset($_REQUEST['search_sort'])){
             $posted_query_json=$_SESSION['lastquery_deassign_'.$experiment_id];
-            $query_id=$_SESSION['lastqueryid_deassign_'.$experiment_id];    
+            $query_id=$_SESSION['lastqueryid_deassign_'.$experiment_id];
             $posted_query=$json->decode($posted_query_json);
             $sort=query__get_sort('assign',$_REQUEST['search_sort']);  // sanitize sort
         } else {
             // store new query in session
-            $query_id=time();       
+            $query_id=time();
             if(isset($_REQUEST['form'])) $posted_query=$_REQUEST['form']; else $posted_query=array('query'=>array());
-            $posted_query_json=$json->encodeUnsafe($posted_query);      
+            $posted_query_json=$json->encodeUnsafe($posted_query);
             $_SESSION['lastquery_deassign_'.$experiment_id] =  $posted_query_json;
             $_SESSION['lastqueryid_deassign_'.$experiment_id] =  $query_id;
-            $sort=query__load_default_sort('assign',$experiment_id);    
+            $sort=query__load_default_sort('assign',$experiment_id);
         }
 
         // show query in human-readable form
@@ -88,25 +88,25 @@ if ($proceed) {
         $pseudo_query_display=query__display_pseudo_query($pseudo_query_array,false);
 
         echo '<TABLE border=0>';
-        echo '<TR><TD style="outline: 1px solid black; background: '.$color['search__pseudo_query_background'].'">';        
+        echo '<TR><TD style="outline: 1px solid black; background: '.$color['search__pseudo_query_background'].'">';
         echo $pseudo_query_display;
         echo '</TD></TR></TABLE>';
-        echo '<BR><BR>';    
+        echo '<BR><BR>';
         $query_array=query__get_query_array($posted_query['query']);
 
         $yetassigned_clause=array('query'=>"participant_id IN (SELECT participant_id FROM ".table('participate_at')." WHERE experiment_id= :experiment_id AND session_id=0 AND pstatus_id=0)",'pars'=>array(':experiment_id'=>$experiment_id));
         $additional_clauses=array($yetassigned_clause);
-        
+
         $query=query__get_query($query_array,$query_id,$additional_clauses,$sort);
-        
+
         //echo '<TABLE width="70%" border=0><TR><TD><B>Query:</B></TD></TR><TR><TD>';
         //echo $query['query'];
         //echo '</TD></TR></TABLE>';
         //dump_array($query['pars'],"Parameters");
-        
+
         echo  '<FORM name="part_list" method="POST" action="'.thisdoc().'">
                 <INPUT type=hidden name=experiment_id value="'.$experiment_id.'">';
-                        
+
         // show list of results
         $assign_ids=query_show_query_result($query,"deassign");
         $_SESSION['deassign_ids_'.$experiment_id]=$assign_ids;
@@ -121,19 +121,19 @@ if ($proceed) {
         $hide_modules=array('statusids');
         $status_query=participant_status__get_pquery_snippet("eligible_for_experiments");
         $saved_queries=query__load_saved_queries('deassign',$settings['queryform_experimentdeassign_savedqueries_numberofentries'],$experiment_id);
-    
+
         echo experiment__count_participate_at($experiment_id).' '.
         lang('participants_assigned_to_this_experiment');
 
         echo '<CENTER><TABLE width="80%"><TR><TD>';
         query__show_form($hide_modules,$experiment,$load_query,lang('search_and_show'),$saved_queries,$status_query);
-        echo '</TD></TR></TABLE></CENTER>';    
+        echo '</TD></TR></TABLE></CENTER>';
 
     }
 }
 
 if ($proceed) {
-    
+
     echo '  <A HREF="experiment_show.php?experiment_id='.$experiment_id.'">
             '.lang('mainpage_of_this_experiment').'</A><BR><BR>
 

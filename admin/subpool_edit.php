@@ -16,7 +16,7 @@ if ($proceed) {
     // load languages
     $languages=get_languages();
     $exptypes=load_external_experiment_types();
-    
+
     if ($subpool_id) {
         $subpool=orsee_db_load_array("subpools",$subpool_id,"subpool_id");
         if (!isset($subpool['subpool_id'])) redirect ("admin/subpool_main.php");
@@ -26,7 +26,7 @@ if ($proceed) {
             foreach ($exptype_ids as $exptype_id) {
                 $subpool['exptypes'][$exptype_id]=$exptype_id;
             }
-            $pars=array(':subpool_id'=>$subpool_id);    
+            $pars=array(':subpool_id'=>$subpool_id);
             $query="SELECT * from ".table('lang')." WHERE content_type='subjectpool' AND content_name= :subpool_id";
             $selfdesc=orsee_query($query,$pars);
         }
@@ -54,7 +54,7 @@ if ($proceed) {
             message(lang('at_minimum_one_exptype_mapping_required'));
             $continue=false;
         }
-        
+
         $selfdesc=$_REQUEST['selfdesc'];
         if (!$subpool_id || $subpool_id > 1) {
             foreach ($languages as $language) {
@@ -64,7 +64,7 @@ if ($proceed) {
                 }
             }
         }
-        
+
         if ($subpool_id==1) {
             $_REQUEST['show_at_registration_page']='n';
             foreach ($languages as $language) $selfdesc[$language]='';
@@ -82,8 +82,8 @@ if ($proceed) {
             } else {
                 $new=false;
                 $pars=array(':subpool_id'=>$subpool_id);
-                $query="SELECT * from ".table('lang')." 
-                        WHERE content_type='subjectpool' 
+                $query="SELECT * from ".table('lang')."
+                        WHERE content_type='subjectpool'
                         AND content_name= :subpool_id";
                 $lsub=orsee_query($query,$pars);
             }
@@ -118,7 +118,7 @@ if ($proceed) {
         <TABLE class="or_panel">
             <TR><TD>'.lang('id').':</TD><TD>'.$subpool_id.'</TD></TR>
             <TR><TD>'.lang('name').':</TD>
-                <TD><INPUT name="subpool_name" type=text size=40 maxlength=100 
+                <TD><INPUT name="subpool_name" type=text size=40 maxlength=100
                         value="'.$subpool['subpool_name'].'"></TD>
             </TR><TR><TD>'.lang('description').':</TD>
                 <TD><textarea name="subpool_description" rows=5 cols=30 wrap=virtual>'.
@@ -127,7 +127,7 @@ if ($proceed) {
                 <TD>';
     experiment_ext_types__checkboxes('exptypes',lang('lang'),$subpool['exptypes']);
     echo '  </TD></TR>';
-    
+
     if (!$subpool_id || $subpool_id>1) {
         echo '<TR>
                 <TD>'.lang('show_at_registration_page?').'</TD>

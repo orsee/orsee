@@ -18,7 +18,7 @@ if ($proceed) {
 if ($proceed) {
     if ($upload['experiment_id']>0) {
         $experiment_id=$upload['experiment_id'];
-        if (!check_allow('experiment_restriction_override')) 
+        if (!check_allow('experiment_restriction_override'))
             check_experiment_allowed($experiment_id,"admin/experiment_show.php?experiment_id=".$experiment_id);
     } else $experiment_id=0;
 }
@@ -54,7 +54,7 @@ if ($proceed) {
     ob_end_clean();
     header("Pragma: public");
     header("Expires: 0");
-    header("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 
     header("Content-Type: ".$mime_type."; name=\"$filename\"");
     header( "Content-Disposition: attachment; filename=\"$filename\"");

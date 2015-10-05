@@ -34,14 +34,14 @@ if ($proceed) {
     $query="SELECT *
             FROM ".table('faqs').", ".table('lang')."
             WHERE content_type='faq_question'
-            AND ".table('faqs').".faq_id=".table('lang').".content_name 
+            AND ".table('faqs').".faq_id=".table('lang').".content_name
             ORDER BY ".lang('lang');
     $result=or_query($query);
 
     $shade=false;
     while ($line=pdo_fetch_assoc($result)) {
         echo '  <tr class="small"';
-        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
+        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
         echo '>';
         foreach ($languages as $language) {

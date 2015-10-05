@@ -37,7 +37,7 @@ if ($proceed) {
         }
     }
 }
-    
+
 if ($proceed) {
     if (isset($_REQUEST['delete_redundant']) && $_REQUEST['delete_redundant']) {
         $pars=array(); foreach ($redundant as $r) $pars[]=array(':mysql_column_name'=>$r);
@@ -49,9 +49,9 @@ if ($proceed) {
 }
 
 
-if ($proceed) { 
+if ($proceed) {
     echo '<center>';
-        
+
     if (count($redundant)>0) {
         $m=lang('pfields_redundant_configurations_message').'<BR><B>'.implode(", ",$redundant).'</B>';
         $m.='<BR><FORM action="'.thisdoc().'" method="POST">
@@ -72,11 +72,11 @@ if ($proceed) {
         echo '<TD></TD>';
         echo '</TR></thead>
             <tbody>';
-    
+
     $shade=false;
     foreach ($user_columns as $k=>$uc) {
         echo '<tr';
-        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
+        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
         echo '>';
         echo '<TD>'.$k.'</TD>';
@@ -91,15 +91,15 @@ if ($proceed) {
             echo '<TD>'.lang('no').'</TD>';
             echo '<TD>-</TD>';
             echo '<TD>-</TD>';
-            echo '<TD><A HREF="options_participant_profile_edit.php?mysql_column_name='.$k.'">'.lang('configure').'</A></TD>';  
+            echo '<TD><A HREF="options_participant_profile_edit.php?mysql_column_name='.$k.'">'.lang('configure').'</A></TD>';
         }
         echo '</TR>';
-    } 
+    }
     echo '</tbody></TABLE>';
 
     echo '<TABLE width="80%"><TR><TD>'.
             button_link('options_participant_profile_add.php',
-                    lang('create_new_mysql_table_column'),'plus-circle').' 
+                    lang('create_new_mysql_table_column'),'plus-circle').'
         </TD></TR></TABLE>';
 
     echo '<BR><BR><A href="options_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';

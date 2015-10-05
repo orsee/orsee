@@ -10,12 +10,12 @@ if ($proceed) {
 
 if ($proceed) {
     $form=true;
-    if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']=="12345" && isset($_REQUEST['doit'])) { 
+    if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']=="12345" && isset($_REQUEST['doit'])) {
         $default_inactive_status=participant_status__get("is_default_inactive");
         $pars=array(':participant_id'=>$participant_id,':default_inactive_status'=>$default_inactive_status);
-        $query="UPDATE ".table('participants')." 
+        $query="UPDATE ".table('participants')."
                 SET status_id= :default_inactive_status,
-                deletion_time='".time()."'  
+                deletion_time='".time()."'
                 WHERE participant_id= :participant_id";
         $done=or_query($query,$pars);
         log__participant("delete",$participant_id);
@@ -23,7 +23,7 @@ if ($proceed) {
         message (lang('removed_from_invitation_list'));
         redirect("public/");
     }
-}   
+}
 
 if ($proceed) {
     if ($form) {

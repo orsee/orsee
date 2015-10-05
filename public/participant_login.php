@@ -11,8 +11,8 @@ if ($proceed) {
         message(lang('logout'));
         message (lang('password_changed_log_in_again'));
     }
-    
-    if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url']) 
+
+    if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url'])
         $_SESSION['requested_url']=$_REQUEST['requested_url'];
 
     if (isset($_REQUEST['login']) && isset($_REQUEST['email']) && isset($_REQUEST['password'])) {
@@ -33,7 +33,7 @@ if ($proceed) {
 if ($proceed) {
     echo '<CENTER>';
     show_message();
-    
+
     echo '<BR><BR><form name="login" action="participant_login.php" method=post>
         <table class="or_formtable">
         <TR><TD>'.lang('email').':</TD><TD>
@@ -47,11 +47,11 @@ if ($proceed) {
         <input class="button" type=submit name=login value="'.lang('login').'">
         </TD></TR>
         </TABLE>
-        
+
         <BR><BR>
         <A HREF="participant_reset_pw.php"><FONT class="small">'.lang('forgot_your_password?').'</FONT></A>
         ';
-    
+
     echo '</CENTER>';
 }
 include("footer.php");

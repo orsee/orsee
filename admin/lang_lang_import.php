@@ -42,8 +42,8 @@ if ($proceed) {
                 message(lang('error_uploaded_file_not_orsee_lang_file'));
                 redirect ("admin/lang_lang_import.php?lang_id=".$lang_id);
             }
-            
-            if ($proceed) { 
+
+            if ($proceed) {
                 // load old lang
                 $old_lang=array();
                 $query="SELECT content_type, content_name, ".$lang_id."
@@ -53,8 +53,8 @@ if ($proceed) {
                     if ($line['content_value']==NULL) $line['content_value']="";
                     $old_lang[$line['content_type']][$line['content_name']]=$line['content_value'];
                 }
-            
-            
+
+
                 $update=array();
                 $upgrade=array();
 
@@ -73,8 +73,8 @@ if ($proceed) {
                     redirect ("admin/lang_lang_import.php?lang_id=".$lang_id);
                 }
             }
-                
-            if ($proceed) { 
+
+            if ($proceed) {
                 $ignored=0; $errors=0;
 
                 if ($do_update) {
@@ -87,9 +87,9 @@ if ($proceed) {
                                 $pars[]=array(':value'=>$value,':type'=>$type,':name'=>$name);
                             }
                         }
-                        $query="UPDATE ".table('lang')." 
-                                SET ".$lang_id."= :value 
-                                WHERE content_type= :type 
+                        $query="UPDATE ".table('lang')."
+                                SET ".$lang_id."= :value
+                                WHERE content_type= :type
                                 AND content_name= :name";
                         $done=or_query($query,$pars);
                         $imported[]=count($pars).' '.$type;
@@ -99,8 +99,8 @@ if ($proceed) {
                 } else {
                     foreach ($update as $item) $ignored=$ignored+count($item);
                 }
-        
-                // add new items    
+
+                // add new items
                 if ($do_upgrade) {
                     $query="SELECT max(lang_id) as max_id FROM ".table('lang');
                     $line=orsee_query($query);
@@ -120,10 +120,10 @@ if ($proceed) {
                                 }
                             }
                         }
-                        if (count($upars)>0) {                    
+                        if (count($upars)>0) {
                                 $query="UPDATE ".table('lang')."
-                                    SET ".$lang_id."= :value 
-                                    WHERE content_type= :type 
+                                    SET ".$lang_id."= :value
+                                    WHERE content_type= :type
                                     AND content_name= :name";
                                 $done=or_query($query,$upars);
                         }
@@ -182,7 +182,7 @@ if ($proceed) {
                 </TD>
                 <TD width=50%>
                     This means that only language symbols already defined in the system
-                    will be imported. Existing terms will be overwritten. Use this to 
+                    will be imported. Existing terms will be overwritten. Use this to
                     install a new language on this system.
                 </TD>
             </TR>

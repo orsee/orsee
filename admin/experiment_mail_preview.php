@@ -20,8 +20,8 @@ if ($proceed) {
 
 if ($proceed) {
     $pars=array(':experiment_id'=>$experiment_id);
-    $query="SELECT * from ".table('lang')." 
-            WHERE content_type='experiment_invitation_mail' 
+    $query="SELECT * from ".table('lang')."
+            WHERE content_type='experiment_invitation_mail'
             AND content_name= :experiment_id";
     $experiment_mail=orsee_query($query,$pars);
 
@@ -36,8 +36,8 @@ if ($proceed) {
     echo '</TR></TABLE>';
 
     echo '<TABLE class="or_formtable" style="width: 80%;">';
-    
-    echo '<TR><TD colspan=2>                        
+
+    echo '<TR><TD colspan=2>
             '.button_link('experiment_mail_participants.php?experiment_id='.urlencode($experiment_id),
                             lang('back_to_mail_page'),'backward','font-size: 8pt;').'
             </TD></TR>';
@@ -50,11 +50,11 @@ if ($proceed) {
         if ($experiment['experiment_type']=="laboratory") {
             $sessionlist=experimentmail__get_session_list($experiment_id,$inv_lang);
         } else $sessionlist='';
-        
+
         $pform_fields=participant__load_participant_email_fields($inv_lang);
         $experimentmail=experimentmail__preview_fake_participant_details($pform_fields);
         $experimentmail=experimentmail__get_invitation_mail_details($experimentmail,$experiment,$sessionlist);
-        if ($experiment['sender_mail']) $sendermail=$experiment['sender_mail']; else $sendermail=$settings['support_mail'];     
+        if ($experiment['sender_mail']) $sendermail=$experiment['sender_mail']; else $sendermail=$settings['support_mail'];
         $email_text=process_mail_template(stripslashes($body),$experimentmail);
 
         if (count($inv_langs) > 1) {
@@ -83,7 +83,7 @@ if ($proceed) {
             <TR>
                 <TD valign=top bgcolor="'.$color['content_background_color'].'" colspan=2>
                     '.nl2br($email_text);
-                if (isset($experimentmail['include_footer']) && $experimentmail['include_footer']=="y") 
+                if (isset($experimentmail['include_footer']) && $experimentmail['include_footer']=="y")
                     echo nl2br(stripslashes(experimentmail__get_mail_footer(0)));
         echo '      </TD>
             </TR>
@@ -92,7 +92,7 @@ if ($proceed) {
 
     }
 
-        echo '<TR><TD colspan=2>                        
+        echo '<TR><TD colspan=2>
             '.button_link('experiment_mail_participants.php?experiment_id='.urlencode($experiment_id),
                             lang('back_to_mail_page'),'backward','font-size: 8pt;').'
             </TD></TR>';

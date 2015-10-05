@@ -194,14 +194,14 @@ if (!$allset) {
         $squery="SELECT adminname FROM ".$new_db_name.".".table('admin')."";
         $result=or_query($squery);
         while ($line=pdo_fetch_assoc($result)) $existing_admins[]=$line['adminname'];
-    
+
         $squery="SELECT * FROM ".$old_db_name.".".table('admin')."";
         $result=or_query($squery);
         while ($line=pdo_fetch_assoc($result)) {
             if (!in_array($line['adminname'],$existing_admins)) {
-                $line['pw_update_requested']=1; 
+                $line['pw_update_requested']=1;
                 $line['password_crypt']=$line['password'];
-                $line=convert_array_to_UTF8($line); 
+                $line=convert_array_to_UTF8($line);
                 if ($do_insert) $done=orsee_db_save_array($line,"admin",$line['admin_id'],"admin_id");
             }
         }
@@ -211,7 +211,7 @@ if (!$allset) {
         echo "Importing admin log from ".table('admin_log')."\n";
         copy_table('admin_log', 'log_id');
     }
-    
+
     if ($import_custom_admin_types) {
         echo "Importing custom admin types from ".table('admin_types')."\n";
         copy_table('admin_types', 'type_id',"WHERE type_name NOT IN (SELECT type_name FROM ".$new_db_name.".".table('admin_types').")",false);
@@ -226,30 +226,30 @@ if (!$allset) {
         echo "Importing experiment types from ".table('experiment_types')."\n";
         copy_table('experiment_types', 'exptype_id');
     }
-    
+
     if ($import_experiments) {
         echo "Importing experiments from ".table('experiments')."\n";
         $dquery="DELETE FROM ".$new_db_name.".".table('experiments')."";
         if ($do_delete) $done=or_query($dquery);
         $squery="SELECT * FROM ".$old_db_name.".".table('experiments')."";
         $result=or_query($squery);
-        $trans_list=array('experiment_class','experimenter_mail','experimenter'); 
+        $trans_list=array('experiment_class','experimenter_mail','experimenter');
         while ($line=pdo_fetch_assoc($result)) {
             $line['experiment_class']=commalist_to_dbstring($line['experiment_class']);
             $line['experimenter_mail']=experimentercommalist_to_newdbstring($line['experimenter_mail']);
             $line['experimenter']=experimentercommalist_to_newdbstring($line['experimenter']);
             if (isset($old_exptype_name_to_id[$line['experiment_ext_type']]))  $line['experiment_ext_type']=$old_exptype_name_to_id[$line['experiment_ext_type']];
             elseif (isset($old_exptype_name_to_id[trim($line['experiment_ext_type'])]))  $line['experiment_ext_type']=$old_exptype_name_to_id[trim($line['experiment_ext_type'])];
-            $line=convert_array_to_UTF8($line); 
+            $line=convert_array_to_UTF8($line);
             if ($do_insert) $done=orsee_db_save_array($line,"experiments",$line['experiment_id'],"experiment_id");
         }
     }
-    
+
     if ($import_faqs) {
         echo "Importing FAQs from ".table('faqs')."\n";
         copy_table('faqs', 'faq_id');
     }
-    
+
     if ($import_lab_bookings) {
         echo "Importing non-session lab bookings from ".table('lab_space')." to table ".table('events')."\n";
         // default lab booking category: 1
@@ -262,7 +262,7 @@ if (!$allset) {
             $line['event_start']=mult_time_to_sesstime($line,'space_start_');
             $line['event_stop']=mult_time_to_sesstime($line,'space_stop_');
             $line['event_category']=1;
-            $line=convert_array_to_UTF8($line); 
+            $line=convert_array_to_UTF8($line);
             if ($do_insert) $done=orsee_db_save_array($line,"events",$line['space_id'],"event_id");
         }
     }
@@ -277,7 +277,7 @@ if (!$allset) {
             if ($do_delete) $done=or_query($dquery);
 
             $squery="SELECT * FROM ".$old_db_name.".".table('lang')." WHERE content_type='".$cat."'";
-            $result=or_query($squery); 
+            $result=or_query($squery);
             while ($line=pdo_fetch_assoc($result)) {
                 if ($first) {
                     foreach ($line as $k=>$v) {
@@ -287,7 +287,7 @@ if (!$allset) {
                     $first=false;
                 }
                 foreach ($new_langs as $new_lang) { if (!isset($line[$new_lang])) $line[$new_lang]=$line[$old_langs[0]]; }
-                $line=convert_array_to_UTF8($line); 
+                $line=convert_array_to_UTF8($line);
                 if ($do_insert) $done=lang__insert_to_lang($line);
             }
         }
@@ -310,13 +310,13 @@ if (!$allset) {
                 while ($line=pdo_fetch_assoc($result)) {
                     if ($first) {
                         echo "Importing language items for profile field old: ".$oldf.", new: ".$newf." from ".table('lang')."\n";
-                        $first=false;   
+                        $first=false;
                     }
                     foreach ($new_langs as $new_lang) { if (!isset($line[$new_lang])) $line[$new_lang]=$line[$old_langs[0]]; }
                     $line['content_type']=$newf;
-                    $line=convert_array_to_UTF8($line); 
+                    $line=convert_array_to_UTF8($line);
                     if ($do_insert) $done=lang__insert_to_lang($line);
-                }   
+                }
             }
         }
     }
@@ -354,7 +354,7 @@ if (!$allset) {
 
             $n['status_id']=$participant_status_mapping[$o['deleted']][$o['excluded']];
             if ($o['deleted']=='y') $n['deletion_time']=time(); else $n['deletion_time']=0;
-            
+
             if ($replace_tokens=='y') $n['participant_id_crypt']=make_p_token(get_entropy($n));
 
             foreach ($pform_mapping as $oldf=>$newf) {
@@ -362,7 +362,7 @@ if (!$allset) {
                     $n[$newf]=$o[$oldf];
                 }
             }
-            $n=convert_array_to_UTF8($n);   
+            $n=convert_array_to_UTF8($n);
             if ($do_insert) $done=orsee_db_save_array($n,"participants",$n['participant_id'],"participant_id");
         }
     }
@@ -376,32 +376,32 @@ if (!$allset) {
         while ($line=pdo_fetch_assoc($result)) {
             $line['session_start']=mult_time_to_sesstime($line,'session_start_');
             if ($line['session_finished']=='y') {
-                $line['session_status']='completed'; 
+                $line['session_status']='completed';
                 $completed_sessions[]=$line['session_id'];
             } else $line['session_status']='live';
-            $line=convert_array_to_UTF8($line); 
+            $line=convert_array_to_UTF8($line);
             if ($do_insert) $done=orsee_db_save_array($line,"sessions",$line['session_id'],"session_id");
         }
     }
 
-    if ($import_participant_log) {  
+    if ($import_participant_log) {
         echo "Importing participant log from ".table('participants_log')."\n";
         copy_table('participants_log', 'log_id');
     }
 
-    if ($import_participate_at) {   
+    if ($import_participate_at) {
         echo "Importing participation history from ".table('participate_at')."\n";
         $dquery="DELETE FROM ".$new_db_name.".".table('participate_at')."";
         if ($do_delete) $done=or_query($dquery);
         $squery="SELECT * FROM ".$old_db_name.".".table('participate_at')."";
         $result=or_query($squery);
         while ($line=pdo_fetch_assoc($result)) {
-            if ($line['invited']=='y') $line['invited']=1; 
+            if ($line['invited']=='y') $line['invited']=1;
             else $line['invited']=0;
             if ($line['session_id']>0 && in_array($line['session_id'],$completed_sessions))
                 $line['pstatus_id']=$participation_mapping[$line['shownup']][$line['participated']];
             else $line['pstatus_id']=0;
-            $line=convert_array_to_UTF8($line); 
+            $line=convert_array_to_UTF8($line);
             if ($do_insert) $done=orsee_db_save_array($line,"participate_at",$line['participate_id'],"participate_id");
         }
     }
@@ -419,7 +419,7 @@ if (!$allset) {
                 elseif (isset($old_exptype_name_to_id[trim($et)]))  $et_arr[]=$old_exptype_name_to_id[trim($et)];
             }
             $line['experiment_types']=id_array_to_db_string($et_arr);
-            $line=convert_array_to_UTF8($line); 
+            $line=convert_array_to_UTF8($line);
             if ($do_insert) $done=orsee_db_save_array($line,"subpools",$line['subpool_id'],"subpool_id");
         }
     }
@@ -436,7 +436,7 @@ if (!$allset) {
             if ($line['upload_type']) {
                 if(isset($filecat_map[$line['upload_type']])) $line['upload_type']=$filecat_map[$line['upload_type']];
                 else {
-                    $id=$now+$i;                
+                    $id=$now+$i;
                     $lline=array();
                     $lline['content_type']='file_upload_category';
                     $lline['content_name']=$id;
@@ -446,21 +446,21 @@ if (!$allset) {
                     $line['upload_type']=$id;
                 }
             } else $line['upload_type']=7;
-            $line=convert_array_to_UTF8($line); 
+            $line=convert_array_to_UTF8($line);
             if ($do_insert) $done=orsee_db_save_array($line,"uploads",$line['upload_id'],"upload_id");
         }
 
         $dquery="DELETE FROM ".$new_db_name.".".table('uploads_data')."";
         if ($do_delete) $done=or_query($dquery);
-        $iquery="INSERT INTO ".$new_db_name.".".table('uploads_data')." 
+        $iquery="INSERT INTO ".$new_db_name.".".table('uploads_data')."
                 SELECT * FROM ".$old_db_name.".".table('uploads_data')."";
         if ($do_insert) $done=or_query($iquery);
     }
 
-    if ($update_last_enrolment_date) {  
+    if ($update_last_enrolment_date) {
         echo "Updating last_enrolment in ".table('participants')." with last session's date\n";
         // last enrolements separately
-        $squery="SELECT p.participant_id, max(s.session_start) as last_sess 
+        $squery="SELECT p.participant_id, max(s.session_start) as last_sess
                 FROM ".$new_db_name.".".table('participate_at')." as p,  ".$new_db_name.".".table('sessions')." as s
                 WHERE p.session_id>0
                 AND p.session_id=s.session_id
@@ -471,7 +471,7 @@ if (!$allset) {
                         ':last_enrolment'=>ortime__sesstime_to_unixtime($line['last_sess'])
                         );
         }
-        $uquery="UPDATE ".$new_db_name.".".table('participants')." 
+        $uquery="UPDATE ".$new_db_name.".".table('participants')."
                  SET last_enrolment = :last_enrolment
                  WHERE participant_id = :participant_id";
         if ($do_insert) $result=or_query($uquery,$pars);

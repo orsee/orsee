@@ -32,21 +32,21 @@ if ($proceed) {
         if ($active) $cgivars[]='active=true';
         if (count($cgivars)>0) $cgivarst='?'.implode("&",$cgivars); else $cgivarst='';
         redirect('admin/'.thisdoc().$cgivarst);
-        
-    } 
+
+    }
 }
 
 if ($proceed) {
     if (isset($_REQUEST['action']) && $_REQUEST['action']) {
         if (isset($_REQUEST['search_sort'])) $search_sort=$_REQUEST['search_sort'];
         else $search_sort='';
-        
+
         $plist_ids=array();
         if (isset($_REQUEST['sel'])) {
             foreach($_REQUEST['sel'] as $k=>$v) if($v) $plist_ids[]=$k;
         }
         $num_participants=count($plist_ids);
-        
+
         if ($num_participants>0) {
             if ($_REQUEST['action']=='bulkmail') {
                 // message_subject  message_text
@@ -71,16 +71,16 @@ if ($proceed) {
                                     ':subject'=>$_REQUEST['message_subject_'.$inv_lang],
                                     ':body'=>$_REQUEST['message_text_'.$inv_lang]);
                     }
-                    $query="INSERT INTO ".table('bulk_mail_texts')." 
+                    $query="INSERT INTO ".table('bulk_mail_texts')."
                             SET bulk_id= :bulk_id,
                             lang= :inv_lang,
                             bulk_subject= :subject,
                             bulk_text= :body";
-                    $done=or_query($query,$pars);       
+                    $done=or_query($query,$pars);
                     $done=experimentmail__send_bulk_mail_to_queue($bulk_id,$plist_ids);
                     message($num_participants.' '.lang('xxx_bulk_mails_sent_to_mail_queue'));
-                    log__admin("bulk_mail","recipients: ".$num_participants);                   
-                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);       
+                    log__admin("bulk_mail","recipients: ".$num_participants);
+                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
                 } else {
                     $_REQUEST['search_sort']=$search_sort;
                 }
@@ -95,9 +95,9 @@ if ($proceed) {
                                     ':remark'=>$remark);
                         log__admin("bulk_change_status","participant_id: ".$pid);
                     }
-                    $query="UPDATE ".table('participants')." 
+                    $query="UPDATE ".table('participants')."
                             SET status_id= :status_id,
-                            remarks= CONCAT(remarks, :remark) 
+                            remarks= CONCAT(remarks, :remark)
                             WHERE participant_id = :participant_id";
                     $done=or_query($query,$pars);
                     message($num_participants.' '.lang('xxx_participants_moved_to_new_status'));
@@ -120,7 +120,7 @@ if ($proceed) {
                         $new_pool=NULL;
                     }
                 }
-                if ($continue) {    
+                if ($continue) {
                     $pars=array();
                     foreach ($plist_ids as $pid) {
                         $thispar=array(':participant_id'=>$pid,
@@ -131,14 +131,14 @@ if ($proceed) {
                         if ($new_pool) $target.=", new_pool: ".$new_pool;
                         log__admin("bulk_set_profile_update_request",$target);
                     }
-                    $query="UPDATE ".table('participants')." 
-                            SET pending_profile_update_request= :pending_profile_update_request, 
-                                profile_update_request_new_pool = :profile_update_request_new_pool 
+                    $query="UPDATE ".table('participants')."
+                            SET pending_profile_update_request= :pending_profile_update_request,
+                                profile_update_request_new_pool = :profile_update_request_new_pool
                                 WHERE participant_id = :participant_id";
                     $done=or_query($query,$pars);
                     message($num_participants.' '.lang('xxx_participants_were_assigned_a_new_profile_update_status'));
                     redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
-                }       
+                }
             } else {
                 // redirect to same page
                 redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
@@ -165,37 +165,37 @@ if ($proceed) {
             // use old query
             if ($active) {
                 $posted_query_json=$_SESSION['lastquery_participants_search_active'];
-                $query_id=$_SESSION['lastqueryid_participants_search_active'];  
+                $query_id=$_SESSION['lastqueryid_participants_search_active'];
                 $sort=query__get_sort('participants_search_active',$_REQUEST['search_sort']); // sanitize sort
             } else {
                 $posted_query_json=$_SESSION['lastquery_participants_search_all'];
-                $query_id=$_SESSION['lastqueryid_participants_search_all'];         
+                $query_id=$_SESSION['lastqueryid_participants_search_all'];
                 $sort=query__get_sort('participants_search_all',$_REQUEST['search_sort']); // sanitize sort
             }
             $posted_query=$json->decode($posted_query_json);
-            
+
         } else {
             // store new query in session
-            $query_id=time();       
+            $query_id=time();
             if(isset($_REQUEST['form'])) $posted_query=$_REQUEST['form']; else $posted_query=array('query'=>array());
-            $posted_query_json=$json->encodeUnsafe($posted_query);      
+            $posted_query_json=$json->encodeUnsafe($posted_query);
             if ($active) {
                 $_SESSION['lastquery_participants_search_active'] =  $posted_query_json;
                 $_SESSION['lastqueryid_participants_search_active'] =  $query_id;
-                $sort=query__load_default_sort('participants_search_active');   
+                $sort=query__load_default_sort('participants_search_active');
             } else {
                 $_SESSION['lastquery_participants_search_all'] =  $posted_query_json;
                 $_SESSION['lastqueryid_participants_search_all'] =  $query_id;
-                $sort=query__load_default_sort('participants_search_all');          
+                $sort=query__load_default_sort('participants_search_all');
             }
         }
-        
+
         // show query in human-readable form
         $pseudo_query_array=query__get_pseudo_query_array($posted_query['query']);
         $pseudo_query_display=query__display_pseudo_query($pseudo_query_array,$active);
-        
+
         echo '<TABLE border=0>';
-        echo '<TR><TD style="outline: 1px solid black; background: '.$color['search__pseudo_query_background'].'">';        
+        echo '<TR><TD style="outline: 1px solid black; background: '.$color['search__pseudo_query_background'].'">';
         echo $pseudo_query_display;
         echo '</TD></TR></TABLE>';
         echo '<BR><BR>';
@@ -206,27 +206,27 @@ if ($proceed) {
             $active_clause=array('query'=>participant_status__get_pquery_snippet("eligible_for_experiments"),'pars'=>array());
             $additional_clauses=array($active_clause);
         } else $additional_clauses=array();
-        
+
         $query=query__get_query($query_array,$query_id,$additional_clauses,$sort);
-        
+
         //echo '<TABLE width="70%" border=0><TR><TD><B>Query:</B></TD></TR><TR><TD>';
         //echo $query['query'];
         //echo '</TD></TR></TABLE>';
         //dump_array($query['pars'],"Parameters");
         //dump_array($_REQUEST);
         // show list of results
-    
+
         echo '<form id="bulkactionform" action="participants_show.php" method="POST">';
         if (isset($_REQUEST['search_sort'])) echo '<input type="hidden" name="search_sort" value="'.$_REQUEST['search_sort'].'">';
         if (isset($_REQUEST['active'])) echo '<input type="hidden" name="active" value="'.$_REQUEST['active'].'">';
-        
+
         if ($active) $plist_ids=query_show_query_result($query,"participants_search_active");
         else $plist_ids=query_show_query_result($query,"participants_search_all");
-        
+
         echo '</form>';
 
     } else {
-    
+
         //if (!isset($_SESSION['lastquery_'.$experiment_id])) $_SESSION['lastquery_'.$experiment_id]='';
         //$load_query=$_SESSION['lastquery_'.$experiment_id];
 
@@ -238,7 +238,7 @@ if ($proceed) {
             $status_query=participant_status__get_pquery_snippet("eligible_for_experiments");
             $formextra='<INPUT type="hidden" name="active" value="true">';
             $saved_queries=query__load_saved_queries('participants_search_active',$settings['queryform_partsearchactive_savedqueries_numberofentries']);
-        } else {        
+        } else {
             if (!isset($_SESSION['lastquery_participants_search_all'])) $_SESSION['lastquery_participants_search_all']='';
             $load_query=$_SESSION['lastquery_participants_search_all'];
             if (!$load_query) $load_query=query__load_default_query('participants_search_all');
@@ -250,15 +250,15 @@ if ($proceed) {
         if ($active) {
             $active_clause=participant_status__get_pquery_snippet("eligible_for_experiments");
             $count=participants__count_participants($active_clause);
-            echo $count.' '.lang('active_participant_profiles_in_database').'<BR>'; 
+            echo $count.' '.lang('active_participant_profiles_in_database').'<BR>';
         } else {
             $count=participants__count_participants();
-            echo $count.' '.lang('participant_profiles_in_database').'<BR>';    
+            echo $count.' '.lang('participant_profiles_in_database').'<BR>';
         }
-        
+
         echo '<TABLE width="80%"><TR><TD>';
         query__show_form($hide_modules,false,$load_query,lang('search_and_show'),$saved_queries,$status_query,$formextra);
-        echo '</TD></TR></TABLE>'; 
+        echo '</TD></TR></TABLE>';
 
     }
 }

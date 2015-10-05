@@ -3,8 +3,8 @@
 
 function faq__load_question($faq_id="") {
     $pars=array(':faq_id'=>$faq_id);
-    $query="SELECT * from ".table('lang')." 
-            WHERE content_type='faq_question' 
+    $query="SELECT * from ".table('lang')."
+            WHERE content_type='faq_question'
             AND content_name= :faq_id";
     $line=orsee_query($query,$pars);
     return $line;

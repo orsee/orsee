@@ -14,8 +14,8 @@ function participants__count_participants($constraint="",$const_pars=array()) {
 // check if participant is already active
 function participant__participant_get_if_not_confirmed($confirmation_token) {
     $pars=array(':confirmation_token'=>$confirmation_token);
-    $query="SELECT participant_id FROM ".table('participants')." 
-            WHERE confirmation_token= :confirmation_token 
+    $query="SELECT participant_id FROM ".table('participants')."
+            WHERE confirmation_token= :confirmation_token
             AND status_id=0 ";
     $line=orsee_query($query,$pars);
     if (isset($line['participant_id'])) return $line['participant_id'];
@@ -31,11 +31,11 @@ function participant__exclude_participant($participant) {
                 ':deletion_time'=>time(),
                 ':remarks'=>$remarks,
                 ':participant_id'=>$participant['participant_id']);
-                
+
     $query="UPDATE ".table('participants')."
             SET status_id=:status_id,
             deletion_time=:deletion_time,
-            remarks=:remarks 
+            remarks=:remarks
             WHERE participant_id=:participant_id";
     $done=or_query($query,$pars);
     $result='excluded';
@@ -76,13 +76,13 @@ function participants__stat_laboratory($participant_id) {
     // plus all unfinished experiments where participant is eligible
     // order by session_status, time
     $pars=array(':participant_id'=>$participant_id);
-    $query="SELECT ".table('participate_at').".experiment_id as exp_id, ".table('participate_at').".session_id as sess_id, ".table('experiments').".*, ".table('participate_at').".*, ".table('sessions').".* 
+    $query="SELECT ".table('participate_at').".experiment_id as exp_id, ".table('participate_at').".session_id as sess_id, ".table('experiments').".*, ".table('participate_at').".*, ".table('sessions').".*
             FROM ".table('experiments').",  ".table('participate_at')."
-            LEFT JOIN ".table('sessions')." ON ".table('participate_at').".session_id=".table('sessions').".session_id 
+            LEFT JOIN ".table('sessions')." ON ".table('participate_at').".session_id=".table('sessions').".session_id
             WHERE ".table('participate_at').".participant_id = :participant_id
             AND ".table('experiments').".experiment_id=".table('participate_at').".experiment_id
             AND experiment_type='laboratory'
-            AND ( ".table('experiments').".experiment_finished='n' 
+            AND ( ".table('experiments').".experiment_finished='n'
                     OR ".table('participate_at').".session_id!=0 )
             ORDER BY if(".table('sessions').".session_id IS NULL,0,1),
             if(session_status='completed' OR session_status='balanced',1,0),
@@ -109,7 +109,7 @@ function participants__stat_laboratory($participant_id) {
         //if ($p['sess_id']=='0') $last_reg_time=sessions__get_registration_end("","",$p['exp_id']);
         if ($p['sess_id']!='0' || true) { //$last_reg_time > $now) {
             echo '<TR';
-                if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
+                if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
                         else echo ' bgcolor="'.$color['list_shade2'].'"';
             echo '>
                 <TD>
@@ -141,7 +141,7 @@ function participants__stat_laboratory($participant_id) {
                 }
             echo '</TD>
                 <TD>';
-                
+
             if ($p['pstatus_id']>0) {
                 echo '<FONT color="';
                 if ($pstatuses[$p['pstatus_id']]['noshow']) echo $color['shownup_no']; else echo $color['shownup_yes'];
@@ -168,41 +168,41 @@ function participant__create_participant_id($pdata=array()) {
         $participant_id_crypt=make_p_token(get_entropy($pdata));
         $pars=array(':participant_id'=>$participant_id,
                     ':participant_id_crypt'=>$participant_id_crypt);
-        $query="SELECT participant_id FROM ".table('participants')." 
+        $query="SELECT participant_id FROM ".table('participants')."
                  WHERE participant_id= :participant_id OR participant_id_crypt= :participant_id_crypt";
         $line=orsee_query($query,$pars);
         if (isset($line['participant_id'])) $exists=true; else $exists=false;
     }
-    return array('participant_id'=>$participant_id,'participant_id_crypt'=>$participant_id_crypt); 
+    return array('participant_id'=>$participant_id,'participant_id_crypt'=>$participant_id_crypt);
 }
 
 // CHECKS
 // check unique
 function participantform__check_unique($edit,$formtype,$participant_id=0) {
     global $lang, $settings, $errors__dataform;
-    
+
     $disable_form=false; $problem=false; $nonunique_fields=array();
     if (!isset($edit['subpool_id']) || !$edit['subpool_id']) $edit['subpool_id']=$settings['subpool_default_registration_id'];
     $subpool=orsee_db_load_array("subpools",$edit['subpool_id'],"subpool_id");
     if (!$subpool['subpool_id']) $subpool=orsee_db_load_array("subpools",1,"subpool_id");
     $edit['subpool_id']=$subpool['subpool_id'];
 
-    $nonunique=participantform__get_nonunique($edit,$participant_id);   
+    $nonunique=participantform__get_nonunique($edit,$participant_id);
 
     if ($formtype=='create') {
         foreach ($nonunique as $f) {
             // conditions for check: 1) subpool must fit, 2) must be a public field, 3) form not yet disabled, 4) requires unique in creation form
-            if(($f['subpools']=='all' || in_array($subpool['subpool_id'],explode(",",$f['subpools']))) && 
+            if(($f['subpools']=='all' || in_array($subpool['subpool_id'],explode(",",$f['subpools']))) &&
                 ($f['admin_only']!='y') &&
-                $disable_form==false && 
+                $disable_form==false &&
                 $f['require_unique_on_create_page']=='y'
                     ) {
-            
+
                 if ($f['nonunique_participants']) {
                     $errors__dataform[]=$f['mysql_column_name'];
-                    
-                    $first_other_nonunique_status=participant__get_participant_status($f['nonunique_participants_list'][0]);                    
-                    if(($first_other_nonunique_status['access_to_profile']=='n') && $f['unique_on_create_page_tell_if_deleted']=='y') {         
+
+                    $first_other_nonunique_status=participant__get_participant_status($f['nonunique_participants_list'][0]);
+                    if(($first_other_nonunique_status['access_to_profile']=='n') && $f['unique_on_create_page_tell_if_deleted']=='y') {
                         message ($first_other_nonunique_status['error']);
                         message(lang('if_you_have_questions_write_to').' '.support_mail_link());
                         $disable_form=true;
@@ -214,13 +214,13 @@ function participantform__check_unique($edit,$formtype,$participant_id=0) {
                             if($f['unique_on_create_page_email_regmail_confmail_again']=='y') {
                                 message(lang('message_with_edit_link_mailed'));
                                 $done=experimentmail__mail_edit_link($f['nonunique_participants_list'][0]);
-                                $disable_form=true; 
+                                $disable_form=true;
                             }
-                        } else { 
+                        } else {
                         // if we use passwords, we direct to login page (if unique_on_create_page_email_cancel_signup is not set to 'n'
                             if (!(isset($f['unique_on_create_page_email_cancel_signup']) && $f['unique_on_create_page_email_cancel_signup']=='n')) {
-                                    message(lang('please_use_email_address_and_password_to_login'));    
-                                    $disable_form=true;                         
+                                    message(lang('please_use_email_address_and_password_to_login'));
+                                    $disable_form=true;
                             }
                         }
                     }
@@ -232,14 +232,14 @@ function participantform__check_unique($edit,$formtype,$participant_id=0) {
     } elseif ($formtype=='edit') {
         foreach ($nonunique as $f) {
             // conditions for check: 1) subpool must fit, 2) must be a public field, 3) requires unique in edit form
-            if(($f['subpools']=='all' || in_array($subpool['subpool_id'],explode(",",$f['subpools']))) && 
-                ($f['admin_only']!='y') && $f['check_unique_on_edit_page']=='y') {  
+            if(($f['subpools']=='all' || in_array($subpool['subpool_id'],explode(",",$f['subpools']))) &&
+                ($f['admin_only']!='y') && $f['check_unique_on_edit_page']=='y') {
                 if ($f['nonunique_participants']) {
                     $errors__dataform[]=$f['mysql_column_name'];
                     $problem=true;
                     if (isset($lang[$f['unique_on_edit_page_error_message_if_exists_lang']])) message($lang[$f['unique_on_edit_page_error_message_if_exists_lang']]);
                     else message($f['unique_on_edit_page_error_message_if_exists_lang']);
-                } 
+                }
             }
         }
     }
@@ -248,14 +248,14 @@ function participantform__check_unique($edit,$formtype,$participant_id=0) {
 }
 
 function participantform__get_nonunique($edit,$participant_id=0) {
-    $nonunique_fields=array(); 
+    $nonunique_fields=array();
     $formfields=participantform__load();
-    foreach ($formfields as $f) { 
+    foreach ($formfields as $f) {
     $f['nonunique_participants']=false; $f['nonunique_participants_list']=array();
     if(($f['require_unique_on_create_page']=='y' || $f['check_unique_on_edit_page']=='y') &&
         (isset($edit[$f['mysql_column_name']]) && $edit[$f['mysql_column_name']]) ) {
-        $pars=array(':value'=>$edit[$f['mysql_column_name']]); 
-        $query="SELECT participant_id FROM ".table('participants')." 
+        $pars=array(':value'=>$edit[$f['mysql_column_name']]);
+        $query="SELECT participant_id FROM ".table('participants')."
                 WHERE ".$f['mysql_column_name']."= :value" ;
         if ($participant_id) {
             $query.=" AND participant_id!= :participant_id";
@@ -265,7 +265,7 @@ function participantform__get_nonunique($edit,$participant_id=0) {
         while ($line = pdo_fetch_assoc($result)) $f['nonunique_participants_list'][]=$line['participant_id'];
         if (count($f['nonunique_participants_list'])>0) {
             $f['nonunique_participants']=true;
-            $nonunique_fields[$f['mysql_column_name']]=$f;  
+            $nonunique_fields[$f['mysql_column_name']]=$f;
         }
     }}
     return $nonunique_fields;
@@ -276,14 +276,14 @@ function participantform__get_nonunique($edit,$participant_id=0) {
 function participantform__check_fields($edit,$admin) {
     global $lang, $settings;
     $errors_dataform=array();
-    
+
     if (!isset($edit['subpool_id']) || !$edit['subpool_id']) $edit['subpool_id']=$settings['subpool_default_registration_id'];
     $subpool=orsee_db_load_array("subpools",$edit['subpool_id'],"subpool_id");
     if (!$subpool['subpool_id']) $subpool=orsee_db_load_array("subpools",1,"subpool_id");
     $edit['subpool_id']=$subpool['subpool_id'];
-    
+
     $formfields=participantform__load();
-    foreach ($formfields as $f) { 
+    foreach ($formfields as $f) {
     if($f['subpools']=='all' | in_array($subpool['subpool_id'],explode(",",$f['subpools']))) {
         if ($admin || $f['admin_only']!='y') {
             if ($f['compulsory']=='y') {
@@ -309,7 +309,7 @@ function participantform__check_fields($edit,$admin) {
         $errors_dataform[]='subscriptions';
         message(lang('at_least_one_exptype_has_to_be_selected'));
     }
-    
+
     return $errors_dataform;
 }
 
@@ -360,9 +360,9 @@ return $array;
 }
 
 function participantform__load() {
-    global $preloaded_participant_form; 
+    global $preloaded_participant_form;
     if (isset($preloaded_participant_form) && is_array($preloaded_participant_form) && count($preloaded_participant_form)>0) {
-        return $preloaded_participant_form; 
+        return $preloaded_participant_form;
     } else {
         $query="SELECT  * FROM ".table('profile_fields')."
                 WHERE enabled=1";
@@ -375,7 +375,7 @@ function participantform__load() {
         }
         // make sure all standard properties are set for all fields
         foreach ($pform as $k=>$f) {
-            $t=participantform__allvalues();    
+            $t=participantform__allvalues();
             foreach ($f as $kf=>$vf) {
                 $t[$kf]=$vf;
             }
@@ -403,22 +403,22 @@ function template_replace_callbackB(array $m) {
 
 // processing the template
 function load_form_template($tpl_name,$out,$template='current_template') {
-    global $lang, $settings__root_to_server, 
+    global $lang, $settings__root_to_server,
         $settings__root_directory, $settings;
         global $tempout;
         $tempout = $out;
 
     //$tpl=file_get_contents('../ftpl/'.$tpl_name.'.tpl');
     $tpl_data=options__load_object('profile_form_template',$tpl_name);
-    if (isset($tpl_data['item_details'][$template])) 
+    if (isset($tpl_data['item_details'][$template]))
         $tpl=$tpl_data['item_details'][$template];
     else $tpl=$tpl_data['item_details']['current_template'];
-    
+
     // process conditionals
     $pattern="/\{[^#\}]*#(!?)([^#!\}]+)#([^\}]+)\}/i";
     $replacement = "($1\$out['$2'])?\"$3\":''";
-    $tpl=preg_replace_callback($pattern, 
-        'template_replace_callbackA', 
+    $tpl=preg_replace_callback($pattern,
+        'template_replace_callbackA',
         $tpl);
 
 
@@ -428,10 +428,10 @@ function load_form_template($tpl_name,$out,$template='current_template') {
     // fill in language terms
         $pattern="/lang\[([^\]]+)\]/i";
         $replacement = "\$lang['$1']";
-        $tpl=preg_replace_callback($pattern, 
-        'template_replace_callbackB', 
+        $tpl=preg_replace_callback($pattern,
+        'template_replace_callbackB',
         $tpl);
-                                        
+
     return $tpl;
 }
 
@@ -529,11 +529,11 @@ function form__render_select_numbers($f) {
 
 function participant__subscriptions_form_field($subpool_id,$varname,$value) {
     global $settings, $lang;
-    $checked=db_string_to_id_array($value); 
+    $checked=db_string_to_id_array($value);
     $exptypes=load_external_experiment_types();
     if (!$subpool_id) $subpool_id=$settings['subpool_default_registration_id'];
     $subpool=subpools__get_subpool($subpool_id);
-    $subpool_exptypes=db_string_to_id_array($subpool['experiment_types']); 
+    $subpool_exptypes=db_string_to_id_array($subpool['experiment_types']);
     $out='';
     foreach($subpool_exptypes as $exptype_id) {
         $out.='<INPUT type="checkbox" name="'.$varname.'['.$exptype_id.']"
@@ -583,7 +583,7 @@ function participant__add_to_session_select($session_id="",$participant_id='') {
     if ($participant_id) {
         $pars[':participant_id']=$participant_id;
         $query="SELECT *
-                FROM ".table('participate_at')." 
+                FROM ".table('participate_at')."
                 WHERE participant_id= :participant_id";
         $result=or_query($query,$pars);
         $del_exp=array(); $ass_exp=array();
@@ -616,11 +616,11 @@ function participant__select_numbers($ptablevarname,$formfieldvarname,$prevalue,
             if ($reverse) $i=$i-$steps; else $i=$i+$steps;
         }
     } else {
-        $query="SELECT count(*) as tf_count, ".$ptablevarname." as tf_value 
-                FROM ".table('participants')." 
+        $query="SELECT count(*) as tf_count, ".$ptablevarname." as tf_value
+                FROM ".table('participants')."
                 WHERE ".table('participants').".participant_id IS NOT NULL ";
         if($where) $query.=" AND ".$where." ";
-        $query.=" GROUP BY ".$ptablevarname." 
+        $query.=" GROUP BY ".$ptablevarname."
                   ORDER BY ".$ptablevarname;
         if ($reverse) $query.=" DESC ";
         $result=or_query($query);
@@ -636,11 +636,11 @@ function participant__select_numbers($ptablevarname,$formfieldvarname,$prevalue,
             if ($show_count) $out.=' ('.$line['tf_count'].')';
             $out.='</option>';
         }
-                
-        
+
+
         while ($line = pdo_fetch_assoc($result)) {
             $out.='<option value="'.$line['tf_value'].'"'; if ($line['tf_value'] == (int) $prevalue) $out.=' SELECTED'; $out.='>';
-            $out.=helpers__pad_number($line['tf_value'],$fillzeros); 
+            $out.=helpers__pad_number($line['tf_value'],$fillzeros);
             if ($show_count) $out.=' ('.$line['tf_count'].')';
             $out.='</option>';
         }
@@ -652,16 +652,16 @@ function participant__select_numbers($ptablevarname,$formfieldvarname,$prevalue,
 function participant__select_existing($ptablevarname,$formfieldvarname,$prevalue,$where='',$show_count=false) {
     $out='';
     $out.='<select name="'.$formfieldvarname.'">';
-    $query="SELECT count(*) as tf_count, ".$ptablevarname." as tf_value 
-            FROM ".table('participants')." 
+    $query="SELECT count(*) as tf_count, ".$ptablevarname." as tf_value
+            FROM ".table('participants')."
             WHERE ".table('participants').".participant_id IS NOT NULL ";
     if($where) $query.=" AND ".$where." ";
-    $query.=" GROUP BY ".$ptablevarname." 
+    $query.=" GROUP BY ".$ptablevarname."
               ORDER BY ".$ptablevarname;
     $result=or_query($query);
     while ($line = pdo_fetch_assoc($result)) {
         $out.='<option value="'.$line['tf_value'].'"'; if ($line['tf_value'] == $prevalue) $out.=' SELECTED'; $out.='>';
-        $out.=$line['tf_value']; 
+        $out.=$line['tf_value'];
         if ($show_count) $out.=' ('.$line['tf_count'].')';
         $out.='</option>';
     }
@@ -680,10 +680,10 @@ function participant__show_form($edit,$button_title="",$errors,$admin=false,$ext
             <TR><TD>';
     participant__show_inner_form($edit,$errors,$admin);
     echo '</TD></TR>
-            <TR><TD>';  
+            <TR><TD>';
     echo $extra;
     echo '</TD></TR>';
-    
+
     if (!$button_title) $button_title=lang('change');
     echo '<tr><td colspan="2" align="center">
             <INPUT class="button" name="add" type="submit" value="'.$button_title.'">
@@ -701,18 +701,18 @@ function participant__show_inner_form($edit,$errors,$admin=false,$template='curr
     $subpool=orsee_db_load_array("subpools",$edit['subpool_id'],"subpool_id");
     if (!$subpool['subpool_id']) $subpool=orsee_db_load_array("subpools",1,"subpool_id");
     $edit['subpool_id']=$subpool['subpool_id'];
-    
+
     $pools=subpools__get_subpools();
     foreach ($pools as $p=>$pool) $out['is_subjectpool_'.$p]=false;
     $out['is_subjectpool_'.$subpool['subpool_id']]=true;
     if ($admin) { $out['is_admin']=true; $out['is_not_admin']=false; }
     else { $out['is_admin']=false; $out['is_not_admin']=true; }
-    
+
     if (!$admin && isset($edit['participant_id_crypt'])) {
             echo '<INPUT type=hidden name="p" value="'.$edit['participant_id_crypt'].'">
                 <INPUT type=hidden name="participant_id_crypt" value="'.$edit['participant_id_crypt'].'">';
     }
-    
+
     if ($admin) $nonunique=participantform__get_nonunique($edit,$edit['participant_id']);
 
     // user-defined participant form fields
@@ -728,13 +728,13 @@ function participant__show_inner_form($edit,$errors,$admin=false,$template='curr
                     $note=lang('not_unique');
                     $link='participants_show.php?form%5Bquery%5D%5B0%5D%5Bpformtextfields_freetextsearch%5D%5Bsearch_string%5D='.urlencode($f['value']).'&form%5Bquery%5D%5B0%5D%5Bpformtextfields_freetextsearch%5D%5Bnot%5D=&form%5Bquery%5D%5B0%5D%5Bpformtextfields_freetextsearch%5D%5Bsearch_field%5D='.urlencode($f['mysql_column_name']).'&search_submit=';
                     $field.=' <A HREF="'.$link.'"><FONT color="'.$color['important_note_textcolor'].'">'.str_replace(" ","&nbsp;",$note).'</FONT></A>';
-                }       
+                }
             }
             $out[$f['mysql_column_name']]=$field;
-            if(in_array($f['mysql_column_name'],$errors)) { 
-                $out['error_'.$f['mysql_column_name']]=' bgcolor="'.$color['missing_field'].'"'; 
-            } else { 
-                $out['error_'.$f['mysql_column_name']]=''; 
+            if(in_array($f['mysql_column_name'],$errors)) {
+                $out['error_'.$f['mysql_column_name']]=' bgcolor="'.$color['missing_field'].'"';
+            } else {
+                $out['error_'.$f['mysql_column_name']]='';
             }
         }
     }}
@@ -750,14 +750,14 @@ function participant__show_inner_form($edit,$errors,$admin=false,$template='curr
         $tout['multiple_participant_languages_exist']=false;
     }
     $out['language']=lang__select_lang('language',$edit['language'],"part");
-    if(in_array('language',$errors)) $out['error_language']=' bgcolor="'.$color['missing_field'].'"'; 
-    else $out['error_language']=''; 
-    
+    if(in_array('language',$errors)) $out['error_language']=' bgcolor="'.$color['missing_field'].'"';
+    else $out['error_language']='';
+
     // subscriptions field
     if (!isset($edit['subscriptions'])) $edit['subscriptions']='';
     $out['subscriptions']=participant__subscriptions_form_field($subpool['subpool_id'],'subscriptions',$edit['subscriptions']);
-    if(in_array('subscriptions',$errors)) $out['error_subscriptions']=' bgcolor="'.$color['missing_field'].'"'; 
-    else $out['error_subscriptions']=''; 
+    if(in_array('subscriptions',$errors)) $out['error_subscriptions']=' bgcolor="'.$color['missing_field'].'"';
+    else $out['error_subscriptions']='';
 
     $formoutput=load_form_template('profile_form_public',$out,$template);
     echo $formoutput;
@@ -766,7 +766,7 @@ function participant__show_inner_form($edit,$errors,$admin=false,$template='curr
 // the inner admin participant form
 function participant__get_inner_admin_form($edit,$errors,$template='current_template') {
     global $lang, $settings, $color;
-    
+
     if (!isset($edit['participant_id'])) $edit['participant_id']='';
     if (!isset($edit['subpool_id'])) $edit['subpool_id']=1;
     $subpool=orsee_db_load_array("subpools",$edit['subpool_id'],"subpool_id");
@@ -777,16 +777,16 @@ function participant__get_inner_admin_form($edit,$errors,$template='current_temp
     // first show user-defined admin participant form fields
     $formfields=participantform__load(); $tout=array();
     foreach ($formfields as $f) { if($f['subpools']=='all' | in_array($subpool['subpool_id'],explode(",",$f['subpools']))) {
-        if ($f['admin_only']=='y') { 
+        if ($f['admin_only']=='y') {
             $f=form__replace_funcs_in_field($f);
             if (isset($edit[$f['mysql_column_name']])) $f['value']=$edit[$f['mysql_column_name']];
             else $f['value']=$f['default_value'];
             $field=form__render_field($f);
             $tout[$f['mysql_column_name']]=$field;
-            if(in_array($f['mysql_column_name'],$errors)) { 
-                $tout['error_'.$f['mysql_column_name']]=' bgcolor="'.$color['missing_field'].'"'; 
-            } else { 
-                $tout['error_'.$f['mysql_column_name']]=''; 
+            if(in_array($f['mysql_column_name'],$errors)) {
+                $tout['error_'.$f['mysql_column_name']]=' bgcolor="'.$color['missing_field'].'"';
+            } else {
+                $tout['error_'.$f['mysql_column_name']]='';
             }
         }
     }}
@@ -805,29 +805,29 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
     $subpool=orsee_db_load_array("subpools",$edit['subpool_id'],"subpool_id");
     if (!$subpool['subpool_id']) $subpool=orsee_db_load_array("subpools",1,"subpool_id");
     $edit['subpool_id']=$subpool['subpool_id'];
-    
+
     $pools=subpools__get_subpools();
     foreach ($pools as $p=>$pool) $out['is_subjectpool_'.$p]=false;
     $out['is_subjectpool_'.$subpool['subpool_id']]=true;
-    
+
     echo '<FORM action="'.thisdoc().'" method="POST">';
 
     echo '<table border="0">';
     echo '<TR><TD valign="top">';
     echo '<TABLE class="or_formtable" style="width: 100%; height: 100%; max-width: 100%"><TR><TD>';
-    
+
     // get the participant form
     participant__show_inner_form($edit,$errors,true);
-    
+
     echo '</TD></TR></TABLE>';
     echo '</TD><TD valign="top">';
     echo '<TABLE class="or_formtable" style="width: 100%; height: 100%; max-width: 100%; background: '.$color['list_shade2'].'"><TR><TD>';
 
     echo '<INPUT type="hidden" name="participant_id" value="'.$edit['participant_id'].'">';
-    global $hide_header; 
-    if (isset($hide_header) && $hide_header) echo '<INPUT type="hidden" name="hide_header" value="true">'; 
-    
-    
+    global $hide_header;
+    if (isset($hide_header) && $hide_header) echo '<INPUT type="hidden" name="hide_header" value="true">';
+
+
     $adminformoutput=participant__get_inner_admin_form($edit,$errors);
     if ($adminformoutput) {
         echo '<TABLE width="100%">
@@ -838,7 +838,7 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
     echo '<BR>';
 
     // then show the rest
-    
+
     // initialize
     if (!isset($edit['participant_id'])) $edit['participant_id']='???';
     if (!isset($edit['participant_id_crypt'])) $edit['participant_id_crypt']='???';
@@ -850,7 +850,7 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
     echo '<table width="100%">';
     echo '  <tr><td>'.lang('subpool').'</td>
             <td>'.subpools__select_field("subpool_id",$edit['subpool_id']).'</td></tr>';
-            
+
     echo '<tr><td colspan=2>&nbsp;</td></tr>';
 
     echo '  <tr><td>'.lang('id').'</td>
@@ -870,7 +870,7 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
     echo '<tr><td colspan=2>&nbsp;</td></tr>';
 
     echo '<tr><td colspan=2 align=left>
-                '.participant__add_to_session_checkbox().' '.lang('register_sub_for_session').'<BR> 
+                '.participant__add_to_session_checkbox().' '.lang('register_sub_for_session').'<BR>
                 '.participant__add_to_session_select($edit['session_id'],$edit['participant_id']).'
             </td></tr>';
 
@@ -879,7 +879,7 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
     echo '<table>
             <tr style="outline: 2px solid red;">
             <td>
-                <B>'.lang('participant_status').'</B>: ';            
+                <B>'.lang('participant_status').'</B>: ';
     if (check_allow('participants_change_status')) {
         if(!isset($_REQUEST['status_id'])) $_REQUEST['status_id']="";
             if ($_REQUEST['status_id']=='0') $hide=array(); else $hide=array('0');
@@ -892,7 +892,7 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
                         $statuses[$default_status]['name'];
         } else {
             echo participant_status__get_name($_REQUEST['status_id']);
-        }   
+        }
     echo '</td></tr></table>';
     echo '</td></tr></table>';
     echo '</td></tr>';
@@ -926,7 +926,7 @@ function participant__password_form_fields($new=false,$provided=false) {
 function participant__check_password($password,$password2) {
     global $settings;
     $continue=true;
-    if (!$password || !$password2) { 
+    if (!$password || !$password2) {
         message (lang('you_have_to_give_a_password'));
         $continue=false;
     }
@@ -944,12 +944,12 @@ function participant__check_password($password,$password2) {
 function participant__check_login($email,$password) {
     global $lang;
     $pars=array(':email'=>$email);
-    $query="SELECT * FROM ".table('participants')." 
+    $query="SELECT * FROM ".table('participants')."
             WHERE email= :email";
     $participant=orsee_query($query,$pars);
-    
+
     $continue=true;
-    
+
     if ($continue) {
         if (!isset($participant['participant_id'])) {
             $continue=false;
@@ -967,7 +967,7 @@ function participant__check_login($email,$password) {
             message(lang('error_password_or_username'));
         }
     }
-        
+
     if ($continue) {
         $check_pw=crypt_verify($password,$participant['password_crypted']);
         if (!$check_pw) {
@@ -977,7 +977,7 @@ function participant__check_login($email,$password) {
             message(lang('error_password_or_username'));
         }
     }
-    
+
     if ($continue) {
         $statuses=participant_status__get_statuses();
         $statuses_profile=participant_status__get("access_to_profile");
@@ -1021,8 +1021,8 @@ function participant__track_unsuccessful_login($participant) {
     if (isset($settings['participant_lockout_minutes']) && $settings['participant_lockout_minutes']>0)
     $lockout_minutes=$settings['participant_lockout_minutes'];
     else $lockout_minutes=20;
-    
-    $last_login_attempt=time(); 
+
+    $last_login_attempt=time();
     $failed_login_attempts=$participant['failed_login_attempts']+1;
     if ($failed_login_attempts>=$limit) {
         $locked=1;
@@ -1064,7 +1064,7 @@ function participant__track_successful_login($participant) {
 function participant__set_password($password,$participant_id) {
     $pars=array(':participant_id'=>$participant_id,
                 ':password'=>unix_crypt($password));
-    $query="UPDATE ".table('participants')." 
+    $query="UPDATE ".table('participants')."
             SET password_crypted= :password
             WHERE participant_id= :participant_id";
     $done=or_query($query,$pars);
@@ -1102,7 +1102,7 @@ function participant__update_last_enrolment_time($participant_id,$time=0) {
         $pars[':participant_id']=$participant_id;
         $condition="participant_id= :participant_id";
     }
-    $query="UPDATE ".table('participants')." 
+    $query="UPDATE ".table('participants')."
             SET last_enrolment=:time1,
             last_activity=:time2
             WHERE ".$condition;
@@ -1164,7 +1164,7 @@ function participant_status__get_statuses() {
     } else {
         $participant_statuses=array();
         $query="SELECT *
-                FROM ".table('participant_statuses')."  
+                FROM ".table('participant_statuses')."
                 ORDER BY status_id";
         $result=or_query($query);
         while ($line = pdo_fetch_assoc($result)) {
@@ -1172,7 +1172,7 @@ function participant_status__get_statuses() {
         }
         $query="SELECT *
                 FROM ".table('lang')."
-                WHERE content_type='participant_status_name' 
+                WHERE content_type='participant_status_name'
                 OR content_type='participant_status_error'
                 ORDER BY content_name";
         $result=or_query($query);
@@ -1199,7 +1199,7 @@ function participant_status__get($what="is_default_active") {
 function participant_status__get_pquery_snippet($what="eligible_for_experiments") {
     // what can be access_to_profile, eligible_for_experiments, is_default_active or is_default_inactive
     $check_statuses=participant_status__get($what);
-    if (count($check_statuses)>0) { 
+    if (count($check_statuses)>0) {
         if ($what=='is_default_active' || $what=='is_default_inactive') return " status_id='".$check_statuses."' ";
         else {
             $snippet=" status_id IN (".implode(", ",$check_statuses).") ";
@@ -1212,8 +1212,8 @@ function participant_status__get_name($status_id) {
     global $lang;
     $pars=array(':status_id'=>$status_id);
     $query="SELECT *
-            FROM ".table('lang')." 
-            WHERE content_type='participant_status_name' 
+            FROM ".table('lang')."
+            WHERE content_type='participant_status_name'
             AND content_name= :status_id";
     $result=or_query($query,$pars);
     $line = pdo_fetch_assoc($result);
@@ -1225,7 +1225,7 @@ function participant__get_participant_status($participant_id) {
     $statuses=participant_status__get_statuses();
     $pars=array(':participant_id'=>$participant_id);
     $query="SELECT status_id
-            FROM ".table('participants')." 
+            FROM ".table('participants')."
             WHERE participant_id= :participant_id";
     $line=orsee_query($query,$pars);
     return $statuses[$line['status_id']];
@@ -1250,7 +1250,7 @@ function participant__nonuserdefined_columns() {
     $columns['pending_profile_update_request']=array('use_in_tables'=>1,'lang_symbol'=>'pending_profile_update_request');
     $columns['language']=array('use_in_tables'=>1,'lang_symbol'=>'language');
     $columns['remarks']=array('use_in_tables'=>1,'lang_symbol'=>'remarks');
-    
+
     $columns['participant_id_crypt']=array('use_in_tables'=>0,'lang_symbol'=>'');
     $columns['password_crypted']=array('use_in_tables'=>0,'lang_symbol'=>'');
     $columns['confirmation_token']=array('use_in_tables'=>0,'lang_symbol'=>'');
@@ -1265,7 +1265,7 @@ function participant__nonuserdefined_columns() {
 }
 
 function participant__userdefined_columns() {
-    $internal_columns=participant__nonuserdefined_columns();        
+    $internal_columns=participant__nonuserdefined_columns();
     $query="SHOW COLUMNS FROM ".table('participants');
     $result=or_query($query);
     $user_columns=array();
@@ -1325,14 +1325,14 @@ function participant__get_possible_participant_columns($listtype) {
         $cols['payment_budget']=array('display_text'=>lang('payment_budget'),'display_table_head'=>lang('payment_budget_abbr'),'on_list'=>true,'allow_remove'=>false);
         $cols['payment_type']=array('display_text'=>lang('payment_type'),'display_table_head'=>lang('payment_type_abbr'),'on_list'=>true,'allow_remove'=>false);
         $cols['payment_amount']=array('display_text'=>lang('payment_amount'),'display_table_head'=>lang('payment_amount_abbr'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'payment_amt');
-        $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'on_list'=>true,'allow_remove'=>false);      
+        $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'on_list'=>true,'allow_remove'=>false);
     } elseif ($listtype=='session_participants_list_pdf') {
         $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['session_id']=array('display_text'=>lang('session'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'session_id');
         $cols['payment_amount']=array('display_text'=>lang('payment_amount'),'display_table_head'=>lang('payment_amount_abbr'),'sort_order'=>'payment_amt');
-        $cols['pstatus_id']=array('display_text'=>lang('participation_status'));        
+        $cols['pstatus_id']=array('display_text'=>lang('participation_status'));
     } elseif ($listtype=='email_participant_guesses_list') {
         $cols['email']=array('display_text'=>lang('email'),'on_list'=>true,'allow_remove'=>false,'sortable'=>true);
         $cols['pform_fields']='';
@@ -1369,7 +1369,7 @@ function participant__get_result_table_columns($list) {
         $pars=array(':item_type'=>$list);
         $query="SELECT *
                 FROM ".table('objects')."
-                WHERE item_type= :item_type 
+                WHERE item_type= :item_type
                 ORDER BY order_number";
         $result=or_query($query,$pars);
         $saved_cols=array(); while ($line=pdo_fetch_assoc($result)) $saved_cols[$line['item_name']]=$line;
@@ -1392,7 +1392,7 @@ function participant__get_result_table_headcells($columns,$allow_sort=true) {
         if (isset($arr['sort_order'])) $sort_order=$arr['sort_order'];
         else $sort_order=$k;
         switch($k) {
-            case 'checkbox': 
+            case 'checkbox':
                 $out.='<'.$celltag.'  style="">'.lang('select_all').'
                 '.javascript__selectall_checkbox_script().'</'.$celltag.'>';
                 break;
@@ -1469,11 +1469,11 @@ function participant__get_result_table_row($columns,$p) {
     global $thislist_sessions, $thislist_avail_payment_budgets, $thislist_avail_payment_types;
 
     $pform_columns=participant__load_all_pform_fields();
-    
+
     $out='';
-    foreach ($columns as $k=>$arr) {        
+    foreach ($columns as $k=>$arr) {
         switch($k) {
-            case 'email_unconfirmed': 
+            case 'email_unconfirmed':
                 $message="";
                 $message=experimentmail__get_confirmation_mail_text($p);
                 $message=str_replace(" ","%20",$message);
@@ -1486,7 +1486,7 @@ function participant__get_result_table_row($columns,$p) {
                 $out.='<A class="small" HREF="'.$linktext.'">'.$p['email'].'</A>';
                 $out.='</td>';
                 break;
-            case 'checkbox': 
+            case 'checkbox':
                 $out.='<td class="small">';
                 $out.='<INPUT type="checkbox" name="sel['.$p['participant_id'].']" value="y"';
                 if (isset($_REQUEST['sel'][$p['participant_id']]) && $_REQUEST['sel'][$p['participant_id']]=='y') $out.=' CHECKED';
@@ -1511,7 +1511,7 @@ function participant__get_result_table_row($columns,$p) {
             case 'subscriptions':
                 $exptypes=load_external_experiment_types();
                 $inv_arr=db_string_to_id_array($p[$k]);
-                $inv_names=array(); 
+                $inv_names=array();
                 foreach($inv_arr as $inv) {
                     if (isset($exptypes[$inv]['exptype_name'])) $inv_names[]=$exptypes[$inv]['exptype_name'];
                     else $inv_names[]='undefined';
@@ -1527,7 +1527,7 @@ function participant__get_result_table_row($columns,$p) {
                 $participant_statuses=participant_status__get_statuses();
                 $pstatus_name=(isset($participant_statuses[$p[$k]]['name']))?$participant_statuses[$p[$k]]['name']:$p[$k];
                 if ($participant_statuses[$p['status_id']]['eligible_for_experiments']=='y') $ccolor=$color['participant_status_eligible_for_experiments'];
-                else $ccolor=$color['participant_status_noneligible_for_experiments'];  
+                else $ccolor=$color['participant_status_noneligible_for_experiments'];
                 $out.='<td class="small" bgcolor="'.$ccolor.'">'.$pstatus_name.'</td>';
                 break;
             case 'edit_link':
@@ -1557,15 +1557,15 @@ function participant__get_result_table_row($columns,$p) {
                     $payment_budgets=payments__load_budgets();
                     if (check_allow('payments_edit')) {
                         $out.='<td class="small">';
-                        $out.=payments__budget_selectfield('paybudget['.$p['participant_id'].']',$p['payment_budget'],array(),$thislist_avail_payment_budgets); 
+                        $out.=payments__budget_selectfield('paybudget['.$p['participant_id'].']',$p['payment_budget'],array(),$thislist_avail_payment_budgets);
                         $out.='</td>';
                     } elseif (check_allow('payments_view')) {
                         $out.='<td class="small">';
                         if (isset($payment_budgets[$p['payment_budget']])) $out.=$payment_budgets[$p['payment_budget']]['budget_name']; else $out.='-';
-                        $out.='</td>';                  
+                        $out.='</td>';
                     }
                 }
-                break;              
+                break;
             case 'payment_type':
                 if($settings['enable_payment_module']=='y') {
                     $payment_types=payments__load_paytypes();
@@ -1576,7 +1576,7 @@ function participant__get_result_table_row($columns,$p) {
                     } elseif (check_allow('payments_view')) {
                         $out.='<td class="small">';
                         if (isset($payment_types[$p['payment_type']])) $out.=$payment_types[$p['payment_type']]; else $out.='-';
-                        $out.='</td>';                  
+                        $out.='</td>';
                     }
                 }
                 break;
@@ -1591,7 +1591,7 @@ function participant__get_result_table_row($columns,$p) {
                     } elseif (check_allow('payments_view')) {
                         $out.='<td class="small">';
                         if ($p['payment_amt']!='') $out.=$p['payment_amt']; else $out.='-';
-                        $out.='</td>';                  
+                        $out.='</td>';
                     }
                 }
                 break;
@@ -1604,7 +1604,7 @@ function participant__get_result_table_row($columns,$p) {
                     $pstatuses=expregister__get_participation_statuses();
                     $out.=$pstatuses[$p['pstatus_id']]['internal_name'];
                 }
-                $out.='</td>';  
+                $out.='</td>';
                 break;
             default:
                 if (isset($pform_columns[$k])) {
@@ -1615,7 +1615,7 @@ function participant__get_result_table_row($columns,$p) {
                         else $out.=$p[$k];
                     } else $out.=$p[$k];
                     if($pform_columns[$k]['link_as_email_in_lists']=='y') $out.='</A>';
-                    $out.='</td>';          
+                    $out.='</td>';
                 } else {
                     $out.='<td class="small">';
                     if (isset($p[$k])) $out.=$p[$k];
@@ -1633,9 +1633,9 @@ function participant__get_result_table_row_pdf($columns,$p) {
     global $thislist_sessions;
 
     $pform_columns=participant__load_all_pform_fields();
-    
+
     $row=array();
-    foreach ($columns as $k=>$arr) {        
+    foreach ($columns as $k=>$arr) {
         switch($k) {
             case 'number_noshowup':
                 $row[]=$p['number_noshowup'].'/'.$p['number_reg'];
@@ -1648,7 +1648,7 @@ function participant__get_result_table_row_pdf($columns,$p) {
             case 'subscriptions':
                 $exptypes=load_external_experiment_types();
                 $inv_arr=db_string_to_id_array($p[$k]);
-                $inv_names=array(); 
+                $inv_names=array();
                 foreach($inv_arr as $inv) {
                     if (isset($exptypes[$inv]['exptype_name'])) $inv_names[]=$exptypes[$inv]['exptype_name'];
                     else $inv_names[]='undefined';
@@ -1682,7 +1682,7 @@ function participant__get_result_table_row_pdf($columns,$p) {
                     $payment_budgets=payments__load_budgets();
                     if (isset($payment_budgets[$p['payment_budget']])) $row[]=$payment_budgets[$p['payment_budget']]['budget_name']; else $row[]='-';
                 }
-                break;              
+                break;
             case 'payment_type':
                 if($settings['enable_payment_module']=='y' && check_allow('payments_view')) {
                     $payment_types=payments__load_paytypes();
@@ -1722,7 +1722,7 @@ function participant__load_all_pform_fields($tlang='') {
         $formfields=participantform__load(); $pform_columns=array();
         foreach ($formfields as $f) {
             if ($f['search_result_sort_order']) $f['sort_order']=$f['search_result_sort_order'];
-            else $f['sort_order']=$f['mysql_column_name'];  
+            else $f['sort_order']=$f['mysql_column_name'];
             $f['column_name']=load_language_symbol($f['name_lang'],$tlang);
             if (!$f['column_name']) $f['column_name']=$f['name_lang'];
             if(preg_match("/(radioline|select_list)/",$f['type'])) {
@@ -1743,7 +1743,7 @@ function participant__load_all_pform_fields($tlang='') {
                 }
             } elseif (preg_match("/(select_lang|radioline_lang)/",$f['type'])) {
                 $f['lang']=lang__load_lang_cat($f['mysql_column_name'],$tlang);
-            }           
+            }
             $pform_columns[$f['mysql_column_name']]=$f;
         }
         $preloaded_all_pform_fields[$tlang]=$pform_columns;
@@ -1775,10 +1775,10 @@ function participant__load_participant_email_fields($tlang='') {
                             else $f['lang'][$v]=$optionnames[$k];
                         }
                     }
-                }       
+                }
             } elseif (preg_match("/(select_lang|radioline_lang)/",$f['type'])) {
                 $f['lang']=lang__load_lang_cat($f['mysql_column_name'],$tlang);
-            }           
+            }
             $result_columns[]=$f;
         }
     }

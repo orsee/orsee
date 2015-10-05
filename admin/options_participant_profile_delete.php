@@ -7,7 +7,7 @@ $title="delete_participant_profile_field";
 include ("header.php");
 if ($proceed) {
     $user_columns=participant__userdefined_columns();
-    if (!isset($_REQUEST['mysql_column_name']) || !isset($user_columns[$_REQUEST['mysql_column_name']])) 
+    if (!isset($_REQUEST['mysql_column_name']) || !isset($user_columns[$_REQUEST['mysql_column_name']]))
         redirect('admin/options_participant_profile.php');
     else $field_name=$_REQUEST['mysql_column_name'];
 }
@@ -42,7 +42,7 @@ if ($proceed) {
     if ($reallydelete) {
         // transaction?
         $pars=array(':mysql_column_name'=>$field_name);
-        $query="DELETE FROM ".table('profile_fields')." 
+        $query="DELETE FROM ".table('profile_fields')."
                 WHERE mysql_column_name= :mysql_column_name";
         $result=or_query($query,$pars);
 
@@ -50,7 +50,7 @@ if ($proceed) {
                 DROP COLUMN ".$field_name.",
                 DROP INDEX ".$field_name."_index";
         $result=or_query($query);
-    
+
         log__admin("profile_form_field_delete","mysql_column_name:".$field_name);
         message (lang('profile_form_field_deleted'));
         redirect ("admin/options_participant_profile.php");
@@ -81,7 +81,7 @@ if ($proceed) {
                 <TR>
                 <TD align=center>
                 '.button_link('options_participant_profile_delete.php?mysql_column_name='.urlencode($field_name).'&reallydelete=true',
-                                        lang('yes_delete'),'check-square biconred').'   
+                                        lang('yes_delete'),'check-square biconred').'
                 </TD>
             </TR>
             <TR>

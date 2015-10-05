@@ -25,7 +25,7 @@ if ($proceed) {
 if ($proceed) {
     $experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
 
-    if ($reallydelete) { 
+    if ($reallydelete) {
 
         $pars=array(':experiment_id'=>$experiment_id);
         $query="DELETE FROM ".table('experiments')."
@@ -41,7 +41,7 @@ if ($proceed) {
         $result=or_query($query,$pars);
 
         $query="DELETE FROM ".table('lang')."
-                WHERE content_type='experiment_invitation_mail' 
+                WHERE content_type='experiment_invitation_mail'
                 AND content_name= :experiment_id";
         $result=or_query($query,$pars);
 

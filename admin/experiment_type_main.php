@@ -30,7 +30,7 @@ if ($proceed) {
             <tbody>';
 
     $query="SELECT *
-            FROM ".table('experiment_types')." 
+            FROM ".table('experiment_types')."
             ORDER BY exptype_id";
     $result=or_query($query);
 
@@ -38,7 +38,7 @@ if ($proceed) {
     while ($line=pdo_fetch_assoc($result)) {
         $count=participants__count_participants(" subscriptions LIKE :exptype_id",array(':exptype_id'=>'%|'.$line['exptype_id'].'|%'));
         echo '  <tr class="small"';
-        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"'; 
+        if ($shade) echo ' bgcolor="'.$color['list_shade1'].'"';
         else echo ' bgcolor="'.$color['list_shade2'].'"';
         echo '>
                 <td>'.$line['exptype_id'].'</td>

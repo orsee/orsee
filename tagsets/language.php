@@ -29,7 +29,7 @@ function load_language_symbol($symbol,$language) {
         if (in_array($language,$languages)) $this_lang=$language;
         else $this_lang=$settings['public_standard_language'];
         $pars=array(':symbol'=>$symbol);
-        $query="SELECT content_name, ".$this_lang." as content_value FROM ".table('lang')." 
+        $query="SELECT content_name, ".$this_lang." as content_value FROM ".table('lang')."
                 WHERE (content_type='lang' OR content_type='datetime_format') and content_name= :symbol";
         $line=orsee_query($query,$pars);
         if (isset($line['content_value'])) return stripslashes($line['content_value']);
@@ -57,19 +57,19 @@ function language__get_item($content_type,$content_name,$language="") {
 
 function language__save_item_order($content_type,$order_array) {
     $pars=array(':content_type'=>$content_type);
-    $query="UPDATE ".table('lang')." 
-            SET order_number = -1  
+    $query="UPDATE ".table('lang')."
+            SET order_number = -1
             WHERE content_type= :content_type";
     $done=or_query($query,$pars);
 
     $pars=array();
-    foreach ($order_array as $k=>$v) {  
+    foreach ($order_array as $k=>$v) {
         $pars[]=array(':content_type'=>$content_type,
                     ':content_name'=>$v,
                     ':order_number'=>$k);
     }
-    $query="UPDATE ".table('lang')." 
-            SET order_number = :order_number  
+    $query="UPDATE ".table('lang')."
+            SET order_number = :order_number
             WHERE content_type = :content_type
             AND content_name = :content_name";
     $done=or_query($query,$pars);
@@ -84,7 +84,7 @@ function language__selectfield_item($content_type,$ptablevarname,$formfieldvarna
     $pars=array(':content_type'=>$content_type);
     $query="SELECT *, ".$language." AS item
             FROM ".table('lang')."
-            WHERE content_type= :content_type  
+            WHERE content_type= :content_type
             ORDER BY ".pdo_escape_string($order_by);
     $result=or_query($query,$pars);
     while ($line = pdo_fetch_assoc($result)) {
@@ -101,7 +101,7 @@ function language__selectfield_item($content_type,$ptablevarname,$formfieldvarna
     }
     $out.='</SELECT>';
     return $out;
-} 
+}
 
 function language__radioline_item($content_type,$ptablevarname,$formfieldvarname,$selected,$incnone=false,$order='alphabetically') {
     $language=lang('lang');
@@ -111,7 +111,7 @@ function language__radioline_item($content_type,$ptablevarname,$formfieldvarname
     $pars=array(':content_type'=>$content_type);
     $query="SELECT *, ".$language." AS item
             FROM ".table('lang')."
-            WHERE content_type= :content_type  
+            WHERE content_type= :content_type
             ORDER BY ".pdo_escape_string($order_by);
     $result=or_query($query,$pars);
     while ($line = pdo_fetch_assoc($result)) {
@@ -125,7 +125,7 @@ function language__radioline_item($content_type,$ptablevarname,$formfieldvarname
         $out.='>'.$v.'&nbsp;&nbsp;&nbsp;';
     }
     return $out;
-} 
+}
 
 
 function language__multiselectfield_item($content_type,$ptablevarname,$formfieldvarname,$selected,$language="",$existing=false,$where='',$show_count=false,$multi=true,$mpoptions=array()) {
@@ -138,7 +138,7 @@ function language__multiselectfield_item($content_type,$ptablevarname,$formfield
     $pars=array(':content_type'=>$content_type);
     $query="SELECT *, ".lang('lang')." AS item
             FROM ".table('lang')."
-            WHERE content_type= :content_type  
+            WHERE content_type= :content_type
             ORDER BY ".pdo_escape_string($language);
     $result=or_query($query,$pars);
     while ($line = pdo_fetch_assoc($result)) {
@@ -149,11 +149,11 @@ function language__multiselectfield_item($content_type,$ptablevarname,$formfield
     if (!$existing) {
         $mylist=$items;
     } else {
-        $query="SELECT count(*) as tf_count, ".pdo_escape_string($ptablevarname)." as tf_value 
-                FROM ".table('participants')." 
+        $query="SELECT count(*) as tf_count, ".pdo_escape_string($ptablevarname)." as tf_value
+                FROM ".table('participants')."
                 WHERE ".table('participants').".participant_id IS NOT NULL ";
         if($where) $query.=" AND ".$where." ";
-        $query.=" GROUP BY ".pdo_escape_string($ptablevarname)." 
+        $query.=" GROUP BY ".pdo_escape_string($ptablevarname)."
                 ORDER BY ".pdo_escape_string($ptablevarname);
         $result=or_query($query);
         while ($line = pdo_fetch_assoc($result)) {
@@ -165,7 +165,7 @@ function language__multiselectfield_item($content_type,$ptablevarname,$formfield
             $mylist[$line['tf_value']]=$thisname;
         }
     }
-    
+
     $out="";
     if (!is_array($mpoptions)) $mpoptions=array();
     if (!isset($mpoptions['picker_icon'])) $mpoptions['picker_icon']='bars';
@@ -177,15 +177,15 @@ function language__multiselectfield_item($content_type,$ptablevarname,$formfield
                 <OPTION value=""'; if (!is_array($selected) || count($selected)==0) $out.= ' SELECTED'; $out.= '>-</OPTION>
                 ';
         foreach ($mylist as $k=>$v) {
-            $out.= '<OPTION value="'.$k.'"'; 
+            $out.= '<OPTION value="'.$k.'"';
                 if ((is_array($selected) && $selected[0]==$out) || $selected==$k) $out.= ' SELECTED'; $out.= '>'.$v.'</OPTION>
                 ';
         }
         $out.= '</SELECT>
         ';
     }
-    return $out;  
-} 
+    return $out;
+}
 
 function get_languages() {
     global $preloaded_languages_list;
@@ -249,13 +249,13 @@ function lang__insert_to_lang($item) {
 
     $pars=array(':content_type'=>$item['content_type']);
     $query="SELECT max(lang_id) as lcount
-            FROM ".table('lang')." 
+            FROM ".table('lang')."
             WHERE content_type= :content_type";
     $line=orsee_query($query,$pars);
     $maxid=$line['lcount'];
 
     $reorganize=false; $newmax=false; $newmin=false;
-    
+
     // if there is no item under this content_type
     if ($maxid==NULL) {
         $newmax=true; $reorganize=true; $newmin=false;
@@ -310,7 +310,7 @@ function lang__reorganize_lang_table($steps=10000) {
             $i=($current_step + 1) * $steps;
         }
         $pars[]=array(':new_lang_id'=>$i,':old_lang_id'=>$item['lang_id']);
-        $i++;   
+        $i++;
     }
     $query="UPDATE ".table('lang')." SET lang_id= :new_lang_id WHERE lang_id= :old_lang_id";
     $done=or_query($query,$pars);
@@ -319,17 +319,17 @@ function lang__reorganize_lang_table($steps=10000) {
 
 
 function lang__load_lang_cat($content_type,$language="") {
-    global $lang, $preloaded_lang_cats; 
+    global $lang, $preloaded_lang_cats;
     if (!$language) $language=lang('lang');
-    
-    if (isset($preloaded_lang_cats[$content_type][$language]) && 
-        is_array($preloaded_lang_cats[$content_type][$language]) && 
-        count($preloaded_lang_cats[$content_type][$language])>0) 
+
+    if (isset($preloaded_lang_cats[$content_type][$language]) &&
+        is_array($preloaded_lang_cats[$content_type][$language]) &&
+        count($preloaded_lang_cats[$content_type][$language])>0)
             return $preloaded_lang_cats[$content_type][$language];
     else {
         $cat=array();
         $pars=array(':content_type'=>$content_type);
-        $query="SELECT content_name, ".$language." as content_value 
+        $query="SELECT content_name, ".$language." as content_value
                 FROM ".table('lang')." WHERE content_type= :content_type";
         $result=or_query($query,$pars);
         while ($line = pdo_fetch_assoc($result)) {
@@ -341,7 +341,7 @@ function lang__load_lang_cat($content_type,$language="") {
 }
 
 
-/* this is a list of used, but not explicit programmed language items 
+/* this is a list of used, but not explicit programmed language items
     just to not forget and delete them
 
 lang('calendar')

@@ -14,7 +14,7 @@ if ($proceed) {
     if (isset($_REQUEST['deletesel']) && $_REQUEST['deletesel']) $dsel=true; else $dsel=false;
 
     if ( $dall || $dsel ) {
-    
+
         $ok=false;
         if ($dsel) {
             $dids=array();
@@ -31,26 +31,26 @@ if ($proceed) {
                     $pars[':participant_id'.$i]=$id;
                     $parnames[]=':participant_id'.$i;
                 }
-                $in_clause=" AND participant_id IN (".implode(",",$parnames).")";                   
+                $in_clause=" AND participant_id IN (".implode(",",$parnames).")";
             }
-        } elseif ($dall) { 
+        } elseif ($dall) {
             $ok=true;
             $pars=array();
             $in_clause="";
-        } 
-        
-        if ($ok) {     
-            $query="SELECT participant_id, email 
+        }
+
+        if ($ok) {
+            $query="SELECT participant_id, email
                     FROM ".table('participants')."
                     WHERE status_id='0' ".$in_clause;
             $result=or_query($query,$pars);
             while ($line=pdo_fetch_assoc($result)) $del_emails[$line['participant_id']]=$line['email'];
-                   
-            $query="DELETE FROM ".table('participants')." 
-                    WHERE status_id='0' ".$in_clause;        
+
+            $query="DELETE FROM ".table('participants')."
+                    WHERE status_id='0' ".$in_clause;
             $done=or_query($query,$pars);
             $number=pdo_num_rows($done);
-            
+
             message ($number.' '.lang('xxx_temp_participants_deleted'));
             foreach ($del_emails as $participant_id=>$email) {
                 log__admin("participant_unconfirmed_delete","participant_id: ".$participant_id.', email: '.$email);
@@ -78,14 +78,14 @@ if ($proceed) {
             </TD><TD width="50%" align="right">
             <input class="button" type=submit name="deletesel" value="'.lang('delete_selected').'">
             </TD></TR>
-            </TABLE>                        
+            </TABLE>
         </TD></TR>
         <TR><TD colspan="2">';
-        
+
     $emails=query_show_query_result($query,"participants_unconfirmed",false);
 
     echo '</FORM>';
-    echo '</TD></TR></TABLE>';  
+    echo '</TD></TR></TABLE>';
 
     $emailstring=implode(",",$emails);
         echo '<BR><BR>'.button_link('mailto:'.$settings['support_mail'].'?bcc='.$emailstring,lang('write_message_to_all_listed'),'envelope');

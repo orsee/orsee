@@ -54,12 +54,12 @@ if ($proceed) {
         // prepare lang stuff
         foreach ($inv_langs as $inv_lang) {
             $sitem[$inv_lang]=$sitem[$inv_lang.'_subject']."\n".$sitem[$inv_lang.'_body'];
-        }   
+        }
 
         // well: just to be sure: for all other languages, copy the public default lang
         foreach ($installed_langs as $inst_lang) {
             if (!in_array($inst_lang,$inv_langs)) $sitem[$inst_lang]=$sitem[$settings['public_standard_language']];
-        }   
+        }
 
         // is unknown or known?
         if (!$id) $done=lang__insert_to_lang($sitem);
@@ -67,7 +67,7 @@ if ($proceed) {
 
         if ($done) message(lang('mail_text_saved'));
         else message (lang('database_error'));
-        
+
         log__admin("experiment_customize_enrolment_confirmation","experiment:".$experiment['experiment_name']);
 
         if ($save_preview) {
@@ -81,17 +81,17 @@ if ($proceed) {
 if ($proceed) {
 
     $pars=array(':experiment_id'=>$experiment_id);
-    $query="SELECT * from ".table('lang')." 
-            WHERE content_type='experiment_enrolment_conf_mail' 
+    $query="SELECT * from ".table('lang')."
+            WHERE content_type='experiment_enrolment_conf_mail'
             AND content_name= :experiment_id";
     $experiment_mail=orsee_query($query,$pars);
 
     $session=experimentmail__preview_fake_session_details($experiment_id);
-    
+
     if ($show_preview) {
         echo '<TABLE class="or_formtable" style="width: 80%;">';
-        
-        echo '<TR><TD colspan=2>                        
+
+        echo '<TR><TD colspan=2>
             '.button_link('experiment_customize_enrol_conf.php?experiment_id='.urlencode($experiment_id),
                             lang('back_to_mail_page'),'backward','font-size: 8pt;').'
             </TD></TR>';
@@ -100,14 +100,14 @@ if ($proceed) {
             // split in subject and text
             $subject=str_replace(strstr($experiment_mail[$inv_lang],"\n"),"",$experiment_mail[$inv_lang]);
             $body=substr($experiment_mail[$inv_lang],strpos($experiment_mail[$inv_lang],"\n")+1,strlen($experiment_mail[$inv_lang]));
-        
+
             $lab=laboratories__get_laboratory_text($session['laboratory_id'],$inv_lang);
 
             $pform_fields=participant__load_participant_email_fields($inv_lang);
             $experimentmail=experimentmail__preview_fake_participant_details($pform_fields);
             $experimentmail['language']=$inv_lang;
-            $experimentmail=experimentmail__get_session_reminder_details($experimentmail,$experiment,$session,$lab);    
-            $experimentmail=experimentmail__get_experiment_registration_details($experimentmail,$experiment,$session,$lab,$inv_lang);       
+            $experimentmail=experimentmail__get_session_reminder_details($experimentmail,$experiment,$session,$lab);
+            $experimentmail=experimentmail__get_experiment_registration_details($experimentmail,$experiment,$session,$lab,$inv_lang);
             if ($experiment['sender_mail']) $sendermail=$experiment['sender_mail']; else $sendermail=$settings['support_mail'];
             $email_text=process_mail_template(stripslashes($body),$experimentmail);
 
@@ -137,7 +137,7 @@ if ($proceed) {
                     <TR>
                         <TD valign=top bgcolor="'.$color['content_background_color'].'" colspan=2>
                             '.nl2br(process_mail_template(stripslashes($body),$experimentmail));
-            if (isset($experimentmail['include_footer']) && $experimentmail['include_footer']=="y") 
+            if (isset($experimentmail['include_footer']) && $experimentmail['include_footer']=="y")
                         echo nl2br(stripslashes(experimentmail__get_mail_footer(0)));
             echo '      </TD>
                         </TR>
@@ -145,7 +145,7 @@ if ($proceed) {
             echo '<TR><TD colspan=2>&nbsp;</TD></TR>';
         }
 
-        echo '<TR><TD colspan=2>                        
+        echo '<TR><TD colspan=2>
                 '.button_link('experiment_customize_enrol_conf.php?experiment_id='.urlencode($experiment_id),
                                 lang('back_to_mail_page'),'backward','font-size: 8pt;').'
                 </TD></TR>';
@@ -157,9 +157,9 @@ if ($proceed) {
                 lang('mainpage_of_this_experiment').'</A><BR><BR>
 
                 </CENTER>';
-        
+
     } else {
-    
+
         if (!isset($experiment_mail['lang_id'])) {
             $experiment_mail=array('lang_id'=>'');
             foreach ($inv_langs as $inv_lang) $experiment_mail[$inv_lang]='';
@@ -228,7 +228,7 @@ if ($proceed) {
                 </TD></TR>
                 </TABLE>
             </TD></TR>';
-        
+
         echo '
                 </TABLE>
                 </FORM>';
@@ -237,7 +237,7 @@ if ($proceed) {
                 lang('mainpage_of_this_experiment').'</A><BR><BR>
 
             </CENTER>';
-        
+
     }
 
 }

@@ -6,7 +6,7 @@ function mailqueue__show_mailqueue($experiment_id="",$limit=-1) {
 
 if ($proceed) {
     $pars=array();
-    
+
     if ($limit==-1 && $experiment_id && isset($options['mailqueue_experiment_number_of_entries_per_page']) && $options['mailqueue_experiment_number_of_entries_per_page']) {
         $limit=$options['mailqueue_experiment_number_of_entries_per_page'];
     } elseif ($limit==-1 && isset($options['mailqueue_number_of_entries_per_page']) && $options['mailqueue_number_of_entries_per_page']) {
@@ -16,7 +16,7 @@ if ($proceed) {
     }
 
     if (isset($_REQUEST['os']) && $_REQUEST['os']>0) $offset=$_REQUEST['os']; else $offset=0;
-    
+
     if ($experiment_id) {
         $equery=" AND experiment_id=:experiment_id ";
         $pars[':experiment_id']=$experiment_id;
@@ -37,7 +37,7 @@ if ($proceed) {
 
         $ok=false;
         if ($dall) $ok=true;
-        
+
 
         if ($dallpage) {
             $tallids=array();
@@ -56,8 +56,8 @@ if ($proceed) {
                 message(lang('error__mailqueue_delete_no_emails_selected'));
                 $ok=false;
             }
-        } 
-        
+        }
+
         if ($dsel) {
             $dids=array();
             if (isset($_REQUEST['del']) && is_array($_REQUEST['del'])) {
@@ -80,15 +80,15 @@ if ($proceed) {
                 $ok=false;
             }
         }
-        
+
         if ($ok) {
-            $query="DELETE FROM ".table('mail_queue').$where_clause;    
+            $query="DELETE FROM ".table('mail_queue').$where_clause;
             //echo $query;
-        
+
             $done=or_query($query,$pars);
             $number=pdo_num_rows($done);
             message ($number.' '.lang('xxx_emails_deleted_from_queue'));
-        
+
             if ($experiment_id) {
                 if ($number>0) log__admin("mailqueue_delete_entries","Experiment: ".$experiment_id.", Count: ".$number);
             } else {
@@ -104,7 +104,7 @@ if ($proceed) {
 }
 
 if ($proceed) {
-    
+
     $pars=array();
     if ($experiment_id) {
         $equery=" AND experiment_id=:experiment_id ";
@@ -115,24 +115,24 @@ if ($proceed) {
     $query="SELECT * FROM ".table('mail_queue')."
         WHERE mail_id IS NOT NULL ".
         $equery.
-        " ORDER BY timestamp DESC 
+        " ORDER BY timestamp DESC
         LIMIT :offset , :limit";
     $result=or_query($query,$pars);
     $num_rows=pdo_num_rows($result);
-        
+
     if ($experiment_id && check_allow('mailqueue_edit_experiment')) {
         echo '<FORM action="experiment_mailqueue_show.php" method="POST">
             <INPUT type="hidden" name="experiment_id" value="'.$experiment_id.'">';
     } elseif (check_allow('mailqueue_edit_all')) {
         echo '<FORM action="mailqueue_show.php" method="POST">';
     }
-    
+
     echo '<TABLE width=90% border=0>
         <TR><TD width=50%>';
     //echo '<FONT class="small">'.lang('query').': '.$query.'</FONT><BR><BR>';
     echo '&nbsp;</TD>
         <TD align=right width=50%>';
-    
+
     if (check_allow('mailqueue_edit_all')) {
         echo '
             <TABLE width="100%" border="0">
@@ -143,7 +143,7 @@ if ($proceed) {
             </TD><TD width="33%" align="right">
             <input class="button" type=submit name="deletesel" value="'.lang('delete_selected').'">
             </TD></TR>
-            </TABLE>                        
+            </TABLE>
             ';
         }
     echo '</TD></TR></TABLE>';
@@ -180,7 +180,7 @@ if ($proceed) {
                             this.checked = false;
                         });
                     }
-                }); 
+                });
             </script>
         </TD>';
     }
@@ -204,7 +204,7 @@ if ($proceed) {
         else echo ' bgcolor="'.$color['list_shade2'].'"';
 
         echo '>
-            <TD>'.$line['mail_id'].'</TD>       
+            <TD>'.$line['mail_id'].'</TD>
             <TD>'.ortime__format($line['timestamp'],'hide_second:false',lang('lang')).'</TD>
             <TD>'.$line['mail_type'].'</TD>
             <TD>'.$line['mail_recipient'].'</TD>
@@ -225,7 +225,7 @@ if ($proceed) {
     if (check_allow('mailqueue_edit_all')) {
         echo '<INPUT type="hidden" name="allids" value="'.implode(",",$ids).'">';
         echo '</FORM>';
-    }   
+    }
     return $num_rows;
 }
 }

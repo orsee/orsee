@@ -7,7 +7,7 @@ $title="delete_subpool";
 include ("header.php");
 if ($proceed) {
     if (isset($_REQUEST['subpool_id'])) $subpool_id=$_REQUEST['subpool_id']; else $subpool_id="";
-    
+
     if (!$subpool_id || !$subpool_id>1) redirect ('admin/subpool_edit.php?subpool_id='.$subpool_id);
 
     if (isset($_REQUEST['betternot']) && $_REQUEST['betternot'])
@@ -38,11 +38,11 @@ if ($proceed) {
             $subpool['exptypes'][]=$exptypes[$exptype_id][lang('lang')];
     }
     unset($subpool['experiment_types']);
-    $pars=array(':subpool_id'=>$subpool_id);    
+    $pars=array(':subpool_id'=>$subpool_id);
     $query="SELECT * from ".table('lang')." WHERE content_type='subjectpool' AND content_name= :subpool_id";
     $selfdesc=orsee_query($query,$pars);
     foreach ($languages as $language) $subpool['selfdesc_'.$language]=$selfdesc[$language];
-    
+
     echo '<center>';
 
     if ($reallydelete) {
@@ -50,22 +50,22 @@ if ($proceed) {
         if (isset($_REQUEST['merge_with']) && $_REQUEST['merge_with']) $merge_with=$_REQUEST['merge_with']; else $merge_with=1;
         $subpools=subpools__get_subpools();
         if (!isset($subpools[$merge_with])) redirect ("admin/subpool_main.php");
-        else {          
+        else {
             // transaction?
-            $pars=array(':subpool_id'=>$subpool_id);    
-            $query="DELETE FROM ".table('subpools')." 
+            $pars=array(':subpool_id'=>$subpool_id);
+            $query="DELETE FROM ".table('subpools')."
                     WHERE subpool_id= :subpool_id";
             $result=or_query($query,$pars);
 
             $pars=array(':subpool_id'=>$subpool_id);
             $query="DELETE FROM ".table('lang')."
-                    WHERE content_name= :subpool_id 
+                    WHERE content_name= :subpool_id
                     AND content_type='subjectpool'";
             $result=or_query($query,$pars);
 
             $pars=array(':subpool_id'=>$subpool_id,':merge_with'=>$merge_with);
-            $query="UPDATE ".table('participants')." 
-                    SET subpool_id= :merge_with 
+            $query="UPDATE ".table('participants')."
+                    SET subpool_id= :merge_with
                     WHERE subpool_id= :subpool_id";
             $result=or_query($query,$pars);
 
@@ -89,7 +89,7 @@ if ($proceed) {
                         </TD>
                 </TR></TABLE>
                 </TD></TR>
-                
+
                 <TR>
                     <TD colspan=2>
                         '.lang('really_delete_subpool?').'

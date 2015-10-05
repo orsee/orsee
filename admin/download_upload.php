@@ -39,7 +39,7 @@ if ($proceed) {
     if (isset($_REQUEST['upload']) && $_REQUEST['upload']) {
         $redirect_target="admin/download_upload.php?experiment_id=".urlencode($experiment_id)
                 .'&upload_name='.urlencode($_REQUEST['upload_name'])
-                .'&upload_category='.urlencode($_REQUEST['upload_category']);       
+                .'&upload_category='.urlencode($_REQUEST['upload_category']);
 
         $file=$_FILES['contents'];
         if ($file['size']>$settings['upload_max_size'] || $file['error']>0) {
@@ -52,13 +52,13 @@ if ($proceed) {
                 message (lang('error_no_upload_file_name'));
                 redirect ($redirect_target);
             }
-            
+
             if ($continue) {
                 $upload=array();
 
                 $upload['upload_id']=time();
                 $upload['experiment_id']=$experiment_id;
-                $upload['session_id']=$_REQUEST['session_id'];  
+                $upload['session_id']=$_REQUEST['session_id'];
                 $upload['upload_type']=$_REQUEST['upload_type'];
                 $upload['upload_name']=$_REQUEST['upload_name'];
                 $upload['upload_filesize']=$file['size'];
@@ -81,7 +81,7 @@ if ($proceed) {
                     message (lang('file_uploaded'));
                     $target= ($experiment_id) ? "experiment:".$experiment['experiment_name'] : "general";
                     log__admin("file_upload",$target);
-                    if ($experiment_id>0) 
+                    if ($experiment_id>0)
                         redirect ('admin/experiment_show.php?experiment_id='.$experiment_id);
                     else redirect ('admin/download_main.php');
                     $proceed=false;
@@ -94,7 +94,7 @@ if ($proceed) {
 if ($proceed) {
 
     //form for uploading file
-    
+
 
     echo '<center>';
 
@@ -111,11 +111,11 @@ if ($proceed) {
         echo ' "'.$experiment['experiment_name'].'"';
     } else {
         echo lang('upload_general_file');
-    }                       
+    }
     echo '          </TD>
                 </TR></TABLE>
             </TD></TR>';
-            
+
     if ($experiment_id) {
         $sessions=sessions__get_sessions($experiment_id);
         echo '<TR>

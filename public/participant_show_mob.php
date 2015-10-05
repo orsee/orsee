@@ -24,10 +24,10 @@ if ($proceed) {
             if (!isset($session['session_id'])) {
                 log__participant("interfere - invalid session_id",$participant_id);
                 message(lang('error_session_id_register'));
-                redirect("public/participant_show_mob.php".$token_string);      
+                redirect("public/participant_show_mob.php".$token_string);
             }
         }
-        if ($proceed) { 
+        if ($proceed) {
             $participate_at=expregister__get_participate_at($participant_id,$session['experiment_id']);
             if (!isset($participate_at['session_id'])) {
                 $continue=false;
@@ -39,10 +39,10 @@ if ($proceed) {
                 if (!$participate_at['invited']) {
                     $continue=false;
                     redirect("public/participant_show_mob.php".$token_string);
-                }   
+                }
             }
         }
-        if ($proceed) { 
+        if ($proceed) {
             if (isset($participate_at['session_id']) && $participate_at['session_id']>0) {
                 $continue=false;
                 message(lang('error_already_registered'));
@@ -95,10 +95,10 @@ if ($proceed) {
             if (!isset($session['session_id'])) {
                 log__participant("interfere enrolment cancellation - invalid session_id",$participant_id);
                 message(lang('error_session_id_register'));
-                redirect("public/participant_show_mob.php".$token_string);      
+                redirect("public/participant_show_mob.php".$token_string);
             }
         }
-        if ($proceed) { 
+        if ($proceed) {
             $participate_at=expregister__get_participate_at($participant_id,$session['experiment_id']);
             if (!isset($participate_at['session_id']) || $participate_at['session_id']!=$session_id) {
                 $continue=false;
@@ -127,7 +127,7 @@ if ($proceed) {
             redirect("public/participant_show_mob.php".$token_string);
         }
     }
-} 
+}
 
 if ($proceed) {
 
@@ -144,7 +144,7 @@ if ($proceed) {
 
     // history
     $history=expregister__get_history($participant_id);
-                    
+
     if (isset($_SESSION['message_text'])) $message_text=$_SESSION['message_text']; else $message_text="";
     $_SESSION['message_text']="";
 
@@ -166,9 +166,9 @@ if ($proceed) {
     echo '
         </div>
         <div data-role="content">';
-    
+
         if ($message_text) echo '<div data-role="content"><font color="red">'.lang('message').': '.$message_text.'</font></div>';
-    
+
         echo '
             <ul data-role="listview">
                 <li>
@@ -179,14 +179,14 @@ if ($proceed) {
                 </li>
                 <li>
                <a href="#participated" class="ui-btn ui-btn-icon-left ui-icon-bullets">'.lang('mobile_past_enrolments').' <span class="ui-li-count">'.count($history).'</span></a>
-                </li>           
+                </li>
             </ul>
 
 
         </div>';
-    
+
     echo $footer;
-  
+
     echo '
     <!-- invited -->
     <div data-role="page" id="invited">
@@ -194,8 +194,8 @@ if ($proceed) {
             <h1>'.lang('mobile_new_invitations').'</h1>
             <a href="#indexPage" class="ui-btn-left">'.lang('back').'</a>
         </div>
- 
-        <div data-role="content"> 
+
+        <div data-role="content">
                 '.lang('please_check_availability_before_register').'
            ';
 
@@ -227,7 +227,7 @@ if ($proceed) {
     else echo '<h4 class="ui-bar ui-bar-a">'.lang('mobile_no_current_invitations').'</h4>';
 
     echo '</div>';
-    
+
     echo $footer;
 
 
@@ -270,9 +270,9 @@ if ($proceed) {
             <a href="#indexPage" class="ui-btn-left">'.lang('back').'</a>
         </div>
         <div data-role="content">';
-    
+
         if (count($registered)>0) echo '<ul data-role="listview" data-theme="a" data-inset="true">';
-    
+
         foreach ($registered as $s) {
             echo '<li><a href="#reg'.$s['session_id'].'" class="ui-mini">
             <font color="black">'.$s['session_name'].'</font><br>
@@ -284,7 +284,7 @@ if ($proceed) {
         else echo '<h4 class="ui-bar ui-bar-a">'.lang('mobile_no_current_registrations').'</h4>';
 
     echo '</div>';
-    
+
     echo $footer;
 
 
@@ -312,7 +312,7 @@ if ($proceed) {
                 echo '';
             }
         }
-        
+
         echo '</div>';
         echo $footer;
     }
@@ -360,11 +360,11 @@ if ($proceed) {
             <a href="#indexPage" class="ui-btn-left">'.lang('back').'</a>
         </div>
         <div data-role="content">
-            '.lang('registered_for').' '.$participant['number_reg'].'<BR> 
+            '.lang('registered_for').' '.$participant['number_reg'].'<BR>
             '.lang('not_shown_up').' '.$participant['number_noshowup'].' ';
 
         if (count($history)>0) echo '<ul data-role="listview" data-theme="a" data-inset="true">';
-    
+
         $pstatuses=expregister__get_participation_statuses();
         foreach ($history as $s) {
             echo '<li><strong>'.$s['session_name'].'</strong><br>
@@ -379,7 +379,7 @@ if ($proceed) {
                     $tcolor=$color['shownup_yes'];
                     //$ttext=lang('yes');
                 }
-                $ttext=$pstatuses[$s['pstatus_id']]['display_name'];    
+                $ttext=$pstatuses[$s['pstatus_id']]['display_name'];
                 echo '<FONT color="'.$tcolor.'"><strong>'.$ttext.'</strong></FONT>';
             } else echo '<FONT color="grey"><strong>'.lang('three_questionmarks').'</strong></FONT>';
             echo '</li>';
@@ -388,10 +388,10 @@ if ($proceed) {
         else echo '<h4 class="ui-bar ui-bar-a">'.lang('mobile_no_past_enrolments').'</h4>';
 
     echo '</div>';
-    
+
     //echo $footer;
 
     html__mobile_footer();
-    
+
 }
 ?>

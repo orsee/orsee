@@ -21,7 +21,7 @@ if ($proceed) {
     if (!(in_array($list,$result_lists) || in_array($list,$other_lists))) redirect ('admin/options_participant_profile.php');
 }
 
-if ($proceed) { 
+if ($proceed) {
     if ($list=='result_table_search_active') {
         $header=lang('columns_in_search_results_table_for_active_participants');
         $cols=participant__get_possible_participant_columns($list);
@@ -49,11 +49,11 @@ if ($proceed) {
     } elseif ($list=='email_participant_guesses_list') {
         $header=lang('email_module_participant_guesses_list');
         $cols=participant__get_possible_participant_columns($list);
-    } 
+    }
     if (!isset($cols)) redirect ('admin/options_participant_profile.php');
 }
 
-if ($proceed) { 
+if ($proceed) {
     if (isset($_REQUEST['save_order']) && $_REQUEST['save_order']) {
         if(isset($_REQUEST['item_order']) && is_array($_REQUEST['item_order']) && count($_REQUEST['item_order'])>0) {
             if (isset($_REQUEST['sortby']) && $_REQUEST['sortby']) $details=array(trim($_REQUEST['sortby'])=>array('default_sortby'=>1));
@@ -62,17 +62,17 @@ if ($proceed) {
             message(lang('changes_saved'));
             redirect('admin/options_ordered_lists.php?list='.urlencode($list));
         }
-    } 
+    }
 }
 
 if ($proceed) {
     $pars=array(':item_type'=>$list);
     $query="SELECT *
             FROM ".table('objects')."
-            WHERE item_type= :item_type 
+            WHERE item_type= :item_type
             ORDER BY order_number";
     $result=or_query($query,$pars);
-    
+
     $rows=array();
     while ($line=pdo_fetch_assoc($result)) {
         $rows[$line['item_name']]=$line;
@@ -85,7 +85,7 @@ if ($proceed) {
         $listrows=options__ordered_lists_get_current($cols,$rows,false);
         $headers='';
     }
-    
+
     echo '<center>';
     echo '<form action="" method="POST">';
     echo '<TABLE class="or_formtable">
@@ -99,12 +99,12 @@ if ($proceed) {
     echo '<TR><TD align="center">';
     echo formhelpers__orderlist("ordered_list", "item_order", $listrows, false, lang('add'),$headers);
     echo '<input class="button" style="display: block;" name="save_order" type="submit" value="'.lang('save_order').'">';
-    echo '</TD></TR></TABLE>';    
-    
+    echo '</TD></TR></TABLE>';
+
     echo '</form>';
-    
+
     echo '<BR><BR><BR><A href="options_main.php">'.icon('back').' '.lang('back').'</A><BR><BR>';
-    
+
     echo '</CENTER>';
 
 }

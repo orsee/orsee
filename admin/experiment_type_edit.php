@@ -23,7 +23,7 @@ if ($proceed) {
             $map=explode(",",$exptype['exptype_mapping']);
             foreach ($map as $etype) {
                 $exptype['exptype_map'][$etype]=$etype;
-            } 
+            }
             $query="SELECT * from ".table('lang')." WHERE content_type='experiment_type' AND content_name='".$exptype_id."'";
             $selfdesc=orsee_query($query);
         } else {
@@ -41,7 +41,7 @@ if ($proceed) {
         }
 
         $map=array();
-        
+
         $types=$system__experiment_types;
         foreach ($types as $etype) {
             if (isset($_REQUEST['exptype_map'][$etype]) && $_REQUEST['exptype_map'][$etype]) $map[]=$_REQUEST['exptype_map'][$etype];
@@ -72,8 +72,8 @@ if ($proceed) {
                 $lsub['content_name']=$exptype_id;
             } else {
                 $new_entry=false;
-                $query="SELECT * from ".table('lang')." 
-                        WHERE content_type='experiment_type' 
+                $query="SELECT * from ".table('lang')."
+                        WHERE content_type='experiment_type'
                         AND content_name='".$exptype_id."'";
                 $lsub=orsee_query($query);
             }
@@ -122,7 +122,7 @@ if ($proceed) {
                     '.lang('name').':
                 </TD>
                 <TD>
-                    <INPUT name="exptype_name" type=text size=40 maxlength=100 
+                    <INPUT name="exptype_name" type=text size=40 maxlength=100
                         value="'.$exptype['exptype_name'].'">
                 </TD>
             </TR>

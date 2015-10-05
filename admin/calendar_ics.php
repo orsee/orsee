@@ -19,7 +19,7 @@ if ($continue) {
     $expadmindata=calendar__get_user_for_ics_token($token);
     if (is_array($expadmindata)) {
         $expadmindata['rights']=admin__load_admin_rights($expadmindata['admin_type']);
-        if (check_allow('login') && $expadmindata['disabled']!='y' 
+        if (check_allow('login') && $expadmindata['disabled']!='y'
             && (check_allow('calendar_export_my') || check_allow('calendar_export_all'))
         ) {
             if ($all==true && !check_allow('calendar_export_all')) $all=false;
@@ -30,7 +30,7 @@ if ($continue) {
 if ($continue) {
 
 $displayfrom_lower = time()-60*60*24*31*$settings['calendar_export_months_back'];
-$displayfrom_upper = time()+60*60*24*31*$settings['calendar_export_months_ahead']; 
+$displayfrom_upper = time()+60*60*24*31*$settings['calendar_export_months_ahead'];
 
 if ($all) $expadminid=false; else $expadminid=$expadmindata['admin_id'];
 $results = calendar__get_events(true, $displayfrom_lower, $displayfrom_upper,$expadminid);
@@ -72,7 +72,7 @@ foreach($results as $day){
         //  if(check_allow('experiment_show_participants'))
         //      $description.=lang('participants').': '.$item['participants_link'].'\n';
         }
-        $description=trim($description);    
+        $description=trim($description);
         echo 'BEGIN:VEVENT' . "\r\n";
         echo 'DTEND:' . calendar__unixtime_to_ical_date($item['end_time']) . "\r\n";
         echo 'UID:' . calendar__escapestring($item['uid']) . "\r\n";

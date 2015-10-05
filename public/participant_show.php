@@ -21,7 +21,7 @@ if ($proceed) {
         if (isset($_REQUEST['betternot']) && $_REQUEST['betternot']) {
             redirect("public/participant_show.php".$token_string);
         }
-        
+
         if ($proceed) {
             if (!$session_id) {
                 $continue=false;
@@ -35,7 +35,7 @@ if ($proceed) {
             if (!isset($session['session_id'])) {
                 log__participant("interfere enrolment - invalid session_id",$participant_id);
                 message(lang('error_session_id_register'));
-                redirect("public/participant_show.php".$token_string);      
+                redirect("public/participant_show.php".$token_string);
             }
         }
         if ($proceed) {
@@ -50,10 +50,10 @@ if ($proceed) {
                 if (!$participate_at['invited']) {
                     $continue=false;
                     redirect("public/participant_show.php".$token_string);
-                }   
+                }
             }
-        }   
-        
+        }
+
         if ($proceed) {
             if (isset($participate_at['session_id']) && $participate_at['session_id']>0) {
                 $continue=false;
@@ -61,7 +61,7 @@ if ($proceed) {
                 redirect("public/participant_show.php".$token_string);
             }
         }
-        
+
         if ($proceed) {
             $registration_end=sessions__get_registration_end($session);
             $full=sessions__session_full($session_id,$session);
@@ -80,7 +80,7 @@ if ($proceed) {
                  redirect("public/participant_show.php".$token_string);
             }
         }
-        
+
         if ($proceed) {
             if (isset($_REQUEST['reallyregister']) && $_REQUEST['reallyregister']) {
                 // if all checks are done, register ...
@@ -103,11 +103,11 @@ if ($proceed) {
                         <TR><TD align="center">
                             '.lang('experiment_registration').'
                         </TD></TABLE>';
-            
+
                 echo '<BR><BR>
                     <form action="participant_show.php">
                     <INPUT type=hidden name="s" value="'.$_REQUEST['s'].'">';
-                    
+
                 if ($token_string) echo '<INPUT type=hidden name="p" value="'.$participant['participant_id_crypt'].'">';
                 echo '<INPUT type=hidden name="register" value="true">
                     <TABLE class="or_formtable">
@@ -157,7 +157,7 @@ if ($proceed) {
                     ';
             }
         }
-        
+
     } elseif (isset($_REQUEST['cancel']) && $_REQUEST['cancel'] &&
             isset($settings['allow_subject_cancellation']) && $settings['allow_subject_cancellation']=='y') {
         $continue=true;
@@ -165,7 +165,7 @@ if ($proceed) {
         if (isset($_REQUEST['betternot']) && $_REQUEST['betternot']) {
             redirect("public/participant_show.php".$token_string);
         }
-        
+
         if ($proceed) {
             if (!$session_id) {
                 $continue=false;
@@ -179,7 +179,7 @@ if ($proceed) {
             if (!isset($session['session_id'])) {
                 log__participant("interfere enrolment cancellation - invalid session_id",$participant_id);
                 message(lang('error_session_id_register'));
-                redirect("public/participant_show.php".$token_string);      
+                redirect("public/participant_show.php".$token_string);
             }
         }
         if ($proceed) {
@@ -189,7 +189,7 @@ if ($proceed) {
                 redirect("public/participant_show.php".$token_string);
             }
         }
-        
+
         if ($proceed) {
             $cancellation_deadline=sessions__get_cancellation_deadline($session);
             $now=time();
@@ -199,7 +199,7 @@ if ($proceed) {
                 redirect("public/participant_show.php".$token_string);
             }
         }
-        
+
         if ($proceed) {
             if (isset($_REQUEST['reallycancel']) && $_REQUEST['reallycancel']) {
                 // if all checks are done, register ...
@@ -217,16 +217,16 @@ if ($proceed) {
                 }
             } else {
                 echo '<center>';
-            
+
                 echo '<TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'">
                         <TR><TD align="center">
                             '.lang('session_enrolment_cancellation').'
                         </TD>';
-                
+
                 echo '<BR><BR>
                     <form action="participant_show.php">
                     <INPUT type="hidden" name="s" value="'.$_REQUEST['s'].'">';
-                    
+
                 if ($token_string) echo '<INPUT type="hidden" name="p" value="'.$participant['participant_id_crypt'].'">';
                 echo '<INPUT type=hidden name="cancel" value="true">
                     <TABLE style="outline: 1px solid black;">
@@ -280,7 +280,7 @@ if ($proceed) {
 
         if (!isset($preloaded_laboratories)) $preloaded_laboratories=laboratories__get_laboratories();
         echo '<center>';
-            
+
         echo '<p align="right"><TABLE border=0>';
         echo '<TR><TD>'.button_link('participant_edit.php'.$token_string,
                             lang('edit_your_profile'),'pencil-square-o').'</TD></TR>';
@@ -296,15 +296,15 @@ if ($proceed) {
                             </TD>
                         </TR></TABLE>
                     </TD></TR>
-                    <TR><TD>    
+                    <TR><TD>
                         '.lang('please_check_availability_before_register').'
                     </TD></TR>
                     <TR><TD>';
-        $labs=expregister__list_invited_for($participant);      
+        $labs=expregister__list_invited_for($participant);
         echo '      </TD></TR>
-                </TABLE>        
+                </TABLE>
             </TD></TR>';
-        echo '<TR><TD>&nbsp;</TD></TR>';    
+        echo '<TR><TD>&nbsp;</TD></TR>';
         echo '<TR><TD>
                 <TABLE width="100%" class="or_panel" style="width: 100%;">
                     <TR><TD>
@@ -317,7 +317,7 @@ if ($proceed) {
                     <TR><TD>';
         $labs2=expregister__list_registered_for($participant,$session_id);
         echo '      </TD></TR>
-                </TABLE>        
+                </TABLE>
             </TD></TR>';
         echo '<TR><TD>&nbsp;</TD></TR>';
         $laboratories=array_unique(array_merge($labs,$labs2));
@@ -325,7 +325,7 @@ if ($proceed) {
             echo '<TR><TD>
                     <table border="0" class="or_panel" style="width: 100%;">
                         <TR><TD colspan=2><B>';
-            if (count($laboratories)==1) echo lang('laboratory_address'); 
+            if (count($laboratories)==1) echo lang('laboratory_address');
             else echo lang('laboratory_addresses');
             echo '      </B></TD></TR>';
             foreach ($laboratories as $laboratory_id) {
@@ -352,13 +352,13 @@ if ($proceed) {
                         </TR></TABLE>
                     </TD></TR>
                     <TR><TD>
-                        '.lang('registered_for').' '.$participant['number_reg'].', 
+                        '.lang('registered_for').' '.$participant['number_reg'].',
                         '.lang('not_shown_up').' '.$participant['number_noshowup'].'
                 </TD></TR>
                     <TR><TD>';
         expregister__list_history($participant);
         echo '      </TD></TR>
-                </TABLE>        
+                </TABLE>
             </TD></TR>';
         echo '</TABLE>';
 

@@ -34,7 +34,7 @@ if ($proceed) {
         $_SESSION['expadmindata']=$expadmindata;
     }
 
-    if (!isset($expadmindata['language'])) 
+    if (!isset($expadmindata['language']))
         $expadmindata['language']=$settings['admin_standard_language'];
 
     $authdata['language']=$expadmindata['language'];

@@ -1,4 +1,4 @@
-<?php 
+<?php
 // part of orsee. see orsee.org
 
 if ($proceed) {

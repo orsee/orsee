@@ -21,25 +21,25 @@ if ($proceed) {
 
     if (isset($_REQUEST['delete']) && $_REQUEST['delete']) $delete=true;
     else $delete=false;
-    
+
     $languages=get_languages();
     $lang_names=lang__get_language_names();
 
     if ($delete || $reallydelete) {
 
         if (!$tlang || !in_array($tlang,$languages)) redirect ("admin/lang_main.php");
-        
+
         if ($proceed) {
             if (!$slang || !in_array($slang,$languages)) redirect ("admin/lang_main.php");
         }
-        
+
         if ($proceed) {
             if ($tlang==$slang) {
                 message (lang('language_to_be_deleted_cannot_be_language_to_substitute'));
                 redirect ('admin/lang_lang_delete.php?elang='.$tlang.'&nlang='.$slang);
             }
         }
-        
+
         if ($proceed) {
             if ($tlang==lang('lang')) redirect ("admin/lang_main.php");
         }
@@ -47,8 +47,8 @@ if ($proceed) {
         if ($proceed) {
             if (isset($_REQUEST['betternot']) && $_REQUEST['betternot']) redirect ('admin/lang_main.php');
         }
-        
-        if ($proceed && $reallydelete) { 
+
+        if ($proceed && $reallydelete) {
             // update participants and admin
             $tables=array('participants','admin');
             foreach ($tables as $table) {
@@ -59,7 +59,7 @@ if ($proceed) {
             message(lang('updated_language_settings'));
 
             // delete language column
-            $query="ALTER TABLE ".table('lang')." 
+            $query="ALTER TABLE ".table('lang')."
                     DROP column ".$tlang;
             $done=or_query($query);
 

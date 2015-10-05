@@ -19,8 +19,8 @@ if ($proceed) {
     if (isset($_REQUEST['nlang_name'])) $nlang_name=trim($_REQUEST['nlang_name']); else $nlang_name="";
     if (isset($_REQUEST['nlang_base'])) $nlang_base=trim($_REQUEST['nlang_base']); else $nlang_base="";
 
-    if (isset($_REQUEST['add']) && $_REQUEST['add']) { 
-        
+    if (isset($_REQUEST['add']) && $_REQUEST['add']) {
+
         // check for errors
         $continue=true;
 
@@ -33,7 +33,7 @@ if ($proceed) {
             message(lang('error_language_shortcut_exists'));
             $continue=false;
         }
-        
+
         if (!preg_match("/^[a-z]{2}$/",$nlang_sc)) {
             message(lang('error_language_shortcut_must_be_two_latin_letters'));
             $continue=false;
@@ -43,7 +43,7 @@ if ($proceed) {
             message(lang('error_no_language_name'));
             $continue=false;
         }
-        
+
         if (!in_array($nlang_base,$languages)) {
             message(lang('error_base_language_does_not_exist'));
             $continue=false;
@@ -62,12 +62,12 @@ if ($proceed) {
             if ($done) message (lang('language_items_copied_from_base_language').' '.$nlang_base);
 
             $pars=array(':nlang_sc'=>$nlang_sc);
-            $query="UPDATE ".table('lang')." SET ".$nlang_sc."= :nlang_sc  
+            $query="UPDATE ".table('lang')." SET ".$nlang_sc."= :nlang_sc
                     WHERE content_type='lang' AND content_name='lang'";
             $done=or_query($query,$pars);
 
             $pars=array(':nlang_name'=>$nlang_name);
-            $query="UPDATE ".table('lang')." SET ".$nlang_sc."= :nlang_name 
+            $query="UPDATE ".table('lang')." SET ".$nlang_sc."= :nlang_name
                     WHERE content_type='lang' AND content_name='lang_name'";
             $done=or_query($query,$pars);
             log__admin("language_add","language:".$_REQUEST['nlang_sc']);

@@ -9,14 +9,14 @@ if ($proceed) {
     // check for sub-subject pool
     if (!(isset($_SESSION['subpool_id']))) {
         // get available subpools
-        $subpools=subpools__get_subpools(); 
+        $subpools=subpools__get_subpools();
         $all_avail_pool_ids=array();
         foreach ($subpools as $pool) {
             if ($pool['subpool_id']>1 && $pool['show_at_registration_page']=='y') {
                 $all_pool_ids[]=$pool['subpool_id'];
             }
         }
-        
+
         if (isset($_REQUEST['s']) && $_REQUEST['s']) {
             if (in_array(trim($_REQUEST['s']),$all_pool_ids)) {
                 // set subpool
@@ -25,7 +25,7 @@ if ($proceed) {
             } else {
                 redirect("public/".thisdoc());
             }
-        } else {    
+        } else {
             if (count($all_pool_ids)<=1 && $settings['subpool_default_registration_id']) {
                 $_SESSION['subpool_id']=$settings['subpool_default_registration_id'];
                 redirect("public/".thisdoc());
@@ -37,15 +37,15 @@ if ($proceed) {
                 redirect ("public/".thisdoc());
             } else {
                 $self_descriptions=array();
-                $query="SELECT * from ".table('lang')."  
+                $query="SELECT * from ".table('lang')."
                         WHERE content_type='subjectpool'";
                 $result=or_query($query);
                 while ($line=pdo_fetch_assoc($result)) $self_descriptions[$line['content_name']]=$line[lang('lang')];
-    
+
                 echo '<BR><BR><center>
                         <TABLE class="or_formtable" style="width: 80%"><TR><TD align="center">
                             <B>'.lang('please_choose_subgroup').'</B><BR><BR>';
-                foreach ($all_pool_ids as $subpool_id) {    
+                foreach ($all_pool_ids as $subpool_id) {
                     echo '<A HREF="'.thisdoc().'?s='.$subpool_id.'">'.$self_descriptions[$subpool_id].'</A><BR><BR>';
                 }
                 echo '</TD></TR></TABLE><BR><BR><BR></center>';
@@ -58,7 +58,7 @@ if ($proceed) {
 if ($proceed) {
     // check for rules
     if (!isset($_SESSION['rules'])) {
-        if ($settings['registration__require_rules_acceptance']=='y' || 
+        if ($settings['registration__require_rules_acceptance']=='y' ||
             $settings['registration__require_privacy_policy_acceptance']=='y') {
             if (isset($_REQUEST['accept_rules']) && $_REQUEST['accept_rules']) {
                 $_SESSION['rules']=true;
@@ -118,27 +118,27 @@ if ($proceed) {
     $form=true; $errors__dataform=array();
     if (isset($_REQUEST['add'])) {
         $continue=true;
-        
+
         if (!isset($_REQUEST['captcha']) || !isset($_SESSION['captcha_string']) || $_REQUEST['captcha']!=$_SESSION['captcha_string']) {
             if (!isset($_REQUEST['subscriptions']) || !is_array($_REQUEST['subscriptions'])) $_REQUEST['subscriptions']=array();
             $_REQUEST['subscriptions']=id_array_to_db_string($_REQUEST['subscriptions']);
             $continue=false;
             message(lang('error_wrong_captcha'));
         }
-        
+
         if ($continue) {
             // checks and errors
             foreach ($_REQUEST as $k=>$v) {
                 if(!is_array($v)) $_REQUEST[$k]=trim($v);
             }
             $_REQUEST['subpool_id']=$_SESSION['subpool_id'];
-            $errors__dataform=participantform__check_fields($_REQUEST,false);       
+            $errors__dataform=participantform__check_fields($_REQUEST,false);
             $error_count=count($errors__dataform);
             if ($error_count>0) $continue=false;
-       
+
             $response=participantform__check_unique($_REQUEST,"create");
-            if (isset($response['disable_form']) && $response['disable_form']) { 
-                $continue=false; 
+            if (isset($response['disable_form']) && $response['disable_form']) {
+                $continue=false;
                 $proceed=false;
                 unset ($_SESSION['subpool_id']);
                 unset ($_SESSION['rules']);
@@ -149,12 +149,12 @@ if ($proceed) {
                 } else {
                     redirect ("public/participant_login.php");
                 }
-            } elseif($response['problem']) { 
-                $continue=false; 
+            } elseif($response['problem']) {
+                $continue=false;
             }
-        
+
             if ($settings['subject_authentication']!='token') {
-                if (isset($_SESSION['pauthdata']['pw_provided']) && $_SESSION['pauthdata']['pw_provided'] && 
+                if (isset($_SESSION['pauthdata']['pw_provided']) && $_SESSION['pauthdata']['pw_provided'] &&
                     isset($_SESSION['pauthdata']['submitted_checked_pw']) && $_SESSION['pauthdata']['submitted_checked_pw']) {
                         $_REQUEST['password']=$_SESSION['pauthdata']['submitted_checked_pw'];
                 } else {
@@ -167,8 +167,8 @@ if ($proceed) {
                     }
                 }
             }
-        }       
-        
+        }
+
         if ($continue) {
             $participant=$_REQUEST;
             unset ($_SESSION['pauthdata']['pw_provided']);
@@ -195,7 +195,7 @@ if ($proceed) {
                 redirect ("public/");
             } else {
                 message(lang('database_error'));
-            } 
+            }
         }
     }
 }

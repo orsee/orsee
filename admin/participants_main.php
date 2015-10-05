@@ -24,11 +24,11 @@ if ($proceed) {
                 <TD><center>
 
                 <TABLE border=1 style="border-collapse: collapse; border: 1px solid #AAA;">';
-                
+
     $exptypes=load_external_experiment_types();
     $pstatuses=participant_status__get_statuses();
-    
-    $query="SELECT count(*) as num_part, subscriptions, status_id 
+
+    $query="SELECT count(*) as num_part, subscriptions, status_id
             FROM ".table('participants')."
             GROUP BY subscriptions, status_id";
     $result=or_query($query);
@@ -61,12 +61,12 @@ if ($proceed) {
         }
         echo '</TR>';
     }
-    
+
     echo '</TABLE></center>
         <BR>
-        
+
         <TABLE>';
-    
+
     echo '
             <TR>
                 <TD>';
@@ -76,7 +76,7 @@ if ($proceed) {
                    else echo lang('registered_but_not_confirmed_xxx');
     echo '  </TD>
                     <TD>
-                        '.participants__count_participants("status_id='0'").' 
+                        '.participants__count_participants("status_id='0'").'
                     </TD>
                 </TR>
                 <TR>
@@ -91,12 +91,12 @@ if ($proceed) {
                     </TD>
                 </TR>
         </TABLE>
-        
+
         <BR>
-                
+
         </TD>
         </TR>
-            
+
         <TR>
             <TD colspan="2">
                 <TABLE class="or_option_buttons_box" style="background: '.$color['options_box_background'].';">
@@ -105,7 +105,7 @@ if ($proceed) {
         if (check_allow('participants_show')) echo '
                 <TD>
                     '.button_link('participants_show.php?active=true',
-                                        lang('edit_active_participants'),'list-alt').'                                        
+                                        lang('edit_active_participants'),'list-alt').'
                 </TD>
                 <TD>
                     '.button_link('participants_show.php',

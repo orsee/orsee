@@ -15,9 +15,9 @@ function downloads__list_files_general($showsize=false,$showtype=false,$showdate
         $allow_delete=check_allow('file_delete_general');
         $allow_edit=check_allow('file_edit_general');
 
-    
+
         $query="SELECT *
-                FROM ".table('uploads')." 
+                FROM ".table('uploads')."
                 WHERE experiment_id = 0
                 ORDER BY upload_type, upload_name, upload_id";
         $result=or_query($query);
@@ -52,7 +52,7 @@ function downloads__list_files_general($showsize=false,$showtype=false,$showdate
                 $out.= '</TD>';
                 if ($showsize) $out.= '<TD>'.number_format(round($upload['upload_filesize']/1024),0).' KB</TD>';
                 if ($showtype) $out.= '<TD>'.$upload['upload_suffix'].'</TD>';
-                if ($showdate) $out.= '<TD>'.ortime__format($upload['upload_id'],'',lang('lang')).'</TD>';          
+                if ($showdate) $out.= '<TD>'.ortime__format($upload['upload_id'],'',lang('lang')).'</TD>';
                 if ($allow_edit) {
                     $out.= '<TD>';
                     $out.= '<A HREF="download_edit.php?file='.$upload['upload_id'].
@@ -64,7 +64,7 @@ function downloads__list_files_general($showsize=false,$showtype=false,$showdate
                     $out.= '<A HREF="download_delete.php?dl='.$upload['upload_id'].
                             '"><FONT class="small">['.lang('delete').']</FONT></A>';
                     $out.= '</TD>';
-                }               
+                }
                 $out.= '</TR>';
             }
             $out.= '</TABLE>';
@@ -98,8 +98,8 @@ function downloads__list_files_experiment($experiment_id,$showsize=false,$showty
         else  $allow_delete=false;
         if (check_allow('file_edit_experiment_all')) $allow_edit=true;
         elseif (in_array($expadmindata['admin_id'],$experimenters) && check_allow('file_edit_experiment_my'))  $allow_edit=true;
-        else  $allow_edit=false;        
-    
+        else  $allow_edit=false;
+
         $query="SELECT ".table('uploads').".*, ".table('sessions').".session_start
                 FROM ".table('uploads')." LEFT JOIN ".table('sessions')."
                 ON ".table('uploads').".session_id = ".table('sessions').".session_id
@@ -126,7 +126,7 @@ function downloads__list_files_experiment($experiment_id,$showsize=false,$showty
                     $uptype=0;
                     $out.= '<TR bgcolor="'.$color['list_shade_subtitle'].'">
                         <TD colspan='.$cols.'>';
-                    if ($upload['session_id']>0) $out.='<i>'.lang('session').' '.ortime__format(ortime__sesstime_to_unixtime($upload['session_start'])).'</i>'; 
+                    if ($upload['session_id']>0) $out.='<i>'.lang('session').' '.ortime__format(ortime__sesstime_to_unixtime($upload['session_start'])).'</i>';
                     else $out.='<i>'.lang('no_session').'</i>';
                     $out.='</TD></TR>';
                 }
@@ -154,7 +154,7 @@ function downloads__list_files_experiment($experiment_id,$showsize=false,$showty
                     $out.= '    <A HREF="download_edit.php?file='.$upload['upload_id'].
                                 '"><FONT class="small">['.lang('edit').']</FONT></A>';
                     $out.= '    </TD>';
-                }       
+                }
                 if ($allow_delete) {
                     $out.= '    <TD>';
                     $out.= '    <A HREF="download_delete.php?dl='.$upload['upload_id'].
@@ -164,7 +164,7 @@ function downloads__list_files_experiment($experiment_id,$showsize=false,$showty
                 $out.= '</TR>';
             }
             $out.= '</TABLE>';
-        }   
+        }
     }
     return $out;
 }
@@ -181,27 +181,27 @@ function downloads__list_experiments($showsize=false,$showtype=false,$showdate=f
         $experimenter_clause = " AND ".table('experiments').".experimenter LIKE :experimenter ";
         $pars=array(':experimenter'=>'%|'.$expadmindata['admin_id'].'|%');
     } else $continue=false;
-    
+
     if ($continue) {
-        $query="SELECT ".table('experiments').".*, 
+        $query="SELECT ".table('experiments').".*,
                 min(".table('sessions').".session_start) as first_session_date,
-                max(".table('sessions').".session_start) as last_session_date 
+                max(".table('sessions').".session_start) as last_session_date
                 FROM ".table('experiments').", ".table('sessions')."
-                WHERE ".table('experiments').".experiment_id IN 
+                WHERE ".table('experiments').".experiment_id IN
                 (SELECT DISTINCT experiment_id FROM ".table('uploads').")
-                ".$experimenter_clause." 
+                ".$experimenter_clause."
                 AND ".table('experiments').".experiment_id = ".table('sessions').".experiment_id
                 GROUP BY ".table('experiments').".experiment_id
                 ORDER BY last_session_date DESC";
         $result=or_query($query,$pars); $experiments=array();
         while ($line = pdo_fetch_assoc($result)) {
             $experiments[]=$line;
-        }   
+        }
         if (count($experiments)>0) {
             $out.='<TABLE width=100% border=0>';
             $shade=true;
             foreach($experiments as $exp) {
-                if ($shade) { $bgcolor=' bgcolor="'.$color['list_shade1'].'"'; $shade=false; } 
+                if ($shade) { $bgcolor=' bgcolor="'.$color['list_shade1'].'"'; $shade=false; }
                 else { $bgcolor=' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
                 $out.='<TR'.$bgcolor.'><TD>';
                 $out.=$exp['experiment_name'].'</TD><TD>(';

@@ -26,7 +26,7 @@ if ($proceed) {
 
     if ($reallydelete) {
         $pars=array('event_id'=>$event_id);
-        $query="DELETE FROM ".table('events')." 
+        $query="DELETE FROM ".table('events')."
                 WHERE event_id= :event_id";
         $result=or_query($query,$pars);
         log__admin("events_delete","event_id:".$event_id);

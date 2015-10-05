@@ -53,13 +53,13 @@ if ($proceed) {
 
             // transaction?
             $pars=array(':pstatus_id'=>$pstatus_id,':merge_with'=>$merge_with);
-            $query="UPDATE ".table('participate_at')." 
-                    SET pstatus_id= :merge_with 
+            $query="UPDATE ".table('participate_at')."
+                    SET pstatus_id= :merge_with
                     WHERE pstatus_id= :pstatus_id";
             $result=or_query($query,$pars);
-        
+
             $pars=array(':pstatus_id'=>$pstatus_id);
-            $query="DELETE FROM ".table('participation_statuses')." 
+            $query="DELETE FROM ".table('participation_statuses')."
                     WHERE pstatus_id= :pstatus_id";
             $result=or_query($query,$pars);
 
@@ -68,7 +68,7 @@ if ($proceed) {
                     WHERE content_name= :pstatus_id
                     AND content_type='participation_status_internal_name'";
             $result=or_query($query,$pars);
-        
+
             $pars=array(':pstatus_id'=>$pstatus_id);
             $query="DELETE FROM ".table('lang')."
                     WHERE content_name= :pstatus_id
@@ -105,16 +105,16 @@ if ($proceed) {
             echo '
                         </TD>
                     </TR>';
-            
+
             $pstatus_internal_names=lang__load_lang_cat('participation_status_internal_name');
-                        
+
             echo '
                         <TR>
                             <TD align=left colspan=2>
                             <INPUT class="button" type=submit name=reallydelete value="'.lang('yes_delete').'">
                     <BR>
                     '.lang('merge_participation_status_with').'
-                    '.expregister__participation_status_select_field('merge_with','',array($pstatus_id)).'                  
+                    '.expregister__participation_status_select_field('merge_with','',array($pstatus_id)).'
                     </TD></TR>
                 <TR>
                                 <TD align=center colspan=2><BR><BR>

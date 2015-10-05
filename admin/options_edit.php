@@ -16,10 +16,10 @@ if ($proceed) {
 
 if ($proceed) {
     if (isset($_REQUEST['otype']) && $_REQUEST['otype'] && in_array($_REQUEST['otype'],array('general','default'))) {
-        $otype=$_REQUEST['otype']; 
+        $otype=$_REQUEST['otype'];
     } else {
-        $otype=""; 
-        redirect ("admin/options_main.php"); 
+        $otype="";
+        redirect ("admin/options_main.php");
     }
 
     echo '<center>';
@@ -51,8 +51,8 @@ if ($proceed) {
             }
         }
         if (count($pars_update)>0) {
-            $query="UPDATE ".table('options')." 
-                    SET option_value= :value 
+            $query="UPDATE ".table('options')."
+                    SET option_value= :value
                     WHERE option_name= :name
                     AND option_type= :type";
             $done=or_query($query,$pars_update);
@@ -64,7 +64,7 @@ if ($proceed) {
                 option_value= :value,
                 option_type= :type";
             $done=or_query($query,$pars_new);
-        }       
+        }
         message(lang('changes_saved'));
         log__admin("options_edit","type:".$otype);
         redirect ('admin/options_edit.php?otype='.$otype);
@@ -75,7 +75,7 @@ if ($proceed) {
     if (check_allow('settings_edit')) echo '
         <FORM action="options_edit.php" method=post>
         <INPUT type=hidden name="otype" value="'.$otype.'">';
-        
+
     echo '  <TABLE class="or_formtable" style="width: 80%;">';
     if (check_allow('settings_edit')) echo '
             <TR>
@@ -87,12 +87,12 @@ if ($proceed) {
 
     if ($otype=='general') $opts=$system__options_general;
     else $opts=$system__options_defaults;
-    
+
     foreach ($opts as $o) {
         $done=options__show_option($o);
     }
 
-    
+
 
     if (check_allow('settings_edit')) echo '
             <TR>

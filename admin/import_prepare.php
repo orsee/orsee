@@ -12,12 +12,12 @@ if ($proceed) {
 }
 if ($proceed) {
     $continue=true;
-    
+
     echo '<center>';
-    
+
     if ($continue) {
         $databases=array();
-        $query="SELECT `SCHEMA_NAME` 
+        $query="SELECT `SCHEMA_NAME`
                 FROM `INFORMATION_SCHEMA`.`SCHEMATA`
                 WHERE `SCHEMA_NAME` NOT IN ('information_schema','mysql')";
         $result=or_query($query);
@@ -27,22 +27,22 @@ if ($proceed) {
 
         // first step:
         if (!isset($_REQUEST['old_version']) || !isset($old_versions[$_REQUEST['old_version']])
-            || !isset($_REQUEST['old_database']) || !in_array($_REQUEST['old_database'],$databases)) { 
+            || !isset($_REQUEST['old_database']) || !in_array($_REQUEST['old_database'],$databases)) {
             $continue=false;
-            
+
             echo '<FORM action="'.thisdoc().'" method="POST">';
             echo '<TABLE class="or_formtable">';
-        
+
             echo '      <TR><TD>From which ORSEE version do you want to import data?</TD>
                         <TD><SELECT name="old_version">';
             foreach ($old_versions as $ov=>$text) echo '<OPTION value="'.$ov.'">'.$text.'</OPTION>';
             echo '</SELECT></TD></TR>';
-        
+
             echo '      <TR><TD>From which database should the data be imported?</TD>
                         <TD><SELECT name="old_database">';
             foreach ($databases as $db) echo '<OPTION value="'.$db.'">'.$db.'</OPTION>';
-            echo '</SELECT></TD></TR>'; 
-            
+            echo '</SELECT></TD></TR>';
+
             echo '<TR><TD colspan="2" align="center">
                     <INPUT type="submit" class="button" name="submit1" value="Next">
                 </TD></TR>';
@@ -62,25 +62,25 @@ if ($proceed) {
 
             if (isset($_REQUEST['submit1'])) {
 
-    
-                    
+
+
                 echo '<FORM action="'.thisdoc().'" method="POST">';
                 echo '<INPUT type="hidden" name="old_version" value="'.$old_version.'">';
                 echo '<INPUT type="hidden" name="old_database" value="'.$old_database.'">';
                 echo '<TABLE class="or_formtable" style="max-width: 90%;">';
-                
-                
-                echo '      <TR><TD colspan=2>Do you want to import 
+
+
+                echo '      <TR><TD colspan=2>Do you want to import
                             <UL><LI><B>all data</B> (admins, admin types, experiment types, faqs, language items, subpools, files, plus all what\'s listed below)</LI>
                                 <LI>or only <B>participation data</B> (participants, experiments, sessions, participations, lab bookings, admin log, cron log, participant log)?</LI>
-                            </UL>                   
+                            </UL>
                                  </TD></TR>
                             <TD colspan=2 align="center"><SELECT name="import_type">
                             <OPTION value="all">all data</OPTION>
                             <OPTION value="participation">participation data</OPTION>
                             </SELECT></TD></TR>';
                 echo '      <TR><TD colspan=2><hr></TD></TR>';
-                
+
                 $statuses=participant_status__get_statuses();
                 echo '<TR><TD colspan=2>There are '.count($statuses).' participant statuses defined in this system.<BR>
                             Please select how previous participant properties should be assigned to these states.
@@ -97,7 +97,7 @@ if ($proceed) {
                             if ($status['status_id']==$arr[1]) echo ' SELECTED';
                             echo '>'.$status['name'].'</OPTION>';
                         }
-                    echo '</SELECT></TD></TR>';                 
+                    echo '</SELECT></TD></TR>';
                 }
                 echo '</TABLE></TD></TR>';
                 echo '      <TR><TD colspan=2><hr></TD></TR>';
@@ -118,16 +118,16 @@ if ($proceed) {
                             if ($status['pstatus_id']==$arr[1]) echo ' SELECTED';
                             echo '>'.$status['internal_name'].'</OPTION>';
                         }
-                    echo '</SELECT></TD></TR>';                 
+                    echo '</SELECT></TD></TR>';
                 }
                 echo '</TABLE></TD></TR>';
                 echo '      <TR><TD colspan=2><hr></TD></TR>';
-    
-                $old_fields=array(); 
+
+                $old_fields=array();
                 $pars=array(':dbname'=>$old_database);
-                $query="SELECT `COLUMN_NAME` 
-                FROM `INFORMATION_SCHEMA`.`COLUMNS` 
-                WHERE `TABLE_SCHEMA`= :dbname 
+                $query="SELECT `COLUMN_NAME`
+                FROM `INFORMATION_SCHEMA`.`COLUMNS`
+                WHERE `TABLE_SCHEMA`= :dbname
                 AND `TABLE_NAME`='or_participants'";
                 $result=or_query($query,$pars);
                 while ($line=pdo_fetch_assoc($result)) {
@@ -144,10 +144,10 @@ if ($proceed) {
                     if (isset($new_fields[$line['mysql_column_name']])) {
                         $new_fields[$line['mysql_column_name']]['fieldtype']=$line['type'];
                     }
-                }                       
-                
+                }
+
                 echo '<TR><TD colspan="2">
-                        The following profile fields are defined in the current (new) system. 
+                        The following profile fields are defined in the current (new) system.
                         Please select from which column in the old system the data should be imported.<BR>
                         <TABLE width="100%">
                         <TR style="font-weight: bold;"><TD>Profile field</TD><TD>Column type</TD>
@@ -167,16 +167,16 @@ if ($proceed) {
                     echo '</TD></TR>';
                 }
                 echo '</TABLE>';
-                echo '</TD></TR>';  
-                
+                echo '</TD></TR>';
+
                 echo '      <TR><TD colspan=2><hr></TD></TR>';
-                
-                echo '      <TR><TD colspan=2>Do you want to create new (more secure) tokens for participant URLs? 
+
+                echo '      <TR><TD colspan=2>Do you want to create new (more secure) tokens for participant URLs?
                             <UL>
                             <LI>The disadvantage of this is that the old URL\'s which participants used to access their
-                            ORSEE enrolment page won\'t work anymore.<BR>The new URLs (with the newly created tokens) 
+                            ORSEE enrolment page won\'t work anymore.<BR>The new URLs (with the newly created tokens)
                             will be included in any email sent out by the system. </LI>
-                            <LI>If you plan to migrate to a username/password authentication for participants in the new system,<BR> 
+                            <LI>If you plan to migrate to a username/password authentication for participants in the new system,<BR>
                             you could also leave the tokens as they are, because once fully migrated they will be irrelevant for access.</LI>
                             </UL>
                             </TD></TR>
@@ -184,18 +184,18 @@ if ($proceed) {
                             <OPTION value="n">Keep old tokens</OPTION>
                             <OPTION value="y">Replace tokens</OPTION>
                             </SELECT></TD></TR>';
-            
+
                 echo '<TR><TD colspan="2" align="center">
                         <INPUT type="submit" class="button" name="submit2" value="Next">
                     </TD></TR>';
                 echo '</TABLE>';
                 echo '</FORM>';
-                
-                
+
+
             }
-            
+
             if (isset($_REQUEST['submit2'])) {
-            
+
                 $code='';
                 $code.='$old_db_name="'.$old_database.'";'."\n";
                 $code.='$new_db_name="'.$site__database_database.'";'."\n";
@@ -219,7 +219,7 @@ if ($proceed) {
                 $code.='// mapping from old participant profile form to new form'."\n";
                 $code.='// empty value for new column name implies no import'."\n";
                 $code.='// pform_mapping[old column name]=new column name'."\n";
-                $code.='$pform_mapping=array();'."\n";  
+                $code.='$pform_mapping=array();'."\n";
                 $new_fields=participant__userdefined_columns();
                 foreach ($new_fields as $field=>$f) {
                     if (isset($_REQUEST['map_'.$field]) && $_REQUEST['map_'.$field]) {
@@ -227,18 +227,18 @@ if ($proceed) {
                     }
                 }
                 $code.=''."\n";
-                $code.='// other settings'."\n";                
+                $code.='// other settings'."\n";
                 $code.='$import_type="'.$_REQUEST['import_type'].'";'."\n";
                 $code.='$replace_tokens="'.$_REQUEST['replace_tokens'].'";'."\n";
                 $code.=''."\n";
                 $code.=''."\n";
-        
+
                 echo '<TABLE>';
-                echo '<TR><TD>';                
-                
+                echo '<TR><TD>';
+
                 echo 'Below you find the code to copy over to install/data_import.php.
                         <BR>';
-                
+
                 echo '<TEXTAREA rows=40 cols=80>'.$code.'</TEXTAREA>';
                 echo '</TD></TR>';
                 echo '</TABLE>';

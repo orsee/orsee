@@ -5,12 +5,12 @@ ob_start();
 include ("nonoutputheader.php");
 $proceed=true;
 
-if ($proceed) { 
+if ($proceed) {
     if (isset($_REQUEST['message_id']) && $_REQUEST['message_id']) $message_id=$_REQUEST['message_id']; else $message_id='';
     if (!$message_id) redirect('admin/emails_main.php');
 }
 
-if ($proceed) { 
+if ($proceed) {
     if (isset($_REQUEST['k'])) $k=$_REQUEST['k']; else redirect('admin/emails_main.php');
 }
 
@@ -38,7 +38,7 @@ if ($proceed) {
     ob_end_clean();
     header("Pragma: public");
     header("Expires: 0");
-    header("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 
     header("Content-Type: ".$mime_type."; name=\"$filename\"");
     header( "Content-Disposition: attachment; filename=\"$filename\"");

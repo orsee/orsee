@@ -13,12 +13,12 @@ if ($proceed) {
 }
 
 if ($proceed) {
-    if (isset($_SESSION['pw_reset_token']) && $_SESSION['pw_reset_token'] && 
+    if (isset($_SESSION['pw_reset_token']) && $_SESSION['pw_reset_token'] &&
         isset($_REQUEST['reset_email']) && isset($_REQUEST['password']) && isset($_REQUEST['password2']) &&
         ( $_REQUEST['reset_email'] || $_REQUEST['password'] || $_REQUEST['password2']) ) {
-        
+
         $continue=true;
-        
+
         $_SESSION['reset_email_address']=trim($_REQUEST['reset_email']);
         // captcha
         if ($continue) {
@@ -30,9 +30,9 @@ if ($proceed) {
         }
         if ($continue) {
             // check password, token, and email address
-            $status_clause=participant_status__get_pquery_snippet("access_to_profile"); 
+            $status_clause=participant_status__get_pquery_snippet("access_to_profile");
             $pars=array(':token'=>$_SESSION['pw_reset_token']);
-            $query="SELECT * FROM ".table('participants')." 
+            $query="SELECT * FROM ".table('participants')."
                     WHERE pwreset_token= :token
                     AND ".$status_clause;
             $participant=orsee_query($query,$pars);
@@ -40,20 +40,20 @@ if ($proceed) {
                 //if token not ok, redirect to main page without comment
                 $continue=false;
                 message('token not found');
-                redirect ("public/");   
+                redirect ("public/");
             } elseif ($participant['pwreset_request_time']+60*60<time()) {
-                //if token validity elapsed, show message and redirect 
+                //if token validity elapsed, show message and redirect
                 message(lang('password_reset_token_not_valid_anymore'));
                 $continue=false;
-                redirect ("public/");       
+                redirect ("public/");
             }
-        } 
+        }
         if ($continue) {
             if ($participant['email']!=trim($_REQUEST['reset_email'])) {
             //if email address not ok: save email address to session, show message, redirect
                 message(lang('password_reset_provided_email_address_not_correct'));
                 $continue=false;
-                redirect("public/participant_reset_pw.php");        
+                redirect("public/participant_reset_pw.php");
             }
         }
         if ($continue) {
@@ -61,15 +61,15 @@ if ($proceed) {
             if (!$pw_ok) {
                 //if passwords not ok: save email address to session, show message, redirect
                 $continue=false;
-                redirect("public/participant_reset_pw.php");        
+                redirect("public/participant_reset_pw.php");
             }
         }
-        if ($continue) {            
+        if ($continue) {
         //if all ok, save new password (reset reset_request, token), reset token, password, email address, set OK, redirect
             $participant['password_crypted']=unix_crypt($_REQUEST['password']);
             $pars=array(':password'=>$participant['password_crypted'],
                         ':participant_id'=>$participant['participant_id']);
-            $query="UPDATE ".table('participants')." 
+            $query="UPDATE ".table('participants')."
                     SET password_crypted = :password,
                     pwreset_token= NULL
                     WHERE participant_id = :participant_id";
@@ -89,10 +89,10 @@ if ($proceed) {
         echo '  <center>';
         show_message();
 
-        if (isset($_SESSION['reset_email_address']) && $_SESSION['reset_email_address']) 
+        if (isset($_SESSION['reset_email_address']) && $_SESSION['reset_email_address'])
             $email=$_SESSION['reset_email_address'];
         else $email='';
-        echo '<form action="participant_reset_pw.php" method="POST">';  
+        echo '<form action="participant_reset_pw.php" method="POST">';
         echo '<table class="or_formtable" style="width: 50%;">';
         echo '<tr><td colspan="2">'.lang('reset_pw_please_enter_email_and_new_password').'</TD></TR>';
         echo '<TR><TD>'.lang('email').'<BR>
@@ -121,7 +121,7 @@ if ($proceed) {
         echo '</center>';
     }
 }
-    
+
 if ($proceed) {
     if (isset($_REQUEST['email']) && $_REQUEST['email']) {
         $continue=true;
@@ -133,11 +133,11 @@ if ($proceed) {
                 redirect("public/participant_reset_pw.php");
             }
         }
-    
+
         if ($continue) {
-            $status_clause=participant_status__get_pquery_snippet("access_to_profile"); 
+            $status_clause=participant_status__get_pquery_snippet("access_to_profile");
             $pars=array(':email'=>$_REQUEST['email']);
-            $query="SELECT * FROM ".table('participants')." 
+            $query="SELECT * FROM ".table('participants')."
                     WHERE email= :email
                     AND ".$status_clause;
             $participant=orsee_query($query,$pars);
@@ -147,9 +147,9 @@ if ($proceed) {
                 $pars=array(':token'=>$participant['pwreset_token'],
                         ':participant_id'=>$participant['participant_id'],
                         ':now'=>time());
-                $query="UPDATE ".table('participants')." 
+                $query="UPDATE ".table('participants')."
                         SET pwreset_token = :token,
-                        pwreset_request_time = :now 
+                        pwreset_request_time = :now
                         WHERE participant_id= :participant_id";
                 $done=or_query($query,$pars);
                 // send reset email
@@ -169,7 +169,7 @@ if ($proceed) {
     echo '  <center><BR><BR>';
             show_message();
 
-    echo '<form action="participant_reset_pw.php" method="POST">';  
+    echo '<form action="participant_reset_pw.php" method="POST">';
     echo '<table class="or_formtable" style="width: 50%;">
             <tr><td colspan="2">'.lang('reset_pw_please_enter_your_email_address').'</TD></TR>
             <TR><TD>'.lang('email').'</TD><TD>

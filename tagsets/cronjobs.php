@@ -65,7 +65,7 @@ function cron__run_cronjobs() {
             $ready=cron__save_and_log_job($cronjob,$now,$done);
         }
     }
-    
+
     clearpixel();
 }
 
@@ -77,7 +77,7 @@ function cron__save_and_log_job($cronjob,$now="",$target="") {
     $pars=array(':job_last_exec'=>$now,
                 ':job_name'=>$cronjob);
     $query="UPDATE ".table('cron_jobs')."
-        SET job_last_exec= :job_last_exec 
+        SET job_last_exec= :job_last_exec
         WHERE job_name= :job_name";
     $done=or_query($query,$pars);
 
@@ -251,7 +251,7 @@ function cron__participants_update_history_participant($part,$what) {
     if (in_array($what,$what_poss)) {
         $pars=array(':number'=>$part[$what],
                 ':participant_id'=>$part['participant_id']);
-        $query="UPDATE ".table('participants')." 
+        $query="UPDATE ".table('participants')."
                 SET ".$what."= :number
                 WHERE participant_id = :participant_id";
         $done=or_query($query,$pars);
@@ -263,18 +263,18 @@ function cron__update_participants_history() {
     $logm="";
 
     // initialize with zero
-    $query="UPDATE ".table('participants')." 
+    $query="UPDATE ".table('participants')."
             SET number_reg = 0, number_noshowup = 0";
     $done=or_query($query);
 
-    $query="SELECT ".table('participate_at').".participant_id, 
+    $query="SELECT ".table('participate_at').".participant_id,
             count(*) as number_reg
-            FROM ".table('participate_at').", ".table('sessions').", ".table('experiments')." 
+            FROM ".table('participate_at').", ".table('sessions').", ".table('experiments')."
             WHERE ".table('sessions').".session_id = ".table('participate_at').".session_id
             AND ".table('participate_at').".experiment_id = ".table('experiments').".experiment_id
-            AND hide_in_stats = 'n' 
+            AND hide_in_stats = 'n'
             AND (session_status='completed' OR session_status='balanced')
-            AND ".table('participate_at').".session_id != 0  
+            AND ".table('participate_at').".session_id != 0
             GROUP BY participant_id";
     $result=or_query($query);
     $n=0;
@@ -292,8 +292,8 @@ function cron__update_participants_history() {
             AND ".table('participate_at').".experiment_id = ".table('experiments').".experiment_id
             AND hide_in_stats = 'n'
             AND (session_status='completed' OR session_status='balanced')
-            AND ".table('participate_at').".session_id != 0 
-            AND ".$noshow_clause." 
+            AND ".table('participate_at').".session_id != 0
+            AND ".$noshow_clause."
             GROUP BY participant_id";
     $result=or_query($query);
     $n=0;
@@ -310,8 +310,8 @@ function cron__check_for_registration_end() {
     global $settings;
     $now=time();
 
-    $query="SELECT ".table('experiments').".*, ".table('sessions').".* 
-            FROM ".table('experiments').", ".table('sessions')." 
+    $query="SELECT ".table('experiments').".*, ".table('sessions').".*
+            FROM ".table('experiments').", ".table('sessions')."
             WHERE ".table('experiments').".experiment_id=".table('sessions').".experiment_id
             AND ".table('sessions').".reg_notice_sent = 'n'";
     $result=or_query($query);
@@ -333,10 +333,10 @@ function cron__check_for_session_reminders() {
 
     $now=time();
     $query="SELECT ".table('sessions').".*, ".table('experiments').".*, count(participate_id) as num_reg
-            FROM ".table('sessions').", ".table('participate_at').", ".table('experiments')."  
+            FROM ".table('sessions').", ".table('participate_at').", ".table('experiments')."
             WHERE ".table('sessions').".session_id=".table('participate_at').".session_id
-            AND ".table('sessions').".experiment_id = ".table('experiments').".experiment_id 
-            AND session_status='live' AND reminder_sent = 'n' AND reminder_checked='n' 
+            AND ".table('sessions').".experiment_id = ".table('experiments').".experiment_id
+            AND session_status='live' AND reminder_sent = 'n' AND reminder_checked='n'
             GROUP BY ".table('participate_at').".session_id";
     $result=or_query($query);
 
@@ -390,11 +390,11 @@ function cron__check_for_noshow_warnings() {
     global $settings;
 
     $now=time();
-    $query="SELECT ".table('sessions').".*, ".table('experiments').".* 
+    $query="SELECT ".table('sessions').".*, ".table('experiments').".*
             FROM ".table('sessions').", ".table('experiments')."
             WHERE ".table('sessions').".experiment_id = ".table('experiments').".experiment_id
-            AND (session_status='completed' OR session_status='balanced') 
-            AND noshow_warning_sent = 'n' 
+            AND (session_status='completed' OR session_status='balanced')
+            AND noshow_warning_sent = 'n'
             ORDER BY session_start";
     $result=or_query($query);
     $mess="";
@@ -414,8 +414,8 @@ function cron__check_for_participant_exclusion() {
     $mess="";
     if ($settings['automatic_exclusion']=='y') {
         $status_query=participant_status__get_pquery_snippet("eligible_for_experiments");
-        $query="SELECT * FROM ".table('participants')." 
-                WHERE ".$status_query."  
+        $query="SELECT * FROM ".table('participants')."
+                WHERE ".$status_query."
                 AND number_noshowup >= '".$settings['automatic_exclusion_noshows']."'";
         $result=or_query($query);
 

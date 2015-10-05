@@ -51,7 +51,7 @@ if ($proceed) {
 
         if (isset($_REQUEST['merge_with']) && $_REQUEST['merge_with']) $merge_with=$_REQUEST['merge_with']; else $merge_with='';
         if ($merge_with) $merge_with_type=orsee_db_load_array("experiment_types",$merge_with,"exptype_id");
-        
+
         if (!isset($merge_with_type['exptype_id'])) {
             message("No target exptype provided!");
             redirect ('admin/experiment_type_edit.php?exptype_id='.$exptype_id);
@@ -59,14 +59,14 @@ if ($proceed) {
             $queries=array();
             $tq=array();
             $tq['pars']=array(':exptype_id'=>$exptype_id);
-            $tq['query']="DELETE FROM ".table('experiment_types')." 
+            $tq['query']="DELETE FROM ".table('experiment_types')."
                     WHERE exptype_id= :exptype_id";
             $queries[]=$tq;
 
             $tq=array();
             $tq['pars']=array(':exptype_id'=>$exptype_id);
             $tq['query']="DELETE FROM ".table('lang')."
-                    WHERE content_name= :exptype_id 
+                    WHERE content_name= :exptype_id
                     AND content_type='experiment_type'";
             $queries[]=$tq;
 
@@ -86,7 +86,7 @@ if ($proceed) {
                                 );
             }
             $affected_participants=count($tq['pars']);
-            $tq['query']="UPDATE ".table('participants')." 
+            $tq['query']="UPDATE ".table('participants')."
                     SET subscriptions= :subscriptions
                     WHERE participant_id= :participant_id";
             $queries[]=$tq;
@@ -95,11 +95,11 @@ if ($proceed) {
             $tq['pars']=array(':merge_with'=>$merge_with,
                         ':exptype_id'=>$exptype_id);
             $tq['query']="UPDATE ".table('experiments')."
-                    SET experiment_ext_type= :merge_with 
+                    SET experiment_ext_type= :merge_with
                     WHERE experiment_ext_type= :exptype_id";
             $queries[]=$tq;
 
-            $done=pdo_transaction($queries);    
+            $done=pdo_transaction($queries);
             log__admin("experimenttype_delete","experimenttype:".$exptype['exptype_name']);
             message (lang('experimenttype_deleted'));
             message ($affected_participants.' '.lang('xx_participants_assigned_to_exptype').' "'.$merge_with_type['exptype_name'].'".');
@@ -138,7 +138,7 @@ if ($proceed) {
                             "",$exptype['exptype_id']);
             echo '<BR><BR>
                         <INPUT class="button" type="submit" name="reallydelete" value="'.lang('yes_delete').'">';
-                    
+
             echo '      </TD>
                                 </TD>
                                 <TD align=right>

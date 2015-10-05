@@ -67,7 +67,7 @@ function lang_icons_prepare() {
             echo '.langicon-'.$tlang.':before {
                 content:url(\''.$tlang_icon.'\');
                 }
-            ';      
+            ';
         }
     }
 }
@@ -129,7 +129,7 @@ function site__check_token() {
 // decode participant token into participant id
 function url_cr_decode($value) {
     $pars=array(':crypted_id'=>$value);
-    $query="SELECT participant_id FROM ".table('participants')." 
+    $query="SELECT participant_id FROM ".table('participants')."
             WHERE participant_id_crypt= :crypted_id";
     $decarray=orsee_query($query,$pars);
     if (is_array($decarray) && isset($decarray['participant_id'])) {
@@ -146,7 +146,7 @@ function unix_crypt($value) {
         $hash=password_hash($value,PASSWORD_DEFAULT);
     } else {
         $hash=crypt($value);
-    } 
+    }
     return $hash;
 }
 
@@ -157,7 +157,7 @@ function crypt_verify($submitted,$hash) {
     } else {
         if (crypt($submitted,$hash)==$hash) return true;
         else return false;
-    } 
+    }
 }
 
 // generate participant token
@@ -217,29 +217,29 @@ function crypto_rand_secure($min, $max) {
 
 
 
-function helpers__scramblemail($address) { 
+function helpers__scramblemail($address) {
     $address = "<a class=\"small\" href=\"mailto:$address\">";
-    $temp =  chunk_split($address,3,"##"); 
+    $temp =  chunk_split($address,3,"##");
     $temp_array =  explode("##",$temp);
     $scrambled="";
-    
-    foreach($temp_array as $piece) 
-        { $scrambled.="+'$piece'"; } 
+
+    foreach($temp_array as $piece)
+        { $scrambled.="+'$piece'"; }
     $scrambled =  substr($scrambled,1, strlen($scrambled));
- 
+
     $result = "<script type='text/javascript'>";
-    $result.="<!--\n"; 
-    $result.= "document.write($scrambled);\n"; 
-    $result.="-->"; 
-    $result.="</SCRIPT>"; 
-    echo $result; 
-} 
+    $result.="<!--\n";
+    $result.= "document.write($scrambled);\n";
+    $result.="-->";
+    $result.="</SCRIPT>";
+    echo $result;
+}
 
 // strip HTML tags from (posted vars) array
 function strip_tags_array($var,$exempt=array()) {
     if (is_array($var)) {
-        foreach($var as $k=>$v) { 
-            if (!in_array($k,$exempt)) $var[$k]=strip_tags_array($v); 
+        foreach($var as $k=>$v) {
+            if (!in_array($k,$exempt)) $var[$k]=strip_tags_array($v);
         }
     } else {
         $var=strip_tags($var);
@@ -264,17 +264,17 @@ function clearpixel() {
 
 function check_clearpixel() {
     $return=false;
-    $query="SELECT * from ".table('objects')." 
+    $query="SELECT * from ".table('objects')."
             WHERE item_type='clearpixel' AND item_name='clearpixel'";
     $cp=orsee_query($query);
     if (!isset($cp['item_details'])) {
-        $query="INSERT IGNORE INTO ".table('objects')." 
+        $query="INSERT IGNORE INTO ".table('objects')."
                 SET item_type='clearpixel', item_name='clearpixel', item_details='".time()."'";
         $done=or_query($query);
         $return=true;
     } else {
         if (time()-$cp['item_details']>24*60*60) {
-            $query="UPDATE ".table('objects')." 
+            $query="UPDATE ".table('objects')."
                     SET item_details='".time()."'
                     WHERE item_type='clearpixel' AND item_name='clearpixel'";
             $done=or_query($query);
@@ -301,7 +301,7 @@ function or_load_url($host,$file) {
         fclose($fp);
         $return=implode('',$page);
     }
-    return $return;  
+    return $return;
 }
 
 

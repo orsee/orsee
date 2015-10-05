@@ -9,11 +9,11 @@ if (isset($_REQUEST['export']) && $_REQUEST['export']) {
         $languages=get_languages();
         if (!$lang_id || !in_array($lang_id,$languages)) redirect ("admin/lang_main.php");
     }
-    if ($proceed) { 
+    if ($proceed) {
         $allow=check_allow('lang_lang_export','lang_lang_edit.php?elang='.$lang_id);
     }
     if ($proceed) {
-        $query="SELECT * FROM ".table('lang')." 
+        $query="SELECT * FROM ".table('lang')."
                 WHERE content_type IN ('lang','mail','default_text')
                 ORDER by lang_id";
         $result=or_query($query);
@@ -28,7 +28,7 @@ if (isset($_REQUEST['export']) && $_REQUEST['export']) {
         ob_end_clean();
         header("Pragma: public");
         header("Expires: 0");
-        header("Cache-Control: must-revalidate, post-check=0, pre-check=0"); 
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
         header("Content-Type: ".$mime_type);
         header( "Content-Disposition: attachment; filename=\"$filename\"");
         header( "Content-Description: File Transfer");
@@ -70,7 +70,7 @@ if (isset($_REQUEST['export']) && $_REQUEST['export']) {
                             orsee_'.$lang_id.'.orl</A>
                     </TD>
                 </TR>';
-        echo '      
+        echo '
             </TABLE>
             ';
         echo '<BR><BR>

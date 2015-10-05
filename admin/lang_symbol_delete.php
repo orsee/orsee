@@ -30,7 +30,7 @@ if ($proceed) {
 
     if ($reallydelete) {
         $pars=array(':lang_id'=>$lang_id);
-        $query="DELETE FROM ".table('lang')." 
+        $query="DELETE FROM ".table('lang')."
                 WHERE lang_id= :lang_id";
         $result=or_query($query,$pars);
 

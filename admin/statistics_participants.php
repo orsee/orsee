@@ -12,15 +12,15 @@ if ($proceed) {
 if ($proceed) {
 
     if (isset($_REQUEST['all']) && $_REQUEST['all']) {
-        $all=true; 
-        $title_add=lang('for_all_profiles_in_database');    
-    } else { 
+        $all=true;
+        $title_add=lang('for_all_profiles_in_database');
+    } else {
         $all=false;
-        $title_add=lang('for_active_subjects_in_pool'); 
+        $title_add=lang('for_active_subjects_in_pool');
     }
 
     $browsable=true;
-    
+
     $restrict=array();
     if (isset($_REQUEST['restrict']) && array($_REQUEST['restrict'])) {
         $posted=$_REQUEST['restrict'];
@@ -37,10 +37,10 @@ if ($proceed) {
     else $condition=array('clause'=>participant_status__get_pquery_snippet('eligible_for_experiments'),
                     'pars'=>array()
                     );
-    $stats_data=stats__get_data($condition,'stats',$restrict); 
-    $_SESSION['stats_data']=$stats_data; 
+    $stats_data=stats__get_data($condition,'stats',$restrict);
+    $_SESSION['stats_data']=$stats_data;
 
-    echo '<center>';                     
+    echo '<center>';
 
     if ($browsable) {
         echo '<FORM action="'.thisdoc().'" METHOD="POST">';
@@ -56,7 +56,7 @@ if ($proceed) {
         echo '<P align="right">'.button_link(thisdoc(),lang('stats_show_for_active'),'dot-circle-o').'</p>';
     } else {
         echo '<P align="right">'.button_link(thisdoc().'?all=true',lang('stats_show_for_all'),'circle-o').'</p>';
-    } 
+    }
     echo '</TD>';
     echo '</TR></TABLE>';
     echo '  </TD></TR>';
@@ -69,7 +69,7 @@ if ($proceed) {
         if (isset($table['data']) && is_array($table['data']) && count($table['data'])>0) $show=true;
         else $show=false;
         if ($show) {
-            $out=stats__stats_display_table($table,$browsable,$restrict);       
+            $out=stats__stats_display_table($table,$browsable,$restrict);
             echo '<TR><TD align="center">';
             echo '<TABLE class="or_formtable" style="width: 90%">
                     <TR><TD colspan="2">

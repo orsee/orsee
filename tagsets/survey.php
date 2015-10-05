@@ -13,7 +13,7 @@ function survey__render_field($field) {
         case 'select_yesno_switchy': $out=survey__render_select_yesno_switchy($field); break;
     }
     return $out;
-}   
+}
 
 function survey__render_textline($f) {
     $out='<INPUT type="text" name="'.$f['submitvarname'].'" value="'.$f['value'].'" size="'.
@@ -80,9 +80,9 @@ function survey__render_select_yesno($f) {
 function survey__render_select_yesno_switchy($f) {
     global $lang, $ynswitch_jscode;
     if (!isset($ynswitch_jscode) || !$ynswitch_jscode) $ynswitch_jscode=false;
-    
+
     $items=array('n'=>'n','y'=>'y');
-    
+
     $id=uniqid();
     $out='';
     $out='<select data-elem-name="yesnoswitch" id="id'.$id.'" name="'.$f['submitvarname'].'">';
@@ -103,7 +103,7 @@ function survey__render_select_yesno_switchy($f) {
             ynswitches.switchy();
             ynswitches.on('change', function(){
                 var firstOption = $(this).children('option').first().val();
-                var lastOption = $(this).children('option').last().val();   
+                var lastOption = $(this).children('option').last().val();
                 var bgColor = '#bababa';
                 if ($(this).val() == firstOption){
                     bgColor = '#DC143C';

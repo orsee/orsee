@@ -27,7 +27,7 @@ if ($proceed) {
     $optionlist[]='<A HREF="admin_pw.php" class="option">'.oicon('key').lang('change_my_password').'</A>';
     $optionlist[]='<A HREF="admin_rights.php" class="option">'.oicon('shield').lang('show_my_rights').'</A>';
     options__show_main_section(lang('my_profile'),$optionlist);
-    
+
     $optionlist=array();
     if (check_allow('laboratory_edit')) $optionlist[]='<A HREF="lang_item_main.php?item=laboratory" class="option">'.oicon('map-marker').lang('laboratories').'</A>';
     if (check_allow('subjectpool_edit')) $optionlist[]='<A HREF="subpool_main.php" class="option">'.oicon('globe').lang('sub_subjectpools').'</A>';
@@ -60,12 +60,12 @@ if ($proceed) {
     if (check_allow('pform_templates_edit')) $optionlist[]='<A HREF="options_profile_template.php" class="option">'.oicon('newspaper-o').lang('participant_profile_form_template').'</A>';
     options__show_main_section(lang('participant_profile'),$optionlist);
 
-    
+
     if (check_allow('pform_lang_field_edit')) {
         $optionlist=array();
         $formfields=participantform__load();
         foreach($formfields as $f) {
-            if (preg_match("/(select_lang|radioline_lang)/",$f['type'])) {  
+            if (preg_match("/(select_lang|radioline_lang)/",$f['type'])) {
                 $to='<A HREF="lang_item_main.php?item='.$f['mysql_column_name'].'" class="option">'.oicon('bars');
                 if (isset($lang[$f['name_lang']])) $to.=$lang[$f['name_lang']];
                 else $to.=$f['name_lang'];
@@ -89,7 +89,7 @@ if ($proceed) {
     }
     options__show_main_section(lang('default_and_saved_queries'),$optionlist);
 
-    
+
     if (check_allow('pform_results_lists_edit')) {
         $optionlist=array();
         $optionlist[]='<A HREF="options_ordered_lists.php?list=result_table_search_active" class="option">'.oicon('bars').lang('columns_in_search_results_table_for_active_participants').'</A>';
@@ -101,9 +101,9 @@ if ($proceed) {
         $optionlist[]='<A HREF="options_ordered_lists.php?list=session_participants_list" class="option">'.oicon('bars').lang('columns_in_session_participants_list').'</A>';
         $optionlist[]='<A HREF="options_ordered_lists.php?list=session_participants_list_pdf" class="option">'.oicon('bars').lang('columns_in_pdf_session_participants_list').'</A>';
         if ($settings['enable_email_module']=='y') $optionlist[]='<A HREF="options_ordered_lists.php?list=email_participant_guesses_list" class="option">'.oicon('bars').lang('email_module_participant_guesses_list').'</A>';
-        options__show_main_section(lang('result_lists'),$optionlist);       
+        options__show_main_section(lang('result_lists'),$optionlist);
     }
-    
+
     $optionlist=array();
     if (check_allow('import_data')) $optionlist[]='<A HREF="import_prepare.php" class="option">'.lang('prepare_data_import').'</A>';
     options__show_main_section(lang('other'),$optionlist);

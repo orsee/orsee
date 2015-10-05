@@ -23,12 +23,12 @@ $all_orsee_query_modules=array(
 function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="",$status_query="") {
     global $lang, $settings, $all_orsee_query_modules;
     $formfields=participantform__load();
-    
+
     $orsee_query_modules=$all_orsee_query_modules;
-    
-    $protoypes=array(); 
+
+    $protoypes=array();
     foreach ($orsee_query_modules as $module) { if (!in_array($module,$hide_modules)) { switch ($module) {
-    
+
     case "brackets":
         $prototype=array('type'=>'brackets',
                         'displayname'=>lang('query_brackets'),
@@ -37,7 +37,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
         $content="";
         $prototype['content']=$content; $prototypes[]=$prototype;
         break;
-        
+
     case "experimentclasses":
         $prototype=array('type'=>'experimentclasses_multiselect',
                         'displayname'=>lang('query_experiment_class'),
@@ -97,7 +97,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
         $content.=experiment__other_experiments_select_field("#experiments_participated#_ms_experiments","participated",$experiment_id,array(),true,array('cols'=>80,'tag_color'=>'#a8a8ff','picker_color'=>'#0000ff','picker_maxnumcols'=>$settings['query_experiment_list_nr_columns']));
         $prototype['content']=$content; $prototypes[]=$prototype;
         break;
-    
+
     case "statusids":
         $prototype=array('type'=>'statusids_multiselect',
                         'displayname'=>lang('query_participant_status'),
@@ -127,7 +127,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
                     $tfield['name']=lang($f['name_lang']);
                     $form_query_fields[]=$tfield;
                 }
-        } 
+        }
         $content="";
         $content.=lang('where');
         $content.=' <INPUT type="text" size="20" maxlength="100" name="search_string" value="">';
@@ -144,7 +144,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
         $content.='</SELECT>';
         $prototype['content']=$content; $prototypes[]=$prototype;
         break;
-    
+
 
 
     case "pformselects":
@@ -179,7 +179,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
                       <OPTION value="<="><=</OPTION>
                       <OPTION value="=" SELECTED>=</OPTION>
                       <OPTION value=">">></OPTION>
-                      </select>';                           
+                      </select>';
                 } else {
                     $content.='<select name="not">
                     <OPTION value="" SELECTED>=</OPTION>
@@ -204,7 +204,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
                 }
                 $prototype['content']=$content; $prototypes[]=$prototype;
             }
-        }  
+        }
         break;
 
     case "noshows":
@@ -267,7 +267,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
                         <OPTION value="last_profile_update">'.lang('last_profile_update').'</OPTION>
                         <OPTION value="creation_time">'.lang('creation_time').'</OPTION>';
         //$content.='    <OPTION value="deletion_time">'.lang('deletion_time').'</OPTION>';
-        $content.='</SELECT> ';     
+        $content.='</SELECT> ';
         $content.='<SELECT name="not">
                         <OPTION value="" SELECTED></OPTION>
                         <OPTION value="NOT">'.lang('not').'</OPTION>
@@ -305,7 +305,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
         $prototype['content']=$content; $prototypes[]=$prototype;
         break;
     }}}
-    
+
     return $prototypes;
 }
 
@@ -315,13 +315,13 @@ function query__get_query_array($posted_array,$experiment_id="") {
     global $lang;
 
     $formfields=participantform__load();
-    $participated_clause=expregister__get_pstatus_query_snippet("participated"); 
+    $participated_clause=expregister__get_pstatus_query_snippet("participated");
     $allowed_signs=array('<=','=','>');
-    
+
     $query_array=array();
     $query_array['clauses']=array();
-     
-    foreach ($posted_array as $num=>$entry) { 
+
+    foreach ($posted_array as $num=>$entry) {
         $temp_keys=array_keys($entry);
         $module_string=$temp_keys[0];
         $module_string_array=explode("_",$module_string);
@@ -334,12 +334,12 @@ function query__get_query_array($posted_array,$experiment_id="") {
             $pform_formfield=implode("_",$module_string_array);
         } else $pform_formfield="";
         $params=$entry[$module_string];
-        
-        $op=''; $ctype=''; $pars=array(); $clause=''; $subqueries=array(); $add=true; 
 
-        if (isset($params['logical_op']) && $params['logical_op']) $op=strtoupper($params['logical_op']); 
-        
-        
+        $op=''; $ctype=''; $pars=array(); $clause=''; $subqueries=array(); $add=true;
+
+        if (isset($params['logical_op']) && $params['logical_op']) $op=strtoupper($params['logical_op']);
+
+
         switch ($module) {
             case "bracket":
                 if ($type=='open') {
@@ -349,51 +349,51 @@ function query__get_query_array($posted_array,$experiment_id="") {
                     $ctype='bracket_close';
                     $clause=')';
                 }
-                break;  
+                break;
             case "experimentclasses":
                 $ctype='subquery';
                 // clause
                 $clause='participant_id ';
                 if ($params['not']) $clause.='NOT ';
-                $clause.='IN (#subquery0#) '; 
+                $clause.='IN (#subquery0#) ';
                 $pars=array();
                 // subquery
                 $subqueries[0]['clause']['query']="SELECT participant_id as id
                             FROM ".table('participate_at')."
-                            WHERE experiment_id IN (#subquery0#) 
+                            WHERE experiment_id IN (#subquery0#)
                             AND ".$participated_clause;
                 $subqueries[0]['clause']['pars']=array();
                 $likelist=query__make_like_list($params['ms_classes'],'experiment_class');
                 $subqueries[0]['subqueries'][0]['clause']['query']="
-                        SELECT experiment_id as id 
+                        SELECT experiment_id as id
                         FROM ".table('experiments')."
                         WHERE (".$likelist['par_names'].") ";
-                $subqueries[0]['subqueries'][0]['clause']['pars']=$likelist['pars'];        
+                $subqueries[0]['subqueries'][0]['clause']['pars']=$likelist['pars'];
                 break;
 
             case "experimenters":
-                $ctype='subquery'; 
+                $ctype='subquery';
                 // clause
                 $clause='participant_id ';
                 if ($params['not']) $clause.='NOT ';
                 $clause.='IN (#subquery0#) ';
                 $pars=array();
                 // subquery
-                $subqueries[0]['clause']['query']="SELECT participant_id as id 
+                $subqueries[0]['clause']['query']="SELECT participant_id as id
                             FROM ".table('participate_at')."
-                            WHERE experiment_id IN (#subquery0#) 
-                            AND ".$participated_clause; 
+                            WHERE experiment_id IN (#subquery0#)
+                            AND ".$participated_clause;
                 $subqueries[0]['clause']['pars']=array();
                 $likelist=query__make_like_list($params['ms_experimenters'],'experimenter');
                 $subqueries[0]['subqueries'][0]['clause']['query']="
                         SELECT experiment_id as id
                         FROM ".table('experiments')."
-                        WHERE (".$likelist['par_names'].") ";   
-                $subqueries[0]['subqueries'][0]['clause']['pars']=$likelist['pars'];            
-                break;              
+                        WHERE (".$likelist['par_names'].") ";
+                $subqueries[0]['subqueries'][0]['clause']['pars']=$likelist['pars'];
+                break;
 
             case "experimentsassigned":
-                $ctype='subquery'; 
+                $ctype='subquery';
                 // clause
                 $clause='participant_id ';
                 if ($params['not']) $clause.='NOT ';
@@ -403,11 +403,11 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 $list=query__make_enquoted_list($params['ms_experiments'],'experiment_id');
                 $subqueries[0]['clause']['query']="SELECT participant_id as id
                             FROM ".table('participate_at')."
-                            WHERE experiment_id IN (".$list['par_names'].")";   
-                $subqueries[0]['clause']['pars']=$list['pars'];     
+                            WHERE experiment_id IN (".$list['par_names'].")";
+                $subqueries[0]['clause']['pars']=$list['pars'];
                 break;
             case "experimentsparticipated":
-                $ctype='subquery'; 
+                $ctype='subquery';
                 // clause
                 $clause='participant_id ';
                 if ($params['not']) $clause.='NOT ';
@@ -415,11 +415,11 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 $pars=array();
                 // subquery
                 $list=query__make_enquoted_list($params['ms_experiments'],'experiment_id');
-                $subqueries[0]['clause']['query']="SELECT participant_id as id 
+                $subqueries[0]['clause']['query']="SELECT participant_id as id
                             FROM ".table('participate_at')."
                             WHERE experiment_id IN (".$list['par_names'].")
-                            AND ".$participated_clause; 
-                $subqueries[0]['clause']['pars']=$list['pars'];         
+                            AND ".$participated_clause;
+                $subqueries[0]['clause']['pars']=$list['pars'];
                 break;
             case "statusids":
                 $ctype='part';
@@ -427,13 +427,13 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 $clause='status_id ';
                 if ($params['not']) $clause.='NOT ';
                 $clause.="IN (".$list['par_names'].")";
-                $pars=$list['pars'];    
+                $pars=$list['pars'];
                 break;
             case "pformtextfields":
                 $ctype='part';
                 $clause="";
                 if ($params['not']) $clause.='NOT ';
-                $form_query_fields=array();              
+                $form_query_fields=array();
                 foreach ($formfields as $f) { // whitelist by loop
                     if( preg_match("/(textline|textarea)/i",$f['type']) &&
                         ((!$experiment_id && $f['search_include_in_participant_query']=='y')    ||
@@ -444,7 +444,7 @@ function query__get_query_array($posted_array,$experiment_id="") {
                                 $form_query_fields[]=$f['mysql_column_name'];
                             }
                     }
-                }       
+                }
                 $like_array=array();
                 $pars=array(); $i=0;
                 foreach ($form_query_fields as $field) {
@@ -454,13 +454,13 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 }
                 $clause.=' ('.implode(" OR ",$like_array).') ';
                 break;
-            case "pform":               
-                $ctype='part'; 
+            case "pform":
+                $ctype='part';
                 $clause="";
                 $f=array();
                 foreach ($formfields as $p) { if($p['mysql_column_name']==$pform_formfield) $f=$p; }
                 if (isset($f['mysql_column_name'])) {
-                    $clause.=$f['mysql_column_name'].' ';           
+                    $clause.=$f['mysql_column_name'].' ';
                     if ($type=='numberselect')  {
                         if (in_array($params['sign'],$allowed_signs)) $clause.=$params['sign'];
                         else $clause.=$allowed_signs[0];
@@ -471,7 +471,7 @@ function query__get_query_array($posted_array,$experiment_id="") {
                         $clause.=" :fieldvalue";
                         $pars=array(':fieldvalue'=>trim($params['fieldvalue']));
                     } else {
-                        if ($params['not']) $clause.="NOT "; 
+                        if ($params['not']) $clause.="NOT ";
                         $list=query__make_enquoted_list($params['ms_'.$pform_formfield],'fieldvalue');
                         $clause.="IN (".$list['par_names'].")";
                         $pars=$list['pars'];
@@ -527,7 +527,7 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 $clause='subpool_id ';
                 if ($params['not']) $clause.='NOT ';
                 $clause.="IN (".$list['par_names'].")";
-                $pars=$list['pars'];    
+                $pars=$list['pars'];
                 break;
             default:
                 $add=false;
@@ -535,7 +535,7 @@ function query__get_query_array($posted_array,$experiment_id="") {
         }
         if ($add) $query_array['clauses'][]=array('op'=>$op, 'ctype'=>$ctype,'clause'=>array('query'=>$clause,'pars'=>$pars), 'subqueries'=>$subqueries);
     }
-    
+
     // remove unnecessary whitespace from any queries
     foreach ($query_array['clauses'] as $k=>$q) {
         $query_array['clauses'][$k]['clause']['query'] = trim(preg_replace('/\s+/', ' ', $query_array['clauses'][$k]['clause']['query']));
@@ -550,16 +550,16 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 unset($query_array['clauses'][$k]);
                 unset($query_array['clauses'][$k-1]);
                 $ok=false;
-                if (isset($query_array['clauses'][$k-2]) && 
+                if (isset($query_array['clauses'][$k-2]) &&
                     $query_array['clauses'][$k-2]['ctype']=='bracket_open' &&
                     isset($query_array['clauses'][$k+1]['op']) ) $query_array['clauses'][$k+1]['op']='';
             }
         }
         $new_clauses=array();
-        foreach ($query_array['clauses'] as $k=>$q) $new_clauses[]=$q; 
+        foreach ($query_array['clauses'] as $k=>$q) $new_clauses[]=$q;
         $query_array['clauses']=$new_clauses;
     }
-    
+
     return $query_array;
 }
 
@@ -569,11 +569,11 @@ function query__get_pseudo_query_array($posted_array) {
     global $lang;
 
     $formfields=participantform__load();
-    
+
     $pseudo_query_array=array();
-     
+
     $clevel=1;
-    foreach ($posted_array as $num=>$entry) { 
+    foreach ($posted_array as $num=>$entry) {
         $temp_keys=array_keys($entry);
         $module_string=$temp_keys[0];
         $module_string_array=explode("_",$module_string);
@@ -585,11 +585,11 @@ function query__get_pseudo_query_array($posted_array) {
             $pform_formfield=implode("_",$module_string_array);
         } else $pform_formfield="";
         $params=$entry[$module_string];
-    
+
         $level=$clevel; $op_text=""; $text=''; $add=true;
 
-        if (isset($params['logical_op']) && $params['logical_op']) $op_text=lang($params['logical_op']); 
-        
+        if (isset($params['logical_op']) && $params['logical_op']) $op_text=lang($params['logical_op']);
+
         switch ($module) {
             case "bracket":
                 if ($type=='open') {
@@ -599,7 +599,7 @@ function query__get_pseudo_query_array($posted_array) {
                     $clevel--; $level=$clevel;
                     $text=')';
                 }
-                break;  
+                break;
             case "experimentclasses":
                 $text=query__pseudo_query_not_without($params);
                 $text.=' '.lang('participants_participated_expclass');
@@ -612,7 +612,7 @@ function query__get_pseudo_query_array($posted_array) {
                 break;
             case "experimentsassigned":
                 $text=query__pseudo_query_not_without($params);
-                $text.=' '.lang('participants_were_assigned_to');   
+                $text.=' '.lang('participants_were_assigned_to');
                 $text.=': '.experiment__exp_id_list_to_exp_names($params['ms_experiments']);
                 break;
             case "experimentsparticipated":
@@ -633,15 +633,15 @@ function query__get_pseudo_query_array($posted_array) {
                 if ($params['search_field']=='all') $text.=lang('any_field');
                 else $text.=$params['search_field'];
                 break;
-            case "pform":               
+            case "pform":
                 $f=array();
                 foreach ($formfields as $p) { if($p['mysql_column_name']==$pform_formfield) $f=$p; }
                 if (isset($f['mysql_column_name'])) {
-                    $text=lang('where').' '.lang($f['name_lang']).' ';          
+                    $text=lang('where').' '.lang($f['name_lang']).' ';
                     if ($type=='numberselect')  $text.=$params['sign'].$params['fieldvalue'];
                     elseif ($type=='simpleselect') $text.=query__pseudo_query_not_not($params).'= "'.$params['fieldvalue'].'"';
                     else $text.=query__pseudo_query_not_not($params).lang('in').': '.participant__select_lang_idlist_to_names($f['mysql_column_name'],$params['ms_'.$pform_formfield]);
-                
+
                 } else $add=false;
                 break;
             case "noshows":
@@ -656,7 +656,7 @@ function query__get_pseudo_query_array($posted_array) {
                 $text=lang('where_profile_update_request_is').' ';
                 if ($params['update_request_status']=='y') $text.=lang('active');
                 else $text.=lang('inactive');
-                break;              
+                break;
             case "activity":
                 $text=lang('where').' '.lang($params['activity_type']).' ';
                 $text.=query__pseudo_query_not_not($params);
@@ -676,7 +676,7 @@ function query__get_pseudo_query_array($posted_array) {
         }
         if ($add) $pseudo_query_array[]=array('level'=>$level, 'op_text'=>$op_text, 'text'=>$text);
     }
-    
+
     return $pseudo_query_array;
 }
 

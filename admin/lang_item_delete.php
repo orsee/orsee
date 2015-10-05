@@ -42,7 +42,7 @@ if ($proceed) {
 if ($proceed) {
     switch($item) {
         case 'experimentclass':
-            $header=lang('delete_experiment_class'); 
+            $header=lang('delete_experiment_class');
             $headervar=lang('lang');
             $reset_part_field="";
             $deletion_message=lang('experiment_class_deleted');
@@ -120,7 +120,7 @@ if ($proceed) {
         // there should be a miore sophisticarted way of doing this
         if ($reset_part_field) {
             $pars=array(':content_name'=>$titem['content_name']);
-            $query="UPDATE ".table('participants')." 
+            $query="UPDATE ".table('participants')."
                     SET ".$reset_part_field."='0'
                     WHERE ".$reset_part_field."= :content_name";
             $result=or_query($query,$pars);

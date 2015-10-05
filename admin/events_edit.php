@@ -6,14 +6,14 @@ $menu__area="experiment_calendar";
 $title="create_event";
 $jquery=array('datepicker','clockpicker','arraypicker','textext');
 include ("header.php");
-if ($proceed) {            
+if ($proceed) {
     if (isset($_REQUEST['event_id']) && $_REQUEST['event_id']) $event_id=$_REQUEST['event_id']; else $event_id="";
     $allow=check_allow('events_edit','calendar_main.php');
 }
 
 
 if ($proceed) {
-    if (isset($_REQUEST['edit']) && $_REQUEST['edit']) { 
+    if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
 
         $_REQUEST['experimenter']=id_array_to_db_string(multipicker_json_to_array($_REQUEST['experimenter']));
 
@@ -30,7 +30,7 @@ if ($proceed) {
 
 
         if ($continue) {
-            $done=orsee_db_save_array($edit,"events",$edit['event_id'],"event_id"); 
+            $done=orsee_db_save_array($edit,"events",$edit['event_id'],"event_id");
             if ($done) {
                 log__admin("events_edit","event_id:".$event_id);
                 message (lang('changes_saved'));
@@ -46,7 +46,7 @@ if ($proceed) {
 if ($proceed) {
     if ($event_id) {
         $edit=orsee_db_load_array("events",$event_id,"event_id");
-        if (!isset($edit['event_id'])) redirect('admin/calendar_main.php'); 
+        if (!isset($edit['event_id'])) redirect('admin/calendar_main.php');
     }
 }
 
@@ -64,14 +64,14 @@ if ($proceed) {
             $_REQUEST['experimenter']=id_array_to_db_string(multipicker_json_to_array($_REQUEST['experimenter']));
             $_REQUEST['event_start']=ortime__array_to_sesstime($_REQUEST,'event_start_');
             $_REQUEST['event_stop']=ortime__array_to_sesstime($_REQUEST,'event_stop_');
-            $edit=$_REQUEST;        
+            $edit=$_REQUEST;
             $edit['event_id']=time();
         } else {
             $edit['event_id']=time();
-        
+
             $edit['event_start']=ortime__unixtime_to_sesstime();
             $edit['event_stop']=ortime__unixtime_to_sesstime(time()+60*60);
-        
+
             $edit['experimenter']='|'.$expadmindata['admin_id'].'|';
             $edit['laboratory_id']="";
             $edit['event_category']="";
@@ -93,8 +93,8 @@ if ($proceed) {
 
 
     echo '<FORM action="events_edit.php" method="POST">
-        <INPUT type=hidden name=event_id value="'.$edit['event_id'].'">'; 
-    if (isset($addit) && $addit) echo '<INPUT type=hidden name="addit" value="true">'; 
+        <INPUT type=hidden name=event_id value="'.$edit['event_id'].'">';
+    if (isset($addit) && $addit) echo '<INPUT type=hidden name="addit" value="true">';
     echo '
         <TABLE class="or_formtable">
         <TR>
@@ -122,7 +122,7 @@ if ($proceed) {
             </TD>
             <TD>';
 
-                
+
     echo formhelpers__pick_date('event_start',$edit['event_start'],$settings['session_start_years_backward'],$settings['session_start_years_forward']);
     echo '&nbsp;&nbsp;';
     echo formhelpers__pick_time('event_start', $edit['event_start']);
@@ -162,17 +162,17 @@ if ($proceed) {
     echo '<TR>
                 <TD COLSPAN="2" align="center"><INPUT class="button" name="edit" type="submit" value="'.$button_name.'"></TD>
         </TR>';
-    
+
     if ($event_id) {
-    
+
         echo '
             <TR>
                 <TD COLSPAN=2 align="right">
                     <INPUT class="button" name="copy" type="submit" value="'.lang('copy_as_new_event').'">
                 </TD>
             </TR>';
-    }       
-        
+    }
+
     echo '  </table>
     </FORM>
     <BR>';
@@ -188,8 +188,8 @@ if ($proceed) {
             </table>
             ';
     }
-    
-    echo '<BR><BR><A href="calendar_main.php">'.icon('back').' '.lang('back').'</A>';       
+
+    echo '<BR><BR><A href="calendar_main.php">'.icon('back').' '.lang('back').'</A>';
 
 
 }

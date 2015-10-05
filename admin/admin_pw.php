@@ -15,12 +15,12 @@ if ($proceed) {
 
         // password tests
         $continue=true;
-    
-        if (!$passold || !$password || !$password2) { 
+
+        if (!$passold || !$password || !$password2) {
             message (lang('error_please_fill_in_all_fields'));
             $continue=false;
         }
-    
+
         if ($password!=$password2) {
             message (lang('error_password_repetition_does_not_match'));
             $continue=false;
@@ -39,10 +39,10 @@ if ($proceed) {
             if ($passold==$password) {
                 message(lang('error_new_password_must_be_different_from_old_password'));
             $continue=false;
-        }       
-        
         }
-    
+
+        }
+
         if (!preg_match('/'.$settings['admin_password_regexp'].'/',$password)) {
             message(lang('error_password_does_not_meet_requirements'));
             $continue=false;

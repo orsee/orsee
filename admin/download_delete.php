@@ -17,7 +17,7 @@ if ($proceed) {
 if ($proceed) {
     if ($upload['experiment_id']>0) {
         $experiment_id=$upload['experiment_id'];
-        if (!check_allow('experiment_restriction_override')) 
+        if (!check_allow('experiment_restriction_override'))
             check_experiment_allowed($experiment_id,"admin/experiment_show.php?experiment_id=".$experiment_id);
     } else $experiment_id=0;
 }
@@ -55,13 +55,13 @@ if ($proceed) {
     if (isset($_REQUEST['reallydelete']) && $_REQUEST['reallydelete']) $reallydelete=true;
     else $reallydelete=false;
 
-    if ($reallydelete) { 
+    if ($reallydelete) {
 
         $pars=array(':upload_id'=>$upload_id);
-        $query="DELETE FROM ".table('uploads')." 
+        $query="DELETE FROM ".table('uploads')."
                 WHERE upload_id= :upload_id";
         $result=or_query($query,$pars);
-        $query="DELETE FROM ".table('uploads_data')."  
+        $query="DELETE FROM ".table('uploads_data')."
                 WHERE upload_id= :upload_id";
         $result=or_query($query,$pars);
         $target= ($experiment_id) ? "experiment_id:".$experiment_id : "general";

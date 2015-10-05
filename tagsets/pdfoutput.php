@@ -13,7 +13,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
     $experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
 
     $pstatuses=expregister__get_participation_statuses();
-    
+
     if ($session_id) {
         $clause="session_id = '".$session_id."'";
         $title=lang('registered_subjects');
@@ -25,9 +25,9 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
         $clause="session_id != 0";
         $title=lang('registered_subjects');
     }
-    
+
     $cols=participant__get_result_table_columns('session_participants_list_pdf');
-    if ($session_id) unset($cols['session_id']);    
+    if ($session_id) unset($cols['session_id']);
     // load sessions of this experiment
     $pars=array(':experiment_id'=>$experiment_id);
     $query="SELECT *
@@ -38,10 +38,10 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
     while ($line=pdo_fetch_assoc($result)) {
         $thislist_sessions[$line['session_id']]=$line;
     }
-    
-    // load participant data for this session/experiment 
+
+    // load participant data for this session/experiment
     $pars=array(':experiment_id'=>$experiment_id);
-    $select_query="SELECT * FROM ".table('participate_at').", ".table('participants')."  
+    $select_query="SELECT * FROM ".table('participate_at').", ".table('participants')."
                     WHERE ".table('participate_at').".experiment_id= :experiment_id
                     AND ".table('participate_at').".participant_id=".table('participants').".participant_id
                     AND (".$clause.")";
@@ -49,7 +49,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
     $order=query__get_sort('session_participants_list_pdf',$sort);
     if(!$order) $order=table('participants').".participant_id";
     $select_query.=" ORDER BY ".$order;
-    
+
     // get result
     $result=or_query($select_query,$pars);
 
@@ -63,7 +63,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
     $pars=array(':texperiment_id'=>$experiment_id);
     $squery="SELECT *
             FROM ".table('sessions')."
-            WHERE experiment_id= :texperiment_id 
+            WHERE experiment_id= :texperiment_id
             ORDER BY session_start";
     $result=or_query($squery,$pars); $thislist_sessions=array();
     while ($line=pdo_fetch_assoc($result)) {
@@ -83,16 +83,16 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
     $table_title=$experiment['experiment_public_name'];
     if ($session_id) $table_title.=', '.lang('session').' '.str_replace("&nbsp;"," ",session__build_name($thislist_sessions[$session_id]));
     $table_title.=' - '.$title;
-    
+
     // determine table headings
-    
+
     $table_headings=participant__get_result_table_headcells_pdf($cols);
     $table_data=array();
 
     $pnr=0;
     foreach ($participants as $p) {
         $pnr++;
-        $p['order_number']=$pnr;        
+        $p['order_number']=$pnr;
         $row=participant__get_result_table_row_pdf($cols,$p);
         $table_data[]=$row;
     }
@@ -110,7 +110,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
     $y=$pdf->ezTable($table_data,
                     $table_headings,
                     $table_title,
-                    array(  'gridlines'=>31, 
+                    array(  'gridlines'=>31,
                             'showHeadings'=>1,
                             'shaded'=>2,
                             'shadeCol'=>array(1,1,1),
@@ -124,7 +124,7 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
                             'maxWidth'=>800,
                             'width'=>800,
                             'protectRows'=>2));
-                            
+
 
     if ($file) {
         $pdffilecode = $pdf->output();
@@ -140,9 +140,9 @@ function pdfoutput__make_part_list($experiment_id,$session_id="",$pstatus="",$fo
 
 function pdfoutput__make_pdf_calendar($displayfrom=0,$wholeyear=false,$admin=false,$forward=0,$file=false){
     global $settings, $lang;
-    
+
     if ($displayfrom==0) $displayfrom=time();
-    
+
     // prepare pdf
     include_once('../tagsets/class.ezpdf.php');
 
@@ -153,7 +153,7 @@ function pdfoutput__make_pdf_calendar($displayfrom=0,$wholeyear=false,$admin=fal
     $fontsize= ($settings['calendar_pdf_table_fontsize']) ? $settings['calendar_pdf_table_fontsize'] : 8;
         $titlefontsize= ($settings['calendar_pdf_title_fontsize']) ? $settings['calendar_pdf_title_fontsize'] : 12;
 
-    
+
     //start building calendar
     $displayfrom_lower = $displayfrom;
     if ($forward > 0) {
@@ -184,12 +184,12 @@ function pdfoutput__make_pdf_calendar($displayfrom=0,$wholeyear=false,$admin=fal
                     $wdindex=0;
                 }
             }
-            $table_headings[$i3]=$calendar__weekdays[$wdindex];     
+            $table_headings[$i3]=$calendar__weekdays[$wdindex];
         }
 
-        $table_data=array();        
+        $table_data=array();
         for($i2 = 1; $i2 <= count($weeks); ++$i2){
-            $las1=array(); $las2=array();; 
+            $las1=array(); $las2=array();;
             for ($i3 = 1; $i3 <= 7; ++$i3){
                 if(!isset($weeks[$i2][$i3])){
                     $las1[$i3]="";
@@ -212,7 +212,7 @@ function pdfoutput__make_pdf_calendar($displayfrom=0,$wholeyear=false,$admin=fal
 
                             if($admin){
                                 $las2[$i3].=experiment__list_experimenters($item['experimenters'],false,true)."\n";
-                            }                           
+                            }
                             if($item['type'] == "experiment_session"){
                                 if($admin){
                                     $las2[$i3].=$item['participants_registered']." (" . $item['participants_needed']. "," . $item['participants_reserve'] . ")";
@@ -228,12 +228,12 @@ function pdfoutput__make_pdf_calendar($displayfrom=0,$wholeyear=false,$admin=fal
             $table_data[]=$las1;
             $table_data[]=$las2;
         }
-        
+
         $y=$pdf->ezTable($table_data,
                         $table_headings,
                         $table_title,
                     array( //'showLines'=>2,
-                            'gridlines'=>31,                    
+                            'gridlines'=>31,
                             'showHeadings'=>1,
                             'shaded'=>2,
                             'shadeCol'=>array(1,1,1),
@@ -254,16 +254,16 @@ function pdfoutput__make_pdf_calendar($displayfrom=0,$wholeyear=false,$admin=fal
     if ($file) {
         $pdffilecode = $pdf->output();
 
-        return $pdffilecode;    
-        
-        //$fname ="/apache/orsee/admin/pdfdir/test.pdf"; 
+        return $pdffilecode;
+
+        //$fname ="/apache/orsee/admin/pdfdir/test.pdf";
         //$fp = fopen($fname,'w');
         //fwrite($fp,$pdffilecode);
         //fclose($fp);
         //echo '<A HREF="pdfdir/test.pdf" target="_blank">pdf file</A><BR><BR>';
         //$pdfcode = str_replace("\n","\n<br>",htmlspecialchars($pdfcode));
         //echo trim($pdfcode);
-         
+
         } else {
         $pdf->ezStream(array('Content-Disposition'=>'calendar.pdf',
                 'Accept-Ranges'=>0,

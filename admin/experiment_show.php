@@ -39,7 +39,7 @@ if ($proceed) {
         $pars=array(':experiment_id'=>$experiment['experiment_id']);
         $query="SELECT *
                 FROM ".table('sessions')."
-                WHERE experiment_id= :experiment_id 
+                WHERE experiment_id= :experiment_id
                 ORDER BY session_start";
         $result=or_query($query,$pars); $min=0; $max=0; $sids=array();
         while ($s=pdo_fetch_assoc($result)) {
@@ -47,7 +47,7 @@ if ($proceed) {
             $s['total_payment']=0;
             $sessions[$s['session_id']]=$s;
             $sesstime=$s['session_start'];
-            if ($min==0) { 
+            if ($min==0) {
                 $min=$sesstime; $max=$sesstime;
             } else {
                 if ($sesstime < $min) $min=$sesstime;
@@ -56,14 +56,14 @@ if ($proceed) {
             $sids[]=$s['session_id'];
         }
         if (count($sids)>0) {
-            $query="SELECT session_id, 
+            $query="SELECT session_id,
                     COUNT(*) as regcount ";
             if ($settings['enable_payment_module']=="y" && check_allow('payments_view')) {
                 $query.=", SUM(payment_amt) as total_payment ";
-            } 
-            $query.=" FROM ".table('participate_at')."  
+            }
+            $query.=" FROM ".table('participate_at')."
                     WHERE session_id IN (".
-                    implode(",",$sids).") 
+                    implode(",",$sids).")
                     GROUP BY session_id";
             $result=or_query($query);
             while ($s=pdo_fetch_assoc($result)) {
@@ -79,9 +79,9 @@ if ($proceed) {
     $exptypes=load_external_experiment_types();
 
     echo '<center>';
-    
+
     show_message();
-        
+
     echo '<TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'">
             <TR><TD align="center">
             '.$experiment['experiment_name'].'
@@ -93,7 +93,7 @@ if ($proceed) {
     if(!isset($lang[$experiment['experiment_type']])) $lang[$experiment['experiment_type']]=$experiment['experiment_type'];
     echo '<BR>
     <table class="or_panel">';
-    
+
     // EXPERIMENT OPTIONS
     echo '<TR>
             <TD colspan=2>
@@ -112,21 +112,21 @@ if ($proceed) {
     }
     if ( check_allow('file_view_experiment_all')
         || (in_array($expadmindata['admin_id'],$experimenters) && check_allow('file_view_experiment_my'))) {
-        $files_downloadable=downloads__list_files_experiment($experiment['experiment_id']); 
+        $files_downloadable=downloads__list_files_experiment($experiment['experiment_id']);
         if ($files_downloadable) {
             echo button_link('download_main.php?experiment_id='.
                     $experiment['experiment_id'], lang('show_files'),'download');
         }
-        
+
     }
 
-    
+
     echo '              </TD>
                     </TR>
-                </TABLE>                        
+                </TABLE>
             </TD>
         </TR>';
-        
+
     // COMMON PARAMETERS
     echo '
         <TR>
@@ -135,7 +135,7 @@ if ($proceed) {
                     <TR>
                         <TD>'.lang('id').':</TD><TD>'.$experiment['experiment_id'].'</TD>
                         <TD>'.lang('type').':</TD>';
-    if (!isset($exptypes[$experiment['experiment_ext_type']]['exptype_name'])) 
+    if (!isset($exptypes[$experiment['experiment_ext_type']]['exptype_name']))
             $exptypes[$experiment['experiment_ext_type']]['exptype_name']='type undefined';
     echo '<TD>'.$lang[$experiment['experiment_type']].' ('.$exptypes[$experiment['experiment_ext_type']]['exptype_name'].')</TD>
                     </TR>
@@ -157,17 +157,17 @@ if ($proceed) {
 
     // CONDITIONAL EXPERIMENT FIELDS
     $conditional_fields=array();
-    if ($settings['enable_editing_of_experiment_sender_email']=='y') 
+    if ($settings['enable_editing_of_experiment_sender_email']=='y')
         $conditional_fields[]='<TD>'.lang('email_sender_address').':</TD><TD>'.$experiment['sender_mail'].'</TD>';
 
     if ($settings['enable_payment_module']=="y" && check_allow('payments_view')) {
             $conditional_fields[]='<TD>'.lang('total_payment').':</TD><TD>'.or__format_number($experiment_total_payment,2).'</TD>';
     }
-    
+
     if (trim($experiment['experiment_link_to_paper'])) {
             $conditional_fields[]='<TD colspan=2><A target="_blank" HREF="'.trim($edit['experiment_link_to_paper']).'">'.lang('Link to paper').'</A></TD>';
     }
-        
+
     $i=0;
     foreach ($conditional_fields as $condfield) {
         if ($i/2 == round($i/2)) {
@@ -177,16 +177,16 @@ if ($proceed) {
             else echo '<TD></TD>';
             echo '</TR>';
         }
-        $i++;   
+        $i++;
     }
-    
+
     // ETHICS APPROVAL - IF ENABLED
     if ($settings['enable_ethics_approval_module']=='y') {
         if (!isset($max)) $max=-1;
         $ethics=experiment__get_ethics_approval_desc($experiment,$max);
         echo '<TR bgcolor="'.$ethics['color'].'"><TD colspan="4">'.$ethics['text'].'</TD></TR>';
     }
-    
+
     if ($experiment['experiment_type']=="laboratory") {
         echo '<TR><TD colspan=4><B>';
         if ($experiment['experiment_finished']=="y")
@@ -194,7 +194,7 @@ if ($proceed) {
            else echo lang('experiment_not_finished');
         echo '</B></TD></TR>';
     }
-    
+
     echo '</TABLE></TD></TR>';
 
     echo '
@@ -214,10 +214,10 @@ if ($proceed) {
                 <TABLE width="100%" border=0 class="or_panel_title"><TR>
                 <TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'">'.lang('sessions').'</TD>';
     if ($min>0) {
-                echo '<TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'">'.lang('from').': '.ortime__format(ortime__sesstime_to_unixtime($min),'hide_time').' 
+                echo '<TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'">'.lang('from').': '.ortime__format(ortime__sesstime_to_unixtime($min),'hide_time').'
                         '.lang('to').': '.ortime__format(ortime__sesstime_to_unixtime($max),'hide_time').'
                         </TD>';
-    }       
+    }
     echo '      <TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'">';
                 if (check_allow('session_edit')) echo button_link('session_edit.php?experiment_id='.
                         $experiment['experiment_id'], lang('create_new'),'plus-circle');
@@ -267,7 +267,7 @@ if ($proceed) {
                         <TD style="background: '.$color['panel_title_background'].'; color: '.$color['panel_title_textcolor'].'">
                             '.lang('participants').'
                         </TD>
-                    </TR></TABLE>                       
+                    </TR></TABLE>
                 </TD>
             </TR>
             <TR>
@@ -341,13 +341,13 @@ if ($proceed) {
                 '</TABLE></TD></TR>';
             }
         }
-    
+
         echo '          <TR><TD colspan=3>
                 <TABLE class="or_option_buttons_box" style="background: '.$color['options_box_background'].';">';
-        
 
-            
-        $buttons=array();       
+
+
+        $buttons=array();
         if (check_allow('experiment_assign_participants')) {
             $buttons[]=button_link('experiment_add_participants.php?experiment_id='.
                     $experiment['experiment_id'],lang('assign_subjects'),'plus-square');
@@ -355,22 +355,22 @@ if ($proceed) {
                     $experiment['experiment_id'],lang('delete_assigned_subjects'));
         }
 
-        if (check_allow('experiment_invitation_edit')) 
+        if (check_allow('experiment_invitation_edit'))
             $buttons[]=button_link('experiment_mail_participants.php?experiment_id='.
                     $experiment['experiment_id'],lang('send_invitations'),'envelope');
-                    
+
         if (check_allow('mailqueue_show_experiment'))
             $buttons[]=button_link('experiment_mailqueue_show.php?experiment_id='.
                     $experiment['experiment_id'],lang('monitor_experiment_mail_queue'),'envelope-square');
 
-        if (check_allow('experiment_customize_session_reminder') && $settings['enable_session_reminder_customization']=='y')                
+        if (check_allow('experiment_customize_session_reminder') && $settings['enable_session_reminder_customization']=='y')
             $buttons[]=button_link('experiment_customize_reminder.php?experiment_id='.
                     $experiment['experiment_id'],lang('customize_session_reminder_email'),'envelope-o');
 
-        if (check_allow('experiment_customize_enrolment_confirmation') && $settings['enable_enrolment_confirmation_customization']=='y')        
+        if (check_allow('experiment_customize_enrolment_confirmation') && $settings['enable_enrolment_confirmation_customization']=='y')
             $buttons[]=button_link('experiment_customize_enrol_conf.php?experiment_id='.
                     $experiment['experiment_id'],lang('customize_enrolment_confirmation_email'),'envelope-o');
-                        
+
         if ($settings['enable_email_module']=='y') {
             $nums=email__get_privileges('experiment',$experiment,'read',true);
             if ($nums['allowed'] && $nums['num_all']>0) {
@@ -381,7 +381,7 @@ if ($proceed) {
                         $experiment['experiment_id'],$btext,'envelope-square');
             }
         }
-                    
+
         if (check_allow('experiment_recruitment_report_show'))
             $buttons[].=button_link('experiment_recruitment_report.php?experiment_id='.
                         $experiment['experiment_id'],lang('generate_recruitment_report'),'list-alt');
@@ -393,7 +393,7 @@ if ($proceed) {
                 echo '</TD></TR>';
             }
         }
-        
+
         echo '
                 </TABLE></TD>
             </TR>

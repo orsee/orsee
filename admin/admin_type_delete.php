@@ -13,7 +13,7 @@ if ($proceed) {
         redirect ('admin/admin_type_show.php');
         $proceed=false;
     }
-    
+
 }
 
 if ($proceed) {
@@ -37,32 +37,32 @@ if ($proceed) {
 
 if ($proceed) {
     if ($reallydelete) {
-        
+
         if (isset($_REQUEST['stype']) && $_REQUEST['stype']) $stype=$_REQUEST['stype']; else $stype='';
         if ($stype) $stype_type=orsee_db_load_array("admin_types",$stype,"type_id");
-        
+
         if (!isset($stype_type['type_id'])) {
             message("No target type id provided!");
             redirect ('admin/admin_type_edit.php?type_id='.$type_id);
             $proceed=false;
         } else {
-        
+
             if ($stype==$type_id) {
                 message (lang('type_to_be_deleted_cannot_be_type_to_substitute'));
                 redirect ('admin/admin_type_delete.php?type_id='.$type_id);
                 $proceed=false;
             }
-            
+
             if ($proceed) {
-                // update admins 
+                // update admins
                 $pars=array(':new_type'=>$stype_type['type_name'],
                             ':old_type'=>$type['type_name']);
-                $query="UPDATE ".table('admin')." SET admin_type= :new_type 
+                $query="UPDATE ".table('admin')." SET admin_type= :new_type
                         WHERE admin_type= :old_type";
                 $done=or_query($query,$pars);
 
                 // delete admin type
-                $query="DELETE FROM ".table('admin_types')." 
+                $query="DELETE FROM ".table('admin_types')."
                         WHERE type_id='".$type_id."'";
                 $done=or_query($query);
 

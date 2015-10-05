@@ -29,7 +29,7 @@ if ($proceed) {
 
 if ($proceed) {
 
-    if ($reallysend) { 
+    if ($reallysend) {
         // send it out to mail queue
         $number=experimentmail__send_session_reminders_to_queue($session);
         message ($number.' '.lang('xxx_session_reminder_emails_sent_out'));

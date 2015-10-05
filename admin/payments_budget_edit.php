@@ -8,7 +8,7 @@ $jquery=array('arraypicker','textext');
 include ("header.php");
 if ($proceed) {
 
-    if (isset($_REQUEST['budget_id'])) $budget_id=$_REQUEST['budget_id']; 
+    if (isset($_REQUEST['budget_id'])) $budget_id=$_REQUEST['budget_id'];
 
     if (isset($budget_id)) $allow=check_allow('payments_budget_edit','payments_budget_main.php');
     else $allow=check_allow('payments_budget_add','payments_budget_main.php');
@@ -28,7 +28,7 @@ if ($proceed) {
     $continue=true;
 
     if (isset($_REQUEST['edit']) && $_REQUEST['edit']) {
-    
+
         if (!isset($_REQUEST['budget_name']) || !$_REQUEST['budget_name']) {
                     message (lang('error_you_have_to_provide_budget_name'));
                     $continue=false;
@@ -36,7 +36,7 @@ if ($proceed) {
 
         if ($continue) {
             $_REQUEST['experimenter']=id_array_to_db_string(multipicker_json_to_array($_REQUEST['experimenter']));
-        
+
             if (!isset($budget_id)) {
                 $new=true;
                 $query="SELECT max(budget_id)+1 as new_budget_id FROM ".table('budgets');
@@ -51,7 +51,7 @@ if ($proceed) {
             $budget['budget_id']=$budget_id;
             if (!$budget['budget_limit']) $budget['budget_limit']=NULL;
             $done=orsee_db_save_array($budget,"budgets",$budget_id,"budget_id");
-            
+
             message (lang('changes_saved'));
             log__admin("payments_budget_edit","budget_id:".$budget['budget_id']);
             //redirect ("admin/payments_budget_edit.php?budget_id=".$budget_id);
@@ -69,7 +69,7 @@ if ($proceed) {
     echo '
             <FORM action="payments_budget_edit.php">';
         if (isset($budget_id)) echo '<INPUT type=hidden name="budget_id" value="'.$budget_id.'">';
-        
+
     echo '
         <TABLE class="or_formtable">
             <TR><TD colspan="2">
@@ -92,7 +92,7 @@ if ($proceed) {
                 </TD>
             </TR>';
     }
-        
+
     echo '
         <TR>
             <TD valign="top">
@@ -102,7 +102,7 @@ if ($proceed) {
                 <INPUT name="budget_name" type=text size=40 maxlength=200 value="'.$budget['budget_name'].'">
             </TD>
         </TR>';
-    
+
     echo '
         <TR>
             <TD valign="top">
@@ -112,7 +112,7 @@ if ($proceed) {
                 <INPUT name="budget_limit" type=text size=40 maxlength=200 value="'.$budget['budget_limit'].'">
             </TD>
         </TR>';
-        
+
     echo '
         <TR>
             <TD valign="top">
@@ -166,7 +166,7 @@ if ($proceed) {
                     <TD>
                 </TR>
                 </table>';
-        
+
     }
 
         echo '<BR><BR>

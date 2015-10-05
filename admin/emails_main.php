@@ -23,7 +23,7 @@ if ($proceed) {
         $mode=$_REQUEST['mode'];
         if (in_array($mode,array('mailbox','experiment','session','participant'))) {
             if (isset($_REQUEST['id']) &&  $_REQUEST['id']) $id=$_REQUEST['id'];
-            if ($mode=='mailbox') { 
+            if ($mode=='mailbox') {
                 if (isset($mailboxes[$id])) $continue=true;
             } elseif ($mode=='experiment') {
                 $experiment=orsee_db_load_array("experiments",$id,"experiment_id");
@@ -43,7 +43,7 @@ if ($proceed) {
         } elseif ($mode=='listmailboxes') {
             $continue=true;
         }
-    } 
+    }
     if (!$continue) $mode="inbox";
 }
 
@@ -51,7 +51,7 @@ if ($proceed) {
     $url_string='mode='.urlencode($mode);
     if ($id) $url_string.='&id='.urlencode($id);
 
-    $action=''; 
+    $action='';
     if (isset($_REQUEST['switch_read']) && $_REQUEST['switch_read'] &&
             isset($_REQUEST['message_id']) && $_REQUEST['message_id']) $action='switch_read_status';
     if (isset($_REQUEST['switch_assigned_to_read']) && $_REQUEST['switch_assigned_to_read'] &&
@@ -91,7 +91,7 @@ if ($proceed) {
         <TR><TD align="center">
             <TABLE class="or_page_subtitle" style="width: 100%; background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'">
                 <TR><TD align="center">';
-                
+
     if ($mode=='inbox') echo lang('mailbox_inbox');
     elseif ($mode=='experiment') echo lang('experiment').': '.$experiment['experiment_name'];
     elseif ($mode=='session') echo lang('session').': '.$experiment['experiment_name'].', '.session__build_name($session);
@@ -101,7 +101,7 @@ if ($proceed) {
     elseif ($mode=='trash') {
         echo lang('mailbox_trash');
         if (check_allow('emails_trash_empty')) echo button_link(thisdoc().'?mode=trash&empty_trash=true',lang('email_empty_trash'),'trash').'<BR>';
-    } 
+    }
 
     echo '
             </TD></TR></TABLE>
@@ -116,7 +116,7 @@ if ($proceed) {
         // search for emails and list them
     } else {
         echo javascript__email_popup();
-        email__list_emails($mode,$id,$rmode,$url_string); 
+        email__list_emails($mode,$id,$rmode,$url_string);
     }
 
     echo '   </TD></TR></TABLE>

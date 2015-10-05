@@ -19,7 +19,7 @@ if ($proceed) {
     if ($send) {
         if ((!is_array($plist_ids)) || count($plist_ids)<1) redirect ("admin/");
     }
-    
+
 }
 
 if ($proceed) {
@@ -48,13 +48,13 @@ if ($proceed) {
                             ':subject'=>$bulk[$inv_lang.'_subject'],
                             ':body'=>$bulk[$inv_lang.'_body']);
             }
-            $query="INSERT INTO ".table('bulk_mail_texts')." 
+            $query="INSERT INTO ".table('bulk_mail_texts')."
                     SET bulk_id= :bulk_id,
                     lang= :inv_lang,
                     bulk_subject= :subject,
                     bulk_text= :body";
             $done=or_query($query,$pars);
-            
+
             $done=experimentmail__send_bulk_mail_to_queue($bulk_id,$plist_ids);
 
             message ($number.' '.lang('xxx_bulk_mails_sent_to_mail_queue'));

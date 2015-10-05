@@ -182,7 +182,7 @@ $system__admin_rights=array(
 "subjectpool_add:add new sub-subject pool:subjectpool_edit",
 "subjectpool_delete:delete sub-subject pool:subjectpool_edit",
 "subjectpool_edit:edit sub-subjectpool settings"
-        );  
+        );
 
 
 // define options
@@ -212,7 +212,7 @@ $system__options_general[]=array(
 );
 
 
-$system__options_general[]=array('type'=>'line');   
+$system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
             'text'=>'Email configuration');
@@ -410,7 +410,7 @@ $system__options_general[]=array(
 $system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
-            'text'=>'Extra features');  
+            'text'=>'Extra features');
 
 $system__options_general[]=array(
 'option_name'=>'enable_ethics_approval_module',
@@ -442,12 +442,12 @@ $system__options_general[]=array(
 'default_value'=>'n'
 );
 
-$system__options_general[]=array('type'=>'line');   
+$system__options_general[]=array('type'=>'line');
 
 
 $system__options_general[]=array('type'=>'comment',
             'text'=>'Participant system registration settings');
-            
+
 $system__options_general[]=array(
 'option_name'=>'subpool_default_registration_id',
 'option_text'=>'Default registration subject pool?',
@@ -469,12 +469,12 @@ $system__options_general[]=array(
 'default_value'=>'y'
 );
 
-$system__options_general[]=array('type'=>'line');   
+$system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
             'text'=>'Experiment enrolment settings');
-            
-    
+
+
 $system__options_general[]=array(
 'option_name'=>'enable_enrolment_only_on_invite',
 'option_text'=>'Eligible assigned subjects can only enrol after having received an invitation email?',
@@ -560,7 +560,7 @@ $system__options_general[]=array(
 );
 
 
-$system__options_general[]=array('type'=>'line');   
+$system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
             'text'=>'Automated noshow warnings and exclusions');
@@ -608,10 +608,10 @@ $system__options_general[]=array(
 
 
 
-$system__options_general[]=array('type'=>'line');   
+$system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
-            'text'=>'Admin authentication related settings');   
+            'text'=>'Admin authentication related settings');
 
 $system__options_general[]=array(
 'option_name'=>'allow_experiment_restriction',
@@ -656,10 +656,10 @@ $system__options_general[]=array(
 'maxlength'=>'5',
 );
 
-$system__options_general[]=array('type'=>'line');   
+$system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
-            'text'=>'Subject security and privacy related settings');   
+            'text'=>'Subject security and privacy related settings');
 
 
 $system__options_general[]=array(
@@ -690,8 +690,8 @@ $system__options_general[]=array(
 'default_value'=>'3',
 'size'=>'5',
 'maxlength'=>'5',
-);  
-        
+);
+
 $system__options_general[]=array(
 'option_name'=>'participant_lockout_minutes',
 'option_text'=>'Number of minutes to lock participant account until another login attempt is allowed?',
@@ -705,8 +705,8 @@ $system__options_general[]=array('type'=>'line');
 
 
 $system__options_general[]=array('type'=>'comment',
-            'text'=>'Diverse settings');    
-            
+            'text'=>'Diverse settings');
+
 $system__options_general[]=array(
 'option_name'=>'http_log_file_location',
 'option_text'=>'Path to server log file (access.log)?',
@@ -774,7 +774,7 @@ $system__options_defaults[]=array(
 );
 
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'stats_logs_results_per_page',
@@ -809,7 +809,7 @@ $system__options_defaults[]=array(
 'maxlength'=>'5'
 );
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'calendar_pdf_title_fontsize',
@@ -859,7 +859,7 @@ $system__options_defaults[]=array(
 'include_none_option'=>'n'
 );
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'multipicker_left_or_right',
@@ -908,7 +908,7 @@ $system__options_defaults[]=array(
 'include_none_option'=>'n'
 );
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 $system__options_defaults[]=array(
 'option_name'=>'query_random_subset_default_size',
 'option_text'=>'Participant query: default size of random subset?',
@@ -958,7 +958,7 @@ $system__options_defaults[]=array(
 );
 
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'laboratory_opening_time_hour',
@@ -968,7 +968,7 @@ $system__options_defaults[]=array(
         ":".helpers__select_number("options[laboratory_opening_time_minute]",$options["laboratory_opening_time_minute"],0,59,2,15)'
 );
 
-               
+
 $system__options_defaults[]=array(
 'option_name'=>'laboratory_closing_time_hour',
 'option_text'=>'Laboratory: closing time?',
@@ -977,7 +977,7 @@ $system__options_defaults[]=array(
         ":".helpers__select_number("options[laboratory_closing_time_minute]",$options["laboratory_closing_time_minute"],0,59,2,15)'
 );
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'lab_participants_max',
@@ -1021,7 +1021,7 @@ $system__options_defaults[]=array(
 'include_none_option'=>'n'
 );
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'session_duration_hour_max',
@@ -1053,9 +1053,9 @@ $system__options_defaults[]=array(
 'type'=>'plain',
 'field'=>'func:helpers__select_number("options[session_duration_hour_default]",$options["session_duration_hour_default"],0,$options["session_duration_hour_max"],0,1).
     ":".helpers__select_number("options[session_duration_minute_default]",$options["session_duration_minute_default"],0,59,2,$options["session_duration_minute_steps"])'
-);  
+);
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'session_registration_end_hours_max',
@@ -1088,7 +1088,7 @@ $system__options_defaults[]=array(
 'include_none_option'=>'n'
 );
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'session_reminder_send_on_default',
@@ -1132,7 +1132,7 @@ $system__options_defaults[]=array(
 );
 
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'session_start_years_backward',
@@ -1158,7 +1158,7 @@ $system__options_defaults[]=array(
 'include_none_option'=>'n'
 );
 
-$system__options_defaults[]=array('type'=>'line');         
+$system__options_defaults[]=array('type'=>'line');
 
 $system__options_defaults[]=array(
 'option_name'=>'mailqueue_number_of_entries_per_page',
@@ -1178,7 +1178,7 @@ $system__options_defaults[]=array(
 'maxlength'=>'3',
 );
 
-$system__options_defaults[]=array('type'=>'line');  
+$system__options_defaults[]=array('type'=>'line');
 
 
 
@@ -1188,11 +1188,11 @@ $system__options_defaults[]=array('type'=>'line');
 $system__colors=array();
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Colors for header');
-            
+
 $system__colors[]=array(
 'color_name'=>'html_header_top_bar_background',
 'default_value'=>'#6b7da5'
@@ -1209,7 +1209,7 @@ $system__colors[]=array(
 );
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Colors for content');
@@ -1245,7 +1245,7 @@ $system__colors[]=array(
 );
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Colors for lists, panels, etc.');
@@ -1259,7 +1259,7 @@ $system__colors[]=array(
 'color_name'=>'page_subtitle_textcolor',
 'default_value'=>'#222222'
 );
-                
+
 $system__colors[]=array(
 'color_name'=>'panel_title_background',
 'default_value'=>'#6b7da5'
@@ -1310,34 +1310,34 @@ $system__colors[]=array(
 'default_value'=>'#d3d3d3'
 );
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'ORSEE menu colors');
-        
+
 $system__colors[]=array(
 'color_name'=>'menu_title',
 'default_value'=>'#d7d7d7'
 );
 
-        
+
 $system__colors[]=array(
 'color_name'=>'menu_item',
 'default_value'=>'#e2e2e2'
 );
 
-        
+
 $system__colors[]=array(
 'color_name'=>'menu_item_highlighted_background',
 'default_value'=>'#93712c'
 );
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Notification message colors');
-            
+
 $system__colors[]=array(
 'color_name'=>'message_background',
 'default_value'=>'#ff7f50'
@@ -1362,7 +1362,7 @@ $system__colors[]=array(
 $system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
-            'text'=>'Colors to be used for participant profile / email popup'); 
+            'text'=>'Colors to be used for participant profile / email popup');
 
 $system__colors[]=array(
 'color_name'=>'popup_bgcolor',
@@ -1379,7 +1379,7 @@ $system__colors[]=array(
 'default_value'=>'#a3a3a3'
 );
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Experiment calendar colors');
@@ -1402,7 +1402,7 @@ $system__colors[]=array(
 $system__colors[]=array('type'=>'comment',
         'text'=>'The following three are color <B>lists</B>, seperated by ",".<BR>
                 The calendar will rotate through these colors to depict different experiments.<BR>
-                If you want the same color for all experiments (e.g. in the public calendar, 
+                If you want the same color for all experiments (e.g. in the public calendar,
                 just choose only one color.');
 
 $system__colors[]=array(
@@ -1424,7 +1424,7 @@ $system__colors[]=array(
 );
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Session state text colors for public and admin pages');
@@ -1460,14 +1460,14 @@ $system__colors[]=array(
 );
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Participation status colors');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Public area');
-                
+
 $system__colors[]=array(
 'color_name'=>'shownup_no',
 'default_value'=>'#ff0000'
@@ -1480,7 +1480,7 @@ $system__colors[]=array(
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Admin pages');
-                
+
 $system__colors[]=array(
 'color_name'=>'pstatus_noshow',
 'default_value'=>'#ff9999'
@@ -1496,11 +1496,11 @@ $system__colors[]=array(
 'default_value'=>'#e1e1e6'
 );
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Participant status colors');
-            
+
 $system__colors[]=array(
 'color_name'=>'participant_status_eligible_for_experiments',
 'default_value'=>'#b9e6a8'
@@ -1512,45 +1512,45 @@ $system__colors[]=array(
 );
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Text color for status of session reminder');
-            
+
 $system__colors[]=array(
 'color_name'=>'session_reminder_state_sent_text',
 'default_value'=>'#008000'
 );
 
-            
+
 $system__colors[]=array(
 'color_name'=>'session_reminder_state_checked_text',
 'default_value'=>'#ff0000'
 );
-            
+
 $system__colors[]=array(
 'color_name'=>'session_reminder_state_waiting_text',
 'default_value'=>'#0000ff'
 );
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Ethics approval background colors');
-        
+
 $system__colors[]=array(
 'color_name'=>'ethics_approval_not_entered',
 'default_value'=>'#e0e0eb'
 );
 
-                
+
 $system__colors[]=array(
 'color_name'=>'ethics_approval_valid',
 'default_value'=>'#c2f0c2'
 );
 
-                
+
 $system__colors[]=array(
 'color_name'=>'ethics_approval_expired',
 'default_value'=>'#ffd985'
@@ -1558,11 +1558,11 @@ $system__colors[]=array(
 
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Admin type list: error backgrounds');
-            
+
 $system__colors[]=array(
 'color_name'=>'admin_type_error_missing_required',
 'default_value'=>'#f08080'
@@ -1573,31 +1573,31 @@ $system__colors[]=array(
 'default_value'=>'#90ee90'
 );
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Background color for fields not supplied in a form');
-            
+
 $system__colors[]=array(
 'color_name'=>'missing_field',
 'default_value'=>'#ffa500'
 );
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Public area, experiment registration');
-            
+
 $system__colors[]=array(
 'color_name'=>'just_registered_session_background',
 'default_value'=>'#f4a460'
 );
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Background color for graphs in statistics section');
-            
+
 $system__colors[]=array(
 'color_name'=>'stats_graph_background',
 'default_value'=>'#fffafa'
@@ -1605,11 +1605,11 @@ $system__colors[]=array(
 
 
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Some colors in admin area');
-            
+
 $system__colors[]=array(
 'color_name'=>'search__pseudo_query_background',
 'default_value'=>'#d8e1eb'
@@ -1620,7 +1620,7 @@ $system__colors[]=array(
 'default_value'=>'#0000FF'
 );
 
-$system__colors[]=array('type'=>'line');    
+$system__colors[]=array('type'=>'line');
 
 $system__colors[]=array('type'=>'comment',
             'text'=>'Tooltips');

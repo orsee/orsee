@@ -10,7 +10,7 @@ if ($proceed) {
     if (isset($_REQUEST['admin_id']) && $_REQUEST['admin_id']) $admin_id=$_REQUEST['admin_id'];
     else { redirect ("admin/"); $proceed=false; }
 }
-    
+
 if ($proceed) {
 
     if (isset($_REQUEST['betternot']) && $_REQUEST['betternot']) {
@@ -34,10 +34,10 @@ if ($proceed) {
     echo '<center>';
 
 
-    if ($reallydelete) { 
+    if ($reallydelete) {
 
         $pars=array(':admin_id'=>$admin_id);
-        $query="DELETE FROM ".table('admin')." 
+        $query="DELETE FROM ".table('admin')."
                 WHERE admin_id= :admin_id";
         $result=or_query($query,$pars);
         log__admin("admin_delete",$admin['adminname']);
@@ -47,7 +47,7 @@ if ($proceed) {
         redirect ('admin/admin_show.php');
         $proceed=false;
     }
-    
+
 }
 
 if ($proceed) {
@@ -55,11 +55,11 @@ if ($proceed) {
     // form
 
     $num_experiments=experiment__count_experiments("experimenter LIKE :adminname",array(':adminname'=>'%|'.$admin['adminname'].'|%'));
-    
+
     if ($num_experiments>0) {
         echo lang('admin_delete_warning');
     }
-    
+
     echo '
         <TABLE class="or_formtable">
             <TR><TD colspan="2">

@@ -1,4 +1,4 @@
-<?php 
+<?php
 // part of orsee. see orsee.org
 
 function experimentmail__mail($recipient,$subject,$message,$headers,$env_sender="") {
@@ -70,7 +70,7 @@ function experimentmail__mail_attach($to, $from, $subject, $message, $filename, 
 function load_mail($mail_name,$lang) {
     global $authdata;
     $pars=array(':mail_name'=>$mail_name);
-    $query="SELECT * FROM ".table('lang')." 
+    $query="SELECT * FROM ".table('lang')."
             WHERE content_type='mail'
             AND content_name= :mail_name";
     $marr=orsee_query($query,$pars);
@@ -117,7 +117,7 @@ function experimentmail__load_bulk_mail($bulk_id,$tlang="") {
 }
 
 function experimentmail__gc_bulk_mail_texts() {
-    $query="DELETE from ".table('bulk_mail_texts')." WHERE 
+    $query="DELETE from ".table('bulk_mail_texts')." WHERE
             bulk_id NOT IN (SELECT DISTINCT bulk_id FROM or_mail_queue)";
     $done=or_query($query);
     return $done;
@@ -139,7 +139,7 @@ function process_mail_template($template,$vararray) {
 }
 
 // lists possible sessions for given experiment
-// only lists sessions with future registration end and which are not full 
+// only lists sessions with future registration end and which are not full
 function experimentmail__get_session_list($experiment_id,$tlang="") {
     global $settings, $lang;
     $savelang=$lang;
@@ -160,7 +160,7 @@ function experimentmail__get_session_list($experiment_id,$tlang="") {
         if ($registration_unixtime > $now && !$session_full) {
             $list.=session__build_name($s,lang('lang')).' '.
                 laboratories__get_laboratory_name($s['laboratory_id']);
-            if (or_setting('include_sign_up_until_in_invitation')) {    
+            if (or_setting('include_sign_up_until_in_invitation')) {
                 $list.=', '.lang('registration_until').' '.
                     ortime__format($registration_unixtime,'',lang('lang'));
             }
@@ -182,12 +182,12 @@ function experimentmail__send_invitations_to_queue($experiment_id,$whom="not-inv
     $now=time();
     $status_query=participant_status__get_pquery_snippet("eligible_for_experiments");
     $pars=array(':experiment_id'=>$experiment_id);
-    $query="INSERT INTO ".table('mail_queue')." (timestamp,mail_type,mail_recipient,experiment_id) 
-            SELECT ".$now.",'invitation', ".table('participants').".participant_id, experiment_id 
-            FROM ".table('participants').", ".table('participate_at')." 
-            WHERE experiment_id= :experiment_id  
+    $query="INSERT INTO ".table('mail_queue')." (timestamp,mail_type,mail_recipient,experiment_id)
+            SELECT ".$now.",'invitation', ".table('participants').".participant_id, experiment_id
+            FROM ".table('participants').", ".table('participate_at')."
+            WHERE experiment_id= :experiment_id
             AND ".table('participants').".participant_id=".table('participate_at').".participant_id ".
-            $aquery." 
+            $aquery."
             AND session_id = '0' AND pstatus_id = '0'";
     if ($status_query) $query.=" AND ".$status_query;
     $query.=" ".$order;
@@ -204,7 +204,7 @@ function experimentmail__send_bulk_mail_to_queue($bulk_id,$part_array) {
             $pars[]=array(':participant_id'=>$participant_id,
                         ':bulk_id'=>$bulk_id);
         }
-        $query="INSERT INTO ".table('mail_queue')." 
+        $query="INSERT INTO ".table('mail_queue')."
                 SET timestamp='".$now."',
                 mail_type='bulk_mail',
                 mail_recipient= :participant_id,
@@ -242,7 +242,7 @@ function experimentmail__send_noshow_warnings_to_queue($session) {
             SELECT UNIX_TIMESTAMP(),'noshow_warning', participant_id, experiment_id, session_id
             FROM ".table('participate_at')."
             WHERE experiment_id= :experiment_id
-            AND session_id= :session_id 
+            AND session_id= :session_id
             AND ".$noshow_clause;
     $done=or_query($query,$pars);
     $count=pdo_num_rows($done);
@@ -273,11 +273,11 @@ function experimentmail__mails_in_queue($type="",$experiment_id="",$session_id="
     } else $tquery="";
     if ($experiment_id) {
         $equery=" AND experiment_id= :experiment_id ";
-        $pars[':experiment_id']=$experiment_id; 
+        $pars[':experiment_id']=$experiment_id;
     } else $equery="";
     if ($session_id) {
         $squery=" AND session_id= :session_id ";
-        $pars[':session_id']=$session_id; 
+        $pars[':session_id']=$session_id;
     } else $squery="";
     $query="SELECT count(mail_id) as number FROM ".table('mail_queue')."
             WHERE mail_id>0 ".$tquery.$equery.$squery;
@@ -300,18 +300,18 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
     } else $tquery="";
     if ($experiment_id) {
         $equery=" AND experiment_id= :experiment_id ";
-        $pars[':experiment_id']=$experiment_id; 
+        $pars[':experiment_id']=$experiment_id;
     } else $equery="";
     if ($session_id) {
         $squery=" AND session_id= :session_id ";
-        $pars[':session_id']=$session_id; 
+        $pars[':session_id']=$session_id;
     } else $squery="";
 
     $smails=array(); $smails_ids=array();
-    $invitations=array(); $reminders=array(); $bulks=array(); $warnings=array(); 
-    $errors=array(); 
+    $invitations=array(); $reminders=array(); $bulks=array(); $warnings=array();
+    $errors=array();
     $reminder_text=array(); $warning_text=array(); $inv_texts=array();
-    $exps=array(); $sesss=array(); $parts=array(); $labs=array(); 
+    $exps=array(); $sesss=array(); $parts=array(); $labs=array();
     $pform_fields=array();
     $slists=array();
 
@@ -326,11 +326,11 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
         $smails[]=$line;
         $smails_ids[]=$line['mail_id'];
     }
-    
+
     // so we don't handle errors at all, and just delete here?!?
     //$pars=array();
     //foreach ($smails_ids as $id) $pars[]=array(':id'=>$id);
-    //$query="DELETE FROM ".table('mail_queue')." 
+    //$query="DELETE FROM ".table('mail_queue')."
     //      WHERE mail_id = :id";
     //$done=or_query($query,$pars);
 
@@ -366,7 +366,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
             $labs[$tsess][$tlang]=laboratories__get_laboratory_text($sesss[$tsess]['laboratory_id'],$tlang);
         }
 
-        
+
         if ($ttype=="invitation" && !isset($inv_texts[$texp][$tlang]))
             $inv_texts[$texp][$tlang]=experimentmail__load_invitation_text($texp,$tlang);
         if ($ttype=="invitation" && !isset($slists[$texp][$tlang]))
@@ -411,7 +411,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
         // fine, if no errors, add to arrays
         if ($continue) {
             switch ($line['mail_type']) {
-                case "invitation": 
+                case "invitation":
                     $invitations[]=$line;
                     break;
                 case "session_reminder":
@@ -420,7 +420,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
                 case "noshow_warning":
                     $warnings[]=$line;
                     break;
-                case "bulk_mail": 
+                case "bulk_mail":
                     $bulks[]=$line;
                     break;
             }
@@ -484,7 +484,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
             $errors[]=$mail;
         }
     }
-                
+
     // bulks
     foreach ($bulks as $mail) {
         $tlang=$parts[$mail['mail_recipient']]['language'];
@@ -503,8 +503,8 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
     $pars=array(); $mails_errors=count($errors);
     if ($mails_errors>0) {
         foreach ($errors as $mail) $pars[]=array(':error'=>$mail['error'],':mail_id'=>$mail['mail_id']);
-        $query="UPDATE ".table('mail_queue')." 
-                SET error= :error  
+        $query="UPDATE ".table('mail_queue')."
+                SET error= :error
                 WHERE mail_id= :mail_id";
         $done=or_query($query,$pars);
     }
@@ -545,7 +545,7 @@ function experimentmail__preview_fake_participant_details($pform_fields) {
 
 function experimentmail__preview_fake_session_details($experiment_id) {
     $pars=array(':experiment_id'=>$experiment_id);
-    $query="SELECT * FROM ".table('sessions')." 
+    $query="SELECT * FROM ".table('sessions')."
             WHERE experiment_id = :experiment_id
             ORDER BY if(session_status='live',0,1), session_start DESC
             LIMIT 1";
@@ -562,7 +562,7 @@ function experimentmail__preview_fake_session_details($experiment_id) {
     return $session;
 }
 
-function experimentmail__get_session_reminder_details($part,$exp,$session,$lab) {  
+function experimentmail__get_session_reminder_details($part,$exp,$session,$lab) {
     $part['edit_link']=experimentmail__build_edit_link($part);
     $part['enrolment_link']=experimentmail__build_lab_registration_link($part);
     $part['experiment_name']=$exp['experiment_public_name'];
@@ -616,7 +616,7 @@ function experimentmail__send_participant_exclusion_mail($part) {
     $mailtext=stripslashes(load_mail("public_participant_exclusion",$part['language']));
     $subject=load_language_symbol('participant_exclusion_mail_subject',$part['language']);
     $recipient=$part['email'];
-    $message=process_mail_template($mailtext,$part); 
+    $message=process_mail_template($mailtext,$part);
     $sender=$settings['support_mail'];
     $headers="From: ".$sender."\r\n";
     $done=experimentmail__mail($recipient,$subject,$message,$headers);
@@ -634,7 +634,7 @@ function experimentmail__send_reminder_notice($line,$number,$sent,$disclaimer=""
         $mail['experiment_name']=$line['experiment_name'];
         $mail['nr_participants'] = ($sent) ? $number : 0;
         switch ($disclaimer) {
-            case 'part_needed': 
+            case 'part_needed':
                 $mail['disclaimer']=load_language_symbol('reminder_not_sent_part_needed',$tlang);
                 break;
             case 'part_reserve':
@@ -706,8 +706,8 @@ function experimentmail__update_invited_flag($mail) {
     $pars=array(':participant_id'=>$mail['mail_recipient'],
                 ':experiment_id'=>$mail['experiment_id']);
     $query="UPDATE ".table('participate_at')."
-            SET invited=1 
-            WHERE participant_id= :participant_id 
+            SET invited=1
+            WHERE participant_id= :participant_id
             AND experiment_id= :experiment_id";
     $result=or_query($query,$pars);
     return $result;
@@ -773,7 +773,7 @@ function experimentmail__get_language($partlang) {
     global $authdata;
     if (isset($authdata['language']) && $authdata['language']) $maillang=$authdata['language'];
     else $maillang=$partlang;
-    return $maillang;   
+    return $maillang;
 }
 
 function experimentmail__get_admin_language($adminlang) {
@@ -870,7 +870,7 @@ function experimentmail__experiment_registration_mail($participant,$session) {
     $pform_fields=participant__load_participant_email_fields($maillang);
     $experimentmail=experimentmail__fill_participant_details($participant,$pform_fields);
     $experimentmail=experimentmail__get_experiment_registration_details($experimentmail,$experiment,$session,$lab);
-    
+
     $mailtext=false;
     if ($settings['enable_enrolment_confirmation_customization']=='y')
         $mailtext=experimentmail__get_customized_mailtext('experiment_enrolment_conf_mail',$session['experiment_id'],$maillang);
@@ -878,7 +878,7 @@ function experimentmail__experiment_registration_mail($participant,$session) {
         $mailtext['subject']=load_language_symbol('enrolment_email_subject',$maillang);
         $mailtext['body']=load_mail("public_experiment_registration",$maillang);
     }
-        
+
     $message=process_mail_template($mailtext['body'],$experimentmail);
     $message=$message."\n".experimentmail__get_mail_footer($participant);
     $sendermail=experimentmail__get_sender_email($experiment);
@@ -899,10 +899,10 @@ function experimentmail__experiment_cancellation_mail($participant,$session) {
     $pform_fields=participant__load_participant_email_fields($maillang);
     $experimentmail=experimentmail__fill_participant_details($participant,$pform_fields);
     $experimentmail=experimentmail__get_experiment_registration_details($experimentmail,$experiment,$session,$lab);
-    
+
     $mailtext['subject']=load_language_symbol('enrolment_cancellation_email_subject',$maillang);
     $mailtext['body']=load_mail("public_experiment_enrolment_cancellation",$maillang);
-        
+
     $message=process_mail_template($mailtext['body'],$experimentmail);
     $message=$message."\n".experimentmail__get_mail_footer($participant);
     $sendermail=experimentmail__get_sender_email($experiment);
@@ -953,16 +953,16 @@ function experimentmail__send_registration_notice($line) {
 function experimentmail__send_calendar() {
     global $lang, $settings;
     $now=time();
-    if (isset($settings['emailed_calendar_included_months']) && $settings['emailed_calendar_included_months']>0) 
+    if (isset($settings['emailed_calendar_included_months']) && $settings['emailed_calendar_included_months']>0)
             $number_of_months=$settings['emailed_calendar_included_months']-1;
     else $number_of_months=1;
     $from=$settings['support_mail'];
-    
+
     // remember the current language for later reset
     $old_lang=lang('lang');
 
-    // preload details with current language    
-    $maillang=$old_lang;    
+    // preload details with current language
+    $maillang=$old_lang;
     $mail_subject=lang('experiment_calendar').' '.ortime__format($now,'hide_time:true');
     $cal_name=lang('experiment_calendar').' '.date("Y-m-d",$now);
     $cal_filename=str_replace(" ","_",$cal_name).".pdf";
@@ -972,7 +972,7 @@ function experimentmail__send_calendar() {
     $query="SELECT *
             FROM ".table('admin')."
             WHERE get_calendar_mail='y'
-            AND disabled='n' 
+            AND disabled='n'
             ORDER BY language";
     $result=or_query($query);
     $i=0; $rec_count=pdo_num_rows($result);
@@ -1017,7 +1017,7 @@ function experimentmail__send_participant_statistics() {
     $query="SELECT *
             FROM ".table('admin')."
             WHERE get_statistics_mail='y'
-            AND disabled='n' 
+            AND disabled='n'
             ORDER BY language";
     $result=or_query($query);
 

@@ -3,7 +3,7 @@
 
 // creates databae connection
 function site__database_config() {
-    global $db, $site__database_host, $site__database_admin_username, 
+    global $db, $site__database_host, $site__database_admin_username,
         $site__database_admin_password, $site__database_database, $site__database_port;
 
     if (preg_match("/^([^:]+):([0-9]+)$/",trim($site__database_host),$matches)) {
@@ -28,7 +28,7 @@ function site__database_config() {
     $dbname='dbname='.$site__database_database;
 
     $dsn='mysql:'.$host.$port.$charset.$dbname;
-    
+
     try {
         $db = new PDO($dsn, $site__database_admin_username, $site__database_admin_password);
         if (PHP_VERSION_ID < 50306) {
@@ -51,7 +51,7 @@ function table($table) {
 }
 
 function id_array_to_par_array($id_array,$parname='id') {
-    $pars=array(); $keys=array(); $i=0; 
+    $pars=array(); $keys=array(); $i=0;
     foreach ($id_array as $id) {
         $i++;
         $key=':'.$parname.$i;
@@ -127,7 +127,7 @@ function stop_query_timer($id) {
 
 
 function pdo_fetch_assoc($stmt) {
-    return $stmt->fetch(PDO::FETCH_ASSOC);  
+    return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 function pdo_num_rows($stmt) {
@@ -162,7 +162,7 @@ function pdo_transaction($queries) { // works only with innoDB. Should we move t
                 }
             } else {
                 $stmt = $db->query($q['query']);
-            }       
+            }
         }
         $db->commit();
     } catch(PDOException $e) {
@@ -194,8 +194,8 @@ function orsee_db_save_array($array,$table,$key,$keyname) {
     global $site__database_database;
 
     // find out which fields i can save
-    $query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS 
-            WHERE table_name= :table 
+    $query="SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE table_name= :table
             AND table_schema = :table_schema";
     $pars=array(':table'=>table($table),'table_schema'=>$site__database_database);
     $result=or_query($query,$pars); $columns=array();
