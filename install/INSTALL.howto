@@ -7,7 +7,7 @@ When you upgrade from an older version of ORSEE, please read the UPGRADE.howto
 PREREQUISITES
 
 - a webserver (Apache preferred)
-- PHP >=5 both as apache module (apache2-mod_php5) and on commandline (php5) with modules: php5-gd, php5-mysql, php5-mbstring. 
+- PHP >=5 both as apache module (apache2-mod_php5) and on commandline (php5) with modules: php5-gd, php5-mysql, php5-mbstring.
 - MySQL >=5 (I recommend the community-server version from Oracle)
 - cronjob access
 - webalizer for web traffic analysis, of required.
@@ -23,14 +23,14 @@ BASIC INSTALLATION
    % cd yourdirname/install
 
 4. Enter mysql and create the mysql database. (You will need the privileges to add a database.)
-   % mysql 
-   
+   % mysql
+
    mysql> CREATE DATABASE orseedbname;
    mysql> GRANT ALL PRIVILEGES ON orseedbname.* TO orseedbusername@localhost IDENTIFIED BY 'orseeuserdbpassword';
    mysql> FLUSH PRIVILEGES;
    mysql> quit
 
-5. Import the default database structure. 
+5. Import the default database structure.
 
    % mysql orseedbname -uorseedbusername -porseeuserdbpassword < install.sql
 
@@ -57,15 +57,15 @@ POST-INSTALLATION
 
 Just some notes:
 
-- CHANGE THE DEFAULT PASSWORD OF USER orsee_install. 
+- CHANGE THE DEFAULT PASSWORD OF USER orsee_install.
 
-- Also change the email address of the user orsee_install in Options/Edit administrators. 
+- Also change the email address of the user orsee_install in Options/Edit administrators.
 
 - Edit the settings in Options/General Settings and Options/Default Values. Don't forget to change the "System support email address", otherwise your system emails appear to come from orsee.org, and *I* will receive replies to *your* emails.
 
 - Check whether all characters are correctly displayed on the site. To do so, just use the pre-installed German language with all its umlauts (click on Switch to Deutsch when on public/index.php).
 
-- If you want to add your own fields in the participant profile from, then please read the instructions in the wiki. 
+- If you want to add your own fields in the participant profile from, then please read the instructions in the wiki.
 
 - Create your own style
   ->Copy the 'orsee' directory from the 'style' dir.

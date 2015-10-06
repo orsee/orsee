@@ -5,11 +5,11 @@ $menu__area="experiment_calendar";
 $title="experiment_calendar";
 include ("header.php");
 if ($proceed) {
-	echo '<center>';
+    echo '<center>';
 
-	$done=calendar__display_calendar(true);
+    $done=calendar__display_calendar(true);
 
-	echo '</center>';
+    echo '</center>';
 }
 include ("footer.php");
 ?>

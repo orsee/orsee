@@ -7,7 +7,7 @@ $title="experiments";
 $jquery=array('arraypicker','textext');
 include("header.php");
 if ($proceed) {
-	experiment__current_experiment_summary("","n",true);
+    experiment__current_experiment_summary("","n",true);
 
 }
 include("footer.php");

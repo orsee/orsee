@@ -1,27 +1,27 @@
 
 ORSEE 3.0.2:
-	Some critical bugfixes.
-	Updated install/UPGRADE.howto.
+    Some critical bugfixes.
+    Updated install/UPGRADE.howto.
 
 ORSEE 3.0.1:
-	Many minor bugfixes.
-	config/settings.php is now in install/settings-dist.php
-	and needs to be copied over
+    Many minor bugfixes.
+    config/settings.php is now in install/settings-dist.php
+    and needs to be copied over
 
 ORSEE 3.0.0:
-	Too numerous to list.
-		
+    Too numerous to list.
+
 ORSEE 2.2.1:
-	Fixed bug which had PDF session participant list ordered randomnly.
+    Fixed bug which had PDF session participant list ordered randomnly.
 
 ORSEE 2.2.0:
-	Updated ORSEE to PHP5/MySQL5
-	Fixed all bugs reported on sourceforge bug tracker and elsewhere.
-	Updated all mysql function to mysqli.
-	Fixed all implicit variable definitions (undefined index / undefined variable notices).
-	Security: Real-escaped all posted vars in publicly accessible section.
-	Updated to newest version of PHPlot and ezPDF.
-	Updated ORSEE and MySQL database to full unicode/UTF-8 support.
-	Added participant form customization support.
-		
+    Updated ORSEE to PHP5/MySQL5
+    Fixed all bugs reported on sourceforge bug tracker and elsewhere.
+    Updated all mysql function to mysqli.
+    Fixed all implicit variable definitions (undefined index / undefined variable notices).
+    Security: Real-escaped all posted vars in publicly accessible section.
+    Updated to newest version of PHPlot and ezPDF.
+    Updated ORSEE and MySQL database to full unicode/UTF-8 support.
+    Added participant form customization support.
+
 

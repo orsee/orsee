@@ -1211,7 +1211,7 @@ class PHPlot
             return FALSE;
         }
 
-		//$which_font='../tagsets/fonts/FreeSans.ttf';
+        //$which_font='../tagsets/fonts/FreeSans.ttf';
         // Empty font name means use the default font.
         if (empty($which_font))
             $which_font = $this->GetDefaultTTFont();
@@ -3971,7 +3971,7 @@ class PHPlot
             } elseif ($adjust_mode == 'I') {
                 // Mode 'I': Adjustment to next higher integer.
                 $plot_max = ceil($plot_max);
-            }  
+            }
         }
 
         // Calculate the tick increment for the case where number of ticks was given:
@@ -5763,7 +5763,7 @@ class PHPlot
                 case 'line':
                     // Draw a short line segment with proper color, width, and style
                     imagesetthickness($this->img, $this->line_widths[$lws_index]);
-                    $style = $this->SetDashedStyle($this->ndx_data_colors[$color_index], 
+                    $style = $this->SetDashedStyle($this->ndx_data_colors[$color_index],
                                                    $this->line_styles[$lws_index] == 'dashed');
                     imageline($this->img, $dot_left_x, $yc, $dot_right_x, $yc, $style);
                     imagesetthickness($this->img, 1);

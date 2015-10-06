@@ -7,14 +7,14 @@ $title="welcome";
 
 include("header.php");
 if ($proceed) {
-	echo '<center>';
+    echo '<center>';
 
-	show_message();
+    show_message();
 
-	echo content__get_content("admin_mainpage");
+    echo content__get_content("admin_mainpage");
 
-	echo '</center><BR><BR>';
-	
+    echo '</center><BR><BR>';
+
 }
 include("footer.php");
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 // part of orsee. see orsee.org
 error_reporting(E_ALL & ~E_NOTICE);
 
@@ -58,7 +58,7 @@ $settings__stop_admin_site="n";
 // To stop tracking set to "y"
 $settings__disable_orsee_tracking="n";
 
-// Enable/disable debugging information output at the bottom fo each page. 
+// Enable/disable debugging information output at the bottom fo each page.
 // Do NOT ENABLE on a live ORSEE system - reveals a lot of information.
 $settings__time_debugging_enabled="n";
 $settings__query_debugging_enabled="n";
