@@ -21,8 +21,10 @@ function site__database_config() {
         define('PHP_VERSION_ID', ($version[0] * 10000 + $version[1] * 100 + $version[2]));
     }
     if (PHP_VERSION_ID < 50306) {
+        $construct_options=array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'');
         $charset='';
     } else {
+        $construct_options=array();
         $charset='charset=UTF8;';
     }
     $dbname='dbname='.$site__database_database;
@@ -30,10 +32,7 @@ function site__database_config() {
     $dsn='mysql:'.$host.$port.$charset.$dbname;
 
     try {
-        $db = new PDO($dsn, $site__database_admin_username, $site__database_admin_password);
-        if (PHP_VERSION_ID < 50306) {
-            $db->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
-        }
+        $db = new PDO($dsn, $site__database_admin_username, $site__database_admin_password,$construct_options);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $db->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
         $db->setAttribute(PDO::ATTR_EMULATE_PREPARES, FALSE);
