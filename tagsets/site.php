@@ -41,7 +41,8 @@ function show_message() {
 function redirect($url) {
 	global $settings__root_url, $proceed;
 	$proceed=false;
-	if (preg_match("/^(http:\/\/|https:\/\/)/i",$url)) {
+       $url = urldecode($url);
+       if (preg_match("/^(http:\/\/|https:\/\/)/i",$url)) {
 		header("Location: ".trim($url));
 	} else {
 		$newurl=trim($settings__root_url."/".$url);
