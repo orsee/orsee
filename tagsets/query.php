@@ -653,7 +653,7 @@ function query__resulthead_participantsearch() {
                         modalColor: "'.$color['popup_modal_color'].'",
                         opacity: 0.8
                         });
-                    $("#popupsubmit").click(function(){
+                    $("#popupsubmit").click(function(event){
                         event.preventDefault();
                         $(".bforminput").each(function(){
                             var $input = $( this );
