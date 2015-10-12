@@ -1,4 +1,9 @@
 
+ORSEE 3.0.3
+    Larger bugfix for wrongly encoded special characters (UTF8)
+    Bugfix for javascript in bulk actions/faqs
+    Database version now stored in or_options
+
 ORSEE 3.0.2:
     Some critical bugfixes.
     Updated install/UPGRADE.howto.
