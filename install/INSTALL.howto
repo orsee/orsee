@@ -1,4 +1,4 @@
-These are short installation notes for ORSEE 3.0.0
+These are short installation notes for ORSEE 3.0.x
 
 The ORSEE Wiki contains more details on ORSEE installation.
 
@@ -17,7 +17,7 @@ BASIC INSTALLATION
 1. Unpack ORSEE's tgz file in your webservers path. (Oh, you already did?)
 
 2. Rename the directory if needed
-   % mv orsee-3.0.0 yourdirname
+   % mv orsee-3.0.x yourdirname
 
 3. Cd to the 'install' directory.
    % cd yourdirname/install
@@ -25,7 +25,7 @@ BASIC INSTALLATION
 4. Enter mysql and create the mysql database. (You will need the privileges to add a database.)
    % mysql
 
-   mysql> CREATE DATABASE orseedbname;
+   mysql> CREATE DATABASE orseedbname DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
    mysql> GRANT ALL PRIVILEGES ON orseedbname.* TO orseedbusername@localhost IDENTIFIED BY 'orseeuserdbpassword';
    mysql> FLUSH PRIVILEGES;
    mysql> quit

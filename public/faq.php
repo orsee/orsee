@@ -91,7 +91,7 @@ if ($proceed) {
                         modalColor: "'.$color['popup_modal_color'].'",
                         opacity: 0.8
                         });
-                    $("#faq_vote").click(function(){
+                    $("#faq_vote").click(function(event){
                         event.preventDefault();
                         var vote_url="faq_vote.php?eval=true&id=" + faq_id;
                         $.ajax({
