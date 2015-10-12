@@ -8,7 +8,7 @@ $jquery=array('arraypicker','textext');
 include("header.php");
 if ($proceed) {
 
-	if (isset($_REQUEST['class']) && $_REQUEST['class']) $tclass=$_REQUEST['class']; else $tclass="";
+    if (isset($_REQUEST['class']) && $_REQUEST['class']) $tclass=$_REQUEST['class']; else $tclass="";
 
     experiment__current_experiment_summary("","y",true);
 

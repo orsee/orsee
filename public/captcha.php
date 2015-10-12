@@ -19,7 +19,7 @@ $im = imagecreatetruecolor($captcha_length*38, 70);
 $bg = imagecolorallocate($im, 255, 255, 255);
 imagefill($im, 0, 0, $bg);
 for($i=0;$i<300;$i++) {
-	$done = imagesetthickness($im, 3);
+    $done = imagesetthickness($im, 3);
     $lines = imagecolorallocate($im, rand(150, 220), rand(150, 220), rand(150, 220));
     $start_x = rand(0,$captcha_length*38);
     $start_y = rand(0,70);
