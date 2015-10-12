@@ -13,6 +13,13 @@ For installation and usage manual see [wiki documentation](http://www.orsee.org/
 
 Please use the [ORSEE bug tracker](http://www.orsee.org/web/tracker.php) for reporting issues.
 
+Becoming a developer
+------------
+
+Please refer to [Developer wiki area](https://github.com/orsee/orsee/wiki) for
+the details on coding style, how to contribute to the project and other
+useful information for developers.
+
 License
 ------------
 
