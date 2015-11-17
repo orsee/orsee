@@ -64,8 +64,8 @@ if ($proceed) {
             $_REQUEST['password2']="";
         }
 
-        if ($continue) {
-            foreach (array('fname','lname','adminname') as $k) $_REQUEST[$k]=trim($_REQUEST[$k]);
+        if ($continue && isset($_REQUEST['adminname'])) {
+            $_REQUEST['adminname']=trim($_REQUEST['adminname']);
             $pars=array(':adminname'=>$_REQUEST['adminname']);
             $query="SELECT admin_id FROM ".table('admin')."
                     WHERE adminname = :adminname";
@@ -84,6 +84,7 @@ if ($proceed) {
             } else unset($_REQUEST['password']);
 
             if (!$admin_id) $admin_id=time();
+            foreach (array('fname','lname') as $k) $_REQUEST[$k]=trim($_REQUEST[$k]);
             $done=orsee_db_save_array($_REQUEST,"admin",$admin_id,"admin_id");
             message(lang('changes_saved'));
             log__admin("admin_edit",$_REQUEST['adminname']);
