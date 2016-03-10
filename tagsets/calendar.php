@@ -66,7 +66,7 @@ function calendar__days_in_month($month, $year){
 }
 
 
-function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $admin_id = false, $split_events=false){
+function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $admin_id = false, $split_events=false, $laboratory_id=false){
     $events = array();
     global $lang, $settings, $settings__root_url, $color;
 
@@ -88,6 +88,10 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
     if ($admin_id) {
         $query.=" AND ".table('experiments').".experimenter LIKE :admin_id ";
         $pars[':admin_id']='%|".$admin_id."|%';
+    }
+    if ($laboratory_id) {
+        $query.=" AND ".table('sessions').".laboratory_id=:laboratory_id ";
+        $pars[':laboratory_id']=$laboratory_id;
     }
 
     $result=or_query($query,$pars);
@@ -176,6 +180,10 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
         $query.=" AND ".table('events').".experimenter LIKE :admin_id ";
         $pars[':admin_id']='%|".$admin_id."|%';
     }
+    if ($laboratory_id) {
+        $query.=" AND ".table('events').".laboratory_id=:laboratory_id ";
+        $pars[':laboratory_id']=$laboratory_id;
+    }
     $result=or_query($query,$pars);
     $exp_colors = array();
     $exp_colors_used = 0;
@@ -257,6 +265,14 @@ function calendar__display_calendar($admin = false){
     $wholeyear = false;
     if(isset($_REQUEST['wholeyear']) && $admin){
         $wholeyear = true;
+    }
+    $labid_urlstring = ''; $laboratory_id=false;
+    $labs=laboratories__get_laboratories();
+    if(isset($_REQUEST['laboratory_id']) && $_REQUEST['laboratory_id'] && $admin) {
+        if(isset($labs[$_REQUEST['laboratory_id']])) {
+            $laboratory_id=$_REQUEST['laboratory_id'];
+            $labid_urlstring = "laboratory_id=".urlencode($laboratory_id);
+        }
     }
     //$monthsum format: years x 12 + months
     $calendar_month_font = "white";
@@ -393,7 +409,7 @@ function calendar__display_calendar($admin = false){
     if($wholeyear && $admin){
         $displayfrom_upper = mktime(0, 0, 0, 1, 1, date('Y', $displayfrom)+1);
     }
-    $results = calendar__get_events($admin, $displayfrom_lower, $displayfrom_upper, false, true);
+    $results = calendar__get_events($admin, $displayfrom_lower, $displayfrom_upper, false, true, $laboratory_id);
     $buttons1="";
     $buttons2="";
 
@@ -401,20 +417,31 @@ function calendar__display_calendar($admin = false){
         $buttons1.="<TABLE border=0 width=100%>";
         $buttons1.='<TR>';
         if ($wholeyear) {
-            $buttons1.='<TD align="left">'.button_link("?",lang('current_month'),'','font-size: 8pt;').'</TD>';
+            $buttons1.='<TD align="left">'.button_link("?".$labid_urlstring,lang('current_month'),'','font-size: 8pt;').'</TD>';
         } else {
-            $buttons1.='<TD align="left">'.button_link("?wholeyear=true&displayfrom=" . mktime(0, 0, 0, 1, 1, date('Y', $displayfrom)),lang('whole_year'),'','font-size: 8pt;').'</TD>';
+            $buttons1.='<TD align="left">'.button_link("?wholeyear=true&displayfrom=" . mktime(0, 0, 0, 1, 1, date('Y', $displayfrom))."&".$labid_urlstring,lang('whole_year'),'','font-size: 8pt;').'</TD>';
         }
         $buttons1.='<TD align="center">'.button_link('events_edit.php',lang('create_event'),'plus-circle').'<BR>
                 <FONT class="small">'.lang('for_session_time_reservation_please_use_experiments').'</FONT></TD>';
-        $buttons1.='<TD align="right">'.button_link('calendar_main_print_pdf.php?displayfrom='.$displayfrom.'&wholeyear='.$wholeyear,
+        $buttons1.='<TD align="right">'.button_link('calendar_main_print_pdf.php?displayfrom='.$displayfrom.'&wholeyear='.$wholeyear."&".$labid_urlstring,
                     lang('print_version'),'print','font-size: 8pt;','target="_blank"').'</TD>';
         $buttons1.='</TR></TABLE>';
     }
-    $buttons2 .= '<TABLE width="100%"><TR><TD colspan=3 align="left">';
-    $buttons2 .= button_link("?displayfrom=".date__skip_months(-1, $displayfrom), strtoupper(lang('previous')),'caret-square-o-up','font-size: 8pt;');
-    $buttons2 .= '</TD><TD colspan=4 align="right">';
-    $buttons2 .= button_link("?displayfrom=".date__skip_months(1, $displayfrom),strtoupper(lang('next')),'caret-square-o-down','font-size: 8pt;');
+    $buttons2 .= '<TABLE width="100%"><TR><TD colspan=2 align="left">';
+    $buttons2 .= button_link("?displayfrom=".date__skip_months(-1, $displayfrom)."&".$labid_urlstring, strtoupper(lang('previous')),'caret-square-o-up','font-size: 8pt;');
+    $buttons2 .= '</TD>';
+    $buttons2 .= '<TD colspan=3 align="center">';
+    if (count($labs)>1 && $admin) {
+        $lab_links=array();
+        $lab_links[]='<A HREF="calendar_main.php?displayfrom='.$displayfrom.'&wholeyear='.$wholeyear.'&laboratory_id=">'.lang('select_all').'</A>';
+        foreach ($labs as $lab_id=>$lab) {
+            $lab_links[]='<A HREF="calendar_main.php?displayfrom='.$displayfrom.'&wholeyear='.$wholeyear.'&laboratory_id='.urlencode($lab_id).'">'.$lab['lab_name'].'</A>';
+        }
+        $buttons2 .= lang('laboratories').': '.implode("&nbsp;|&nbsp;",$lab_links);
+    }
+    $buttons2 .= '</TD>';
+    $buttons2 .= '<TD colspan=2 align="right">';
+    $buttons2 .= button_link("?displayfrom=".date__skip_months(1, $displayfrom)."&".$labid_urlstring,strtoupper(lang('next')),'caret-square-o-down','font-size: 8pt;');
     $buttons2 .= '</TD></TR></TABLE><BR>';
 
     echo $buttons1;
