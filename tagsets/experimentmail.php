@@ -488,7 +488,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
     // bulks
     foreach ($bulks as $mail) {
         $tlang=$parts[$mail['mail_recipient']]['language'];
-        $done=experimentmail__send_bulk_mail($mail,$parts[$mail['mail_recipient']],$bulk_mails[$tbulk][$tlang],$footers[$tlang]);
+        $done=experimentmail__send_bulk_mail($mail,$parts[$mail['mail_recipient']],$bulk_mails[$mail['bulk_id']][$tlang],$footers[$tlang]);
         if ($done) {
             $mails_sent++;
             $deleted=experimentmail__delete_from_queue($mail['mail_id']);
