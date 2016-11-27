@@ -839,11 +839,11 @@ function experimentmail__get_experiment_registration_details($part,$exp,$sess,$l
 
 function experimentmail__get_customized_mailtext($type,$experiment_id,$maillang="") {
     if (!$maillang) $maillang=lang('lang'); $mailtext=array();
-    $fulltext=language__get_item('experiment_enrolment_conf_mail',$experiment_id,$maillang);
+    $fulltext=language__get_item($type,$experiment_id,$maillang);
     if ($fulltext) {
         $mailtext['subject']=str_replace(strstr($fulltext,"\n"),"",$fulltext);
         $mailtext['body']=substr($fulltext,strpos($fulltext,"\n")+1,strlen($fulltext));
-        return $fulltext;
+        return $mailtext;
     } else {
         return false;
     }
