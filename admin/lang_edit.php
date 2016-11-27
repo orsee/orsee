@@ -73,9 +73,8 @@ if ($proceed) {
         </FORM><BR>';
 
 
-    $query="select left(content_name,1) as letter,
-            count(lang_id) as number,
-            content_name
+    $query="select lower(left(content_name,1)) as letter,
+            count(lang_id) as number
             from ".table('lang')."
             where content_type='lang' GROUP BY letter";
     $result=or_query($query);

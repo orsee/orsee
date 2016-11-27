@@ -184,19 +184,18 @@ function downloads__list_experiments($showsize=false,$showtype=false,$showdate=f
 
     if ($continue) {
         $query="SELECT ".table('experiments').".*,
-                min(".table('sessions').".session_start) as first_session_date,
-                max(".table('sessions').".session_start) as last_session_date
-                FROM ".table('experiments').", ".table('sessions')."
+                (SELECT min(session_start) from or_sessions as s1 WHERE s1.experiment_id=".table('experiments').".experiment_id) as first_session_date,
+                (SELECT max(session_start) from or_sessions as s2 WHERE s2.experiment_id=".table('experiments').".experiment_id) as last_session_date
+                FROM ".table('experiments')."
                 WHERE ".table('experiments').".experiment_id IN
                 (SELECT DISTINCT experiment_id FROM ".table('uploads').")
                 ".$experimenter_clause."
-                AND ".table('experiments').".experiment_id = ".table('sessions').".experiment_id
-                GROUP BY ".table('experiments').".experiment_id
                 ORDER BY last_session_date DESC";
         $result=or_query($query,$pars); $experiments=array();
         while ($line = pdo_fetch_assoc($result)) {
             $experiments[]=$line;
         }
+        
         if (count($experiments)>0) {
             $out.='<TABLE width=100% border=0>';
             $shade=true;
@@ -205,8 +204,18 @@ function downloads__list_experiments($showsize=false,$showtype=false,$showdate=f
                 else { $bgcolor=' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
                 $out.='<TR'.$bgcolor.'><TD>';
                 $out.=$exp['experiment_name'].'</TD><TD>(';
-                $out.=lang('from').' '.ortime__format(ortime__sesstime_to_unixtime($exp['first_session_date']),'hide_time:true').' ';
-                $out.=lang('to').' '.ortime__format(ortime__sesstime_to_unixtime($exp['last_session_date']),'hide_time:true');
+                $out.=lang('from').' ';
+                if ($exp['first_session_date']==0) {
+                    $out.='???';
+                } else {
+                    $out.=ortime__format(ortime__sesstime_to_unixtime($exp['first_session_date']),'hide_time:true');
+                }
+                $out.=' '.lang('to').' ';
+                if ($exp['last_session_date']==0) {
+                    $out.='???';
+                } else {
+                    $out.=ortime__format(ortime__sesstime_to_unixtime($exp['last_session_date']),'hide_time:true');
+                }
                 $out.=')</TD><TD>';
                 $out.=experiment__list_experimenters($exp['experimenter'],true,true);
                 $out.='</TD><TD><A HREF="download_main.php?experiment_id='.$exp['experiment_id'].'">'.
