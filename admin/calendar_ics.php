@@ -56,7 +56,11 @@ if ($continue) {
     $displayfrom_lower = time()-60*60*24*31*$settings['calendar_export_months_back'];
     $displayfrom_upper = time()+60*60*24*31*$settings['calendar_export_months_ahead'];
 
-    if ($all) $expadminid=false; else $expadminid=$expadmindata['admin_id'];
+    if ($all) {
+        $expadminid=false; 
+    } else {
+        $expadminid=$expadmindata['admin_id'];
+    }
     $results = calendar__get_events(true, $displayfrom_lower, $displayfrom_upper,$expadminid, false, $laboratory_id);
 
 

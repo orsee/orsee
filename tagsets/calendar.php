@@ -87,7 +87,7 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
     $query .= " AND session_start >= :start_time ";
     if ($admin_id) {
         $query.=" AND ".table('experiments').".experimenter LIKE :admin_id ";
-        $pars[':admin_id']='%|".$admin_id."|%';
+        $pars[':admin_id']='%|'.$admin_id.'|%';
     }
     if ($laboratory_id) {
         $query.=" AND ".table('sessions').".laboratory_id=:laboratory_id ";
@@ -178,7 +178,7 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
               AND event_stop >= :start_time";
     if ($admin_id) {
         $query.=" AND ".table('events').".experimenter LIKE :admin_id ";
-        $pars[':admin_id']='%|".$admin_id."|%';
+        $pars[':admin_id']='%|'.$admin_id.'|%';
     }
     if ($laboratory_id) {
         $query.=" AND ".table('events').".laboratory_id=:laboratory_id ";
