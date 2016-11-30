@@ -137,14 +137,16 @@ function ortime__array_ampm_time_to_array_mil_time ($a) { // unused?
 }
 
 function ortime__get_weekday($unixtime,$language='') {
-    global $lang;
+    global $lang, $expadmindata, $settings;
     if (!$language) {
         if (isset($lang['lang']) && $lang['lang']) {
             $language=$lang['lang'];
         } else {
-            global $expadmindata, $settings;
-            if (isset($expadmindata['language']) && $expadmindata['language']) $language=$expadmindata['language'];
-            else $language=$settings['public_standard_language'];
+            if (isset($expadmindata['language']) && $expadmindata['language']) {
+                $language=$expadmindata['language'];
+            } else {
+                $language=$settings['public_standard_language'];
+            }
         }
     }
     $w_index=date("w",$unixtime);
