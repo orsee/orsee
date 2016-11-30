@@ -33,7 +33,7 @@ function email__retrieve_incoming() {
 
     if ($continue) {
         include_once('../tagsets/class.fmailbox.php');
-        $mailbox = new fMailbox($settings__email_server_type, $settings__email_server_name, $settings__email_username, $settings__email_password, $settings__email_server_port,$settings__email_ssl);
+        $mailbox = new fMailbox($settings__email_server_type, $settings__email_server_name, $settings__email_username, $settings__email_password, $settings__email_server_port, $settings__email_ssl);
         $messages = $mailbox->listMessages();
         $count=0;
         foreach ($messages as $message) {
