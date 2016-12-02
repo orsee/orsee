@@ -3,7 +3,7 @@
 
 function email__retrieve_incoming() {
     global $settings, $settings__email_server_type, $settings__email_server_name, $settings__email_server_port,
-            $settings__email_username, $settings__email_password;
+            $settings__email_username, $settings__email_password, $settings__email_ssl;
 
     $continue=true; $result=array(); $result['errors']=array();
     if (!isset($settings__email_server_type) || !in_array($settings__email_server_type,array('pop3','imap'))) {
@@ -22,12 +22,18 @@ function email__retrieve_incoming() {
         $result['errors'][]='No email username name given.';
         $continue=false;
     }
-    if (!isset($settings__email_server_port) || !$settings__email_server_port)
+    if (!isset($settings__email_server_port) || !$settings__email_server_port) {
         $settings__email_server_port=NULL;
+    }
+    if (!isset($settings__email_ssl) || !$settings__email_ssl) {
+        $settings__email_ssl=FALSE;
+    } else {
+        $settings__email_ssl=TRUE;
+    }
 
     if ($continue) {
         include_once('../tagsets/class.fmailbox.php');
-        $mailbox = new fMailbox($settings__email_server_type, $settings__email_server_name, $settings__email_username, $settings__email_password, $settings__email_server_port);
+        $mailbox = new fMailbox($settings__email_server_type, $settings__email_server_name, $settings__email_username, $settings__email_password, $settings__email_server_port, $settings__email_ssl);
         $messages = $mailbox->listMessages();
         $count=0;
         foreach ($messages as $message) {
