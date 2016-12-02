@@ -4,7 +4,7 @@ ob_start();
 
 $menu__area="experiments";
 $title="assign_subjects";
-$jquery=array('arraypicker','textext','dropit','queryform','datepicker');
+$jquery=array('arraypicker','textext','dropit','queryform','datepicker','popup');
 include ("header.php");
 if ($proceed) {
     if ($_REQUEST['experiment_id']) $experiment_id=$_REQUEST['experiment_id'];
@@ -85,6 +85,10 @@ if ($proceed) {
             $_SESSION['lastquery_assign_'.$experiment_id] =  $posted_query_json;
             $_SESSION['lastqueryid_assign_'.$experiment_id] =  $query_id;
             $sort=query__load_default_sort('assign',$experiment_id);
+        }
+
+        if (check_allow('participants_edit')) {
+            echo javascript__edit_popup();
         }
 
         // show query in human-readable form

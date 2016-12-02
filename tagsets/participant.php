@@ -1300,7 +1300,7 @@ function participant__get_possible_participant_columns($listtype) {
         $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        //$cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='result_table_search_duplicates') {
         $cols['pform_fields']='';
         $cols['other_pfields']='';
@@ -1316,6 +1316,7 @@ function participant__get_possible_participant_columns($listtype) {
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['invited']=array('display_text'=>lang('invited'),'on_list'=>true,'allow_remove'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='session_participants_list') {
         $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
         $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
@@ -1326,6 +1327,7 @@ function participant__get_possible_participant_columns($listtype) {
         $cols['payment_type']=array('display_text'=>lang('payment_type'),'display_table_head'=>lang('payment_type_abbr'),'on_list'=>true,'allow_remove'=>false);
         $cols['payment_amount']=array('display_text'=>lang('payment_amount'),'display_table_head'=>lang('payment_amount_abbr'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'payment_amt');
         $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'on_list'=>true,'allow_remove'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='session_participants_list_pdf') {
         $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
         $cols['pform_fields']='';
