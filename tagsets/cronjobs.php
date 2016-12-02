@@ -332,12 +332,11 @@ function cron__check_for_session_reminders() {
     global $settings;
 
     $now=time();
-    $query="SELECT ".table('sessions').".*, ".table('experiments').".*, count(participate_id) as num_reg
-            FROM ".table('sessions').", ".table('participate_at').", ".table('experiments')."
-            WHERE ".table('sessions').".session_id=".table('participate_at').".session_id
-            AND ".table('sessions').".experiment_id = ".table('experiments').".experiment_id
-            AND session_status='live' AND reminder_sent = 'n' AND reminder_checked='n'
-            GROUP BY ".table('participate_at').".session_id";
+    $query="SELECT ".table('sessions').".*, ".table('experiments').".*,
+            (SELECT count(*) from ".table('participate_at')." as p1 WHERE p1.session_id=".table('sessions').".session_id) as num_reg 
+            FROM ".table('sessions').", ".table('experiments')."
+            WHERE ".table('sessions').".experiment_id = ".table('experiments').".experiment_id
+            AND session_status='live' AND reminder_sent = 'n' AND reminder_checked='n'";
     $result=or_query($query);
 
     $mess="";

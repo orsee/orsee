@@ -37,17 +37,14 @@ function experiment__current_experiment_summary($experimenter="",$finished="n",$
     $aquery=$finq.$expq.$classq;
 
         $query="SELECT ".table('experiments').".*,
-                count(*) as num_sessions,
-                if(session_start IS NULL, 1,0) as no_sessions,
-                min(if(session_start > date_format(now(),'%Y%m%d%H%i'),
-                session_start,NULL)) as time,
-                min(session_start) as first_session_date,
-                max(session_start) as last_session_date
+                (SELECT count(*) from ".table('sessions')." as s1 WHERE s1.experiment_id=".table('experiments').".experiment_id) as num_sessions,
+                if((SELECT count(*) from ".table('sessions')." as s2 WHERE s2.experiment_id=".table('experiments').".experiment_id)=0,1,0) as no_sessions,
+                (SELECT min(if(session_start > date_format(now(),'%Y%m%d%H%i'),session_start,NULL)) from ".table('sessions')." as s3 WHERE s3.experiment_id=".table('experiments').".experiment_id) as time,
+                (SELECT min(session_start) from ".table('sessions')." as s4 WHERE s4.experiment_id=".table('experiments').".experiment_id) as first_session_date,
+                (SELECT max(session_start) from ".table('sessions')." as s5 WHERE s5.experiment_id=".table('experiments').".experiment_id) as last_session_date 
                 FROM ".table('experiments')."
-                LEFT JOIN ".table('sessions')." ON ".table('experiments').".experiment_id=".table('sessions').".experiment_id
                 WHERE ".table('experiments').".experiment_id IS NOT NULL
                 AND ".$aquery."
-                GROUP BY experiment_id
                 ORDER BY no_sessions, time, last_session_date DESC, experiment_id";
         $result=or_query($query,$pars);
         $experiments=array(); $eids=array();
