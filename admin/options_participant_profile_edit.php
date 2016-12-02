@@ -179,7 +179,7 @@ if ($proceed) {
 
     echo '<TR class="condfield radioline_lang tooltip" title="Whether to sort values of this field by the order predetermined in &quot;Options/Items for profile fields of type select_lang/radioline_lang&quot; or alphabetically in the respective language.">
             <TD>Order values</TD>
-            <TD>'.pform_options_selectfield('order_select_lang_values',array('alphabetically','fixed_order'),$field).'</TD></TR>';
+            <TD>'.pform_options_selectfield('order_radio_lang_values',array('alphabetically','fixed_order'),$field).'</TD></TR>';
 
 
     echo '<TR class="condfield select_numbers tooltip" title="First number in list. Must be integer."><TD>Start number

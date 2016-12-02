@@ -329,6 +329,7 @@ $array=array(
 'include_in_statistics'=>'n',
 'include_none_option'=>'n',
 'order_select_lang_values'=>'alphabetically',
+'order_radio_lang_values'=>'alphabetically',
 'link_as_email_in_lists'=>'n',
 'list_in_session_participants_list'=>'n',
 'list_in_session_pdf_list'=>'n',
@@ -514,7 +515,7 @@ function form__render_select_lang($f) {
 
 function form__render_radioline_lang($f) {
     if ($f['include_none_option']=='y') $incnone=true; else $incnone=false;
-    $out=language__radioline_item($f['mysql_column_name'],$f['mysql_column_name'],$f['mysql_column_name'],$f['value'],$incnone,$f['order_select_lang_values']);
+    $out=language__radioline_item($f['mysql_column_name'],$f['mysql_column_name'],$f['mysql_column_name'],$f['value'],$incnone,$f['order_radio_lang_values']);
     return $out;
 }
 
