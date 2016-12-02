@@ -136,6 +136,30 @@ function ortime__array_ampm_time_to_array_mil_time ($a) { // unused?
     return $r;
 }
 
+function ortime__get_weekday($unixtime,$language='') {
+    global $lang, $expadmindata, $settings;
+    if (!$language) {
+        if (isset($lang['lang']) && $lang['lang']) {
+            $language=$lang['lang'];
+        } else {
+            if (isset($expadmindata['language']) && $expadmindata['language']) {
+                $language=$expadmindata['language'];
+            } else {
+                $language=$settings['public_standard_language'];
+            }
+        }
+    }
+    $w_index=date("w",$unixtime);
+    if(isset($lang['lang']) && $language==$lang['lang']) {
+        $wdays=$lang['format_datetime_weekday_abbr'];
+    } else {
+        $wdays=load_language_symbol('format_datetime_weekday_abbr',$language);
+    }
+    $wday_arr=explode(',',$wdays);
+    $w=$wday_arr[$w_index];
+    return $w;
+}
+
 function ortime__format($unixtime,$options='',$language='') {
     // possible options: hide_time hide_second hide_date hide_year
     global $lang;
@@ -173,10 +197,11 @@ function ortime__format($unixtime,$options='',$language='') {
     if(!isset($op['hide_date'])) $f.=$dformat;
     if (!isset($op['hide_date']) && !isset($op['hide_time'])) $f.=" ";
     if (!isset($op['hide_time'])) $f.=$tformat;
-
-    $datestring=str_replace(array('%Y','%m','%d','%H','%h','%i','%s','%a'),
+    $arr['w']=ortime__get_weekday($unixtime,$language);
+    
+    $datestring=str_replace(array('%Y','%m','%d','%H','%h','%i','%s','%a','%w'),
             array($arr['y'],$arr['m'],$arr['d'],$arr['h'],
-            $arr['h12'],$arr['i'],$arr['s'],$arr['a']),
+            $arr['h12'],$arr['i'],$arr['s'],$arr['a'],$arr['w']),
             $f);
     $datestring=str_replace(" ","&nbsp;",$datestring);
     return $datestring;

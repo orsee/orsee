@@ -407,6 +407,14 @@ $system__options_general[]=array(
 'default_value'=>'y'
 );
 
+$system__options_general[]=array(
+'option_name'=>'include_weekday_in_session_name',
+'option_text'=>'Include weekday in session date whereever displayed?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
+
+
 $system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
