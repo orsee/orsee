@@ -1,6 +1,6 @@
 /*  This file is part of the Online Recruitment System for Economic Experiments (ORSEE).
 
-    Copyright (c) 2003-2015 Ben Greiner (m@ilben.de).
+    Copyright (c) 2003-2016 Ben Greiner (m@ilben.de).
 
     Author(s): Ben Greiner
 
@@ -17,9 +17,9 @@
        software's use by an appropriate citation of the following
        publication (or an updated version):
 
-         Ben Greiner (2015), Subject Pool Recruitment Procedures: Organizing
-         Experiments with ORSEE, Journal of the Economic Science Association 1.
-         Forthcoming.
+         Ben Greiner (2015),
+         Subject Pool Recruitment Procedures: Organizing Experiments with ORSEE, 
+         Journal of the Economic Science Association 1 (1), 114-125.
          http://link.springer.com/article/10.1007/s40881-015-0004-4
 
     2. Redistributions of source code must retain the above copyright

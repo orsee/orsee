@@ -294,7 +294,9 @@ if ($proceed) {
     foreach ($clause_pars as $p=>$v) $pars[$p]=$v;
 
     $order=query__get_sort('session_participants_list',$sort);  // sanitize sort or load default if empty
-    if(!$order) $order=table('participants').".participant_id"; //??
+    if((!$order) || $order=='participant_id') {
+        $order=table('participants').".participant_id";
+    }
     $query.=" ORDER BY ".$order;
 
     // get result
@@ -327,6 +329,10 @@ if ($proceed) {
         }
     }
     unset($temp_participants);
+
+    if (check_allow('participants_edit')) {
+        echo javascript__edit_popup();
+    }
 
     echo '<center>';
 

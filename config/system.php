@@ -1,7 +1,7 @@
 <?php
 // part of orsee. see orsee.org
 // THIS FILE WILL CHANGE FROM VERSION TO VERSION. BETTER NOT EDIT.
-$system__version="3.0.3";
+$system__version="3.0.4";
 
 // implemented experiment types
 $system__experiment_types=array('laboratory','online-survey','internet');
@@ -406,6 +406,14 @@ $system__options_general[]=array(
 'type'=>'select_yesno_switchy',
 'default_value'=>'y'
 );
+
+$system__options_general[]=array(
+'option_name'=>'include_weekday_in_session_name',
+'option_text'=>'Include weekday in session date whereever displayed?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
+
 
 $system__options_general[]=array('type'=>'line');
 

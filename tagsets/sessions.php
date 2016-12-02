@@ -252,6 +252,9 @@ function session__build_name($pack,$language="") {
                     $pack['session_duration_hour'],$pack['session_duration_minute']);
     $session_time_string=ortime__format(ortime__sesstime_to_unixtime($start_time),'hide_second:true',$thislang).'-'.
                         ortime__format(ortime__sesstime_to_unixtime($end_time),'hide_date:true,hide_second:true',$thislang);
+    if (or_setting('include_weekday_in_session_name')) {
+        $session_time_string=ortime__get_weekday(ortime__sesstime_to_unixtime($start_time),$thislang).", ".$session_time_string;
+    }
     return $session_time_string;
 }
 

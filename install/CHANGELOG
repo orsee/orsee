@@ -1,3 +1,10 @@
+ORSEE 3.0.4
+    Many minor and major bugfixes
+    New feature: Email module allows SSL connections
+    New feature: weekdays can be displayed in session lists
+    New feature: import participant data from txt file
+    New feature: calendar can be displayed by laboratory
+    New feature: Edit links can be displayed in session & assign lists
 
 ORSEE 3.0.3
     Larger bugfix for wrongly encoded special characters (UTF8)

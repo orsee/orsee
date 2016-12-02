@@ -329,6 +329,7 @@ $array=array(
 'include_in_statistics'=>'n',
 'include_none_option'=>'n',
 'order_select_lang_values'=>'alphabetically',
+'order_radio_lang_values'=>'alphabetically',
 'link_as_email_in_lists'=>'n',
 'list_in_session_participants_list'=>'n',
 'list_in_session_pdf_list'=>'n',
@@ -514,7 +515,7 @@ function form__render_select_lang($f) {
 
 function form__render_radioline_lang($f) {
     if ($f['include_none_option']=='y') $incnone=true; else $incnone=false;
-    $out=language__radioline_item($f['mysql_column_name'],$f['mysql_column_name'],$f['mysql_column_name'],$f['value'],$incnone,$f['order_select_lang_values']);
+    $out=language__radioline_item($f['mysql_column_name'],$f['mysql_column_name'],$f['mysql_column_name'],$f['value'],$incnone,$f['order_radio_lang_values']);
     return $out;
 }
 
@@ -1300,7 +1301,7 @@ function participant__get_possible_participant_columns($listtype) {
         $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        //$cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='result_table_search_duplicates') {
         $cols['pform_fields']='';
         $cols['other_pfields']='';
@@ -1316,6 +1317,7 @@ function participant__get_possible_participant_columns($listtype) {
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['invited']=array('display_text'=>lang('invited'),'on_list'=>true,'allow_remove'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='session_participants_list') {
         $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
         $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
@@ -1326,6 +1328,7 @@ function participant__get_possible_participant_columns($listtype) {
         $cols['payment_type']=array('display_text'=>lang('payment_type'),'display_table_head'=>lang('payment_type_abbr'),'on_list'=>true,'allow_remove'=>false);
         $cols['payment_amount']=array('display_text'=>lang('payment_amount'),'display_table_head'=>lang('payment_amount_abbr'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'payment_amt');
         $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'on_list'=>true,'allow_remove'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='session_participants_list_pdf') {
         $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
         $cols['pform_fields']='';
@@ -1504,8 +1507,11 @@ function participant__get_result_table_row($columns,$p) {
             case 'rules_signed':
                 if ($settings['enable_rules_signed_tracking']=='y')  {
                     $out.='<td class="small">';
-                    $out.=lang($p['rules_signed']);
-                    $out.='</td>';
+                    $out.='<INPUT type="checkbox" name="rules['.$p['participant_id'].']" value="y"';
+                    if ($p['rules_signed']=='y') {
+                        $out.=' CHECKED';
+                    }
+                    $out.='></td>';
                 }
                 break;
             case 'subscriptions':

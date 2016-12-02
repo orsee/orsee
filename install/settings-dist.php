@@ -48,6 +48,9 @@ $settings__email_server_name="mail.foobar.edu";
 $settings__email_server_port=""; // if empty or not set, port is automatically determined by type
 $settings__email_username="orsee@foobar.edu";
 $settings__email_password="orseefoorbar_pw";
+$settings__email_ssl=FALSE; // whether to use SSL to connect to IMAP/POP3 server (for gmail, use TRUE!)
+// E.g. for gmail, use TRUE for ssl setting. You may have to allow 
+// "Access for less secure apps" in your google account settings.
 
 
 // STOP SITE, TRACKING, DEBUGGING
