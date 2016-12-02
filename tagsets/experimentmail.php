@@ -488,7 +488,7 @@ function experimentmail__send_mails_from_queue($number=0,$type="",$experiment_id
     // bulks
     foreach ($bulks as $mail) {
         $tlang=$parts[$mail['mail_recipient']]['language'];
-        $done=experimentmail__send_bulk_mail($mail,$parts[$mail['mail_recipient']],$bulk_mails[$tbulk][$tlang],$footers[$tlang]);
+        $done=experimentmail__send_bulk_mail($mail,$parts[$mail['mail_recipient']],$bulk_mails[$mail['bulk_id']][$tlang],$footers[$tlang]);
         if ($done) {
             $mails_sent++;
             $deleted=experimentmail__delete_from_queue($mail['mail_id']);
@@ -839,11 +839,11 @@ function experimentmail__get_experiment_registration_details($part,$exp,$sess,$l
 
 function experimentmail__get_customized_mailtext($type,$experiment_id,$maillang="") {
     if (!$maillang) $maillang=lang('lang'); $mailtext=array();
-    $fulltext=language__get_item('experiment_enrolment_conf_mail',$experiment_id,$maillang);
+    $fulltext=language__get_item($type,$experiment_id,$maillang);
     if ($fulltext) {
         $mailtext['subject']=str_replace(strstr($fulltext,"\n"),"",$fulltext);
         $mailtext['body']=substr($fulltext,strpos($fulltext,"\n")+1,strlen($fulltext));
-        return $fulltext;
+        return $mailtext;
     } else {
         return false;
     }

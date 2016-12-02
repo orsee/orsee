@@ -1504,8 +1504,11 @@ function participant__get_result_table_row($columns,$p) {
             case 'rules_signed':
                 if ($settings['enable_rules_signed_tracking']=='y')  {
                     $out.='<td class="small">';
-                    $out.=lang($p['rules_signed']);
-                    $out.='</td>';
+                    $out.='<INPUT type="checkbox" name="rules['.$p['participant_id'].']" value="y"';
+                    if ($p['rules_signed']=='y') {
+                        $out.=' CHECKED';
+                    }
+                    $out.='></td>';
                 }
                 break;
             case 'subscriptions':
