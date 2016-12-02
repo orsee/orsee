@@ -330,6 +330,10 @@ if ($proceed) {
     }
     unset($temp_participants);
 
+    if (check_allow('participants_edit')) {
+        echo javascript__edit_popup();
+    }
+
     echo '<center>';
 
     echo '<TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'; width: 95%">
