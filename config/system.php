@@ -193,6 +193,11 @@ $system__admin_rights=array(
 $system__options_general=array();
 
 $system__options_general[]=array('type'=>'comment',
+            'text'=>'ORSEE version: '.$system__version);
+
+$system__options_general[]=array('type'=>'line');
+
+$system__options_general[]=array('type'=>'comment',
             'text'=>'Languages');
 
 $system__options_general[]=array(
