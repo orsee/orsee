@@ -169,7 +169,7 @@ if ($proceed) {
             </TD></TR>';
 
 
-    echo '<TR class="condfield select_lang tooltip" title="Whether or not to include a &quot;none&quot; option (represented by value 0 and &quot;-&quot; in the select list) in addition to the options defined in &quot;Options/Items for profile fields of type select_lang&quot;. Potentially useful in conjunction with &quot;compulsory=yes&quot; in order to not have a 0-value field pre-selected when one must be chosen."><TD>Include a &quot;none&quot; option</TD>
+    echo '<TR class="condfield select_lang select_numbers tooltip" title="Whether or not to include a &quot;none&quot; option (represented by value 0 and &quot;-&quot; in the select list) in addition to the options defined in &quot;Options/Items for profile fields of type select_lang&quot;. Potentially useful in conjunction with &quot;compulsory=yes&quot; in order to not have a 0-value field pre-selected when one must be chosen."><TD>Include a &quot;none&quot; option</TD>
             <TD>'.pform_options_yesnoradio('include_none_option',$field).'</TD></TR>';
 
     echo '<TR class="condfield select_lang tooltip" title="Whether to sort values of this field by the order predetermined in &quot;Options/Items for profile fields of type select_lang&quot; or alphabetically in the respective language.">
