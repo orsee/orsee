@@ -10,6 +10,7 @@ $all_orsee_query_modules=array(
 "activity",
 "updaterequest",
 "subsubjectpool",
+"interfacelanguage",
 "pformselects",
 "experimentclasses",
 "experimenters",
@@ -259,6 +260,21 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
                     </select> ';
         $prototype['content']=$content; $prototypes[]=$prototype;
         break;
+    case "interfacelanguage":
+        $prototype=array('type'=>'interfacelanguage_simpleselect',
+                        'displayname'=>lang('query_interface_language'),
+                        'field_name_placeholder'=>'#interfacelanguage#'
+                        );
+        $content="";
+        $content.=lang('where_interface_language_is');
+        $content.=' <SELECT name="not">
+                        <OPTION value="" SELECTED></OPTION>
+                        <OPTION value="NOT">'.lang('not').'</OPTION>
+                    </SELECT> ';
+        $content.=lang__select_lang('interface_language',$options['public_standard_language'],'public');
+        $prototype['content']=$content; $prototypes[]=$prototype;
+        break;
+
     case "activity":
         $prototype=array('type'=>'activity_numbercompare',
                         'displayname'=>lang('query_activity'),
@@ -514,6 +530,13 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 $clause='pending_profile_update_request = :pending_profile_update_request';
                 $pars=array(':pending_profile_update_request'=>$params['update_request_status']);
                 break;
+            case "interfacelanguage":
+                $ctype='part';
+                $clause='language ';
+                if ($params['not']) $clause.="!= "; else $clause.="= ";
+                $clause.=' :interface_language';
+                $pars=array(':interface_language'=>$params['interface_language']);
+                break;
             case "randsubset":
                 $add=false;
                 if($params['limit']==0) $params['limit']=0;
@@ -668,6 +691,11 @@ function query__get_pseudo_query_array($posted_array) {
                 $text=lang('where_profile_update_request_is').' ';
                 if ($params['update_request_status']=='y') $text.=lang('active');
                 else $text.=lang('inactive');
+                break;
+            case "interfacelanguage":
+                $lnames=lang__get_language_names();
+                $text=lang('where_interface_language_is').' ';
+                $text.=query__pseudo_query_not_not($params).'= "'.$lnames[$params['interface_language']].'"';
                 break;
             case "activity":
                 $text=lang('where').' '.lang($params['activity_type']).' ';
