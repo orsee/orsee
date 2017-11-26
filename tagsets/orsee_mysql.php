@@ -279,7 +279,16 @@ function or_upgrade_database($old_version_int) {
     }
     
     // further database upgrade, to be added with each new ORSEE version if necessary
-
+    if ($old_version<30005) {
+        $done=lang__upgrade_symbol_if_not_exists('query_interface_language',
+                                            array('en'=>'Interface language ...',
+                                                'de'=>'Interface-Sprache ...'
+                                                ));
+        $done=lang__upgrade_symbol_if_not_exists('where_interface_language_is',
+                                            array('en'=>'where the interface language is',
+                                                'de'=>'wo die Interface-Sprache ist'
+                                                ));
+    }
 }
 
 ?>
