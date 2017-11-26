@@ -247,5 +247,39 @@ function dump_array($array,$title="",$dolang=true) {
     echo '</TABLE>';
 }
 
+function version_to_integer($version) {
+    $varray=explode(".",$version);
+    $version_int=$varray[0]*10000+$varray[1]*100+$varray[2]*1;
+    return $version_int;
+}
+
+function check_database_upgrade() {
+    global $settings, $system__version;
+
+    if (!isset($settings['database_version'])) {
+        $settings['database_version']='3.0.2';
+    }
+    $current_system_version_int=version_to_integer($system__version);
+    $db_version_int=version_to_integer($settings['database_version']);
+    if ($db_version_int<$current_system_version_int) {
+        $done=or_upgrade_database($old_db_version_int);
+        $done=orsee_db_save_array(array('option_value'=>$system__version),'options',1,'option_id');
+        return $done;
+    } else {
+        return false;
+    }
+}
+
+function or_upgrade_database($old_version_int) {
+    global $settings;
+    if ($old_version<30003) {
+        if (!isset($settings['database_version'])) {
+            $done=or_query("INSERT INTO ".table('or_options')." VALUES (1,'general',NULL,'database_version','3.0.3')");
+        }
+    }
+    
+    // further database upgrade, to be added with each new ORSEE version if necessary
+
+}
 
 ?>

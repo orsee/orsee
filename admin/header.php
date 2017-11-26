@@ -61,6 +61,8 @@ if ($proceed) {
 
     $lang=load_language($expadmindata['language']);
 
+    $done=check_database_upgrade();
+
     if (!isset($title)) $title="";
     if ($title) $title=lang($title);
     $pagetitle=$settings['default_area'].': '.$title;
