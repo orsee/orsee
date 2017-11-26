@@ -3,12 +3,20 @@
 
 // login form
 function admin__login_form() {
-    global $lang;
+    global $lang, $settings;
     echo '<form name="login" action="admin_login.php" method=post>
         '.lang('username').':
-        <input type=text size=20 maxlength=20 name=adminname onChange="gotoPassword()"><BR>
+        <input type=text size=20 maxlength=20 name=adminname';
+    if (!(isset($settings['disable_admin_login_js']) && $settings['disable_admin_login_js']=='y')) {
+        echo ' onChange="gotoPassword()"';
+    }
+    echo '><BR>
         '.lang('password').':
-        <input type=password size=20 maxlength=20 name=password onChange="sendForm()"><BR>';
+        <input type=password size=20 maxlength=20 name=password';
+    if (!(isset($settings['disable_admin_login_js']) && $settings['disable_admin_login_js']=='y')) {
+        echo ' onChange="sendForm()"';
+    }
+    echo '><BR>';
     if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url'])
         echo '<input type=hidden name="requested_url" value="'.$_REQUEST['requested_url'].'">';
     echo '<input class="button" type=submit name=login value="'.lang('login').'">

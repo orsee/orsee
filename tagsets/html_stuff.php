@@ -85,7 +85,9 @@ echo '<HTML>
 ';
 
 
-if (thisdoc()=="admin_login.php") script__login_page();
+if (thisdoc()=="admin_login.php" && (!(isset($settings['disable_admin_login_js']) && $settings['disable_admin_login_js']=='y'))) {
+    script__login_page();
+}
 
 if (isset($jquery) && is_array($jquery)) {
     include_jquery('',false);
@@ -137,7 +139,9 @@ if (isset($color['body_vlink'])) echo ' vlink="'.$color['body_vlink'].'"';
 if (isset($color['body_alink'])) echo ' alink="'.$color['body_alink'].'"';
 if (isset($color['shade_around_content'])) echo ' bgcolor="'.$color['shade_around_content'].'"';
 echo ' TOPMARGIN=0 LEFTMARGIN=0 MARGINWIDTH=0 MARGINHEIGHT=0';
-if (thisdoc()=="admin_login.php") echo ' onload="gotoUsername();"';
+if (thisdoc()=="admin_login.php" && (!(isset($settings['disable_admin_login_js']) && $settings['disable_admin_login_js']=='y'))) {
+    echo ' onload="gotoUsername();"';
+}
 echo '>
 ';
 
