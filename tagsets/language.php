@@ -246,7 +246,6 @@ function lang__select_lang($varname,$selected="",$type="all") {
 
 
 function lang__insert_to_lang($item) {
-
     $pars=array(':content_type'=>$item['content_type']);
     $query="SELECT max(lang_id) as lcount
             FROM ".table('lang')."
@@ -282,6 +281,51 @@ function lang__insert_to_lang($item) {
     if ($reorganize) $done2=lang__reorganize_lang_table($steps);
     return $newid;
 }
+
+function lang__check_symbol_exists($symbol) {
+    global $lang;
+    if (isset($lang[$symbol])) {
+        return true;
+    } else {
+        $pars=array(':symbol'=>$symbol);
+        $query="SELECT count(*) as nb_symbols FROM ".table('lang')."
+                WHERE (content_type='lang' OR content_type='datetime_format') and content_name= :symbol";
+        $line=orsee_query($query,$pars);
+        if ($line['nb_symbols']>0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+function lang__add_new_symbol($symbol,$terms) {
+    $languages=get_languages();
+    $item=array('content_type'=>'lang','content_name'=>$symbol);
+    foreach ($languages as $thislang) {
+        if(isset($terms[$thislang])) {
+            $item[$thislang]=$terms[$thislang];
+        } elseif(isset($terms['en'])) {
+            $item[$thislang]=$terms['en'];
+        } else {
+            $item[$thislang]=reset($terms);
+        }
+    }
+    $done=lang__insert_to_lang($item);
+}
+
+function lang__upgrade_symbol_if_not_exists($symbol,$terms) {
+    $symbol_exists=lang__check_symbol_exists($symbol);
+    if(!$symbol_exists) {
+        lang__add_new_symbol($symbol,$terms);
+        log__admin("Automatic upgrade: added language symbol '".$symbol."'.");
+        message("Automatic upgrade: added language symbol '".$symbol."'.");
+        return true;
+    } else {
+        return false;
+    }
+}
+
 
 function lang__reorganize_lang_table($steps=10000) {
 
