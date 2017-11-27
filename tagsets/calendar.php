@@ -80,6 +80,10 @@ function calendar__get_events($admin = false, $start_time = 0, $end_time = 0, $a
     if (!$admin) {
         $query.=" AND ".table('experiments').".hide_in_cal='n' ";
     }
+    // don't include planned sessions if not admin and setting is disabled
+    if (!$admin & $settings['hide_planned_sessions_in_public_calendar']=='y') {
+        $query.=" AND ".table('sessions').".session_status!='planned' ";
+    }
     //only events between start and end time parameters
     $pars=array(':end_time'=>date("Ym320000", $end_time), // lowerr than "32nd day" of end time month
                 ':start_time'=>date("Ym000000", $start_time)); // larger than "0st day" of start time month

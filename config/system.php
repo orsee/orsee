@@ -356,6 +356,13 @@ $system__options_general[]=array(
 );
 
 $system__options_general[]=array(
+'option_name'=>'hide_planned_sessions_in_public_calendar',
+'option_text'=>'Participant calendar: Hide "planned" sessions?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
+
+$system__options_general[]=array(
 'option_name'=>'show_public_rules_page',
 'option_text'=>'Should ORSEE show the rules page in the public section?',
 'type'=>'select_yesno_switchy',
@@ -486,7 +493,6 @@ $system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
             'text'=>'Experiment enrolment settings');
-
 
 $system__options_general[]=array(
 'option_name'=>'enable_enrolment_only_on_invite',
