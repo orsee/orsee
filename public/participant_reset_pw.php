@@ -49,7 +49,7 @@ if ($proceed) {
             }
         }
         if ($continue) {
-            if ($participant['email']!=trim($_REQUEST['reset_email'])) {
+            if (strtolower($participant['email'])!=strtolower(trim($_REQUEST['reset_email']))) {
             //if email address not ok: save email address to session, show message, redirect
                 message(lang('password_reset_provided_email_address_not_correct'));
                 $continue=false;

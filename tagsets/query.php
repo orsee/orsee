@@ -213,10 +213,10 @@ function query__get_query($query_array,$query_id,$additional_clauses,$sort,$reso
         $add_queries=array();
         foreach ($additional_clauses as $add_clause) {
             foreach ($add_clause['pars'] as $p=>$v) {
-                $add_clause['query']=str_replace($p,$p.'_'.$i,$add_clause['query']);
+                $add_clause['query']=preg_replace('/'.$p.'([^0-9])/',$p.'_'.$i.'\\1',$add_clause['query']);
                 $pars[$p.'_'.$i]=$v;
-                $i++;
             }
+            $i++;
             $add_queries[]=$add_clause['query'];
         }
         $query.=implode(' AND ',$add_queries);
@@ -232,10 +232,10 @@ function query__get_query($query_array,$query_id,$additional_clauses,$sort,$reso
         } else {
             if (isset($q['subqueries'])) $q['clause']=query__get_subqueries($q['clause'],$q['subqueries'],$resolve_subqueries);
             foreach ($q['clause']['pars'] as $p=>$v) {
-                $q['clause']['query']=str_replace($p,$p.'_'.$i,$q['clause']['query']);
+                $q['clause']['query']=preg_replace('/'.$p.'([^0-9])/',$p.'_'.$i.'\\1',$q['clause']['query']);
                 $pars[$p.'_'.$i]=$v;
-                $i++;
             }
+            $i++;
             $query.=' '.$q['op'].' ('.$q['clause']['query'].') ';
         }
     }

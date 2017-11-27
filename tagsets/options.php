@@ -156,7 +156,7 @@ function options__get_color_styles() {
         $query="select option_style from ".table('options')."
                 where option_type='color'
                 group by option_style
-                order by option_id";
+                order by option_style";
         $result=or_query($query);
         while ($line=pdo_fetch_assoc($result)) $color_styles[]=$line['option_style'];
         $preloaded_color_styles=$color_styles;
