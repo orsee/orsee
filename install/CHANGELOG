@@ -1,3 +1,11 @@
+ORSEE 3.0.5
+	Many minor and major bugfixes
+	New feature: Display ORSEE version in General Settings
+	New feature: Disable js auto-submit on admin login form
+	New feature: Edit faq count
+	New feature: Allow "none"-option for select_numbers field
+	New feature: Hide planned sessions in public calendar
+	
 ORSEE 3.0.4
     Many minor and major bugfixes
     New feature: Email module allows SSL connections

@@ -112,7 +112,7 @@ function language__radioline_item($content_type,$ptablevarname,$formfieldvarname
     $query="SELECT *, ".$language." AS item
             FROM ".table('lang')."
             WHERE content_type= :content_type
-            ORDER BY ".pdo_escape_string($order_by);
+            ORDER BY ".$order_by;
     $result=or_query($query,$pars);
     while ($line = pdo_fetch_assoc($result)) {
         $items[$line['content_name']]=$line['item'];

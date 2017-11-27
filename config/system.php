@@ -1,7 +1,7 @@
 <?php
 // part of orsee. see orsee.org
 // THIS FILE WILL CHANGE FROM VERSION TO VERSION. BETTER NOT EDIT.
-$system__version="3.0.4";
+$system__version="3.0.5";
 
 // implemented experiment types
 $system__experiment_types=array('laboratory','online-survey','internet');
@@ -193,6 +193,11 @@ $system__admin_rights=array(
 $system__options_general=array();
 
 $system__options_general[]=array('type'=>'comment',
+            'text'=>'ORSEE version: '.$system__version);
+
+$system__options_general[]=array('type'=>'line');
+
+$system__options_general[]=array('type'=>'comment',
             'text'=>'Languages');
 
 $system__options_general[]=array(
@@ -351,6 +356,13 @@ $system__options_general[]=array(
 );
 
 $system__options_general[]=array(
+'option_name'=>'hide_planned_sessions_in_public_calendar',
+'option_text'=>'Participant calendar: Hide "planned" sessions?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
+
+$system__options_general[]=array(
 'option_name'=>'show_public_rules_page',
 'option_text'=>'Should ORSEE show the rules page in the public section?',
 'type'=>'select_yesno_switchy',
@@ -481,7 +493,6 @@ $system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
             'text'=>'Experiment enrolment settings');
-
 
 $system__options_general[]=array(
 'option_name'=>'enable_enrolment_only_on_invite',
@@ -662,6 +673,13 @@ $system__options_general[]=array(
 'default_value'=>'30',
 'size'=>'5',
 'maxlength'=>'5',
+);
+
+$system__options_general[]=array(
+'option_name'=>'disable_admin_login_js',
+'option_text'=>'Disable auto-submit on admin login form? (May interfere with some browser autofill functions.)',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
 );
 
 $system__options_general[]=array('type'=>'line');

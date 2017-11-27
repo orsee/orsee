@@ -15,9 +15,11 @@ if ($proceed) {
 if ($proceed) {
     // load faq question and answer from lang table
     if ($faq_id) {
+        $faq=orsee_db_load_array("faqs",$faq_id,"faq_id");
         $question=faq__load_question($faq_id);
         $answer=faq__load_answer($faq_id);
     } else {
+        $faq=array('evaluation'=>0);
         $question=array();
         $answer=array();
     }
@@ -49,13 +51,16 @@ if ($proceed) {
         }
 
         if ($continue) {
+            if (isset($_REQUEST['evaluation']) && $_REQUEST['evaluation']) {
+                $faq['evaluation']=$_REQUEST['evaluation'];
+            } else {
+                $faq['evaluation']=0;
+            }
             if (!$faq_id) {
                 $new_faq_id=time();
-
                 $faq['faq_id']=$new_faq_id;
-                $faq['evaluation']=0;
+                
                 $done=orsee_db_save_array($faq,"faqs",$faq['faq_id'],"faq_id");
-
                 $question['content_name']=$new_faq_id;
                 $question['content_type']="faq_question";
                 $done=lang__insert_to_lang($question);
@@ -66,6 +71,8 @@ if ($proceed) {
 
                 log__admin("faq_create","faq_id:".$new_faq_id);
             } else {
+                $faq['faq_id']=$faq_id;
+                $done=orsee_db_save_array($faq,"faqs",$faq['faq_id'],"faq_id");
                 $done=orsee_db_save_array($question,"lang",$question['lang_id'],"lang_id");
                 $done=orsee_db_save_array($answer,"lang",$answer['lang_id'],"lang_id");
                 log__admin("faq_edit","faq_id:".$faq_id);
@@ -96,7 +103,12 @@ if ($proceed) {
                     <TR>
                         <TD>'.lang('id').'</TD>
                         <TD>'.$faq_id.'</TD>
-                    </TR>';
+                    </TR>
+                    <TR>
+                    <TD>'.lang('this_faq_answered_questions_of_xxx').'</TD>
+                    <TD><INPUT name="evaluation" type="text" size=5 maxlength=5 value="'.$faq['evaluation'].'"> '.lang('persons').'</TD>
+                    </TR>
+                    ';
     $shade=true;
     foreach ($languages as $language) {
         if (!isset($question[$language])) $question[$language]="";
