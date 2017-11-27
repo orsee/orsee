@@ -675,6 +675,13 @@ $system__options_general[]=array(
 'maxlength'=>'5',
 );
 
+$system__options_general[]=array(
+'option_name'=>'disable_admin_login_js',
+'option_text'=>'Disable auto-submit on admin login form? (May interfere with some browser autofill functions.)',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
+
 $system__options_general[]=array('type'=>'line');
 
 $system__options_general[]=array('type'=>'comment',
