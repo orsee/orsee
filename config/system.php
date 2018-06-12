@@ -640,6 +640,13 @@ $system__options_general[]=array(
 );
 
 $system__options_general[]=array(
+'option_name'=>'default_experiment_restriction',
+'option_text'=>'If restriction enabled: Should a new experiment be restricted by default?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
+
+$system__options_general[]=array(
 'option_name'=>'admin_password_regexp',
 'option_text'=>'Regular expression for admin passwords (default: PW between 8 and 20 characters long,
                  at least one lower-case letter (a-z), one upper-case (A-Z), one digit (0-9)).
