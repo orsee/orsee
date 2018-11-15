@@ -324,11 +324,10 @@ if ($proceed) {
         if ($settings['allow_permanent_queries']=='y') {
             $perm_queries=query__get_permanent($experiment_id);
             if (count($perm_queries)>0) {
-                $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
                 echo '<TR><TD colspan=3><B>'.lang('found_active_permanent_query').'</B></TD></TR>';
                 echo '<TR><TD colspan=3><TABLE width="100%" border="0">';
                 foreach($perm_queries as $pquery) {
-                    $posted_query=$json->decode($pquery['json_query']);
+                    $posted_query=json_decode($pquery['json_query'],true);
                     $pseudo_query_array=query__get_pseudo_query_array($posted_query['query']);
                     $pseudo_query_display=query__display_pseudo_query($pseudo_query_array,false);
                     echo '<TR><TD>'.$pseudo_query_display.'</TD><TD>';

@@ -11,10 +11,9 @@ function query__show_form($hide_modules,$experiment=array(),$load_query="",$butt
     $done=query__echo_form_javascript($prototypes,$load_query);
     $pastitems = "";
     $pastitemsdata = "";
-    $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
     if (is_array($saved_queries) && count($saved_queries)>0) {
         foreach($saved_queries as $id => $query){
-            $decoded = $json->decode($query);
+            $decoded = json_decode($query,true);
             $pastitems = $pastitems . '<a style="text-align: left;" onclick="javascript:loadFromObj(pastQueries[' . $id . ']); return false;">' . query__display_pseudo_query(query__get_pseudo_query_array($decoded['query'])) . '</a>';
             $pastitemsdata = $pastitemsdata . $query;
             if((count($saved_queries)-1) != $id){
@@ -148,8 +147,7 @@ function query__echo_form_javascript($prototypes,$load_query="") {
             );
         }
         echo "<script type='text/javascript'>var Ptypes = ";
-        $json = new Services_JSON();
-        echo $json->encodeUnsafe($tmp);
+        echo json_encode($tmp);
         echo ";
             buildDropdown();
             ";
@@ -620,14 +618,13 @@ function query__resulthead_participantsearch() {
 
     $bulkactions=query__get_bulkactions();
     if (count($bulkactions)>0) {
-        $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         echo '<div id="bulkPopupDiv" class="bulkpopupDiv" style=" background: '.$color['popup_bgcolor'].'; color: '.$color['popup_text'].';">
                 <div align="right"><button class="b-close button fa-backward popupBack">'.lang('back_to_results').'</button></div>
                 <div id="bulkPopupContent" style="margin-left: 20px; margin-top: 0px;"></div>
             </div>
             <script type="text/javascript">
                 var bulkactions = ';
-        echo $json->encodeUnsafe($bulkactions);
+        echo json_encode($bulkactions);
         echo ';
                 $(document).ready(function(){
                     $.each(bulkactions, function(actionName, action){
@@ -820,7 +817,6 @@ function query__apply_permanent_queries() {
     }
 
     if ($continue) {
-        $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         $query_assigned=array();
         foreach ($ppart as $p) {
             $num_p++;
@@ -828,7 +824,7 @@ function query__apply_permanent_queries() {
                 $experiment=orsee_db_load_array("experiments",$q['experiment_id'],"experiment_id");
                 if (!isset($experiment['experiment_id'])) $continue=false;
                 if ($continue) {
-                    $posted_query=$json->decode($q['json_query']);
+                    $posted_query=json_decode($q['json_query'],true);
                     $query_array=query__get_query_array($posted_query['query']);
                     $active_clause=array('query'=>participant_status__get_pquery_snippet("eligible_for_experiments"),'pars'=>array());
                     $exptype_clause=array('query'=>"subscriptions LIKE (:experiment_ext_type)",

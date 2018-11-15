@@ -15,8 +15,8 @@ if ($proceed) {
     if (isset($_REQUEST['active']) && $_REQUEST['active']) $active=true;
     else $active=false;
 
-    // to encode: $json->encodeUnsafe($_REQUEST['form']).'<BR>';
-    // do decode: $json->decode($_SESSION['lastquery']);
+    // to encode: json_encode($_REQUEST['form']).'<BR>';
+    // do decode: json_decode($_SESSION['lastquery'],true);
 
     if (isset($_REQUEST['save_query'])) {
         // get old query
@@ -160,7 +160,6 @@ if ($proceed) {
 
 if ($proceed) {
     if(isset($_REQUEST['search_submit']) || isset($_REQUEST['search_sort'])) {
-        $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         if(isset($_REQUEST['search_sort'])){
             // use old query
             if ($active) {
@@ -172,13 +171,13 @@ if ($proceed) {
                 $query_id=$_SESSION['lastqueryid_participants_search_all'];
                 $sort=query__get_sort('participants_search_all',$_REQUEST['search_sort']); // sanitize sort
             }
-            $posted_query=$json->decode($posted_query_json);
+            $posted_query=json_decode($posted_query_json,true);
 
         } else {
             // store new query in session
             $query_id=time();
             if(isset($_REQUEST['form'])) $posted_query=$_REQUEST['form']; else $posted_query=array('query'=>array());
-            $posted_query_json=$json->encodeUnsafe($posted_query);
+            $posted_query_json=json_encode($posted_query);
             if ($active) {
                 $_SESSION['lastquery_participants_search_active'] =  $posted_query_json;
                 $_SESSION['lastqueryid_participants_search_active'] =  $query_id;

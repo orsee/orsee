@@ -72,11 +72,10 @@ if ($proceed) {
         </div>
         <script type="text/javascript">
             var faq_divs = ';
-    $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
-    echo $json->encodeUnsafe($faq_divs);
+    echo json_encode($faq_divs);
     echo ';
             var faq_html= ';
-    echo $json->encodeUnsafe($faq_html);
+    echo json_encode($faq_html);
     echo ';
                 function open_faq(faq_id){
                     var faq_question = faq_divs[faq_id];
