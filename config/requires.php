@@ -28,6 +28,7 @@ require "updownloads.php";
 require "subpools.php";
 require "expregister.php";
 require "pdfoutput.php";
+require "csvoutput.php";
 require "survey.php";
 require "faqs.php";
 require "stats.php";

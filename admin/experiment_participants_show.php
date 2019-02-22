@@ -347,6 +347,8 @@ if ($proceed) {
     if ($display!='enrol') {
         echo '<P align=right><A class="small" HREF="experiment_participants_show_pdf.php'.$thiscgis.
                 '" target="_blank">'.lang('print_version').'</A></P>';
+        echo '<P align=right><A class="small" HREF="experiment_participants_show_csv.php'.$thiscgis.
+                '" target="_blank">'.lang('print_version').'</A></P>';
     }
 
     // show query
