@@ -18,7 +18,7 @@ function admin__login_form() {
     }
     echo '><BR>';
     if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url'])
-        echo '<input type=hidden name="requested_url" value="'.$_REQUEST['requested_url'].'">';
+        echo '<input type=hidden name="requested_url" value="'.urlencode($_REQUEST['requested_url']).'">';
     echo '<input class="button" type=submit name=login value="'.lang('login').'">
         </form>';
 }
