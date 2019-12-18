@@ -2,7 +2,7 @@
 // part of orsee. see orsee.org
 ob_start();
 
-$jquery=array();
+$jquery=array('popup');
 $title="mailqueue";
 $menu__area="statistics";
 include ("header.php");
