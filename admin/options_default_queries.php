@@ -17,9 +17,8 @@ if ($proceed) {
 
 if ($proceed) {
     if (isset($_REQUEST['search_submit'])) {
-        $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         if(isset($_REQUEST['form'])) $posted_query=$_REQUEST['form']; else $posted_query=array('query'=>array());
-        $posted_query_json=$json->encodeUnsafe($posted_query);
+        $posted_query_json=json_encode($posted_query);
         $done=query__save_default_query($posted_query_json,'default_'.$type);
         redirect('admin/'.thisdoc().'?type='.$type);
     }

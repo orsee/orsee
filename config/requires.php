@@ -31,7 +31,6 @@ require "pdfoutput.php";
 require "survey.php";
 require "faqs.php";
 require "stats.php";
-require "class.json.php";
 require "payments.php";
 require "email.php";
 

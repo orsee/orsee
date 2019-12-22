@@ -108,10 +108,9 @@ if ($proceed) {
         ';
 
     $shade=false; $ids=array();
-    $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
     if ($type=='participants_search_active') $active=true; else $active=false;
     while ($line=pdo_fetch_assoc($result)) {
-        $posted_query=$json->decode($line['json_query']);
+        $posted_query=json_decode($line['json_query'],true);
         $pseudo_query_array=query__get_pseudo_query_array($posted_query['query']);
         $pseudo_query_display=query__display_pseudo_query($pseudo_query_array,$active);
 
