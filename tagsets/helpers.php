@@ -15,18 +15,15 @@ function support_mail_link() {
 }
 
 function multi_array_sort(&$data, $sortby) {
-    $sortby1=""; $sortby2=""; $sortby3="";
+    $sorting_var1=""; $sorting_var2=""; $sorting_var3="";
     if (is_array($sortby)) {
-        $sortby1 = $sortby[0];
-        if (isset($sortby[1])) $sortby2 = $sortby[1];
-        if (isset($sortby[2])) $sortby3 = $sortby[2];
+        $sorting_var1 = $sortby[0];
+        if (isset($sortby[1])) $sorting_var2 = $sortby[1];
+        if (isset($sortby[2])) $sorting_var3 = $sortby[2];
     } else {
-        $sortby1 = $sortby;
+        $sorting_var1 = $sortby;
     } 
-    global $sorting_var1, $sorting_var2, $sorting_var3;
-    $sorting_var1=$sortby1; $sorting_var2=$sortby2; $sorting_var3=$sortby3;
-    uasort($data,function ($a,$b) {
-        global $sorting_var1, $sorting_var2, $sorting_var3;
+    uasort($data,function ($a,$b) use ($sorting_var1, $sorting_var2, $sorting_var3) {
         if ($a[$sorting_var1]!=$b[$sorting_var1] || (!$sorting_var2)) {
             return $a[$sorting_var1]>$b[$sorting_var1];
         } elseif ($a[$sorting_var2]!=$b[$sorting_var2] || (!$sorting_var3)) {
