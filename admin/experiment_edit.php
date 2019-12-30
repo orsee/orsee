@@ -76,7 +76,7 @@ if ($proceed) {
 
             if (!isset($_REQUEST['hide_in_cal']) ||!$_REQUEST['hide_in_cal']) $_REQUEST['hide_in_cal']="n";
 
-            if (!isset($_REQUEST['access_restricted']) ||!$_REQUEST['access_restricted']) $_REQUEST['access_restricted']="n";
+            if (!isset($_REQUEST['access_restricted']) ||!$_REQUEST['access_restricted']) $_REQUEST['access_restricted']='n';
 
 
 
@@ -120,6 +120,7 @@ if ($proceed) {
         foreach ($formvarnames as $fvn) {
             if (!isset($edit[$fvn])) $edit[$fvn]="";
         }
+    $edit['access_restricted']=$settings['default_experiment_restriction'];
     }
     if (!$edit['ethics_expire_date']) $edit['ethics_expire_date']=ortime__unixtime_to_sesstime()+100000000;
 
