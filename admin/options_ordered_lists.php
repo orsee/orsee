@@ -8,56 +8,102 @@ $jquery=array('dropit','listtool');
 include ("header.php");
 if ($proceed) {
     if (isset($_REQUEST['list'])) $list=$_REQUEST['list']; else $list="";
-
-    $allow=check_allow('pform_results_lists_edit','options_main.php');
 }
 
 if ($proceed) {
     $result_lists=array('result_table_search_active','result_table_search_all',
                 'result_table_assign','result_table_search_duplicates',
                 'experiment_assigned_list','session_participants_list','session_participants_list_pdf',
-                'email_participant_guesses_list');
-    $other_lists=array('result_table_search_unconfirmed','public_menu','admin_menu');
-    if (!(in_array($list,$result_lists) || in_array($list,$other_lists))) redirect ('admin/options_participant_profile.php');
+                'email_participant_guesses_list','result_table_search_unconfirmed','anonymize_profile_list');
+    if (!in_array($list,$result_lists)) redirect ('admin/options_main.php');
 }
 
 if ($proceed) {
     if ($list=='result_table_search_active') {
         $header=lang('columns_in_search_results_table_for_active_participants');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='sortby_radio';
+        $list_add_option_name=lang('sort_table_by');
     } elseif ($list=='result_table_search_all') {
         $header=lang('columns_in_search_results_table_for_all_participants');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='sortby_radio';
+        $list_add_option_name=lang('sort_table_by');
     } elseif ($list=='result_table_assign') {
         $header=lang('columns_in_results_table_for_assign_query');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='sortby_radio';
+        $list_add_option_name=lang('sort_table_by');
     } elseif ($list=='result_table_search_duplicates') {
         $header=lang('columns_in_search_results_table_for_profile_duplicates');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='sortby_radio';
+        $list_add_option_name=lang('sort_table_by');
     } elseif ($list=='result_table_search_unconfirmed') {
         $header=lang('columns_in_search_results_table_for_unconfirmed_profiles');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='';
+        $list_add_option_name=lang('sort_table_by');
     } elseif ($list=='experiment_assigned_list') {
         $header=lang('columns_in_list_of_assigned_participants');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='sortby_radio';
+        $list_add_option_name=lang('sort_table_by');
     } elseif ($list=='session_participants_list') {
         $header=lang('columns_in_session_participants_list');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='sortby_radio';
+        $list_add_option_name=lang('sort_table_by');
     } elseif ($list=='session_participants_list_pdf') {
         $header=lang('columns_in_pdf_session_participants_list');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='sortby_radio';
+        $list_add_option_name=lang('sort_table_by');
     } elseif ($list=='email_participant_guesses_list') {
         $header=lang('email_module_participant_guesses_list');
         $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_results_lists_edit';
+        $list_add_option='sortby_radio';
+        $list_add_option_name=lang('sort_table_by');
+    } elseif ($list=='anonymize_profile_list') {
+        $header=lang('fields_to_anonymize_in_anonymization_bulk_action');
+        $cols=participant__get_possible_participant_columns($list);
+        $allow_check='pform_anonymization_fields_edit';
+        $list_add_option='field_value';
+        $list_add_option_name=lang('anonymized_dummy_value');
+        $button_text=lang('save');
     }
-    if (!isset($cols)) redirect ('admin/options_participant_profile.php');
+    if (!isset($cols)) redirect ('admin/options_main.php');
+}
+
+if ($proceed && $allow_check) {
+    $allow=check_allow($allow_check,'options_main.php');
 }
 
 if ($proceed) {
     if (isset($_REQUEST['save_order']) && $_REQUEST['save_order']) {
         if(isset($_REQUEST['item_order']) && is_array($_REQUEST['item_order']) && count($_REQUEST['item_order'])>0) {
-            if (isset($_REQUEST['sortby']) && $_REQUEST['sortby']) $details=array(trim($_REQUEST['sortby'])=>array('default_sortby'=>1));
-            else $details=array();
+            $details=array();
+            if (isset($_REQUEST['sortby']) && $_REQUEST['sortby']) {
+                $details=array(trim($_REQUEST['sortby'])=>array('default_sortby'=>1));
+            }
+            if (isset($_REQUEST['field_values']) && $_REQUEST['field_values'] && is_array($_REQUEST['field_values'])) {
+                foreach ($_REQUEST['field_values'] as $field=>$field_value) {
+                    if (isset($details[$field])) {
+                        $details[$field]['field_value']=$field_value;
+                    } else {
+                        $details[$field]=array('field_value'=>$field_value);
+                    }
+                }
+            }
             $done=options__save_item_order($list,$_REQUEST['item_order'],$details);
             message(lang('changes_saved'));
             redirect('admin/options_ordered_lists.php?list='.urlencode($list));
@@ -78,11 +124,12 @@ if ($proceed) {
         $rows[$line['item_name']]=$line;
     }
 
-    if (in_array($list,$result_lists))  {
-        $listrows=options__ordered_lists_get_current($cols,$rows,true);
+    if ($list_add_option)  {
+        $listrows=options__ordered_lists_get_current($cols,$rows,$list_add_option);
         $headers='<TD></TD><TD align="center">'.str_replace(" ","<BR>",lang('sort_table_by')).'</TD>';
+        $headers='<TD></TD><TD align="center">'.$list_add_option_name.'</TD>';
     } else {
-        $listrows=options__ordered_lists_get_current($cols,$rows,false);
+        $listrows=options__ordered_lists_get_current($cols,$rows);
         $headers='';
     }
 
@@ -98,7 +145,13 @@ if ($proceed) {
             </TD></TR>';
     echo '<TR><TD align="center">';
     echo formhelpers__orderlist("ordered_list", "item_order", $listrows, false, lang('add'),$headers);
-    echo '<input class="button" style="display: block;" name="save_order" type="submit" value="'.lang('save_order').'">';
+    echo '<input class="button" style="display: block;" name="save_order" type="submit" value="';
+    if (isset($button_text) && $button_text) {
+        echo $button_text;
+    } else {
+        echo lang('save_order');
+    }
+    echo '">';
     echo '</TD></TR></TABLE>';
 
     echo '</form>';

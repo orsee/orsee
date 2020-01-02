@@ -58,6 +58,8 @@ if ($proceed) {
     $optionlist=array();
     if (check_allow('pform_config_field_configure')) $optionlist[]='<A HREF="options_participant_profile.php" class="option">'.oicon('file-image-o').lang('participant_profile_fields').'</A>';
     if (check_allow('pform_templates_edit')) $optionlist[]='<A HREF="options_profile_template.php" class="option">'.oicon('newspaper-o').lang('participant_profile_form_template').'</A>';
+    if (check_allow('pform_anonymization_fields_edit')) $optionlist[]='<A HREF="options_ordered_lists.php?list=anonymize_profile_list" class="option">'.oicon('bars').lang('fields_to_anonymize_in_anonymization_bulk_action').'</A>';
+
     options__show_main_section(lang('participant_profile'),$optionlist);
 
 

@@ -1339,6 +1339,9 @@ function participant__get_possible_participant_columns($listtype) {
     } elseif ($listtype=='email_participant_guesses_list') {
         $cols['email']=array('display_text'=>lang('email'),'on_list'=>true,'allow_remove'=>false,'sortable'=>true);
         $cols['pform_fields']='';
+    } elseif ($listtype=='anonymize_profile_list') {
+        $cols['email']=array('display_text'=>lang('email'),'on_list'=>true,'allow_remove'=>false,'sortable'=>true);
+        $cols['pform_fields']='';
     }
 
     $poss_cols=array();
@@ -1378,6 +1381,7 @@ function participant__get_internal_freetext_search_fields() {
 function participant__get_result_table_columns($list) {
 // $list can be: result_table_search_active, result_table_search_all,
 // result_table_assign, result_table_search_duplicates, session_list,session_list_pdf
+// anonymize_profile_list
     global $preloaded_result_table_columns;
     if (isset($preloaded_result_table_columns[$list]) && is_array($preloaded_result_table_columns[$list])) return $preloaded_result_table_columns[$list];
     else {

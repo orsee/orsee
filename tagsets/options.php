@@ -188,7 +188,7 @@ function options__save_item_order($item_type,$order_array,$details=array()) {
     return $done;
 }
 
-function options__ordered_lists_get_current($poss_cols,$saved_cols,$sortby_radio=false) {
+function options__ordered_lists_get_current($poss_cols,$saved_cols,$extra_field='') {
     // filter out non-draggable at begin and end
     $first_draggable=false;
     $first=array(); $num_first=0; $last=array(); $num_last=0;
@@ -257,12 +257,14 @@ function options__ordered_lists_get_current($poss_cols,$saved_cols,$sortby_radio
         if (!isset($arr['fixed_position'])) $arr['fixed_position']=0;
         if (!isset($arr['sortable'])) $arr['sortable']=true;
         if (!isset($arr['cols'])) $arr['cols']='<TD>'.$arr['display_text'].'</TD>';
-        if ($sortby_radio) {
+        if ($extra_field && $extra_field=='sortby_radio') {
             if ($arr['sortable']) {
                 $arr['cols'].='<TD><INPUT type="radio" name="sortby" value="'.$k.'"';
                 if (isset($arr['item_details']['default_sortby']) && $arr['item_details']['default_sortby']) $arr['cols'].=' CHECKED';
                 $arr['cols'].='></TD>';
             } else $arr['cols'].='<TD></TD>';
+        } elseif ($extra_field && $extra_field=='field_value') {
+                $arr['cols'].='<TD><INPUT type="text" size="30" maxlength="255" name="field_values['.$k.']" value="'.$arr['item_details']['field_value'].'"></TD>';
         }
         $listrows[$k]=$arr;
     }
