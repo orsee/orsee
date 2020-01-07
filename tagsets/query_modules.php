@@ -452,9 +452,9 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 $int_fields=participant__get_internal_freetext_search_fields();
                 foreach ($int_fields as $ifield) {
                     if ($params['search_field']=='all') {
-                                $form_query_fields[]=$ifield['value'];
-                            } elseif ($params['search_field']==$ifield['value']) {
-                                $form_query_fields[]=$ifield['value'];
+                        $form_query_fields[]=$ifield['value'];
+                    } elseif ($params['search_field']==$ifield['value']) {
+                        $form_query_fields[]=$ifield['value'];
                     }
                 }
                 $like_array=array();
