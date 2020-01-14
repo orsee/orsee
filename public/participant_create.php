@@ -10,7 +10,7 @@ if ($proceed) {
     if (!(isset($_SESSION['subpool_id']))) {
         // get available subpools
         $subpools=subpools__get_subpools();
-        $all_avail_pool_ids=array();
+        $all_pool_ids=array();
         foreach ($subpools as $pool) {
             if ($pool['subpool_id']>1 && $pool['show_at_registration_page']=='y') {
                 $all_pool_ids[]=$pool['subpool_id'];
