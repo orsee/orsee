@@ -1234,33 +1234,33 @@ function participant__get_participant_status($participant_id) {
 
 function participant__nonuserdefined_columns() {
     $columns=array();
-    $columns['participant_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_id');
-    $columns['number_noshowup']=array('use_in_tables'=>1,'lang_symbol'=>'noshowup');
-    $columns['rules_signed']=array('use_in_tables'=>1,'lang_symbol'=>'rules_signed');
-    $columns['creation_time']=array('use_in_tables'=>1,'lang_symbol'=>'creation_time');
-    $columns['deletion_time']=array('use_in_tables'=>1,'lang_symbol'=>'deletion_time');
-    $columns['last_enrolment']=array('use_in_tables'=>1,'lang_symbol'=>'last_enrolment');
-    $columns['last_profile_update']=array('use_in_tables'=>1,'lang_symbol'=>'last_profile_update');
-    $columns['last_activity']=array('use_in_tables'=>1,'lang_symbol'=>'last_activity');
-    $columns['last_login_attempt']=array('use_in_tables'=>1,'lang_symbol'=>'last_login_attempt');
-    $columns['failed_login_attempts']=array('use_in_tables'=>1,'lang_symbol'=>'failed_login_attempts');
-    $columns['locked']=array('use_in_tables'=>1,'lang_symbol'=>'locked');
-    $columns['subpool_id']=array('use_in_tables'=>1,'lang_symbol'=>'subpool');
-    $columns['subscriptions']=array('use_in_tables'=>1,'lang_symbol'=>'subscriptions');
-    $columns['status_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_status');
-    $columns['pending_profile_update_request']=array('use_in_tables'=>1,'lang_symbol'=>'pending_profile_update_request');
-    $columns['language']=array('use_in_tables'=>1,'lang_symbol'=>'language');
-    $columns['remarks']=array('use_in_tables'=>1,'lang_symbol'=>'remarks');
+    $columns['participant_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_id','include_in_freetext_search'=>1);
+    $columns['number_noshowup']=array('use_in_tables'=>1,'lang_symbol'=>'noshowup','include_in_freetext_search'=>0);
+    $columns['rules_signed']=array('use_in_tables'=>1,'lang_symbol'=>'rules_signed','include_in_freetext_search'=>0);
+    $columns['creation_time']=array('use_in_tables'=>1,'lang_symbol'=>'creation_time','include_in_freetext_search'=>0);
+    $columns['deletion_time']=array('use_in_tables'=>1,'lang_symbol'=>'deletion_time','include_in_freetext_search'=>0);
+    $columns['last_enrolment']=array('use_in_tables'=>1,'lang_symbol'=>'last_enrolment','include_in_freetext_search'=>0);
+    $columns['last_profile_update']=array('use_in_tables'=>1,'lang_symbol'=>'last_profile_update','include_in_freetext_search'=>0);
+    $columns['last_activity']=array('use_in_tables'=>1,'lang_symbol'=>'last_activity','include_in_freetext_search'=>0);
+    $columns['last_login_attempt']=array('use_in_tables'=>1,'lang_symbol'=>'last_login_attempt','include_in_freetext_search'=>0);
+    $columns['failed_login_attempts']=array('use_in_tables'=>1,'lang_symbol'=>'failed_login_attempts','include_in_freetext_search'=>0);
+    $columns['locked']=array('use_in_tables'=>1,'lang_symbol'=>'locked','include_in_freetext_search'=>0);
+    $columns['subpool_id']=array('use_in_tables'=>1,'lang_symbol'=>'subpool','include_in_freetext_search'=>0);
+    $columns['subscriptions']=array('use_in_tables'=>1,'lang_symbol'=>'subscriptions','include_in_freetext_search'=>0);
+    $columns['status_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_status','include_in_freetext_search'=>0);
+    $columns['pending_profile_update_request']=array('use_in_tables'=>1,'lang_symbol'=>'pending_profile_update_request','include_in_freetext_search'=>0);
+    $columns['language']=array('use_in_tables'=>1,'lang_symbol'=>'language','include_in_freetext_search'=>0);
+    $columns['remarks']=array('use_in_tables'=>1,'lang_symbol'=>'remarks','include_in_freetext_search'=>1);
 
-    $columns['participant_id_crypt']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['password_crypted']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['confirmation_token']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['pwreset_token']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['pwreset_request_time']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['profile_update_request_new_pool']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['apply_permanent_queries']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['number_reg']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    //$columns['']=array('use_in_tables'=>0,'lang_symbol'=>'');
+    $columns['participant_id_crypt']=array('use_in_tables'=>1,'lang_symbol'=>'participant_id_crypt','include_in_freetext_search'=>1);
+    $columns['password_crypted']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['confirmation_token']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['pwreset_token']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['pwreset_request_time']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['profile_update_request_new_pool']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['apply_permanent_queries']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['number_reg']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    //$columns['']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
 
     return $columns;
 }
@@ -1360,6 +1360,19 @@ function participant__get_possible_participant_columns($listtype) {
         }
     }
     return $poss_cols;
+}
+
+function participant__get_internal_freetext_search_fields() {
+    $columns=participant__nonuserdefined_columns();
+    $sfields=array();
+    foreach ($columns as $k=>$arr) {
+        if (isset($arr['include_in_freetext_search']) && $arr['include_in_freetext_search']) {
+            if (isset($arr['lang_symbol'])) $lang_symbol=$arr['lang_symbol'];
+            else $lang_symbol=$k;
+            $sfields[]=array('value'=>$k,'name'=>lang($lang_symbol));
+        }
+    }
+    return $sfields;
 }
 
 function participant__get_result_table_columns($list) {

@@ -128,6 +128,10 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
                     $form_query_fields[]=$tfield;
                 }
         }
+        $int_fields=participant__get_internal_freetext_search_fields();
+        foreach ($int_fields as $ifield) {
+            $form_query_fields[]=$ifield;
+        }
         $content="";
         $content.=lang('where');
         $content.=' <INPUT type="text" size="20" maxlength="100" name="search_string" value="">';
@@ -443,6 +447,14 @@ function query__get_query_array($posted_array,$experiment_id="") {
                             } elseif ($params['search_field']==$f['mysql_column_name']) {
                                 $form_query_fields[]=$f['mysql_column_name'];
                             }
+                    }
+                }
+                $int_fields=participant__get_internal_freetext_search_fields();
+                foreach ($int_fields as $ifield) {
+                    if ($params['search_field']=='all') {
+                        $form_query_fields[]=$ifield['value'];
+                    } elseif ($params['search_field']==$ifield['value']) {
+                        $form_query_fields[]=$ifield['value'];
                     }
                 }
                 $like_array=array();
