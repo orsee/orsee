@@ -212,4 +212,53 @@ function admin__select_admin_type($fieldname,$selected="",$return_var="type_name
     return $out;
 }
 
+function admin__update_admin_rights_if_not_exists($specs) {
+    global $system__admin_rights;
+    $done=false;
+    
+    // is the right defined? If not: ignore.
+    $defined_rights=array();
+    foreach ($system__admin_rights as $right) {
+        $line=explode(":",$right);
+        $defined_rights[]=$line[0];
+    }
+
+    if (in_array($specs['right_name'],$defined_rights)) {
+        // does the right already exist in >0 admin profiles? If yes: ignore.
+        $exists=false; $trights=array();
+        $query="SELECT * FROM ".table('admin_types')." ORDER BY type_name";
+        $result=or_query($query);
+        while ($type=pdo_fetch_assoc($result)) {
+            $trights[$type['type_name']]=explode(",",$type['rights']);
+            if (in_array($specs['right_name'],$trights[$type['type_name']])) {
+                $exists=true;
+            }
+        }
+        
+        if ($exists) {
+            log__admin('Automatic database upgrade: User privilege "'.$specs['right_name'].'" already exists in at least one admin profile. Not upgraded.');
+        } else {
+            // add right to those types specified
+            foreach ($specs['admin_types'] as $add_to_type) {
+                if (isset($trights[$add_to_type])) {
+                    // if this type exists: add the right to this type's list
+                    $trights[$add_to_type][]=$specs['right_name'];
+                }
+            }
+            // now save all types
+            foreach ($trights as $type_name=>$type_rights) {
+                $ttype=array();
+                $ttype['type_name']=$type_name;
+                $ttype['rights']=implode(",",$type_rights);
+                $done=orsee_db_save_array($ttype,"admin_types",$ttype['type_name'],"type_name");
+            }
+            log__admin("Automatic database upgrade: added admin right '".$specs['right_name']."'.");
+        }
+    } else {
+        log__admin('Automatic database upgrade: User privilege "'.$specs['right_name'].'" in database upgrade not defined as admin right. Not upgraded.');
+    }
+    return $done;
+}
+
+
 ?>

@@ -299,33 +299,35 @@ function lang__check_symbol_exists($symbol) {
     }
 }
 
-function lang__add_new_symbol($symbol,$terms) {
+function lang__add_new_symbol($specs) {
     $languages=get_languages();
-    $item=array('content_type'=>'lang','content_name'=>$symbol);
+    $item=array('content_type'=>'lang','content_name'=>$specs['content_name']);
+    if (isset($specs['content_type'])) {
+        $item['content_type']=$specs['content_type'];
+    }
+    
     foreach ($languages as $thislang) {
-        if(isset($terms[$thislang])) {
-            $item[$thislang]=$terms[$thislang];
-        } elseif(isset($terms['en'])) {
-            $item[$thislang]=$terms['en'];
+        if(isset($specs['content'][$thislang])) {
+            $item[$thislang]=$specs['content'][$thislang];
+        } elseif(isset($specs['content']['en'])) {
+            $item[$thislang]=$specs['content']['en'];
         } else {
-            $item[$thislang]=reset($terms);
+            $item[$thislang]=reset($specs['content']);
         }
     }
     $done=lang__insert_to_lang($item);
 }
 
-function lang__upgrade_symbol_if_not_exists($symbol,$terms) {
-    $symbol_exists=lang__check_symbol_exists($symbol);
+function lang__upgrade_symbol_if_not_exists($specs) {
+    $symbol_exists=lang__check_symbol_exists($specs['content_name']);
     if(!$symbol_exists) {
-        lang__add_new_symbol($symbol,$terms);
-        log__admin("Automatic upgrade: added language symbol '".$symbol."'.");
-        message("Automatic upgrade: added language symbol '".$symbol."'.");
+        lang__add_new_symbol($specs);
+        log__admin("Automatic database upgrade: added language symbol '".$specs['content_name']."'.");
         return true;
     } else {
         return false;
     }
 }
-
 
 function lang__reorganize_lang_table($steps=10000) {
 

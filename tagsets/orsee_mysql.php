@@ -247,39 +247,121 @@ function dump_array($array,$title="",$dolang=true) {
     echo '</TABLE>';
 }
 
-function version_to_integer($version) {
-    $varray=explode(".",$version);
-    $version_int=$varray[0]*10000+$varray[1]*100+$varray[2]*1;
-    return $version_int;
-}
-
 function check_database_upgrade() {
-    global $settings, $system__version;
+    global $settings, $system__database_version;
 
     if (!isset($settings['database_version'])) {
-        $settings['database_version']='3.0.2';
+        $settings['database_version']='2017112700';
+        $done=or_query("INSERT INTO ".table('options')." VALUES (1,'general',NULL,'database_version','".$settings['database_version']."')");
     }
-    $current_system_version_int=version_to_integer($system__version);
-    $db_version_int=version_to_integer($settings['database_version']);
-    if ($db_version_int<$current_system_version_int) {
-        $done=or_upgrade_database($old_db_version_int);
-        $done=orsee_db_save_array(array('option_value'=>$system__version),'options',1,'option_id');
+    if ($settings['database_version']<$system__database_version) {
+        $done=or_upgrade_database();
         return $done;
     } else {
         return false;
     }
 }
 
-function or_upgrade_database($old_version_int) {
+function upgrade_database_version($new_version) {
     global $settings;
-    if ($old_version<30003) {
-        if (!isset($settings['database_version'])) {
-            $done=or_query("INSERT INTO ".table('or_options')." VALUES (1,'general',NULL,'database_version','3.0.3')");
+    $settings['database_version']=$new_version;
+    $done=orsee_db_save_array(array('option_value'=>$new_version),'options',1,'option_id');
+    if(!$done) log__admin("Database upgrade error. Could not set database version to new version number ".$new_version."!");
+    return $done;
+}
+
+
+function or_upgrade_database() {
+    global $settings, $system__database_version, $system__database_upgrades;
+    
+    if (!isset($system__database_upgrades)) {
+        $system__database_upgrades=array();
+    }
+
+    // check $system__database_upgrades for syntax errors, resort database upgrades by version number
+    $database_upgrades=array(); $i=0; $continue=true;
+    foreach ($system__database_upgrades as $upgr) {
+        $i++;
+        if ($continue) {
+            $error=or_upgrade_check_syntax($upgr);
+            if ($error) {
+                $continue=false;
+                log__admin("Error in upgrade syntax for $system__database_upgrades item nb ".$i.": ".$error." Upgrade aborted.");
+            } else {
+                $upgr['item_nb']=$i;
+                $database_upgrades[$upgr['version']][]=$upgr;
+            }
         }
     }
+    if ($continue) {
+        $done=ksort($database_upgrades,SORT_NUMERIC);
+    }
     
-    // further database upgrade, to be added with each new ORSEE version if necessary
-
+    // run the updates, stop if there is an error
+    $continue=true;
+    foreach ($database_upgrades as $this_version=>$vupgrades) {
+        if ($this_version>$settings['database_version']) {
+            foreach ($vupgrades as $upgr) {
+                if ($continue) {
+                   if ($upgr['type']=='new_lang_item') {
+                        $done=lang__upgrade_symbol_if_not_exists($upgr['specs']);
+                    } elseif ($upgr['type']=='new_admin_right') {
+                        $done=admin__update_admin_rights_if_not_exists($upgr['specs']);
+                    } elseif ($upgr['type']=='query') {
+                        $query=preg_replace('/TABLE\(([^)]+)\)/',table("$1"),$upgr['specs']['query_code']);
+                        $done=or_query($query);
+                        if ($done) {
+                            log__admin("Automatic database upgrade: executed query for \$system__database_upgrades item nb ".$i.".");
+                        } else {
+                            $continue=false;
+                            log__admin("Error in upgrade: Query for \$system__database_upgrades item nb ".$i." could not be executed. Upgrade aborted.");
+                        }
+                    }
+                }
+            }
+            if ($continue) {
+                $done=upgrade_database_version($this_version);
+                log__admin('Automatic database upgrade: Database upgraded to version '.$this_version.'.');
+            }
+        }
+    }
+    message("Ran automatic database upgrades. See Statistics/Logs/Experimenter actions for report.");
+    return $continue;
 }
+
+
+function or_upgrade_check_syntax($upgr) {
+    $continue=true; $error="";
+    
+    if ($continue && !isset($upgr['version'])) {
+        $continue=false;
+        $error="No upgrade version number given.";
+    }
+    if ($continue && !isset($upgr['type'])) {
+        $continue=false;
+        $error="No upgrade type given.";
+    }
+    if ($continue && !in_array($upgr['type'],array('new_lang_item','new_admin_right','query'))) {
+        $continue=false;
+        $error="Given upgrade type not valid.";
+    }
+    if ($continue && $upgr['type']=='new_lang_item' && (!isset($upgr['specs']['content_name']) || !isset($upgr['specs']['content']) || !is_array($upgr['specs']['content']))) {
+        $continue=false;
+        $error="Upgrade syntax not correct for upgrade type 'new_lang_item'.";
+    }
+    if ($continue && $upgr['type']=='new_admin_right' && (!isset($upgr['specs']['right_name']) || !isset($upgr['specs']['admin_types']) || !is_array($upgr['specs']['admin_types']))) {
+        $continue=false;
+        $error="Upgrade syntax not correct for upgrade type 'new_admin_right'.";
+    }
+    if ($continue && $upgr['type']=='query' && (!isset($upgr['specs']['query_code']) || !$upgr['specs']['query_code'])) {
+        $continue=false;
+        $error="Upgrade syntax not correct for upgrade type 'query'.";
+    }
+    if ($continue==false && !$error) {
+        $error="Unknown error.";
+    }
+    return $error;
+}
+
 
 ?>
