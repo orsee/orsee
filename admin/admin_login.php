@@ -22,13 +22,13 @@ if ($proceed) {
         if ($logged_in) {
             $expadmindata['admin_id']=$_SESSION['expadmindata']['admin_id'];
             log__admin("login");
-            if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url']) redirect($_REQUEST['requested_url']);
+            if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url']) redirect(urldecode($_REQUEST['requested_url']));
             else redirect("admin/index.php");
         } else {
             message(lang('error_password_or_username'));
             $add="";
             if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url'])
-                $add="?requested_url=".urlencode($_REQUEST['requested_url']);
+                $add="?requested_url=".$_REQUEST['requested_url'];
             redirect("admin/admin_login.php".$add);
         }
         $proceed=false;
