@@ -325,6 +325,7 @@ function lang__upgrade_symbol_if_not_exists($specs) {
         log__admin("Automatic database upgrade: added language symbol '".$specs['content_name']."'.");
         return true;
     } else {
+        log__admin("Automatic database upgrade: symbol '".$specs['content_name']."' not added because it alread exists.");
         return false;
     }
 }

@@ -251,10 +251,10 @@ function check_database_upgrade() {
     global $settings, $system__database_version;
 
     if (!isset($settings['database_version'])) {
-        $settings['database_version']='2017112700';
+        $settings['database_version']=0;
         $done=or_query("INSERT INTO ".table('options')." VALUES (1,'general',NULL,'database_version','".$settings['database_version']."')");
     }
-    if ($settings['database_version']<$system__database_version) {
+    if ((int)$settings['database_version']<$system__database_version) {
         $done=or_upgrade_database();
         return $done;
     } else {
@@ -264,7 +264,7 @@ function check_database_upgrade() {
 
 function upgrade_database_version($new_version) {
     global $settings;
-    $settings['database_version']=$new_version;
+    $settings['database_version']=(int)$new_version;
     $done=orsee_db_save_array(array('option_value'=>$new_version),'options',1,'option_id');
     if(!$done) log__admin("Database upgrade error. Could not set database version to new version number ".$new_version."!");
     return $done;
@@ -300,7 +300,7 @@ function or_upgrade_database() {
     // run the updates, stop if there is an error
     $continue=true;
     foreach ($database_upgrades as $this_version=>$vupgrades) {
-        if ($this_version>$settings['database_version']) {
+        if ((int)$this_version>(int)$settings['database_version']) {
             foreach ($vupgrades as $upgr) {
                 if ($continue) {
                    if ($upgr['type']=='new_lang_item') {
@@ -320,7 +320,7 @@ function or_upgrade_database() {
                 }
             }
             if ($continue) {
-                $done=upgrade_database_version($this_version);
+                $done=upgrade_database_version((int)$this_version);
                 log__admin('Automatic database upgrade: Database upgraded to version '.$this_version.'.');
             }
         }
