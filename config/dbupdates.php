@@ -39,5 +39,25 @@ $system__database_upgrades[]=array(
 END SAMPLE CODE
 */
 
+$system__database_upgrades[]=array(
+'version'=>'2020021100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'query_interface_language',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Interface language ...','de'=>'Interface-Sprache ...')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2020021100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'where_interface_language_is',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'where the interface language is','de'=>'wo die Interface-Sprache ist')
+    )
+);
+
 
 ?>
