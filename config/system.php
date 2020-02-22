@@ -2,6 +2,7 @@
 // part of orsee. see orsee.org
 // THIS FILE WILL CHANGE FROM VERSION TO VERSION. BETTER NOT EDIT.
 $system__version="3.0.5";
+$system__database_version=2020021000;
 
 // implemented experiment types
 $system__experiment_types=array('laboratory','online-survey','internet');
@@ -1678,5 +1679,9 @@ $system__colors[]=array(
 
 */
 
+
+// DATABASE UPGRADE DEFINITIONS //
+$system__database_upgrades=array();
+include ("../config/dbupdates.php");
 
 ?>
