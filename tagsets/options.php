@@ -264,7 +264,7 @@ function options__ordered_lists_get_current($poss_cols,$saved_cols,$extra_field=
                 $arr['cols'].='></TD>';
             } else $arr['cols'].='<TD></TD>';
         } elseif ($extra_field && $extra_field=='field_value') {
-                $arr['cols'].='<TD><INPUT type="text" size="30" maxlength="255" name="field_values['.$k.']" value="'.$arr['item_details']['field_value'].'"></TD>';
+            $arr['cols'].='<TD><INPUT type="text" size="30" maxlength="255" name="field_values['.$k.']" value="'.$arr['item_details']['field_value'].'"></TD>';
         }
         $listrows[$k]=$arr;
     }

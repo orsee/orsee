@@ -129,32 +129,32 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
-'type'=>'new_lang_item', 
-'specs'=> array(
-    'content_name'=>'profile_anonymize', 
-    'content_type'=>'lang',
-    'content'=>array('en'=>'Anonymize profiles','de'=>'Anonymisiere Profile'),
+    'version'=>'2020021200',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'profile_anonymize', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'Anonymize profiles','de'=>'Anonymisiere Profile'),
     )
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
-'type'=>'new_lang_item', 
-'specs'=> array(
-    'content_name'=>'error_no_fields_to_anonymize_defined', 
-    'content_type'=>'lang',
-    'content'=>array('en'=>'Error! There is no definition of fields to anonymize. See ORSEE options.','de'=>'Fehler! Es wurden keine Felder zur Anonymiserung definiert. Siehe ORSEE Optionen.'),
+    'version'=>'2020021200',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'error_no_fields_to_anonymize_defined', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'Error! There is no definition of fields to anonymize. See ORSEE options.','de'=>'Fehler! Es wurden keine Felder zur Anonymiserung definiert. Siehe ORSEE Optionen.'),
     )
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
-'type'=>'new_lang_item', 
-'specs'=> array(
-    'content_name'=>'xxx_participant_profiles_were_anonymized', 
-    'content_type'=>'lang',
-    'content'=>array('en'=>'participant profiles were anonymized.','de'=>'Teilnehmer-Profile wurden anonymisiert.'),
+    'version'=>'2020021200',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'xxx_participant_profiles_were_anonymized', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'participant profiles were anonymized.','de'=>'Teilnehmer-Profile wurden anonymisiert.'),
     )
 );
 
