@@ -607,6 +607,42 @@ function query__get_bulkactions() {
                 ';
         $bulkactions['profile_update']=array('display_text'=>$display_text,'html'=>$html);
     }
+    
+    if (check_allow('participants_bulk_anonymization')) {
+        // BULK ANONYMIZATION
+        $display_text=lang('anonymize_profiles');
+        if (isset($_REQUEST['new_status'])) {
+            $new_status=$_REQUEST['new_status'];
+        } else $new_status='';
+        if (isset($_REQUEST['do_status_change'])) {
+            $do_status_change=$_REQUEST['do_status_change'];
+        } else $do_status_change='';
+        $anon_fields=participant__get_result_table_columns('anonymize_profile_list');
+        $status_select=participant_status__select_field('new_status',$new_status,array(),'bforminput');
+        $html=' <center>
+                <TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'; width: 90%;">
+                    <TR><TD align="center">
+                        '.lang('anonymize_profiles_for').' #xyz_participants#
+                </TD></TR></TABLE>
+                <input class="bforminput" type="hidden" name="action" value="bulk_anonymization">
+                <TABLE class="or_formtable" style="width: 90%;">
+                <TR>
+                    <TD>'.lang('fields_will_be_anonymized_as_follows').':<br>';
+        foreach ($anon_fields as $field_name=>$anon_field) {
+            $html.=$anon_field['display_text'].'=&gt;'.$anon_field['item_details']['field_value'].'<br>';
+        } 
+        $html.='<br>'.lang('disclaimer_anonymize_profiles').'</TD>
+                </TR>
+                <TR>
+                    <TD><INPUT class="bforminput" type="checkbox" name="do_status_change" value="y"';
+        if ($do_status_change=='y') $html.=' CHECKED';
+        $html.='>'.lang('upon_anonymization_change_status_to').' '.$status_select.'</TD>
+                </TR>
+                <TR><TD align="center"><INPUT id="popupsubmit" class="button" type="submit" name="popupsubmit" value="'.lang('profile_anonymize').'"></TD></TR>
+                </TABLE></center>
+                ';
+        $bulkactions['bulk_anonymization']=array('display_text'=>$display_text,'html'=>$html);
+    }
     return $bulkactions;
 }
 
