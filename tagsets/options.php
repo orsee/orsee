@@ -260,7 +260,7 @@ function options__ordered_lists_get_current($poss_cols,$saved_cols,$extra_fields
         foreach ($extra_fields as $extra_field=>$display_name) {
             if ($extra_field=='sortby_radio') {
                 if ($arr['sortable']) {
-                    $arr['cols'].='<TD><INPUT type="radio" name="sortby" value="'.$k.'"';
+                    $arr['cols'].='<TD align="center"><INPUT type="radio" name="sortby" value="'.$k.'"';
                     if (isset($arr['item_details']['default_sortby']) && $arr['item_details']['default_sortby']) {
                         $arr['cols'].=' CHECKED';
                     }
@@ -269,7 +269,25 @@ function options__ordered_lists_get_current($poss_cols,$saved_cols,$extra_fields
                     $arr['cols'].='<TD></TD>';
                 }
             } elseif ($extra_field=='field_value') {
+                if (!isset($arr['item_details'])) {
+                    $arr['item_details']=array();
+                }
+                if (!isset($arr['item_details']['field_value'])) {
+                    $arr['item_details']['field_value']='';
+                }
                 $arr['cols'].='<TD><INPUT type="text" size="30" maxlength="255" name="field_values['.$k.']" value="'.$arr['item_details']['field_value'].'"></TD>';
+            } elseif ($extra_field=='hide_for_admin_types') {
+                if (!(isset($arr['disallow_hide']) && $arr['disallow_hide'])) {
+                    if (!isset($arr['item_details'])) {
+                        $arr['item_details']=array();
+                    }
+                    if (!isset($arr['item_details']['hide_admin_types'])) {
+                        $arr['item_details']['hide_admin_types']='';
+                    }
+                    $arr['cols'].='<TD><INPUT type="text" size="30" maxlength="255" name="hide_admin_types['.$k.']" value="'.$arr['item_details']['hide_admin_types'].'"></TD>';
+                } else {
+                    $arr['cols'].='<TD></TD>';
+                }
             }
         }
         $listrows[$k]=$arr;

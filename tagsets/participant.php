@@ -1293,49 +1293,49 @@ function participant__get_possible_participant_columns($listtype) {
 
     $cols=array();
     if ($listtype=='result_table_search_active' || $listtype=='result_table_search_all') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
     } elseif ($listtype=='result_table_assign') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='result_table_search_duplicates') {
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
     } elseif ($listtype=='result_table_search_unconfirmed') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
         $cols['email_unconfirmed']=array('display_text'=>lang('email_with_confirmation_email'),'on_list'=>true,'allow_remove'=>false,'sortable'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
     } elseif ($listtype=='experiment_assigned_list') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['invited']=array('display_text'=>lang('invited'),'on_list'=>true,'allow_remove'=>false);
         $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='session_participants_list') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
-        $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
+        $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['session_id']=array('display_text'=>lang('session'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'session_id');
         $cols['payment_budget']=array('display_text'=>lang('payment_budget'),'display_table_head'=>lang('payment_budget_abbr'),'on_list'=>true,'allow_remove'=>false);
         $cols['payment_type']=array('display_text'=>lang('payment_type'),'display_table_head'=>lang('payment_type_abbr'),'on_list'=>true,'allow_remove'=>false);
         $cols['payment_amount']=array('display_text'=>lang('payment_amount'),'display_table_head'=>lang('payment_amount_abbr'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'payment_amt');
-        $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'on_list'=>true,'allow_remove'=>false);
+        $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'on_list'=>true,'allow_remove'=>false,'disallow_hide'=>true);
         $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='session_participants_list_pdf') {
-        $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
+        $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        $cols['session_id']=array('display_text'=>lang('session'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'session_id');
+        $cols['session_id']=array('display_text'=>lang('session'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'session_id','disallow_hide'=>true);
         $cols['payment_amount']=array('display_text'=>lang('payment_amount'),'display_table_head'=>lang('payment_amount_abbr'),'sort_order'=>'payment_amt');
-        $cols['pstatus_id']=array('display_text'=>lang('participation_status'));
+        $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'disallow_hide'=>true);
     } elseif ($listtype=='email_participant_guesses_list') {
         $cols['email']=array('display_text'=>lang('email'),'on_list'=>true,'allow_remove'=>false,'sortable'=>true);
         $cols['pform_fields']='';
@@ -1485,13 +1485,23 @@ function participant__get_result_table_headcells_pdf($columns) {
 }
 
 function participant__get_result_table_row($columns,$p) {
-    global $settings, $color;
+    global $settings, $color, $expadmindata;
     global $thislist_sessions, $thislist_avail_payment_budgets, $thislist_avail_payment_types;
 
     $pform_columns=participant__load_all_pform_fields();
 
     $out='';
     foreach ($columns as $k=>$arr) {
+        $hide_for_admin_types=array();
+        if(isset($arr['item_details']['hide_admin_types'])) {
+            $hide_for_admin_types=explode(",",$arr['item_details']['hide_admin_types']);
+        }
+        if (in_array($expadmindata['admin_type'],$hide_for_admin_types)) {
+            $out.='<td class="small">'.lang('hidden_data_symbol').'</td>';
+        } else {
+        // THE SWITCH CLAUSE BELOW NEEDS TO BE INDENTED. I WILL DO THIS LATER, 
+        // SINCE IT COMPLETELY SCREWS UP THE GIT DIFF AND MAKES IT LOOK AS IF 
+        // THERE WERE MANY CHANGES TO IT - AND THERE ARE NOT
         switch($k) {
             case 'email_unconfirmed':
                 $message="";
@@ -1646,19 +1656,31 @@ function participant__get_result_table_row($columns,$p) {
                     $out.='</td>';
                 }
         }
+        // END SWITCH
+        }
     }
     return $out;
 }
 
 
 function participant__get_result_table_row_pdf($columns,$p) {
-    global $settings, $color;
+    global $settings, $color, $expadmindata;
     global $thislist_sessions;
 
     $pform_columns=participant__load_all_pform_fields();
 
     $row=array();
     foreach ($columns as $k=>$arr) {
+        $hide_for_admin_types=array();
+        if(isset($arr['item_details']['hide_admin_types'])) {
+            $hide_for_admin_types=explode(",",$arr['item_details']['hide_admin_types']);
+        }
+        if (in_array($expadmindata['admin_type'],$hide_for_admin_types)) {
+            $row[]=lang('hidden_data_symbol');
+        } else {
+        // THE SWITCH CLAUSE BELOW NEEDS TO BE INDENTED. I WILL DO THIS LATER, 
+        // SINCE IT COMPLETELY SCREWS UP THE GIT DIFF AND MAKES IT LOOK AS IF 
+        // THERE WERE MANY CHANGES TO IT - AND THERE ARE NOT
         switch($k) {
             case 'number_noshowup':
                 $row[]=$p['number_noshowup'].'/'.$p['number_reg'];
@@ -1731,6 +1753,8 @@ function participant__get_result_table_row_pdf($columns,$p) {
                     if (isset($p[$k])) $row[]=$p[$k];
                     else $row[]='???';
                 }
+        }
+        // END SWITCH
         }
     }
     foreach ($row as $k=>$v) $row[$k]=str_replace("&nbsp;"," ",$v);

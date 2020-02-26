@@ -23,17 +23,17 @@ if ($proceed) {
         $header=lang('columns_in_search_results_table_for_active_participants');
         $cols=participant__get_possible_participant_columns($list);
         $allow_check='pform_results_lists_edit';
-        $list_add_options=array('sortby_radio'=>lang('sort_table_by'));
+        $list_add_options=array('hide_for_admin_types'=>lang('hide_column_for_admin_types'),'sortby_radio'=>lang('sort_table_by'));
     } elseif ($list=='result_table_search_all') {
         $header=lang('columns_in_search_results_table_for_all_participants');
         $cols=participant__get_possible_participant_columns($list);
         $allow_check='pform_results_lists_edit';
-        $list_add_options=array('sortby_radio'=>lang('sort_table_by'));
+        $list_add_options=array('hide_for_admin_types'=>lang('hide_column_for_admin_types'),'sortby_radio'=>lang('sort_table_by'));
     } elseif ($list=='result_table_assign') {
         $header=lang('columns_in_results_table_for_assign_query');
         $cols=participant__get_possible_participant_columns($list);
         $allow_check='pform_results_lists_edit';
-        $list_add_options=array('sortby_radio'=>lang('sort_table_by'));
+        $list_add_options=array('hide_for_admin_types'=>lang('hide_column_for_admin_types'),'sortby_radio'=>lang('sort_table_by'));
     } elseif ($list=='result_table_search_duplicates') {
         $header=lang('columns_in_search_results_table_for_profile_duplicates');
         $cols=participant__get_possible_participant_columns($list);
@@ -43,22 +43,22 @@ if ($proceed) {
         $header=lang('columns_in_search_results_table_for_unconfirmed_profiles');
         $cols=participant__get_possible_participant_columns($list);
         $allow_check='pform_results_lists_edit';
-        $list_add_options=array();
+        $list_add_options=array('hide_for_admin_types'=>lang('hide_column_for_admin_types'));
     } elseif ($list=='experiment_assigned_list') {
         $header=lang('columns_in_list_of_assigned_participants');
         $cols=participant__get_possible_participant_columns($list);
         $allow_check='pform_results_lists_edit';
-        $list_add_options=array('sortby_radio'=>lang('sort_table_by'));
+        $list_add_options=array('hide_for_admin_types'=>lang('hide_column_for_admin_types'),'sortby_radio'=>lang('sort_table_by'));
     } elseif ($list=='session_participants_list') {
         $header=lang('columns_in_session_participants_list');
         $cols=participant__get_possible_participant_columns($list);
         $allow_check='pform_results_lists_edit';
-        $list_add_options=array('sortby_radio'=>lang('sort_table_by'));
+        $list_add_options=array('hide_for_admin_types'=>lang('hide_column_for_admin_types'),'sortby_radio'=>lang('sort_table_by'));
     } elseif ($list=='session_participants_list_pdf') {
         $header=lang('columns_in_pdf_session_participants_list');
         $cols=participant__get_possible_participant_columns($list);
         $allow_check='pform_results_lists_edit';
-        $list_add_options=array('sortby_radio'=>lang('sort_table_by'));
+        $list_add_options=array('hide_for_admin_types'=>lang('hide_column_for_admin_types'),'sortby_radio'=>lang('sort_table_by'));
     } elseif ($list=='email_participant_guesses_list') {
         $header=lang('email_module_participant_guesses_list');
         $cols=participant__get_possible_participant_columns($list);
@@ -90,6 +90,22 @@ if ($proceed) {
                     $details[$field]['field_value']=$field_value;
                 }
             }
+            if (isset($_REQUEST['hide_admin_types']) && $_REQUEST['hide_admin_types'] && is_array($_REQUEST['hide_admin_types'])) {
+                $admin_types=admin__load_admin_types();
+                foreach ($_REQUEST['hide_admin_types'] as $field=>$field_value) {
+                    $type_array=explode(",",$field_value); 
+                    $ftype_array=array();
+                    foreach ($type_array as $k=>$v) {
+                        $v=trim($v);
+                        if (isset($admin_types[$v])) {
+                            $ftype_array[]=$v;
+                        }
+                    }
+                    sort($ftype_array);
+                    $field_value=implode(",",$ftype_array);
+                    $details[$field]['hide_admin_types']=$field_value;
+                }
+            }
             $done=options__save_item_order($list,$_REQUEST['item_order'],$details);
             message(lang('changes_saved'));
             redirect('admin/options_ordered_lists.php?list='.urlencode($list));
@@ -112,10 +128,21 @@ if ($proceed) {
 
     if (isset($list_add_options) && is_array($list_add_options) && count($list_add_options)>0)  {
         $listrows=options__ordered_lists_get_current($cols,$rows,$list_add_options);
-        $headers='<TD></TD><TD align="center">'.str_replace(" ","<BR>",lang('sort_table_by')).'</TD>';
         $headers='<TD></TD>';
         foreach ($list_add_options as $name=>$display_name) {
-            $headers.='<TD align="center">'.$display_name.'</TD>';
+            if ($name=='hide_for_admin_types') {
+                $admin_types=admin__load_admin_types();
+                $admin_types_arr=array();
+                foreach($admin_types as $k=>$line) {
+                    $admin_types_arr[]=$k;
+                }
+                $admin_types_list=implode(", ",$admin_types_arr);
+                $headers.='<TD align="center" width="30%">'.$display_name;
+                $headers.='<BR><FONT class="small">'.lang('enter_comma_separated_list_of_any_of').' '.$admin_types_list.'<FONT>';
+                $headers.='</TD>';
+            } else {
+                $headers.='<TD align="center">'.$display_name.'</TD>';
+            }
         }
     } else {
         $listrows=options__ordered_lists_get_current($cols,$rows);

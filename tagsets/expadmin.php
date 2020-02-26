@@ -212,6 +212,54 @@ function admin__select_admin_type($fieldname,$selected="",$return_var="type_name
     return $out;
 }
 
+function admin__load_admin_types() {
+    global $settings, $preloaded_admintypes;
+    if (!isset($preloaded_admintypes) || !is_array($preloaded_admintypes)) {
+        $preloaded_admintypes=array();
+        $query="SELECT * from ".table('admin_types')."
+                 ORDER by type_name";
+        $result=or_query($query);
+        while ($line=pdo_fetch_assoc($result)) {
+            $preloaded_admintypes[$line['type_name']]=$line;
+        }
+    }
+    return $preloaded_admintypes;
+}
+
+function admin__admin_type_select_field($postvarname,$selected,$multi=true,$mpoptions=array()) {
+    // $postvarname - name of form field
+    // selected - array of pre-selected class ids
+    global $lang;
+    $out="";
+    if (!is_array($mpoptions)) $mpoptions=array();
+    $default_options=array('cols'=>30,'picker_maxnumcols'=>3);
+    foreach ($default_options as $k=>$v) {
+        if (!isset($mpoptions[$k])) {
+            $mpoptions[$k]=$v;
+        }
+    }
+    $admin_types=admin__load_admin_types();
+    $mylist=array();
+    foreach ($admin_types as $k=>$line) {
+        $mylist[$k]=$k;
+    }
+    if ($multi) {
+        $out.= get_multi_picker($postvarname,$mylist,$selected,$mpoptions);
+    } else {
+        $out.= '<SELECT name="'.$postvarname.'">
+                <OPTION value=""'; if (!$selected) $out.= ' SELECTED'; $out.= '>-</OPTION>
+                ';
+        foreach ($mylist as $k=>$v) {
+            $out.= '<OPTION value="'.$k.'"';
+                if ($selected==$k) $out.= ' SELECTED'; $out.= '>'.$v.'</OPTION>
+                ';
+        }
+        $out.= '</SELECT>
+        ';
+    }
+    return $out;
+}
+
 function admin__update_admin_rights_if_not_exists($specs) {
     global $system__admin_rights;
     $done=false;
