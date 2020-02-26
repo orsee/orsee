@@ -31,6 +31,18 @@ function site__database_config() {
 
     $dsn='mysql:'.$host.$port.$charset.$dbname;
 
+    if (isset($site__database_use_ssl) && $site__database_use_ssl) {
+        if ($site__database_ssl_key) {
+            $construct_options[PDO::MYSQL_ATTR_SSL_KEY]=$site__database_ssl_key;
+        }
+        if ($site__database_ssl_cert) {
+            $construct_options[PDO::MYSQL_ATTR_SSL_CERT]=$site__database_ssl_cert;
+        }
+        if ($site__database_ssl_ca) {
+            $construct_options[PDO::MYSQL_ATTR_SSL_CA]=$site__database_ssl_ca;
+        }
+    }
+
     try {
         $db = new PDO($dsn, $site__database_admin_username, $site__database_admin_password,$construct_options);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

@@ -34,6 +34,18 @@ $site__database_admin_password="orsee_pw";
 $site__database_type="mysql";
 $site__database_table_prefix="or_";
 
+// SSL mysql connection. Works with PHP >=5.3.9.
+// Use only if your database is located on a different server 
+// and you want to connect via SSL encrypted connection to it
+$site__database_use_ssl=false;
+// path name of client private key file
+$site__database_ssl_key='/etc/mysql/ssl/client-key.pem'; 
+// path name of  client public key certificate file
+$site__database_ssl_cert='/etc/mysql/ssl/client-cert.pem';
+// path name of Certificate Authority (CA) certificate file. 
+// if used, must be the same on client and server
+$site__database_ssl_ca='/etc/mysql/ssl/ca-cert.pem';
+
 // TIMEZOME SETTING
 // PHP >= 5.1.0 requires the timezone to be explicitely set.
 // If you have not set it in php.ini, then set it here. (Otherwise, you can uncomment.)
