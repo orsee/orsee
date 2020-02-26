@@ -178,5 +178,33 @@ $system__database_upgrades[]=array(
     )
 );
 
+$system__database_upgrades[]=array(
+    'version'=>'2020022500',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'download_as', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'DOWNLOAD AS','de'=>'HERUNTERLADEN ALS')
+    )
+);
 
+$system__database_upgrades[]=array(
+    'version'=>'2020022500',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'pdf_file', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'PDF','de'=>'PDF')
+    )
+);
+
+$system__database_upgrades[]=array(
+    'version'=>'2020022500',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'csv_file', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'CSV','de'=>'CSV')
+    )
+);
 ?>
