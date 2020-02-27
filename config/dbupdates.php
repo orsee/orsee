@@ -178,5 +178,35 @@ $system__database_upgrades[]=array(
     )
 );
 
+$system__database_upgrades[]=array(
+    'version'=>'2020021300',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'hide_column_for_admin_types', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'Hide this column for admin types','de'=>'Diese Spalte verbergen für Admin-Typen')
+    )
+);
+
+$system__database_upgrades[]=array(
+    'version'=>'2020021300',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'enter_comma_separated_list_of_any_of', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'Enter comma seperated list of any of these types:','de'=>'Geben Sie eine komma-separierte Liste aus folgenden Typen ein:')
+    )
+);
+
+$system__database_upgrades[]=array(
+    'version'=>'2020021300',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'hidden_data_symbol', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'***','de'=>'***')
+    )
+);
+
 
 ?>
