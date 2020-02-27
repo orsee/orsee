@@ -208,5 +208,24 @@ $system__database_upgrades[]=array(
     )
 );
 
+ $system__database_upgrades[]=array(
+    'version'=>'2020022400',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'bulk_updated_session_statuses', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'Bulk-updated status of selected sessions.','de'=>'Session-Status der gewählten Sessions geändert.')
+    )
+);
+
+$system__database_upgrades[]=array(
+    'version'=>'2020022400',
+    'type'=>'new_lang_item', 
+    'specs'=> array(
+        'content_name'=>'set_session_status_for_selected_sessions_to', 
+        'content_type'=>'lang',
+        'content'=>array('en'=>'Set session status of selected sessions to:','de'=>'Setze Session-Status der selektierten Session auf:'),
+    )
+);
 
 ?>
