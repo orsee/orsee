@@ -260,6 +260,7 @@ function cron__participants_update_history_participant($part,$what) {
 }
 
 function cron__update_participants_history() {
+    global $settings;
     $logm="";
 
     // initialize with zero
@@ -285,6 +286,12 @@ function cron__update_participants_history() {
     $logm.="updated participant's number_reg: ".$n."\n";
 
     $noshow_clause=expregister__get_pstatus_query_snippet("noshow");
+    
+    $restrict_date_clause="";
+    if ($settings['restrict_noshow_warnings_to_date']=='y' && $settings['restrict_noshow_warnings_date']>0) {
+        $restrict_date_clause=" AND ".table('sessions').".session_start > ".$settings['restrict_noshow_warnings_date']." ";
+    } 
+    
     $query="SELECT ".table('participate_at').".participant_id,
             count(*) as number_noshowup
             FROM ".table('participate_at').", ".table('sessions').", ".table('experiments')."
@@ -292,6 +299,7 @@ function cron__update_participants_history() {
             AND ".table('participate_at').".experiment_id = ".table('experiments').".experiment_id
             AND hide_in_stats = 'n'
             AND (session_status='completed' OR session_status='balanced')
+            ".$restrict_date_clause." 
             AND ".table('participate_at').".session_id != 0
             AND ".$noshow_clause."
             GROUP BY participant_id";

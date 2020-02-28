@@ -11,6 +11,7 @@ function survey__render_field($field) {
         case 'select_numbers': $out=survey__render_select_numbers($field); break;
         case 'select_yesno': $out=survey__render_select_yesno($field); break;
         case 'select_yesno_switchy': $out=survey__render_select_yesno_switchy($field); break;
+        case 'date': $out=survey__render_date($field); break;
     }
     return $out;
 }
@@ -120,5 +121,15 @@ function survey__render_select_yesno_switchy($f) {
     return $out;
 }
 
+function survey__render_date($f,$formfieldvarname='') {
+    global $lang;
+    if (!$formfieldvarname) $formfieldvarname=$f['submitvarname'];
+    if (preg_match('/([^\[]+)\[([^\[\]]+)\]/', $formfieldvarname, $matches)) {
+        $formfieldvarname=$matches[1]."__".$matches[2];
+    }
+    $out='';
+    $out=formhelpers__pick_date($formfieldvarname,$f['value']);
+    return $out;
+}
 
 ?>

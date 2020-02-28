@@ -628,7 +628,19 @@ $system__options_general[]=array(
 'default_value'=>'n'
 );
 
+$system__options_general[]=array(
+'option_name'=>'restrict_noshow_warnings_to_date',
+'option_text'=>'Restrict calculation of no-shows to sessions after a certain date?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
 
+$system__options_general[]=array(
+'option_name'=>'restrict_noshow_warnings_date',
+'option_text'=>'If yes, use this date:',
+'type'=>'date',
+'default_value'=>'0'
+);
 
 $system__options_general[]=array('type'=>'line');
 
