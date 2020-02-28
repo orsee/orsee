@@ -31,6 +31,18 @@ function site__database_config() {
 
     $dsn='mysql:'.$host.$port.$charset.$dbname;
 
+    if (isset($site__database_use_ssl) && $site__database_use_ssl) {
+        if ($site__database_ssl_key) {
+            $construct_options[PDO::MYSQL_ATTR_SSL_KEY]=$site__database_ssl_key;
+        }
+        if ($site__database_ssl_cert) {
+            $construct_options[PDO::MYSQL_ATTR_SSL_CERT]=$site__database_ssl_cert;
+        }
+        if ($site__database_ssl_ca) {
+            $construct_options[PDO::MYSQL_ATTR_SSL_CA]=$site__database_ssl_ca;
+        }
+    }
+
     try {
         $db = new PDO($dsn, $site__database_admin_username, $site__database_admin_password,$construct_options);
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -245,6 +257,122 @@ function dump_array($array,$title="",$dolang=true) {
         echo "</TD></TR>\n";
         }
     echo '</TABLE>';
+}
+
+function check_database_upgrade() {
+    global $settings, $system__database_version;
+
+    if (!isset($settings['database_version'])) {
+        $settings['database_version']=0;
+        $done=or_query("INSERT INTO ".table('options')." VALUES (1,'general',NULL,'database_version','".$settings['database_version']."')");
+    }
+    if ((int)$settings['database_version']<$system__database_version) {
+        $done=or_upgrade_database();
+        return $done;
+    } else {
+        return false;
+    }
+}
+
+function upgrade_database_version($new_version) {
+    global $settings;
+    $settings['database_version']=(int)$new_version;
+    $done=orsee_db_save_array(array('option_value'=>$new_version),'options',1,'option_id');
+    if(!$done) log__admin("Database upgrade error. Could not set database version to new version number ".$new_version."!");
+    return $done;
+}
+
+
+function or_upgrade_database() {
+    global $settings, $system__database_version, $system__database_upgrades;
+    
+    if (!isset($system__database_upgrades)) {
+        $system__database_upgrades=array();
+    }
+
+    // check $system__database_upgrades for syntax errors, resort database upgrades by version number
+    $database_upgrades=array(); $i=0; $continue=true;
+    foreach ($system__database_upgrades as $upgr) {
+        $i++;
+        if ($continue) {
+            $error=or_upgrade_check_syntax($upgr);
+            if ($error) {
+                $continue=false;
+                log__admin("Error in upgrade syntax for $system__database_upgrades item nb ".$i.": ".$error." Upgrade aborted.");
+            } else {
+                $upgr['item_nb']=$i;
+                $database_upgrades[$upgr['version']][]=$upgr;
+            }
+        }
+    }
+    if ($continue) {
+        $done=ksort($database_upgrades,SORT_NUMERIC);
+    }
+    
+    // run the updates, stop if there is an error
+    $continue=true;
+    foreach ($database_upgrades as $this_version=>$vupgrades) {
+        if ((int)$this_version>(int)$settings['database_version']) {
+            foreach ($vupgrades as $upgr) {
+                if ($continue) {
+                   if ($upgr['type']=='new_lang_item') {
+                        $done=lang__upgrade_symbol_if_not_exists($upgr['specs']);
+                    } elseif ($upgr['type']=='new_admin_right') {
+                        $done=admin__update_admin_rights_if_not_exists($upgr['specs']);
+                    } elseif ($upgr['type']=='query') {
+                        $query=preg_replace('/TABLE\(([^)]+)\)/',table("$1"),$upgr['specs']['query_code']);
+                        $done=or_query($query);
+                        if ($done) {
+                            log__admin("Automatic database upgrade: executed query for \$system__database_upgrades item nb ".$i.".");
+                        } else {
+                            $continue=false;
+                            log__admin("Error in upgrade: Query for \$system__database_upgrades item nb ".$i." could not be executed. Upgrade aborted.");
+                        }
+                    }
+                }
+            }
+            if ($continue) {
+                $done=upgrade_database_version((int)$this_version);
+                log__admin('Automatic database upgrade: Database upgraded to version '.$this_version.'.');
+            }
+        }
+    }
+    message("Ran automatic database upgrades. See Statistics/Logs/Experimenter actions for report.");
+    return $continue;
+}
+
+
+function or_upgrade_check_syntax($upgr) {
+    $continue=true; $error="";
+    
+    if ($continue && !isset($upgr['version'])) {
+        $continue=false;
+        $error="No upgrade version number given.";
+    }
+    if ($continue && !isset($upgr['type'])) {
+        $continue=false;
+        $error="No upgrade type given.";
+    }
+    if ($continue && !in_array($upgr['type'],array('new_lang_item','new_admin_right','query'))) {
+        $continue=false;
+        $error="Given upgrade type not valid.";
+    }
+    if ($continue && $upgr['type']=='new_lang_item' && (!isset($upgr['specs']['content_name']) || !isset($upgr['specs']['content']) || !is_array($upgr['specs']['content']))) {
+        $continue=false;
+        $error="Upgrade syntax not correct for upgrade type 'new_lang_item'.";
+    }
+    if ($continue && $upgr['type']=='new_admin_right' && (!isset($upgr['specs']['right_name']) || !isset($upgr['specs']['admin_types']) || !is_array($upgr['specs']['admin_types']))) {
+        $continue=false;
+        $error="Upgrade syntax not correct for upgrade type 'new_admin_right'.";
+    }
+    if ($continue && $upgr['type']=='query' && (!isset($upgr['specs']['query_code']) || !$upgr['specs']['query_code'])) {
+        $continue=false;
+        $error="Upgrade syntax not correct for upgrade type 'query'.";
+    }
+    if ($continue==false && !$error) {
+        $error="Unknown error.";
+    }
+    return $error;
 }
 
 

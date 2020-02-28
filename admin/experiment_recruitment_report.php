@@ -234,7 +234,6 @@ if ($proceed) {
     echo '<table class="or_orr_section_content">';
 
     $queries=query__load_saved_queries('assign,deassign',-1,$experiment_id,true,"query_time ASC");
-    $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
 
     $shade=false;
     foreach ($queries as $q) {
@@ -273,7 +272,7 @@ if ($proceed) {
         }
         echo '</TD>';
         echo '<TD>';
-        $posted_query=$json->decode($q['json_query']);
+        $posted_query=json_decode($q['json_query'],true);
         $pseudo_query_array=query__get_pseudo_query_array($posted_query['query']);
         $pseudo_query_display=query__display_pseudo_query($pseudo_query_array,true);
         echo $pseudo_query_display;

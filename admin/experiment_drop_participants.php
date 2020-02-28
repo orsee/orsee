@@ -67,17 +67,16 @@ if ($proceed) {
         redirect ('admin/'.thisdoc().'?experiment_id='.$experiment_id);
 
     } elseif(isset($_REQUEST['search_submit']) || isset($_REQUEST['search_sort'])) {
-        $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         if(isset($_REQUEST['search_sort'])){
             $posted_query_json=$_SESSION['lastquery_deassign_'.$experiment_id];
             $query_id=$_SESSION['lastqueryid_deassign_'.$experiment_id];
-            $posted_query=$json->decode($posted_query_json);
+            $posted_query=json_decode($posted_query_json,true);
             $sort=query__get_sort('assign',$_REQUEST['search_sort']);  // sanitize sort
         } else {
             // store new query in session
             $query_id=time();
             if(isset($_REQUEST['form'])) $posted_query=$_REQUEST['form']; else $posted_query=array('query'=>array());
-            $posted_query_json=$json->encodeUnsafe($posted_query);
+            $posted_query_json=json_encode($posted_query);
             $_SESSION['lastquery_deassign_'.$experiment_id] =  $posted_query_json;
             $_SESSION['lastqueryid_deassign_'.$experiment_id] =  $query_id;
             $sort=query__load_default_sort('assign',$experiment_id);

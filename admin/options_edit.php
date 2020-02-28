@@ -7,7 +7,7 @@ if (isset($_REQUEST['otype']) && $_REQUEST['otype']) {
     elseif ($_REQUEST['otype']=="default") $title='edit_default_values';
 }
 
-$jquery=array('switchy');
+$jquery=array('switchy','datepicker');
 $menu__area="options_main";
 include ("header.php");
 if ($proceed) {
@@ -21,6 +21,9 @@ if ($proceed) {
         $otype="";
         redirect ("admin/options_main.php");
     }
+
+    if ($otype=='general') $opts=$system__options_general;
+    else $opts=$system__options_defaults;
 
     echo '<center>';
 
@@ -36,6 +39,14 @@ if ($proceed) {
 
     if (check_allow('settings_edit') && isset($_REQUEST['change']) && $_REQUEST['change']) {
         $newoptions=$_REQUEST['options']; $now=time();
+        
+        // add and process option values which may be differently submitted
+        foreach ($opts as $o) {
+            if($o['type']=='date') {
+                $newoptions[$o['option_name']]=ortime__array_to_sesstime($_REQUEST,'options__'.$o['option_name'].'_');
+            }
+        }
+        
         $pars_new=array(); $pars_update=array();
         foreach ($newoptions as $oname => $ovalue) {
             if (isset($options[$oname])) {
@@ -84,9 +95,6 @@ if ($proceed) {
                 </TD>
             </TR>
             <TR><TD colspan=2><hr></TD></TR>';
-
-    if ($otype=='general') $opts=$system__options_general;
-    else $opts=$system__options_defaults;
 
     foreach ($opts as $o) {
         $done=options__show_option($o);

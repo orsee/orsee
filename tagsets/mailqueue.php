@@ -154,6 +154,11 @@ if ($proceed) {
     if ($num_rows >= $limit) echo '['.log__link('os='.($offset+$limit)).lang('next').'</A>]';
     else echo '['.lang('next').']';
 
+
+    if (check_allow('participants_edit')) {
+        echo javascript__edit_popup();
+    }
+
     echo '<TABLE class="or_listtable" style="width: 90%;"><thead>';
     // header
     echo '
@@ -207,7 +212,9 @@ if ($proceed) {
             <TD>'.$line['mail_id'].'</TD>
             <TD>'.ortime__format($line['timestamp'],'hide_second:false',lang('lang')).'</TD>
             <TD>'.$line['mail_type'].'</TD>
-            <TD>'.$line['mail_recipient'].'</TD>
+            <TD>'.$line['mail_recipient'];
+        if (check_allow('participants_edit')) echo ' <FONT class="small">'.javascript__edit_popup_link($line['mail_recipient']).'</FONT>';
+        echo '</TD>
             <TD>';
         $reference=array();
         if ($line['experiment_id']) $reference[]='Experiment: <A HREF="experiment_show.php?experiment_id='.$line['experiment_id'].'">'.$experiments[$line['experiment_id']]['experiment_name'].'</A>';

@@ -1,7 +1,8 @@
 <?php
 // part of orsee. see orsee.org
 // THIS FILE WILL CHANGE FROM VERSION TO VERSION. BETTER NOT EDIT.
-$system__version="3.0.5";
+$system__version="3.1.0";
+$system__database_version=2020022800;
 
 // implemented experiment types
 $system__experiment_types=array('laboratory','online-survey','internet');
@@ -133,6 +134,7 @@ $system__admin_rights=array(
 "participants_duplicates:search for duplicates and specify primary accounts",
 "participants_edit:create participant/change participant profile:participants_show",
 "participants_change_status:change the status of a participant from active to deleted/excluded:participants_edit",
+"participants_bulk_anonymization:anonymize participant profiles:participants_edit",
 "participants_show:search participants, view search results",
 "participants_unconfirmed_edit:view and delete unconfirmed participant entries",
 "participationstatus_add:add new experiment/session participation status:participationstatus_edit",
@@ -156,6 +158,7 @@ $system__admin_rights=array(
 "pform_lang_field_delete:delete item of a select_lang/radioline_lang field in participant profile:pform_lang_field_edit",
 "pform_lang_field_edit:edit item of a select_lang/radioline_lang field in participant profile",
 "pform_results_lists_edit: edit the columns that appear in results tables after queries",
+"pform_anonymization_fields_edit: edit the fields to anonymize upon participant profile bulk anonymization",
 "pform_saved_queries_delete:delete saved queries for searches into all or active participants:pform_saved_queries_view",
 "pform_saved_queries_view:view saved queries for searches into all or active participants",
 "pform_templates_edit: edit the templates for the participant profile form",
@@ -625,7 +628,19 @@ $system__options_general[]=array(
 'default_value'=>'n'
 );
 
+$system__options_general[]=array(
+'option_name'=>'restrict_noshow_warnings_to_date',
+'option_text'=>'Restrict calculation of no-shows to sessions after a certain date?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
 
+$system__options_general[]=array(
+'option_name'=>'restrict_noshow_warnings_date',
+'option_text'=>'If yes, use this date:',
+'type'=>'date',
+'default_value'=>'0'
+);
 
 $system__options_general[]=array('type'=>'line');
 
@@ -635,6 +650,13 @@ $system__options_general[]=array('type'=>'comment',
 $system__options_general[]=array(
 'option_name'=>'allow_experiment_restriction',
 'option_text'=>'Allow restriction of experiment page access to experimenters?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
+
+$system__options_general[]=array(
+'option_name'=>'default_experiment_restriction',
+'option_text'=>'If restriction enabled: Should a new experiment be restricted by default?',
 'type'=>'select_yesno_switchy',
 'default_value'=>'n'
 );
@@ -1671,5 +1693,9 @@ $system__colors[]=array(
 
 */
 
+
+// DATABASE UPGRADE DEFINITIONS //
+$system__database_upgrades=array();
+include ("../config/dbupdates.php");
 
 ?>

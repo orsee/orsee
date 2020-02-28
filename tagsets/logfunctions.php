@@ -160,7 +160,7 @@ function log__show_log($log) {
     $query="SELECT * FROM ".$logtable.$secondtable."
         WHERE id IS NOT NULL ".
         $aquery.$idquery.$tquery.
-        " ORDER BY timestamp DESC
+        " ORDER BY timestamp DESC, log_id DESC 
         LIMIT :offset , :limit ";
     $result=or_query($query,$pars);
     $num_rows=pdo_num_rows($result);

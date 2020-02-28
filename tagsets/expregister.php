@@ -389,7 +389,7 @@ function expregister__get_pstatus_query_snippet($what="participated",$reverse=fa
     $psarr=expregister__get_specific_pstatuses($what,$reverse);
     if (count($psarr)==1) return " pstatus_id='".$psarr[0]."' ";
     else {
-        return " pstatus_id= ANY (".implode(", ",$psarr).") ";
+        return " pstatus_id IN (".implode(", ",$psarr).") ";
         //$check_statuses_query=array();
         //foreach ($psarr as $cs) $check_statuses_query[]=" pstatus_id='".$cs."' ";
         //$snippet=" (".implode(" OR ",$check_statuses_query).") ";

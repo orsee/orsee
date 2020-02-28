@@ -1,4 +1,4 @@
-These are short installation notes for ORSEE 3.0.x
+These are short installation notes for ORSEE 3.1.x
 
 The ORSEE Wiki contains more details on ORSEE installation.
 
@@ -17,7 +17,7 @@ BASIC INSTALLATION
 1. Unpack ORSEE's tgz file in your webservers path. (Oh, you already did?)
 
 2. Rename the directory if needed
-   % mv orsee-3.0.x yourdirname
+   % mv orsee-3.1.x yourdirname
 
 3. Cd to the 'install' directory.
    % cd yourdirname/install

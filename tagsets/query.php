@@ -11,10 +11,9 @@ function query__show_form($hide_modules,$experiment=array(),$load_query="",$butt
     $done=query__echo_form_javascript($prototypes,$load_query);
     $pastitems = "";
     $pastitemsdata = "";
-    $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
     if (is_array($saved_queries) && count($saved_queries)>0) {
         foreach($saved_queries as $id => $query){
-            $decoded = $json->decode($query);
+            $decoded = json_decode($query,true);
             $pastitems = $pastitems . '<a style="text-align: left;" onclick="javascript:loadFromObj(pastQueries[' . $id . ']); return false;">' . query__display_pseudo_query(query__get_pseudo_query_array($decoded['query'])) . '</a>';
             $pastitemsdata = $pastitemsdata . $query;
             if((count($saved_queries)-1) != $id){
@@ -148,8 +147,7 @@ function query__echo_form_javascript($prototypes,$load_query="") {
             );
         }
         echo "<script type='text/javascript'>var Ptypes = ";
-        $json = new Services_JSON();
-        echo $json->encodeUnsafe($tmp);
+        echo json_encode($tmp);
         echo ";
             buildDropdown();
             ";
@@ -213,7 +211,7 @@ function query__get_query($query_array,$query_id,$additional_clauses,$sort,$reso
         $add_queries=array();
         foreach ($additional_clauses as $add_clause) {
             foreach ($add_clause['pars'] as $p=>$v) {
-                $add_clause['query']=preg_replace('/'.$p.'([^0-9])/',$p.'_'.$i.'\\1',$add_clause['query']);
+                $add_clause['query']=preg_replace('/'.$p.'([^0-9])/',$p.'_'.$i.'\\1',$add_clause['query'].' ');
                 $pars[$p.'_'.$i]=$v;
             }
             $i++;
@@ -232,7 +230,7 @@ function query__get_query($query_array,$query_id,$additional_clauses,$sort,$reso
         } else {
             if (isset($q['subqueries'])) $q['clause']=query__get_subqueries($q['clause'],$q['subqueries'],$resolve_subqueries);
             foreach ($q['clause']['pars'] as $p=>$v) {
-                $q['clause']['query']=preg_replace('/'.$p.'([^0-9])/',$p.'_'.$i.'\\1',$q['clause']['query']);
+                $q['clause']['query']=preg_replace('/'.$p.'([^0-9])/',$p.'_'.$i.'\\1',$q['clause']['query'].' ');
                 $pars[$p.'_'.$i]=$v;
             }
             $i++;
@@ -609,6 +607,42 @@ function query__get_bulkactions() {
                 ';
         $bulkactions['profile_update']=array('display_text'=>$display_text,'html'=>$html);
     }
+    
+    if (check_allow('participants_bulk_anonymization')) {
+        // BULK ANONYMIZATION
+        $display_text=lang('anonymize_profiles');
+        if (isset($_REQUEST['new_status'])) {
+            $new_status=$_REQUEST['new_status'];
+        } else $new_status='';
+        if (isset($_REQUEST['do_status_change'])) {
+            $do_status_change=$_REQUEST['do_status_change'];
+        } else $do_status_change='';
+        $anon_fields=participant__get_result_table_columns('anonymize_profile_list');
+        $status_select=participant_status__select_field('new_status',$new_status,array(),'bforminput');
+        $html=' <center>
+                <TABLE class="or_page_subtitle" style="background: '.$color['page_subtitle_background'].'; color: '.$color['page_subtitle_textcolor'].'; width: 90%;">
+                    <TR><TD align="center">
+                        '.lang('anonymize_profiles_for').' #xyz_participants#
+                </TD></TR></TABLE>
+                <input class="bforminput" type="hidden" name="action" value="bulk_anonymization">
+                <TABLE class="or_formtable" style="width: 90%;">
+                <TR>
+                    <TD>'.lang('fields_will_be_anonymized_as_follows').':<br>';
+        foreach ($anon_fields as $field_name=>$anon_field) {
+            $html.=$anon_field['display_text'].'=&gt;'.$anon_field['item_details']['field_value'].'<br>';
+        } 
+        $html.='<br>'.lang('disclaimer_anonymize_profiles').'</TD>
+                </TR>
+                <TR>
+                    <TD><INPUT class="bforminput" type="checkbox" name="do_status_change" value="y"';
+        if ($do_status_change=='y') $html.=' CHECKED';
+        $html.='>'.lang('upon_anonymization_change_status_to').' '.$status_select.'</TD>
+                </TR>
+                <TR><TD align="center"><INPUT id="popupsubmit" class="button" type="submit" name="popupsubmit" value="'.lang('profile_anonymize').'"></TD></TR>
+                </TABLE></center>
+                ';
+        $bulkactions['bulk_anonymization']=array('display_text'=>$display_text,'html'=>$html);
+    }
     return $bulkactions;
 }
 
@@ -620,14 +654,13 @@ function query__resulthead_participantsearch() {
 
     $bulkactions=query__get_bulkactions();
     if (count($bulkactions)>0) {
-        $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         echo '<div id="bulkPopupDiv" class="bulkpopupDiv" style=" background: '.$color['popup_bgcolor'].'; color: '.$color['popup_text'].';">
                 <div align="right"><button class="b-close button fa-backward popupBack">'.lang('back_to_results').'</button></div>
                 <div id="bulkPopupContent" style="margin-left: 20px; margin-top: 0px;"></div>
             </div>
             <script type="text/javascript">
                 var bulkactions = ';
-        echo $json->encodeUnsafe($bulkactions);
+        echo json_encode($bulkactions);
         echo ';
                 $(document).ready(function(){
                     $.each(bulkactions, function(actionName, action){
@@ -820,7 +853,6 @@ function query__apply_permanent_queries() {
     }
 
     if ($continue) {
-        $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         $query_assigned=array();
         foreach ($ppart as $p) {
             $num_p++;
@@ -828,7 +860,7 @@ function query__apply_permanent_queries() {
                 $experiment=orsee_db_load_array("experiments",$q['experiment_id'],"experiment_id");
                 if (!isset($experiment['experiment_id'])) $continue=false;
                 if ($continue) {
-                    $posted_query=$json->decode($q['json_query']);
+                    $posted_query=json_decode($q['json_query'],true);
                     $query_array=query__get_query_array($posted_query['query']);
                     $active_clause=array('query'=>participant_status__get_pquery_snippet("eligible_for_experiments"),'pars'=>array());
                     $exptype_clause=array('query'=>"subscriptions LIKE (:experiment_ext_type)",

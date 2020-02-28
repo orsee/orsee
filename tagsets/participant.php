@@ -1234,33 +1234,33 @@ function participant__get_participant_status($participant_id) {
 
 function participant__nonuserdefined_columns() {
     $columns=array();
-    $columns['participant_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_id');
-    $columns['number_noshowup']=array('use_in_tables'=>1,'lang_symbol'=>'noshowup');
-    $columns['rules_signed']=array('use_in_tables'=>1,'lang_symbol'=>'rules_signed');
-    $columns['creation_time']=array('use_in_tables'=>1,'lang_symbol'=>'creation_time');
-    $columns['deletion_time']=array('use_in_tables'=>1,'lang_symbol'=>'deletion_time');
-    $columns['last_enrolment']=array('use_in_tables'=>1,'lang_symbol'=>'last_enrolment');
-    $columns['last_profile_update']=array('use_in_tables'=>1,'lang_symbol'=>'last_profile_update');
-    $columns['last_activity']=array('use_in_tables'=>1,'lang_symbol'=>'last_activity');
-    $columns['last_login_attempt']=array('use_in_tables'=>1,'lang_symbol'=>'last_login_attempt');
-    $columns['failed_login_attempts']=array('use_in_tables'=>1,'lang_symbol'=>'failed_login_attempts');
-    $columns['locked']=array('use_in_tables'=>1,'lang_symbol'=>'locked');
-    $columns['subpool_id']=array('use_in_tables'=>1,'lang_symbol'=>'subpool');
-    $columns['subscriptions']=array('use_in_tables'=>1,'lang_symbol'=>'subscriptions');
-    $columns['status_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_status');
-    $columns['pending_profile_update_request']=array('use_in_tables'=>1,'lang_symbol'=>'pending_profile_update_request');
-    $columns['language']=array('use_in_tables'=>1,'lang_symbol'=>'language');
-    $columns['remarks']=array('use_in_tables'=>1,'lang_symbol'=>'remarks');
+    $columns['participant_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_id','include_in_freetext_search'=>1);
+    $columns['number_noshowup']=array('use_in_tables'=>1,'lang_symbol'=>'noshowup','include_in_freetext_search'=>0);
+    $columns['rules_signed']=array('use_in_tables'=>1,'lang_symbol'=>'rules_signed','include_in_freetext_search'=>0);
+    $columns['creation_time']=array('use_in_tables'=>1,'lang_symbol'=>'creation_time','include_in_freetext_search'=>0);
+    $columns['deletion_time']=array('use_in_tables'=>1,'lang_symbol'=>'deletion_time','include_in_freetext_search'=>0);
+    $columns['last_enrolment']=array('use_in_tables'=>1,'lang_symbol'=>'last_enrolment','include_in_freetext_search'=>0);
+    $columns['last_profile_update']=array('use_in_tables'=>1,'lang_symbol'=>'last_profile_update','include_in_freetext_search'=>0);
+    $columns['last_activity']=array('use_in_tables'=>1,'lang_symbol'=>'last_activity','include_in_freetext_search'=>0);
+    $columns['last_login_attempt']=array('use_in_tables'=>1,'lang_symbol'=>'last_login_attempt','include_in_freetext_search'=>0);
+    $columns['failed_login_attempts']=array('use_in_tables'=>1,'lang_symbol'=>'failed_login_attempts','include_in_freetext_search'=>0);
+    $columns['locked']=array('use_in_tables'=>1,'lang_symbol'=>'locked','include_in_freetext_search'=>0);
+    $columns['subpool_id']=array('use_in_tables'=>1,'lang_symbol'=>'subpool','include_in_freetext_search'=>0);
+    $columns['subscriptions']=array('use_in_tables'=>1,'lang_symbol'=>'subscriptions','include_in_freetext_search'=>0);
+    $columns['status_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_status','include_in_freetext_search'=>0);
+    $columns['pending_profile_update_request']=array('use_in_tables'=>1,'lang_symbol'=>'pending_profile_update_request','include_in_freetext_search'=>0);
+    $columns['language']=array('use_in_tables'=>1,'lang_symbol'=>'language','include_in_freetext_search'=>0);
+    $columns['remarks']=array('use_in_tables'=>1,'lang_symbol'=>'remarks','include_in_freetext_search'=>1);
 
-    $columns['participant_id_crypt']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['password_crypted']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['confirmation_token']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['pwreset_token']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['pwreset_request_time']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['profile_update_request_new_pool']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['apply_permanent_queries']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    $columns['number_reg']=array('use_in_tables'=>0,'lang_symbol'=>'');
-    //$columns['']=array('use_in_tables'=>0,'lang_symbol'=>'');
+    $columns['participant_id_crypt']=array('use_in_tables'=>1,'lang_symbol'=>'participant_id_crypt','include_in_freetext_search'=>1);
+    $columns['password_crypted']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['confirmation_token']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['pwreset_token']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['pwreset_request_time']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['profile_update_request_new_pool']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['apply_permanent_queries']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    $columns['number_reg']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
+    //$columns['']=array('use_in_tables'=>0,'lang_symbol'=>'','include_in_freetext_search'=>0);
 
     return $columns;
 }
@@ -1293,50 +1293,53 @@ function participant__get_possible_participant_columns($listtype) {
 
     $cols=array();
     if ($listtype=='result_table_search_active' || $listtype=='result_table_search_all') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
     } elseif ($listtype=='result_table_assign') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='result_table_search_duplicates') {
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
     } elseif ($listtype=='result_table_search_unconfirmed') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
         $cols['email_unconfirmed']=array('display_text'=>lang('email_with_confirmation_email'),'on_list'=>true,'allow_remove'=>false,'sortable'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
     } elseif ($listtype=='experiment_assigned_list') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['invited']=array('display_text'=>lang('invited'),'on_list'=>true,'allow_remove'=>false);
         $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='session_participants_list') {
-        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false);
-        $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
+        $cols['checkbox']=array('display_text'=>lang('checkbox'),'on_list'=>true,'allow_remove'=>false,'sortable'=>false,'disallow_hide'=>true);
+        $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
         $cols['session_id']=array('display_text'=>lang('session'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'session_id');
         $cols['payment_budget']=array('display_text'=>lang('payment_budget'),'display_table_head'=>lang('payment_budget_abbr'),'on_list'=>true,'allow_remove'=>false);
         $cols['payment_type']=array('display_text'=>lang('payment_type'),'display_table_head'=>lang('payment_type_abbr'),'on_list'=>true,'allow_remove'=>false);
         $cols['payment_amount']=array('display_text'=>lang('payment_amount'),'display_table_head'=>lang('payment_amount_abbr'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'payment_amt');
-        $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'on_list'=>true,'allow_remove'=>false);
+        $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'on_list'=>true,'allow_remove'=>false,'disallow_hide'=>true);
         $cols['edit_link']=array('display_text'=>lang('edit_link'),'on_list'=>false,'allow_remove'=>true,'sortable'=>false);
     } elseif ($listtype=='session_participants_list_pdf') {
-        $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false);
+        $cols['order_number']=array('display_text'=>lang('order_number'),'display_table_head'=>'&nbsp;','sortable'=>false,'disallow_hide'=>true);
         $cols['pform_fields']='';
         $cols['other_pfields']='';
-        $cols['session_id']=array('display_text'=>lang('session'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'session_id');
+        $cols['session_id']=array('display_text'=>lang('session'),'on_list'=>true,'allow_remove'=>false,'sort_order'=>'session_id','disallow_hide'=>true);
         $cols['payment_amount']=array('display_text'=>lang('payment_amount'),'display_table_head'=>lang('payment_amount_abbr'),'sort_order'=>'payment_amt');
-        $cols['pstatus_id']=array('display_text'=>lang('participation_status'));
+        $cols['pstatus_id']=array('display_text'=>lang('participation_status'),'disallow_hide'=>true);
     } elseif ($listtype=='email_participant_guesses_list') {
+        $cols['email']=array('display_text'=>lang('email'),'on_list'=>true,'allow_remove'=>false,'sortable'=>true);
+        $cols['pform_fields']='';
+    } elseif ($listtype=='anonymize_profile_list') {
         $cols['email']=array('display_text'=>lang('email'),'on_list'=>true,'allow_remove'=>false,'sortable'=>true);
         $cols['pform_fields']='';
     }
@@ -1362,9 +1365,23 @@ function participant__get_possible_participant_columns($listtype) {
     return $poss_cols;
 }
 
+function participant__get_internal_freetext_search_fields() {
+    $columns=participant__nonuserdefined_columns();
+    $sfields=array();
+    foreach ($columns as $k=>$arr) {
+        if (isset($arr['include_in_freetext_search']) && $arr['include_in_freetext_search']) {
+            if (isset($arr['lang_symbol'])) $lang_symbol=$arr['lang_symbol'];
+            else $lang_symbol=$k;
+            $sfields[]=array('value'=>$k,'name'=>lang($lang_symbol));
+        }
+    }
+    return $sfields;
+}
+
 function participant__get_result_table_columns($list) {
 // $list can be: result_table_search_active, result_table_search_all,
 // result_table_assign, result_table_search_duplicates, session_list,session_list_pdf
+// anonymize_profile_list
     global $preloaded_result_table_columns;
     if (isset($preloaded_result_table_columns[$list]) && is_array($preloaded_result_table_columns[$list])) return $preloaded_result_table_columns[$list];
     else {
@@ -1468,166 +1485,174 @@ function participant__get_result_table_headcells_pdf($columns) {
 }
 
 function participant__get_result_table_row($columns,$p) {
-    global $settings, $color;
+    global $settings, $color, $expadmindata;
     global $thislist_sessions, $thislist_avail_payment_budgets, $thislist_avail_payment_types;
 
     $pform_columns=participant__load_all_pform_fields();
 
     $out='';
     foreach ($columns as $k=>$arr) {
-        switch($k) {
-            case 'email_unconfirmed':
-                $message="";
-                $message=experimentmail__get_confirmation_mail_text($p);
-                $message=str_replace(" ","%20",$message);
-                $message=str_replace("\n\m","\n",$message);
-                $message=str_replace("\m\n","\n",$message);
-                $message=str_replace("\m","\n",$message);
-                $message=str_replace("\n","%0D%0A",$message);
-                $linktext='mailto:'.$p['email'].'?subject='.str_replace(" ","%20",lang('registration_email_subject')).'&reply-to='.urlencode($settings['support_mail']).'&body='.$message;
-                $out.='<td class="small">';
-                $out.='<A class="small" HREF="'.$linktext.'">'.$p['email'].'</A>';
-                $out.='</td>';
-                break;
-            case 'checkbox':
-                $out.='<td class="small">';
-                $out.='<INPUT type="checkbox" name="sel['.$p['participant_id'].']" value="y"';
-                if (isset($_REQUEST['sel'][$p['participant_id']]) && $_REQUEST['sel'][$p['participant_id']]=='y') $out.=' CHECKED';
-                elseif (isset($_SESSION['sel'][$p['participant_id']]) && $_SESSION['sel'][$p['participant_id']]=='y') $out.=' CHECKED';
-                $out.='></td>';
-                break;
-            case 'number_noshowup':
-                $out.='<td class="small">';
-                $out.=$p['number_noshowup'].'/'.$p['number_reg'];
-                $out.='</td>';
-                break;
-            case 'invited':
-                $out.='<td class="small">'.($p['invited']?lang('y'):lang('n')).'</td>';
-                break;
-            case 'rules_signed':
-                if ($settings['enable_rules_signed_tracking']=='y')  {
+        $hide_for_admin_types=array();
+        if(isset($arr['item_details']['hide_admin_types'])) {
+            $hide_for_admin_types=explode(",",$arr['item_details']['hide_admin_types']);
+        }
+        if (in_array($expadmindata['admin_type'],$hide_for_admin_types)) {
+            $out.='<td class="small">'.lang('hidden_data_symbol').'</td>';
+        } else {
+            switch($k) {
+                case 'email_unconfirmed':
+                    $message="";
+                    $message=experimentmail__get_confirmation_mail_text($p);
+                    $message=str_replace(" ","%20",$message);
+                    $message=str_replace("\n\m","\n",$message);
+                    $message=str_replace("\m\n","\n",$message);
+                    $message=str_replace("\m","\n",$message);
+                    $message=str_replace("\n","%0D%0A",$message);
+                    $linktext='mailto:'.$p['email'].'?subject='.str_replace(" ","%20",lang('registration_email_subject')).'&reply-to='.urlencode($settings['support_mail']).'&body='.$message;
                     $out.='<td class="small">';
-                    $out.='<INPUT type="checkbox" name="rules['.$p['participant_id'].']" value="y"';
-                    if ($p['rules_signed']=='y') {
-                        $out.=' CHECKED';
-                    }
+                    $out.='<A class="small" HREF="'.$linktext.'">'.$p['email'].'</A>';
+                    $out.='</td>';
+                    break;
+                case 'checkbox':
+                    $out.='<td class="small">';
+                    $out.='<INPUT type="checkbox" name="sel['.$p['participant_id'].']" value="y"';
+                    if (isset($_REQUEST['sel'][$p['participant_id']]) && $_REQUEST['sel'][$p['participant_id']]=='y') $out.=' CHECKED';
+                    elseif (isset($_SESSION['sel'][$p['participant_id']]) && $_SESSION['sel'][$p['participant_id']]=='y') $out.=' CHECKED';
                     $out.='></td>';
-                }
-                break;
-            case 'subscriptions':
-                $exptypes=load_external_experiment_types();
-                $inv_arr=db_string_to_id_array($p[$k]);
-                $inv_names=array();
-                foreach($inv_arr as $inv) {
-                    if (isset($exptypes[$inv]['exptype_name'])) $inv_names[]=$exptypes[$inv]['exptype_name'];
-                    else $inv_names[]='undefined';
-                }
-                $out.='<td class="small">'.implode(", ",$inv_names).'</td>';
-                break;
-            case 'subpool_id':
-                $subpools=subpools__get_subpools();
-                $subpool_name=(isset($subpools[$p[$k]]['subpool_name']))?$subpools[$p[$k]]['subpool_name']:$p[$k];
-                $out.='<td class="small">'.$subpool_name.'</td>';
-                break;
-            case 'status_id':
-                $participant_statuses=participant_status__get_statuses();
-                $pstatus_name=(isset($participant_statuses[$p[$k]]['name']))?$participant_statuses[$p[$k]]['name']:$p[$k];
-                if ($participant_statuses[$p['status_id']]['eligible_for_experiments']=='y') $ccolor=$color['participant_status_eligible_for_experiments'];
-                else $ccolor=$color['participant_status_noneligible_for_experiments'];
-                $out.='<td class="small" bgcolor="'.$ccolor.'">'.$pstatus_name.'</td>';
-                break;
-            case 'edit_link':
-                if (check_allow('participants_edit')) $out.='<TD class="small">'.javascript__edit_popup_link($p['participant_id']).'</TD>';
-                break;
-            case 'creation_time':
-            case 'deletion_time':
-            case 'last_enrolment':
-            case 'last_profile_update':
-            case 'last_activity':
-            case 'last_login_attempt':
-                $out.='<td class="small">';
-                if ($p[$k]) $out.=ortime__format($p[$k],'hide_second:false');
-                else  $out.='-';
-                $out.='</td>';
-                break;
-            case 'session_id':
-                $out.='<td class="small">';
-                if (check_allow('experiment_edit_participants')) {
-                    $out.='<INPUT type=hidden name="orig_session['.$p['participant_id'].']" value="'.$p['session_id'].'">';
-                    $out.=select__sessions($p['session_id'],'session['.$p['participant_id'].']',$thislist_sessions,false);
-                } else $out.=session__build_name($thislist_sessions[$p['session_id']]);
-                $out.='</td>';
-                break;
-            case 'payment_budget':
-                if($settings['enable_payment_module']=='y') {
-                    $payment_budgets=payments__load_budgets();
-                    if (check_allow('payments_edit')) {
-                        $out.='<td class="small">';
-                        $out.=payments__budget_selectfield('paybudget['.$p['participant_id'].']',$p['payment_budget'],array(),$thislist_avail_payment_budgets);
-                        $out.='</td>';
-                    } elseif (check_allow('payments_view')) {
-                        $out.='<td class="small">';
-                        if (isset($payment_budgets[$p['payment_budget']])) $out.=$payment_budgets[$p['payment_budget']]['budget_name']; else $out.='-';
-                        $out.='</td>';
-                    }
-                }
-                break;
-            case 'payment_type':
-                if($settings['enable_payment_module']=='y') {
-                    $payment_types=payments__load_paytypes();
-                    if (check_allow('payments_edit')) {
-                        $out.='<td class="small">';
-                        $out.=payments__paytype_selectfield('paytype['.$p['participant_id'].']',$p['payment_type'],array(),$thislist_avail_payment_types);
-                        $out.='</td>';
-                    } elseif (check_allow('payments_view')) {
-                        $out.='<td class="small">';
-                        if (isset($payment_types[$p['payment_type']])) $out.=$payment_types[$p['payment_type']]; else $out.='-';
-                        $out.='</td>';
-                    }
-                }
-                break;
-            case 'payment_amount':
-                if($settings['enable_payment_module']=='y') {
-                    if (check_allow('payments_edit')) {
-                        $out.='<td class="small">';
-                        $out.='<INPUT type="text" name="payamt['.$p['participant_id'].']" value="';
-                        if ($p['payment_amt']!='') $out.=$p['payment_amt']; else $out.='0.00';
-                        $out.='" size="7" maxlength="10" style="text-align:right;">';
-                        $out.='</td>';
-                    } elseif (check_allow('payments_view')) {
-                        $out.='<td class="small">';
-                        if ($p['payment_amt']!='') $out.=$p['payment_amt']; else $out.='-';
-                        $out.='</td>';
-                    }
-                }
-                break;
-            case 'pstatus_id':
-                $out.='<td class="small">';
-                if (check_allow('experiment_edit_participants')) {
-                    $out.='<INPUT type=hidden name="orig_pstatus_id['.$p['participant_id'].']" value="'.$p['pstatus_id'].'">';
-                    $out.=expregister__participation_status_select_field('pstatus_id['.$p['participant_id'].']',$p['pstatus_id']);
-                } else {
-                    $pstatuses=expregister__get_participation_statuses();
-                    $out.=$pstatuses[$p['pstatus_id']]['internal_name'];
-                }
-                $out.='</td>';
-                break;
-            default:
-                if (isset($pform_columns[$k])) {
+                    break;
+                case 'number_noshowup':
                     $out.='<td class="small">';
-                    if($pform_columns[$k]['link_as_email_in_lists']=='y') $out.='<A class="small" HREF="mailto:'.$p[$k].'">';
-                    if(preg_match("/(radioline|select_list|select_lang|radioline_lang)/",$pform_columns[$k]['type'])) {
-                        if (isset($pform_columns[$k]['lang'][$p[$k]])) $out.=lang($pform_columns[$k]['lang'][$p[$k]]);
-                        else $out.=$p[$k];
-                    } else $out.=$p[$k];
-                    if($pform_columns[$k]['link_as_email_in_lists']=='y') $out.='</A>';
+                    $out.=$p['number_noshowup'].'/'.$p['number_reg'];
                     $out.='</td>';
-                } else {
+                    break;
+                case 'invited':
+                    $out.='<td class="small">'.($p['invited']?lang('y'):lang('n')).'</td>';
+                    break;
+                case 'rules_signed':
+                    if ($settings['enable_rules_signed_tracking']=='y')  {
+                        $out.='<td class="small">';
+                        $out.='<INPUT type="checkbox" name="rules['.$p['participant_id'].']" value="y"';
+                        if ($p['rules_signed']=='y') {
+                            $out.=' CHECKED';
+                        }
+                        $out.='></td>';
+                    }
+                    break;
+                case 'subscriptions':
+                    $exptypes=load_external_experiment_types();
+                    $inv_arr=db_string_to_id_array($p[$k]);
+                    $inv_names=array();
+                    foreach($inv_arr as $inv) {
+                        if (isset($exptypes[$inv]['exptype_name'])) $inv_names[]=$exptypes[$inv]['exptype_name'];
+                        else $inv_names[]='undefined';
+                    }
+                    $out.='<td class="small">'.implode(", ",$inv_names).'</td>';
+                    break;
+                case 'subpool_id':
+                    $subpools=subpools__get_subpools();
+                    $subpool_name=(isset($subpools[$p[$k]]['subpool_name']))?$subpools[$p[$k]]['subpool_name']:$p[$k];
+                    $out.='<td class="small">'.$subpool_name.'</td>';
+                    break;
+                case 'status_id':
+                    $participant_statuses=participant_status__get_statuses();
+                    $pstatus_name=(isset($participant_statuses[$p[$k]]['name']))?$participant_statuses[$p[$k]]['name']:$p[$k];
+                    if ($participant_statuses[$p['status_id']]['eligible_for_experiments']=='y') $ccolor=$color['participant_status_eligible_for_experiments'];
+                    else $ccolor=$color['participant_status_noneligible_for_experiments'];
+                    $out.='<td class="small" bgcolor="'.$ccolor.'">'.$pstatus_name.'</td>';
+                    break;
+                case 'edit_link':
+                    if (check_allow('participants_edit')) $out.='<TD class="small">'.javascript__edit_popup_link($p['participant_id']).'</TD>';
+                    break;
+                case 'creation_time':
+                case 'deletion_time':
+                case 'last_enrolment':
+                case 'last_profile_update':
+                case 'last_activity':
+                case 'last_login_attempt':
                     $out.='<td class="small">';
-                    if (isset($p[$k])) $out.=$p[$k];
-                    else $out.='???';
+                    if ($p[$k]) $out.=ortime__format($p[$k],'hide_second:false');
+                    else  $out.='-';
                     $out.='</td>';
-                }
+                    break;
+                case 'session_id':
+                    $out.='<td class="small">';
+                    if (check_allow('experiment_edit_participants')) {
+                        $out.='<INPUT type=hidden name="orig_session['.$p['participant_id'].']" value="'.$p['session_id'].'">';
+                        $out.=select__sessions($p['session_id'],'session['.$p['participant_id'].']',$thislist_sessions,false);
+                    } else $out.=session__build_name($thislist_sessions[$p['session_id']]);
+                    $out.='</td>';
+                    break;
+                case 'payment_budget':
+                    if($settings['enable_payment_module']=='y') {
+                        $payment_budgets=payments__load_budgets();
+                        if (check_allow('payments_edit')) {
+                            $out.='<td class="small">';
+                            $out.=payments__budget_selectfield('paybudget['.$p['participant_id'].']',$p['payment_budget'],array(),$thislist_avail_payment_budgets);
+                            $out.='</td>';
+                        } elseif (check_allow('payments_view')) {
+                            $out.='<td class="small">';
+                            if (isset($payment_budgets[$p['payment_budget']])) $out.=$payment_budgets[$p['payment_budget']]['budget_name']; else $out.='-';
+                            $out.='</td>';
+                        }
+                    }
+                    break;
+                case 'payment_type':
+                    if($settings['enable_payment_module']=='y') {
+                        $payment_types=payments__load_paytypes();
+                        if (check_allow('payments_edit')) {
+                            $out.='<td class="small">';
+                            $out.=payments__paytype_selectfield('paytype['.$p['participant_id'].']',$p['payment_type'],array(),$thislist_avail_payment_types);
+                            $out.='</td>';
+                        } elseif (check_allow('payments_view')) {
+                            $out.='<td class="small">';
+                            if (isset($payment_types[$p['payment_type']])) $out.=$payment_types[$p['payment_type']]; else $out.='-';
+                            $out.='</td>';
+                        }
+                    }
+                    break;
+                case 'payment_amount':
+                    if($settings['enable_payment_module']=='y') {
+                        if (check_allow('payments_edit')) {
+                            $out.='<td class="small">';
+                            $out.='<INPUT type="text" name="payamt['.$p['participant_id'].']" value="';
+                            if ($p['payment_amt']!='') $out.=$p['payment_amt']; else $out.='0.00';
+                            $out.='" size="7" maxlength="10" style="text-align:right;">';
+                            $out.='</td>';
+                        } elseif (check_allow('payments_view')) {
+                            $out.='<td class="small">';
+                            if ($p['payment_amt']!='') $out.=$p['payment_amt']; else $out.='-';
+                            $out.='</td>';
+                        }
+                    }
+                    break;
+                case 'pstatus_id':
+                    $out.='<td class="small">';
+                    if (check_allow('experiment_edit_participants')) {
+                        $out.='<INPUT type=hidden name="orig_pstatus_id['.$p['participant_id'].']" value="'.$p['pstatus_id'].'">';
+                        $out.=expregister__participation_status_select_field('pstatus_id['.$p['participant_id'].']',$p['pstatus_id']);
+                    } else {
+                        $pstatuses=expregister__get_participation_statuses();
+                        $out.=$pstatuses[$p['pstatus_id']]['internal_name'];
+                    }
+                    $out.='</td>';
+                    break;
+                default:
+                    if (isset($pform_columns[$k])) {
+                        $out.='<td class="small">';
+                        if($pform_columns[$k]['link_as_email_in_lists']=='y') $out.='<A class="small" HREF="mailto:'.$p[$k].'">';
+                        if(preg_match("/(radioline|select_list|select_lang|radioline_lang)/",$pform_columns[$k]['type'])) {
+                            if (isset($pform_columns[$k]['lang'][$p[$k]])) $out.=lang($pform_columns[$k]['lang'][$p[$k]]);
+                            else $out.=$p[$k];
+                        } else $out.=$p[$k];
+                        if($pform_columns[$k]['link_as_email_in_lists']=='y') $out.='</A>';
+                        $out.='</td>';
+                    } else {
+                        $out.='<td class="small">';
+                        if (isset($p[$k])) $out.=$p[$k];
+                        else $out.='???';
+                        $out.='</td>';
+                    }
+            }
         }
     }
     return $out;
@@ -1635,85 +1660,93 @@ function participant__get_result_table_row($columns,$p) {
 
 
 function participant__get_result_table_row_pdf($columns,$p) {
-    global $settings, $color;
+    global $settings, $color, $expadmindata;
     global $thislist_sessions;
 
     $pform_columns=participant__load_all_pform_fields();
 
     $row=array();
     foreach ($columns as $k=>$arr) {
-        switch($k) {
-            case 'number_noshowup':
-                $row[]=$p['number_noshowup'].'/'.$p['number_reg'];
-                break;
-            case 'rules_signed':
-                if ($settings['enable_rules_signed_tracking']=='y')  {
-                    $row[]= ($p['rules_signed']!='y') ? "X" : '';
-                }
-                break;
-            case 'subscriptions':
-                $exptypes=load_external_experiment_types();
-                $inv_arr=db_string_to_id_array($p[$k]);
-                $inv_names=array();
-                foreach($inv_arr as $inv) {
-                    if (isset($exptypes[$inv]['exptype_name'])) $inv_names[]=$exptypes[$inv]['exptype_name'];
-                    else $inv_names[]='undefined';
-                }
-                $row[]=implode(", ",$inv_names);
-                break;
-            case 'subpool_id':
-                $subpools=subpools__get_subpools();
-                $subpool_name=(isset($subpools[$p[$k]]['subpool_name']))?$subpools[$p[$k]]['subpool_name']:$p[$k];
-                $row[]=$subpool_name;
-                break;
-            case 'status_id':
-                $participant_statuses=participant_status__get_statuses();
-                $pstatus_name=(isset($participant_statuses[$p[$k]]['name']))?$participant_statuses[$p[$k]]['name']:$p[$k];
-                $row[]=$pstatus_name;
-                break;
-            case 'creation_time':
-            case 'deletion_time':
-            case 'last_enrolment':
-            case 'last_profile_update':
-            case 'last_activity':
-            case 'last_login_attempt':
-                if ($p[$k]) $row[]=ortime__format($p[$k],'hide_second:false');
-                else  $row[]='-';
-                break;
-            case 'session_id':
-                $row[]=session__build_name($thislist_sessions[$p['session_id']]);
-                break;
-            case 'payment_budget':
-                if($settings['enable_payment_module']=='y' && check_allow('payments_view')) {
-                    $payment_budgets=payments__load_budgets();
-                    if (isset($payment_budgets[$p['payment_budget']])) $row[]=$payment_budgets[$p['payment_budget']]['budget_name']; else $row[]='-';
-                }
-                break;
-            case 'payment_type':
-                if($settings['enable_payment_module']=='y' && check_allow('payments_view')) {
-                    $payment_types=payments__load_paytypes();
-                    if (isset($payment_types[$p['payment_type']])) $row[]=$payment_types[$p['payment_type']]; else $row[]='-';
-                }
-                break;
-            case 'payment_amount':
-                if($settings['enable_payment_module']=='y' && check_allow('payments_view')) {
-                    if ($p['payment_amt']!='') $row[]=$p['payment_amt']; else $row[]='-';
-                }
-                break;
-            case 'pstatus_id':
-                $pstatuses=expregister__get_participation_statuses();
-                $row[]=$pstatuses[$p['pstatus_id']]['internal_name'];
-                break;
-            default:
-                if (isset($pform_columns[$k])) {
-                    if(preg_match("/(radioline|select_list|select_lang|radioline_lang)/",$pform_columns[$k]['type'])) {
-                        if (isset($pform_columns[$k]['lang'][$p[$k]])) $row[]=lang($pform_columns[$k]['lang'][$p[$k]]);
-                        else $row[]=$p[$k];
-                    } else $row[]=$p[$k];
-                } else {
-                    if (isset($p[$k])) $row[]=$p[$k];
-                    else $row[]='???';
-                }
+        $hide_for_admin_types=array();
+        if(isset($arr['item_details']['hide_admin_types'])) {
+            $hide_for_admin_types=explode(",",$arr['item_details']['hide_admin_types']);
+        }
+        if (in_array($expadmindata['admin_type'],$hide_for_admin_types)) {
+            $row[]=lang('hidden_data_symbol');
+        } else {
+            switch($k) {
+                case 'number_noshowup':
+                    $row[]=$p['number_noshowup'].'/'.$p['number_reg'];
+                    break;
+                case 'rules_signed':
+                    if ($settings['enable_rules_signed_tracking']=='y')  {
+                        $row[]= ($p['rules_signed']!='y') ? "X" : '';
+                    }
+                    break;
+                case 'subscriptions':
+                    $exptypes=load_external_experiment_types();
+                    $inv_arr=db_string_to_id_array($p[$k]);
+                    $inv_names=array();
+                    foreach($inv_arr as $inv) {
+                        if (isset($exptypes[$inv]['exptype_name'])) $inv_names[]=$exptypes[$inv]['exptype_name'];
+                        else $inv_names[]='undefined';
+                    }
+                    $row[]=implode(", ",$inv_names);
+                    break;
+                case 'subpool_id':
+                    $subpools=subpools__get_subpools();
+                    $subpool_name=(isset($subpools[$p[$k]]['subpool_name']))?$subpools[$p[$k]]['subpool_name']:$p[$k];
+                    $row[]=$subpool_name;
+                    break;
+                case 'status_id':
+                    $participant_statuses=participant_status__get_statuses();
+                    $pstatus_name=(isset($participant_statuses[$p[$k]]['name']))?$participant_statuses[$p[$k]]['name']:$p[$k];
+                    $row[]=$pstatus_name;
+                    break;
+                case 'creation_time':
+                case 'deletion_time':
+                case 'last_enrolment':
+                case 'last_profile_update':
+                case 'last_activity':
+                case 'last_login_attempt':
+                    if ($p[$k]) $row[]=ortime__format($p[$k],'hide_second:false');
+                    else  $row[]='-';
+                    break;
+                case 'session_id':
+                    $row[]=session__build_name($thislist_sessions[$p['session_id']]);
+                    break;
+                case 'payment_budget':
+                    if($settings['enable_payment_module']=='y' && check_allow('payments_view')) {
+                        $payment_budgets=payments__load_budgets();
+                        if (isset($payment_budgets[$p['payment_budget']])) $row[]=$payment_budgets[$p['payment_budget']]['budget_name']; else $row[]='-';
+                    }
+                    break;
+                case 'payment_type':
+                    if($settings['enable_payment_module']=='y' && check_allow('payments_view')) {
+                        $payment_types=payments__load_paytypes();
+                        if (isset($payment_types[$p['payment_type']])) $row[]=$payment_types[$p['payment_type']]; else $row[]='-';
+                    }
+                    break;
+                case 'payment_amount':
+                    if($settings['enable_payment_module']=='y' && check_allow('payments_view')) {
+                        if ($p['payment_amt']!='') $row[]=$p['payment_amt']; else $row[]='-';
+                    }
+                    break;
+                case 'pstatus_id':
+                    $pstatuses=expregister__get_participation_statuses();
+                    $row[]=$pstatuses[$p['pstatus_id']]['internal_name'];
+                    break;
+                default:
+                    if (isset($pform_columns[$k])) {
+                        if(preg_match("/(radioline|select_list|select_lang|radioline_lang)/",$pform_columns[$k]['type'])) {
+                            if (isset($pform_columns[$k]['lang'][$p[$k]])) $row[]=lang($pform_columns[$k]['lang'][$p[$k]]);
+                            else $row[]=$p[$k];
+                        } else $row[]=$p[$k];
+                    } else {
+                        if (isset($p[$k])) $row[]=$p[$k];
+                        else $row[]='???';
+                    }
+            }
         }
     }
     foreach ($row as $k=>$v) $row[$k]=str_replace("&nbsp;"," ",$v);

@@ -68,6 +68,7 @@ function sessions__format_alist($session,$experiment) {
 
 
     echo '<tr'.$rowspec.'>
+            <td><input name="sel['.$session_id.']" type="checkbox" value="y"></td>
             <td><B>'.$session_time;
             if (count($preloaded_laboratories)>1) {
                 echo ' '.$preloaded_laboratories[$laboratory_id]['lab_name'];
@@ -93,6 +94,7 @@ function sessions__format_alist($session,$experiment) {
 
 
     echo '  <TR'.$rowspec.'>
+            <TD></TD>    
             <TD>';
                 if ($allow_sp) echo '
                     <A HREF="experiment_participants_show.php?experiment_id='.
@@ -116,7 +118,7 @@ function sessions__format_alist($session,$experiment) {
         </TR>';
 
     echo '  <TR'.$rowspec.'>
-            <TD colspan=4 class=small>
+            <TD colspan=5 class=small>
                 &nbsp;
             </TD>
         </TR>';

@@ -663,9 +663,11 @@ function experimentmail__get_invitation_mail_details($part,$exp,$slist) {
     $part['experiment_name']=$exp['experiment_public_name'];
     $part['sessionlist']=$slist;
     $part['link']=experimentmail__build_lab_registration_link($part);
+    $part['public_experiment_note']=$exp['public_experiment_note'];
+    $part['ethics_by']=$exp['ethics_by'];
+    $part['ethics_number']=$exp['ethics_number'];
     return $part;
 }
-
 
 function experimentmail__send_invitation_mail($mail,$part,$exp,$inv_text,$slist,$footer) {
     global $settings;

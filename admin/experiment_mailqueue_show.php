@@ -2,7 +2,7 @@
 // part of orsee. see orsee.org
 ob_start();
 
-$jquery=array();
+$jquery=array('popup');
 $title="mailqueue";
 $menu__area="statistics";
 include ("header.php");
@@ -12,7 +12,7 @@ if ($proceed) {
 }
 
 if ($proceed) {
-    $allow=check_allow('mailqueue_show_all','experiment_show.php?experiment_id='.$experiment_id);
+    $allow=check_allow('mailqueue_show_experiment','experiment_show.php?experiment_id='.$experiment_id);
 }
 
 if ($proceed) {
