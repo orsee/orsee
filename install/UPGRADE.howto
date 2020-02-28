@@ -8,9 +8,11 @@ If you import data from an older ORSEE version, double check whether all importe
 
 If you experience this problem after an upgrade from older ORSEE versions or after a data import, please run the script "convert_orse302db_to_UTF8.php" in the install/ directory. This will fix the wrongly encoded characters in your database such that they are correctly displayed. Please do *not* run this script if your display of nonstandard characters is ok.
 
-*Upgrade files from ORSEE 3.x.x versions to the current version*
-Since there have been no changes to the database structure, yet, upgrading is easy.
+*Upgrade from ORSEE 3.x.x versions to the current version*
 
+The most elegant way to upgrade ORSEE is to use Git version management. This allows you to very simply switch between your version (if you made changes to the code) and a new version. It also helps in merging your own changes with changes made officially between ORSEE version.
+
+But even without Git: If you have not changed any code, upgrading is easy.
 - Unzip the .tgz / .zip file anywhere. Let's assume this is <my-unzip-path>.
 - Let's also assume your older version ORSEE 3.x.x is located in <my-orsee-path>
 - Then simply over the files from subdirectories 'tagsets', 'admin', 'public', and 'config', i.e.:
@@ -21,12 +23,14 @@ cp -r <my-unzip-path>/config/* <my-orsee-path>/config/
 
 That's it.
 
+Since ORSEE 3.1.0 the software has an *automatic database upgrade* feature. Whenever the version of your database is lower than the database version which the software expects, it will attempt to automatically upgrade your database to the current version, e.g. adding new language terms etc.. It will record any upgrade results in Statistics/Experimenter actions.
+
 Note that since ORSEE 3.0.1, there is no file settings.php in <my-unzip-path>/config/, such that your original settings.php in <my-orsee-path>/config/ will not be changed by this copying. There is a settings-dist.php in <my-unzip-path>/install/ which has to be copied over to config/settings.php when doing a new install.
 
 
 *Upgrade from ORSEE 2.x.x versions to an ORSEE 3.x.x version*
 
-ORSEE 3.0.0 was a major new versions, with many changes to the database structure and to the code. For this reason, the procedure to upgrade includes two simple steps:
+ORSEE 3.0.0 was a major new version, with many changes to the database structure and to the code. For this reason, the procedure to upgrade includes two simple steps:
 - install the new version as described in INSTALL.howto and the ORSEE3 wiki
 - import your previous data as described in the ORSEE3 wiki
 As per the note above, check your imported data whether any umlauts and other non-standard characters are displayed correctly.

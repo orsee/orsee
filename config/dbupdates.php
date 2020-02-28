@@ -40,7 +40,7 @@ END SAMPLE CODE
 */
 
 $system__database_upgrades[]=array(
-'version'=>'2020021100',
+'version'=>'2020022400',
 'type'=>'new_lang_item',
 'specs'=> array(
     'content_name'=>'query_interface_language',
@@ -50,7 +50,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021100',
+'version'=>'2020022400',
 'type'=>'new_lang_item',
 'specs'=> array(
     'content_name'=>'where_interface_language_is',
@@ -61,7 +61,7 @@ $system__database_upgrades[]=array(
 
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200', 
+'version'=>'2020022500', 
 'type'=>'new_admin_right',
 'specs'=> array(
     'right_name'=>'participants_bulk_anonymization', 
@@ -70,7 +70,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200', 
+'version'=>'2020022500', 
 'type'=>'new_admin_right',
 'specs'=> array(
     'right_name'=>'pform_anonymization_fields_edit', 
@@ -79,7 +79,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
+'version'=>'2020022500',
 'type'=>'new_lang_item', 
 'specs'=> array(
     'content_name'=>'fields_to_anonymize_in_anonymization_bulk_action', 
@@ -89,7 +89,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
+'version'=>'2020022500',
 'type'=>'new_lang_item', 
 'specs'=> array(
     'content_name'=>'anonymized_dummy_value', 
@@ -99,7 +99,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
+'version'=>'2020022500',
 'type'=>'new_lang_item', 
 'specs'=> array(
     'content_name'=>'anonymize_profiles', 
@@ -109,7 +109,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
+'version'=>'2020022500',
 'type'=>'new_lang_item', 
 'specs'=> array(
     'content_name'=>'anonymize_profiles_for', 
@@ -119,7 +119,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
+'version'=>'2020022500',
 'type'=>'new_lang_item', 
 'specs'=> array(
     'content_name'=>'fields_will_be_anonymized_as_follows', 
@@ -129,7 +129,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
+'version'=>'2020022500',
 'type'=>'new_lang_item', 
 'specs'=> array(
     'content_name'=>'disclaimer_anonymize_profiles', 
@@ -139,7 +139,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-'version'=>'2020021200',
+'version'=>'2020022500',
 'type'=>'new_lang_item', 
 'specs'=> array(
     'content_name'=>'upon_anonymization_change_status_to', 
@@ -149,7 +149,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020021200',
+    'version'=>'2020022500',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'profile_anonymize', 
@@ -159,7 +159,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020021200',
+    'version'=>'2020022500',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'error_no_fields_to_anonymize_defined', 
@@ -169,7 +169,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020021200',
+    'version'=>'2020022500',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'xxx_participant_profiles_were_anonymized', 
@@ -179,7 +179,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020021300',
+    'version'=>'2020022600',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'hide_column_for_admin_types', 
@@ -189,7 +189,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020021300',
+    'version'=>'2020022600',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'enter_comma_separated_list_of_any_of', 
@@ -199,7 +199,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020021300',
+    'version'=>'2020022600',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'hidden_data_symbol', 
@@ -209,7 +209,7 @@ $system__database_upgrades[]=array(
 );
 
  $system__database_upgrades[]=array(
-    'version'=>'2020022400',
+    'version'=>'2020022700',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'bulk_updated_session_statuses', 
@@ -219,7 +219,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020022400',
+    'version'=>'2020022700',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'set_session_status_for_selected_sessions_to', 
@@ -229,7 +229,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020022500',
+    'version'=>'2020022800',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'download_as', 
@@ -240,7 +240,7 @@ $system__database_upgrades[]=array(
   
 
 $system__database_upgrades[]=array(
-    'version'=>'2020022500',
+    'version'=>'2020022800',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'pdf_file', 
@@ -250,7 +250,7 @@ $system__database_upgrades[]=array(
 );
 
 $system__database_upgrades[]=array(
-    'version'=>'2020022500',
+    'version'=>'2020022800',
     'type'=>'new_lang_item', 
     'specs'=> array(
         'content_name'=>'csv_file', 
