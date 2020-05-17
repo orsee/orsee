@@ -449,7 +449,12 @@ $system__options_general[]=array(
 'default_value'=>'n'
 );
 
-
+$system__options_general[]=array(
+'option_name'=>'payments_in_part_history',
+'option_text'=>'If payment module enabled: Include payments in participant\'s history?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
 
 $system__options_general[]=array(
 'option_name'=>'enable_rules_signed_tracking',
