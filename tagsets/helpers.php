@@ -15,25 +15,23 @@ function support_mail_link() {
 }
 
 function multi_array_sort(&$data, $sortby) {
-    static $sort_funcs = array();
-
+    $sorting_var1=""; $sorting_var2=""; $sorting_var3="";
     if (is_array($sortby)) {
-            $sortby = join(',',$sortby);
+        $sorting_var1 = $sortby[0];
+        if (isset($sortby[1])) $sorting_var2 = $sortby[1];
+        if (isset($sortby[2])) $sorting_var3 = $sortby[2];
+    } else {
+        $sorting_var1 = $sortby;
+    } 
+    uasort($data,function ($a,$b) use ($sorting_var1, $sorting_var2, $sorting_var3) {
+        if ($a[$sorting_var1]!=$b[$sorting_var1] || (!$sorting_var2)) {
+            return $a[$sorting_var1]>$b[$sorting_var1];
+        } elseif ($a[$sorting_var2]!=$b[$sorting_var2] || (!$sorting_var3)) {
+            return $a[$sorting_var2]>$b[$sorting_var2];
+        } else {
+            return $a[$sorting_var3]>$b[$sorting_var3];
         }
-
-    if (empty($sort_funcs[$sortby])) {
-            $code = "\$c=0;";
-            $sortby_arr=explode(',', $sortby);
-            foreach ($sortby_arr as $key) {
-                $code .= "if ( (\$c = strcasecmp(\$a['$key'],\$b['$key'])) != 0 ) return \$c;\n";
-                }
-            $code .= 'return $c;';
-            $sort_func = $sort_funcs[$sortby] = create_function('$a, $b', $code);
-     } else {
-            $sort_func = $sort_funcs[$sortby];
-        }
-    $sort_func = $sort_funcs[$sortby];
-    uasort($data, $sort_func);
+    });
 }
 
 // debug output

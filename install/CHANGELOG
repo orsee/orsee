@@ -1,11 +1,28 @@
+ORSEE 3.1.0
+        Many minor and major bugfixes -> compatible with PHP7
+        New feature: Bulk-anonymize participant profiles with default values
+        New feature: Hide column values for some admin types
+        New feature: Search for interface language in search tool
+        New feature: Use internal fields in freetext search in search tool
+        New feature: Use more experiment details in email texts
+        New feature: Edit participant profiles from mail queue
+        New feature: Download session participant list as CSV
+        New feature: Change session status of multiple sessions at once
+        New feature: Set experiment access restriction as default
+        New feature: Restrict no-show count to sessions after specific date
+        New feature: Automatically updates database when new features require
+                     new language terms or new user rights
+        New feature: Import participant data from csv/txt file
+        New feature: Use SSL connection with external MySQL databases
+
 ORSEE 3.0.5
-	Many minor and major bugfixes
-	New feature: Display ORSEE version in General Settings
-	New feature: Disable js auto-submit on admin login form
-	New feature: Edit faq count
-	New feature: Allow "none"-option for select_numbers field
-	New feature: Hide planned sessions in public calendar
-	
+    Many minor and major bugfixes
+    New feature: Display ORSEE version in General Settings
+    New feature: Disable js auto-submit on admin login form
+    New feature: Edit faq count
+    New feature: Allow "none"-option for select_numbers field
+    New feature: Hide planned sessions in public calendar
+    
 ORSEE 3.0.4
     Many minor and major bugfixes
     New feature: Email module allows SSL connections

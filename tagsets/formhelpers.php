@@ -274,11 +274,10 @@ function formhelpers__pick_time($field, $selected_time=0,$minute_steps=0) {
 }
 
 function formhelpers__orderlist($listID, $formName, $rows, $no_add_button=false, $add_button_title="", $tableHeads = ""){
-    $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
     $dropdownSelector = ($no_add_button ? 'null' : "$('#".$listID."Dropdown')");
     $out='';
     $out.=" <script>
-            var ".$listID."_rows = "; $out.=$json->encodeUnsafe($rows); $out.=";
+            var ".$listID."_rows = "; $out.=json_encode($rows); $out.=";
             $(document).ready(function(){
                 list_".$listID." = new ListTool(".$listID."_rows, $('#list_".$listID."'), " . $dropdownSelector . ", '".$formName."');
             });

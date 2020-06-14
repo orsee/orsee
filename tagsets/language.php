@@ -246,7 +246,6 @@ function lang__select_lang($varname,$selected="",$type="all") {
 
 
 function lang__insert_to_lang($item) {
-
     $pars=array(':content_type'=>$item['content_type']);
     $query="SELECT max(lang_id) as lcount
             FROM ".table('lang')."
@@ -281,6 +280,54 @@ function lang__insert_to_lang($item) {
     $done1=orsee_db_save_array($item,"lang",$newid,"lang_id");
     if ($reorganize) $done2=lang__reorganize_lang_table($steps);
     return $newid;
+}
+
+function lang__check_symbol_exists($symbol) {
+    global $lang;
+    if (isset($lang[$symbol])) {
+        return true;
+    } else {
+        $pars=array(':symbol'=>$symbol);
+        $query="SELECT count(*) as nb_symbols FROM ".table('lang')."
+                WHERE (content_type='lang' OR content_type='datetime_format') and content_name= :symbol";
+        $line=orsee_query($query,$pars);
+        if ($line['nb_symbols']>0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+function lang__add_new_symbol($specs) {
+    $languages=get_languages();
+    $item=array('content_type'=>'lang','content_name'=>$specs['content_name']);
+    if (isset($specs['content_type'])) {
+        $item['content_type']=$specs['content_type'];
+    }
+    
+    foreach ($languages as $thislang) {
+        if(isset($specs['content'][$thislang])) {
+            $item[$thislang]=$specs['content'][$thislang];
+        } elseif(isset($specs['content']['en'])) {
+            $item[$thislang]=$specs['content']['en'];
+        } else {
+            $item[$thislang]=reset($specs['content']);
+        }
+    }
+    $done=lang__insert_to_lang($item);
+}
+
+function lang__upgrade_symbol_if_not_exists($specs) {
+    $symbol_exists=lang__check_symbol_exists($specs['content_name']);
+    if(!$symbol_exists) {
+        lang__add_new_symbol($specs);
+        log__admin("Automatic database upgrade: added language symbol '".$specs['content_name']."'.");
+        return true;
+    } else {
+        log__admin("Automatic database upgrade: symbol '".$specs['content_name']."' not added because it alread exists.");
+        return false;
+    }
 }
 
 function lang__reorganize_lang_table($steps=10000) {

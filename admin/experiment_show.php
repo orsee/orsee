@@ -1,7 +1,7 @@
 <?php
 // part of orsee. see orsee.org
 ob_start();
-
+$jquery=array();
 $title="experiment";
 $menu__area="experiments_main";
 include ("header.php");
@@ -30,6 +30,25 @@ if ($proceed) {
     }
 }
 
+
+if ($proceed) {
+    // change session status if requested
+    if (isset($_REQUEST['bulk_set_session_status']) && $_REQUEST['bulk_set_session_status'] && isset($_REQUEST['session_status']) 
+        && isset($_REQUEST['sel']) && is_array($_REQUEST['sel']) && count($_REQUEST['sel'])>0 
+        && in_array($_REQUEST['session_status'],array('planned','live','completed','balanced')) ) {
+        $pars=array();
+        foreach($_REQUEST['sel'] as $k=>$v) {
+            $pars[]=array(':session_id'=>$k,':session_status'=>$_REQUEST['session_status'],':experiment_id'=>$experiment_id);
+        }
+        $query="UPDATE ".table('sessions')."
+                SET session_status= :session_status
+                WHERE experiment_id= :experiment_id
+                AND session_id= :session_id";
+        $done=or_query($query,$pars);
+        message (lang('bulk_updated_session_statuses'));
+        redirect('admin/experiment_show.php?experiment_id='.$experiment_id);
+    }
+}
 
 if ($proceed) {
     $experiment_total_payment=0;
@@ -208,6 +227,8 @@ if ($proceed) {
 
     echo '<center>
         <BR>
+        <FORM action="'.thisdoc().'" method="POST">
+        <INPUT type=hidden name="experiment_id" value="'.$experiment_id.'">
         <table class="or_panel">
         <TR>
             <TD>
@@ -231,6 +252,11 @@ if ($proceed) {
                 lang('xxx_sessions_registered').'<BR>
             </TD>
         </TR>
+        <TR>
+            <TD align="left">
+                '.lang('select_all').' '.javascript__selectall_checkbox_script().'
+            </TD>
+        </TR>
 
         <TR>
             <TD>
@@ -243,7 +269,19 @@ if ($proceed) {
 
             </TD>
         </TR>
+        <TR>
+            <TD>
+            <TABLE class="or_option_buttons_box" style="background: '.$color['options_box_background'].';">
+                <TR>
+                    <TD>
+                        '.lang('set_session_status_for_selected_sessions_to').' '.session__session_status_select('session_status',-1).'
+                        <input class="button" type="submit" name="bulk_set_session_status" value="'.lang('button_set').'">
+                    </TD>
+                </TR>
+            </TABLE>
+        </TR>
         </TABLE>
+        </FORM>
         </center><BR><BR>';
 
 }
@@ -324,11 +362,10 @@ if ($proceed) {
         if ($settings['allow_permanent_queries']=='y') {
             $perm_queries=query__get_permanent($experiment_id);
             if (count($perm_queries)>0) {
-                $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
                 echo '<TR><TD colspan=3><B>'.lang('found_active_permanent_query').'</B></TD></TR>';
                 echo '<TR><TD colspan=3><TABLE width="100%" border="0">';
                 foreach($perm_queries as $pquery) {
-                    $posted_query=$json->decode($pquery['json_query']);
+                    $posted_query=json_decode($pquery['json_query'],true);
                     $pseudo_query_array=query__get_pseudo_query_array($posted_query['query']);
                     $pseudo_query_display=query__display_pseudo_query($pseudo_query_array,false);
                     echo '<TR><TD>'.$pseudo_query_display.'</TD><TD>';

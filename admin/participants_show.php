@@ -15,8 +15,8 @@ if ($proceed) {
     if (isset($_REQUEST['active']) && $_REQUEST['active']) $active=true;
     else $active=false;
 
-    // to encode: $json->encodeUnsafe($_REQUEST['form']).'<BR>';
-    // do decode: $json->decode($_SESSION['lastquery']);
+    // to encode: json_encode($_REQUEST['form']).'<BR>';
+    // do decode: json_decode($_SESSION['lastquery'],true);
 
     if (isset($_REQUEST['save_query'])) {
         // get old query
@@ -139,6 +139,51 @@ if ($proceed) {
                     message($num_participants.' '.lang('xxx_participants_were_assigned_a_new_profile_update_status'));
                     redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
                 }
+            } elseif ($_REQUEST['action']=='bulk_anonymization') {
+                // do_status_change new_status
+                $continue=true;
+                $anon_fields=participant__get_result_table_columns('anonymize_profile_list');
+                if (!is_array($anon_fields) || !(count($anon_fields)>0)) {
+                    $continue=false;
+                    $message(lang('error_no_fields_to_anonymize_defined'));
+                }
+                if ($continue) {
+                    if (isset($_REQUEST['do_status_change']) && $_REQUEST['do_status_change']=='y') {
+                        if (!isset($_REQUEST['new_status'])) {
+                            $continue=false;
+                        } else {
+                            $new_status=$_REQUEST['new_status'];
+                        }
+                    } else {
+                        $new_status=-1;
+                    }
+                }
+                if ($continue) {
+                    $pars=array();
+                    foreach ($plist_ids as $pid) {
+                        $thispar=array(':participant_id'=>$pid);
+                        foreach ($anon_fields as $field_name=>$anon_field) {
+                            $thispar[$field_name]=$anon_field['item_details']['field_value'];
+                        }
+                        if ($new_status>-1) $thispar['status_id']=$new_status;
+                        
+                        $pars[]=$thispar;
+                        $target="participant_id: ".$pid;
+                        if ($new_status>-1) $target.=", new_status: ".$new_status;
+                        log__admin("bulk_profile_anonymization",$target);
+                    }
+                    $anon_field_list=array();
+                    foreach ($anon_fields as $field_name=>$anon_field) {
+                        $anon_field_list[]=$field_name." = :".$field_name;
+                    }
+                    $query="UPDATE ".table('participants')."
+                            SET ".implode(" , ",$anon_field_list);
+                    if ($new_status>-1) $query.=", status_id = :status_id ";
+                    $query.=" WHERE participant_id = :participant_id ";
+                    $done=or_query($query,$pars);
+                    message($num_participants.' '.lang('xxx_participant_profiles_were_anonymized'));
+                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
+                }
             } else {
                 // redirect to same page
                 redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
@@ -160,7 +205,6 @@ if ($proceed) {
 
 if ($proceed) {
     if(isset($_REQUEST['search_submit']) || isset($_REQUEST['search_sort'])) {
-        $json = new Services_JSON(SERVICES_JSON_LOOSE_TYPE);
         if(isset($_REQUEST['search_sort'])){
             // use old query
             if ($active) {
@@ -172,13 +216,13 @@ if ($proceed) {
                 $query_id=$_SESSION['lastqueryid_participants_search_all'];
                 $sort=query__get_sort('participants_search_all',$_REQUEST['search_sort']); // sanitize sort
             }
-            $posted_query=$json->decode($posted_query_json);
+            $posted_query=json_decode($posted_query_json,true);
 
         } else {
             // store new query in session
             $query_id=time();
             if(isset($_REQUEST['form'])) $posted_query=$_REQUEST['form']; else $posted_query=array('query'=>array());
-            $posted_query_json=$json->encodeUnsafe($posted_query);
+            $posted_query_json=json_encode($posted_query);
             if ($active) {
                 $_SESSION['lastquery_participants_search_active'] =  $posted_query_json;
                 $_SESSION['lastqueryid_participants_search_active'] =  $query_id;

@@ -215,11 +215,15 @@ function expregister__get_history($participant_id) {
 }
 
 function expregister__list_history($participant) {
-    global $lang, $color, $preloaded_laboratories;
+    global $settings, $lang, $color, $preloaded_laboratories, $preloaded_payment_types;
 
     if (!(is_array($preloaded_laboratories) && count($preloaded_laboratories)>0))
         $preloaded_laboratories=laboratories__get_laboratories();
-
+        
+    if (!(is_array($preloaded_payment_types) && count($preloaded_payment_types)>0)) {
+        $preloaded_payment_types=payments__load_paytypes();
+    }
+    
     $history=expregister__get_history($participant['participant_id']);
 
     echo '<TABLE width=100% border=0 cellspacing="0">';
@@ -229,8 +233,14 @@ function expregister__list_history($participant) {
                 <TD>'.lang('experiment').'</TD>
                 <TD>'.lang('date_and_time').'</TD>
                 <TD>'.lang('location').'</TD>
-                <TD>'.lang('showup?').'</TD>
-                </TR>';
+                <TD>'.lang('showup?').'</TD>';
+        if ($settings['enable_payment_module']=='y' && $settings['payments_in_part_history']=='y') {
+            echo '
+                <TD>'.lang('payment_type_abbr').'</TD>
+                <TD>'.lang('payment_amount_abbr').'</TD>
+                ';
+        }
+        echo '</TR>';
     } else echo '<TD>'.lang('mobile_no_past_enrolments').'</TD>';
 
     $labs=array(); $shade=true;
@@ -258,6 +268,21 @@ function expregister__list_history($participant) {
             echo '<FONT color="'.$tcolor.'">'.$ttext.'</FONT>';
         } else echo lang('three_questionmarks');
         echo '</TD>';
+        if ($settings['enable_payment_module']=='y' && $settings['payments_in_part_history']=='y') {
+            echo '<TD>';
+            if (isset($preloaded_payment_types[$s['payment_type']])) {
+                echo $preloaded_payment_types[$s['payment_type']]; 
+            } else {
+                echo '-';
+            }
+            echo '</TD><TD>';
+            if ($s['payment_amt']!='') {
+                echo $s['payment_amt'];
+            } else {
+                echo '-';
+            }
+            echo '</TD>';
+        }
         echo '</TR>';
         $labs[$s['laboratory_id']]=$s['laboratory_id'];
     }
@@ -389,7 +414,7 @@ function expregister__get_pstatus_query_snippet($what="participated",$reverse=fa
     $psarr=expregister__get_specific_pstatuses($what,$reverse);
     if (count($psarr)==1) return " pstatus_id='".$psarr[0]."' ";
     else {
-        return " pstatus_id= ANY (".implode(", ",$psarr).") ";
+        return " pstatus_id IN (".implode(", ",$psarr).") ";
         //$check_statuses_query=array();
         //foreach ($psarr as $cs) $check_statuses_query[]=" pstatus_id='".$cs."' ";
         //$snippet=" (".implode(" OR ",$check_statuses_query).") ";

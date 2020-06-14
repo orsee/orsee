@@ -18,7 +18,7 @@ function admin__login_form() {
     }
     echo '><BR>';
     if (isset($_REQUEST['requested_url']) && $_REQUEST['requested_url'])
-        echo '<input type=hidden name="requested_url" value="'.$_REQUEST['requested_url'].'">';
+        echo '<input type=hidden name="requested_url" value="'.urlencode($_REQUEST['requested_url']).'">';
     echo '<input class="button" type=submit name=login value="'.lang('login').'">
         </form>';
 }
@@ -211,5 +211,102 @@ function admin__select_admin_type($fieldname,$selected="",$return_var="type_name
     $out.='</SELECT>';
     return $out;
 }
+
+function admin__load_admin_types() {
+    global $settings, $preloaded_admintypes;
+    if (!isset($preloaded_admintypes) || !is_array($preloaded_admintypes)) {
+        $preloaded_admintypes=array();
+        $query="SELECT * from ".table('admin_types')."
+                 ORDER by type_name";
+        $result=or_query($query);
+        while ($line=pdo_fetch_assoc($result)) {
+            $preloaded_admintypes[$line['type_name']]=$line;
+        }
+    }
+    return $preloaded_admintypes;
+}
+
+function admin__admin_type_select_field($postvarname,$selected,$multi=true,$mpoptions=array()) {
+    // $postvarname - name of form field
+    // selected - array of pre-selected class ids
+    global $lang;
+    $out="";
+    if (!is_array($mpoptions)) $mpoptions=array();
+    $default_options=array('cols'=>30,'picker_maxnumcols'=>3);
+    foreach ($default_options as $k=>$v) {
+        if (!isset($mpoptions[$k])) {
+            $mpoptions[$k]=$v;
+        }
+    }
+    $admin_types=admin__load_admin_types();
+    $mylist=array();
+    foreach ($admin_types as $k=>$line) {
+        $mylist[$k]=$k;
+    }
+    if ($multi) {
+        $out.= get_multi_picker($postvarname,$mylist,$selected,$mpoptions);
+    } else {
+        $out.= '<SELECT name="'.$postvarname.'">
+                <OPTION value=""'; if (!$selected) $out.= ' SELECTED'; $out.= '>-</OPTION>
+                ';
+        foreach ($mylist as $k=>$v) {
+            $out.= '<OPTION value="'.$k.'"';
+                if ($selected==$k) $out.= ' SELECTED'; $out.= '>'.$v.'</OPTION>
+                ';
+        }
+        $out.= '</SELECT>
+        ';
+    }
+    return $out;
+}
+
+function admin__update_admin_rights_if_not_exists($specs) {
+    global $system__admin_rights;
+    $done=false;
+    
+    // is the right defined? If not: ignore.
+    $defined_rights=array();
+    foreach ($system__admin_rights as $right) {
+        $line=explode(":",$right);
+        $defined_rights[]=$line[0];
+    }
+
+    if (in_array($specs['right_name'],$defined_rights)) {
+        // does the right already exist in >0 admin profiles? If yes: ignore.
+        $exists=false; $trights=array();
+        $query="SELECT * FROM ".table('admin_types')." ORDER BY type_name";
+        $result=or_query($query);
+        while ($type=pdo_fetch_assoc($result)) {
+            $trights[$type['type_name']]=explode(",",$type['rights']);
+            if (in_array($specs['right_name'],$trights[$type['type_name']])) {
+                $exists=true;
+            }
+        }
+        
+        if ($exists) {
+            log__admin('Automatic database upgrade: User privilege "'.$specs['right_name'].'" already exists in at least one admin profile. Not upgraded.');
+        } else {
+            // add right to those types specified
+            foreach ($specs['admin_types'] as $add_to_type) {
+                if (isset($trights[$add_to_type])) {
+                    // if this type exists: add the right to this type's list
+                    $trights[$add_to_type][]=$specs['right_name'];
+                }
+            }
+            // now save all types
+            foreach ($trights as $type_name=>$type_rights) {
+                $ttype=array();
+                $ttype['type_name']=$type_name;
+                $ttype['rights']=implode(",",$type_rights);
+                $done=orsee_db_save_array($ttype,"admin_types",$ttype['type_name'],"type_name");
+            }
+            log__admin("Automatic database upgrade: added admin right '".$specs['right_name']."'.");
+        }
+    } else {
+        log__admin('Automatic database upgrade: User privilege "'.$specs['right_name'].'" in database upgrade not defined as admin right. Not upgraded.');
+    }
+    return $done;
+}
+
 
 ?>

@@ -366,6 +366,7 @@ if ($proceed) {
         if (count($history)>0) echo '<ul data-role="listview" data-theme="a" data-inset="true">';
 
         $pstatuses=expregister__get_participation_statuses();
+        $payment_types=payments__load_paytypes();
         foreach ($history as $s) {
             echo '<li><strong>'.$s['session_name'].'</strong><br>
             '.lang('experiment').': '.$s['experiment_public_name'].'<br>
@@ -382,6 +383,20 @@ if ($proceed) {
                 $ttext=$pstatuses[$s['pstatus_id']]['display_name'];
                 echo '<FONT color="'.$tcolor.'"><strong>'.$ttext.'</strong></FONT>';
             } else echo '<FONT color="grey"><strong>'.lang('three_questionmarks').'</strong></FONT>';
+            if ($settings['enable_payment_module']=='y' && $settings['payments_in_part_history']=='y') {
+                echo '<br>'.lang('payment_type_abbr').': ';
+                if (isset($payment_types[$s['payment_type']])) {
+                    echo $payment_types[$s['payment_type']]; 
+                } else {
+                    echo '-';
+                }
+                echo ', '.lang('payment_amount_abbr').': ';
+                if ($s['payment_amt']!='') {
+                    echo $s['payment_amt'];
+                } else {
+                    echo '-';
+                }
+            }
             echo '</li>';
         }
         if (count($history)>0) echo '</ul>';
