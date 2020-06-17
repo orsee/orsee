@@ -335,11 +335,23 @@ function expregister__cancel($participant,$session) {
     $done=experimentmail__experiment_cancellation_mail($participant,$session);
 }
 
-
-
+function expregister__language_test_signed_select_field($postvarname,$selected,$hidden=array(),$show_color=true) {
+    $language_test=[ 'y', 'n', 'o' ];
+    $out='<SELECT name="'.$postvarname.'">';
+    foreach ($language_test as $test_value) {
+        if (!in_array($status['language_test'],$hidden)) {
+            $out.='<OPTION value="'.$test_value['pstatus_id'].'"';
+            if ($test_value['pstatus_id']==$selected) $out.=" SELECTED";
+            $out.='>'.$test_value['internal_name'];
+            $out.='</OPTION>
+                ';
+        }
+    }
+    $out.='</SELECT>';
+    return $out;
+}
 
 function expregister__participation_status_select_field($postvarname,$selected,$hidden=array(),$show_color=true) {
-
     $statuses=expregister__get_participation_statuses();
     if ($show_color && isset($statuses[$selected])) {
         global $color;

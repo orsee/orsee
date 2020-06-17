@@ -216,6 +216,20 @@ if ($proceed) {
                         $done=or_query($query,$pars);
                     }
 
+                    // update language_test
+                    $pars=array();
+                        foreach($_REQUEST['pid'] as $k=>$v) {
+                            if (isset($_REQUEST['language_test'][$v]) && $_REQUEST['language_test'][$v]=='y') $r='y';
+                            else if (isset($_REQUEST['language_test'][$v]) && $_REQUEST['language_test'][$v]=='n') $r='n';
+                            else $r='o';
+                            $pars[]=array(':language_test'=>$r,
+                                        ':participant_id'=>$k);
+                        }
+                    $query="UPDATE ".table('participants')."
+                            SET language_test = :language_test ";
+                    $query.="WHERE participant_id= :participant_id";
+                    $done=or_query($query,$pars);
+
                     // move participants to other sessions ...
                     $new_session=array();
                     foreach($_REQUEST['session'] as $k=>$v) {
