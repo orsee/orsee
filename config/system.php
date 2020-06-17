@@ -464,6 +464,13 @@ $system__options_general[]=array(
 );
 
 $system__options_general[]=array(
+'option_name'=>'enable_language_test',
+'option_text'=>'Enable the "language_test" checkbox in participant profiles and session participant lists?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
+
+$system__options_general[]=array(
 'option_name'=>'enable_event_participant_numbers',
 'option_text'=>'Allow to add participant numbers to non-ORSEE-experimental laboratory bookings?',
 'type'=>'select_yesno_switchy',

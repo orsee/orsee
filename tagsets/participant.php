@@ -581,6 +581,19 @@ function participant__rules_signed_form_field($current_rules_signed="") {
     return $out;
 }
 
+function participant__language_test_form_field($current_language_test="") {
+    global $lang;
+	// Field is not mandatory and can be set later.
+	// Default value in database is "o". Nothing is checked if not set.
+	$out='<input type=radio name=language_test value="y"';
+    if ($current_language_test=="y") $out.=" CHECKED";
+        $out.='>'.lang('yes').'&nbsp;&nbsp;&nbsp;
+         <input type=radio name=language_test value="n"';
+        if ($current_language_test=="n") $out.=" CHECKED";
+        $out.='>'.lang('no');
+    return $out;
+}
+
 function participant__remarks_form_field($current_remarks="") {
         global $lang;
         $out='<TEXTAREA name="remarks" rows="5" cols="40" wrap=virtual>';
@@ -868,6 +881,7 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
     if (!isset($edit['participant_id_crypt'])) $edit['participant_id_crypt']='???';
     if (isset($edit['creation_time'])) $tout['creation_time']=ortime__format($edit['creation_time'],'',lang('lang'));  else $tout['creation_time']='';
     if (!isset($edit['rules_signed'])) $edit['rules_signed']='';
+    if (!isset($edit['language_test'])) $edit['language_test']='';
     if (!isset($edit['session_id'])) $edit['session_id']='';
     if (!isset($edit['remarks'])) $edit['remarks']='';
 
@@ -888,6 +902,12 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
         echo '<tr><td>'.lang('rules_signed').'</td>
             <td>'.participant__rules_signed_form_field($edit['rules_signed']).'</td></tr>';
     }
+
+    if ($settings['enable_language_test']=='y') {
+        echo '<tr><td>'.lang('language_test').'</td>
+            <td>'.participant__language_test_form_field($edit['language_test']).'</td></tr>';
+    }
+
     echo '<tr><td valign="top">'.lang('remarks').'</td>
             <td>'.participant__remarks_form_field($edit['remarks']).'</td></tr>';
 
@@ -1260,6 +1280,7 @@ function participant__nonuserdefined_columns() {
     $columns['participant_id']=array('use_in_tables'=>1,'lang_symbol'=>'participant_id','include_in_freetext_search'=>1);
     $columns['number_noshowup']=array('use_in_tables'=>1,'lang_symbol'=>'noshowup','include_in_freetext_search'=>0);
     $columns['rules_signed']=array('use_in_tables'=>1,'lang_symbol'=>'rules_signed','include_in_freetext_search'=>0);
+    $columns['language_test']=array('use_in_tables'=>1,'lang_symbol'=>'language_test','include_in_freetext_search'=>0);
     $columns['creation_time']=array('use_in_tables'=>1,'lang_symbol'=>'creation_time','include_in_freetext_search'=>0);
     $columns['deletion_time']=array('use_in_tables'=>1,'lang_symbol'=>'deletion_time','include_in_freetext_search'=>0);
     $columns['last_enrolment']=array('use_in_tables'=>1,'lang_symbol'=>'last_enrolment','include_in_freetext_search'=>0);
@@ -1447,6 +1468,11 @@ function participant__get_result_table_headcells($columns,$allow_sort=true) {
                     $out.=query__headcell($arr['display_text'],"rules_signed,lname,fname",$allow_sort);
                 }
                 break;
+            case 'language_test':
+                if ($settings['enable_language_test']=='y')  {
+                    $out.=query__headcell($arr['display_text'],"language_test,lname,fname",$allow_sort);
+                }
+                break;
             case 'payment_budget':
             case 'payment_type':
             case 'payment_amount':
@@ -1482,6 +1508,11 @@ function participant__get_result_table_headcells_pdf($columns) {
         switch($k) {
             case 'rules_signed':
                 if ($settings['enable_rules_signed_tracking']=='y')  {
+                    $table_headings[]=$arr['display_text'];
+                }
+                break;
+            case 'language_test':
+                if ($settings['enable_language_test']=='y')  {
                     $table_headings[]=$arr['display_text'];
                 }
                 break;
@@ -1560,6 +1591,16 @@ function participant__get_result_table_row($columns,$p) {
                         }
                         $out.='></td>';
                     }
+                    break;
+				case 'language_test':
+                    $out.='<td class="small">';
+                    if (check_allow('experiment_edit_participants')) {
+                         $out.='<INPUT type=hidden name="orig_language_test['.$p['participant_id'].']" value="'.$p['language_test'].'">';
+                         $out.=expregister__language_test_signed_select_field('language_test['.$p['participant_id'].']',$p['language_test']);
+                    } else {
+                        $out.=lang($p['language_test']);
+                    }
+                    $out.='</td>';
                     break;
                 case 'subscriptions':
                     $exptypes=load_external_experiment_types();
