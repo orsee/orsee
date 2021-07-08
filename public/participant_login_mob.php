@@ -57,7 +57,7 @@ if ($proceed) {
             </div>
             <div data-role="fieldcontain">
                 <label for="password" class="ui-hidden-accessible">'.lang('password').'</label>
-                <input type="password" value="" name="password" id="password" placeholder="'.lang('password').'"/>
+                <input type="password" autocomplete="off" value="" name="password" id="password" placeholder="'.lang('password').'"/>
             </div>
             <input type="submit" data-theme="b" name="login" id="login" value="'.lang('login').'">
         </fieldset>
