@@ -109,7 +109,7 @@ if ($proceed) {
 
     echo '
         <form action="admin_edit.php" method=post>';
-
+    echo addCsrfTokenToForm();
     if ($admin_id) echo '<input type=hidden name="admin_id" value="'.$admin_id.'">';
     else echo '<input type=hidden name="new" value="true">';
 

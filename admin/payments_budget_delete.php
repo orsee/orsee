@@ -105,6 +105,7 @@ if ($proceed) {
 
     echo '  <CENTER>
             <FORM action="payments_budget_delete.php">
+            ' . addCsrfTokenToForm() . '
             <INPUT type="hidden" name="budget_id" value="'.$budget_id.'">
             <TABLE class="or_formtable">
                 <TR><TD colspan="2">

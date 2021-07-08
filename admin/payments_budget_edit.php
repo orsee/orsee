@@ -68,6 +68,7 @@ if ($proceed) {
     show_message();
     echo '
             <FORM action="payments_budget_edit.php">';
+    echo addCsrfTokenToForm();
         if (isset($budget_id)) echo '<INPUT type=hidden name="budget_id" value="'.$budget_id.'">';
 
     echo '

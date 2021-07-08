@@ -118,6 +118,7 @@ if ($proceed) {
 
     echo '
             <FORM action="participation_status_edit.php">';
+    echo addCsrfTokenToForm();
     if (isset($pstatus_id)) echo '<INPUT type=hidden name="pstatus_id" value="'.$pstatus_id.'">';
 
     echo '

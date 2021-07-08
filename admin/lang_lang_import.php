@@ -159,6 +159,7 @@ if ($proceed) {
     show_message();
 
     echo '  <form method=post enctype="multipart/form-data" action="lang_lang_import.php">
+               ' . addCsrfTokenToForm() . '
                 <input type=hidden name="lang_id" value="'.$lang_id.'">
 
         <table class="or_formtable">

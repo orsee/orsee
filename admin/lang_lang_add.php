@@ -81,6 +81,7 @@ if ($proceed) {
     show_message();
 
     echo '<FORM action="lang_lang_add.php">
+        ' . addCsrfTokenToForm() . '
 
         <TABLE class="or_formtable">
             <TR>

@@ -69,6 +69,7 @@ if ($proceed) {
 
     if (check_allow('pform_saved_queries_delete')) {
         echo '<FORM action="'.thisdoc().'" method="POST">
+                ' . addCsrfTokenToForm() . '
                 <INPUT type="hidden" name="type" value="'.$type.'">';
         echo '<TABLE width=90% border=0>
             <TD align=right>

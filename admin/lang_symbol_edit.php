@@ -44,6 +44,7 @@ if ($proceed) {
 
     // form
     echo '  <FORM action="lang_symbol_edit.php" method=post>
+            ' . addCsrfTokenToForm() . '
         <INPUT type=hidden name="lang_id" value="'.$lang_id.'">
 
         <TABLE class="or_formtable">

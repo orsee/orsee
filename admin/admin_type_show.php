@@ -12,6 +12,7 @@ if ($proceed) {
     echo '<center>
         <BR>
         <form action="admin_type_edit.php">
+        ' . addCsrfTokenToForm() . '
         <input class="button" type=submit name="new" value="'.lang('create_new').'">
         </form>';
 

@@ -76,6 +76,7 @@ if ($proceed) {
 
             echo '
                 <FORM action="lang_lang_delete.php">
+                ' . addCsrfTokenToForm() . '
                 <INPUT type=hidden name="elang" value="'.$tlang.'">
                 <INPUT type=hidden name="nlang" value="'.$slang.'">
 
@@ -117,6 +118,7 @@ if ($proceed) {
         echo '  <BR><BR>
                 <center>';
         echo '  <FORM action="lang_lang_delete.php">
+                ' . addCsrfTokenToForm() . '
                 <TABLE class="or_formtable">
                     <TR>
                     <TD align=right>'.lang('delete_language').':</TD>

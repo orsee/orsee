@@ -114,6 +114,7 @@ if ($proceed) {
     show_message();
     echo '
         <FORM action="subpool_edit.php">
+        ' . addCsrfTokenToForm() . '
         <INPUT type=hidden name="subpool_id" value="'.$subpool_id.'">
         <TABLE class="or_panel">
             <TR><TD>'.lang('id').':</TD><TD>'.$subpool_id.'</TD></TR>

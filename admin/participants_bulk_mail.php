@@ -73,6 +73,7 @@ if ($proceed) {
 
     // form
     echo '<FORM action="'.thisdoc().'" method="post">
+        ' . addCsrfTokenToForm() . '
         <TABLE class="or_formtable" style="width: 80%">';
 
     foreach ($inv_langs as $inv_lang) {

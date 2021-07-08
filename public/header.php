@@ -7,6 +7,10 @@ include ("../config/requires.php");
 
 $proceed=true;
 
+error_reporting(0);  // shut down all error reporting
+
+header('X-Frame-Options: SAMEORIGIN');
+
 if ($proceed) {
     site__database_config();
     $settings=load_settings();
@@ -15,6 +19,43 @@ if ($proceed) {
     session_set_save_handler("orsee_session_open", "orsee_session_close", "orsee_session_read", "orsee_session_write", "orsee_session_destroy", "orsee_session_gc");
     session_start();
     $_REQUEST=strip_tags_array($_REQUEST);
+
+    $currentCookieParams = session_get_cookie_params();
+
+    // set cookie flags secure and http
+    session_set_cookie_params(
+        $currentCookieParams['lifetime'],
+        $currentCookieParams['path'],
+        $currentCookieParams['domain'],
+        true,
+        true
+    );
+}
+
+$createNewCsrfToken = false;
+
+
+// if only csrf security when logging in is wanted, take out commented section in next line
+if( $_SERVER['REQUEST_METHOD'] == 'POST' AND getRefererFileName() == 'participant_login' ) {
+    if(!isset($_REQUEST["csrf_token"])) {
+        exit;
+    }
+    elseif(! hash_equals($_SESSION["csrf_token"], $_REQUEST["csrf_token"])) { //$_REQUEST["csrf_token"] != $_SESSION["csrf_token"]) {
+        exit;
+    }
+    else { // after successful comparison recreate token
+        $createNewCsrfToken = true;
+    }
+}
+
+
+if(!isset($_SESSION['csrf_token']) OR $createNewCsrfToken) {
+    // new token to be taken into each form
+    if (function_exists('mcrypt_create_iv')) {
+        $_SESSION['csrf_token'] = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+    } else {
+        $_SESSION['csrf_token'] = bin2hex(openssl_random_pseudo_bytes(32));
+    }
 }
 
 if ($proceed) {

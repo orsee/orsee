@@ -56,6 +56,7 @@ if ($proceed) {
     echo '<br>
 
         <FORM action="'.thisdoc().'" method="POST">';
+    echo addCsrfTokenToForm();
 
 
     echo '<table class="or_listtable"><thead>';

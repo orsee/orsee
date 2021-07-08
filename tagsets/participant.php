@@ -677,6 +677,7 @@ function participant__show_form($edit,$button_title="",$errors,$admin=false,$ext
     $out=array(); $tout=array();
 
     echo '<FORM action="'.thisdoc().'" method="POST">';
+    echo addCsrfTokenToForm();
     echo '<table cellspacing="0" cellpadding="10em" border="0">
             <TR><TD>';
     participant__show_inner_form($edit,$errors,$admin);
@@ -812,6 +813,8 @@ function participant__show_admin_form($edit,$button_title="",$errors,$extra="") 
     $out['is_subjectpool_'.$subpool['subpool_id']]=true;
 
     echo '<FORM action="'.thisdoc().'" method="POST">';
+
+    echo addCsrfTokenToForm();
 
     echo '<table border="0">';
     echo '<TR><TD valign="top">';

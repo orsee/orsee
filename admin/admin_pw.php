@@ -70,6 +70,7 @@ if ($proceed) {
 
     echo '
         <form action="admin_pw.php" method="POST">
+        ' . addCsrfTokenToForm() . '
         <table class="or_formtable" style="max-width: 50%">
         <tr>
             <td>
