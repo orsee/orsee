@@ -106,6 +106,7 @@ if ($proceed) {
 
                 echo '<BR><BR>
                     <form action="participant_show.php">
+                    ' . addCsrfTokenToForm() . '
                     <INPUT type=hidden name="s" value="'.$_REQUEST['s'].'">';
 
                 if ($token_string) echo '<INPUT type=hidden name="p" value="'.$participant['participant_id_crypt'].'">';

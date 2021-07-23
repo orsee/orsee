@@ -251,6 +251,7 @@ if ($proceed) {
                     );
         }
         echo '<form action="" method="POST">';
+        echo addCsrfTokenToForm();
         echo formhelpers__orderlist("langitem_list", "langitem_order", $listrows, true, lang('add'), "");
         echo '<BR><input class="button" name="save_order" type="submit" value="'.lang('save_order').'"></form>';
     } else {

@@ -26,6 +26,7 @@ function query__show_form($hide_modules,$experiment=array(),$load_query="",$butt
 
     // display form table
     echo '  <form id="queryForm" action="'.thisdoc().'" method="POST">';
+    echo addCsrfTokenToForm();
     if ($formextra) echo $formextra;
     if ($experiment_id) echo '<INPUT type="hidden" name="experiment_id" value="'.$experiment_id.'">';
     echo '  <TABLE border=0 width=100%>

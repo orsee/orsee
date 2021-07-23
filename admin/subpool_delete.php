@@ -80,6 +80,7 @@ if ($proceed) {
         // form
         echo '  <CENTER>
                 <FORM action="subpool_delete.php">
+                ' . addCsrfTokenToForm() . '
                 <INPUT type=hidden name="subpool_id" value="'.$subpool_id.'">
                 <TABLE class="or_formtable">
                 <TR><TD colspan="2">

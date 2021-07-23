@@ -123,8 +123,10 @@ if ($proceed) {
     if ($experiment_id && check_allow('mailqueue_edit_experiment')) {
         echo '<FORM action="experiment_mailqueue_show.php" method="POST">
             <INPUT type="hidden" name="experiment_id" value="'.$experiment_id.'">';
+        echo addCsrfTokenToForm();
     } elseif (check_allow('mailqueue_edit_all')) {
         echo '<FORM action="mailqueue_show.php" method="POST">';
+        echo addCsrfTokenToForm();
     }
 
     echo '<TABLE width=90% border=0>

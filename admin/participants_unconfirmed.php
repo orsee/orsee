@@ -64,6 +64,7 @@ if ($proceed) {
     echo '<center>';
 
     echo '<FORM action="participants_unconfirmed.php" method="POST">';
+        echo addCsrfTokenToForm();
 
         $posted_query=array('query'=> array(0=> array("statusids_multiselect"=>array("not"=>"", "ms_status"=>"0"))));
         $query_array=query__get_query_array($posted_query['query']);

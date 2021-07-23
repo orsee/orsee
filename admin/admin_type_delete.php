@@ -84,6 +84,7 @@ if ($proceed) {
 
     echo '
         <FORM action="admin_type_delete.php">
+        ' . addCsrfTokenToForm() . '
         <INPUT type=hidden name="type_id" value="'.$type_id.'">
 
         <TABLE class="or_formtable">

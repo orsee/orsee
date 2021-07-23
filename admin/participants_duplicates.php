@@ -103,6 +103,7 @@ if ($proceed) {
         }
 
         echo '<FORM action="participants_duplicates.php" method="POST">';
+        echo addCsrfTokenToForm();
         echo '<B></B>';
 
         echo '<TABLE class="or_formtable"><TR><TD>

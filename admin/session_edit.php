@@ -146,6 +146,7 @@ if ($proceed) {
     show_message();
 
     echo '<FORM action="session_edit.php" method="POST">
+        ' . addCsrfTokenToForm() . '
             <INPUT type=hidden name=session_id value="'.$edit['session_id'].'">
             <INPUT type=hidden name=experiment_id value="'.$edit['experiment_id'].'">';
     if (isset($addit) && $addit) echo '<INPUT type=hidden name="addit" value="true">';

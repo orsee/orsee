@@ -146,7 +146,7 @@ function experiment__current_experiment_summary($experimenter="",$finished="n",$
         <table class="or_panel">';
     if ($show_filter) {
         echo '<TR><TD colspan=2>
-                    <FORM action="'.thisdoc().'"><TABLE border=0><TR><TD>'.
+                    <FORM action="'.thisdoc().'"><TABLE border=0>' . addCsrfTokenToForm(). '<TR><TD>'.
                     lang('restrict_list_to_experiments_of_class').'</TD><TD>';
                     echo experiment__experiment_class_select_field('class_search',$class_arr,true,array('cols'=>30,'picker_maxnumcols'=>3));
         echo '  </TD><TD rowspan=2 valign=middle>

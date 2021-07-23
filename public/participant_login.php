@@ -35,6 +35,7 @@ if ($proceed) {
     show_message();
 
     echo '<BR><BR><form name="login" action="participant_login.php" method=post>
+        ' . addCsrfTokenToForm() . '
         <table class="or_formtable">
         <TR><TD>'.lang('email').':</TD><TD>
         <input type="text" size="30" maxlength="100" name="email">

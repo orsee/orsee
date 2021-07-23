@@ -90,6 +90,7 @@ if ($proceed) {
     // form
     echo '<center>';
     echo '  <FORM action="faq_edit.php" METHOD=POST>
+    			' . addCsrfTokenToForm() . '
                 <INPUT type=hidden name="faq_id" value="'.$faq_id.'">
 
                 <TABLE class="or_formtable">

@@ -93,6 +93,7 @@ if ($proceed) {
 
 
     echo '<FORM action="events_edit.php" method="POST">
+        ' . addCsrfTokenToForm(). '
         <INPUT type=hidden name=event_id value="'.$edit['event_id'].'">';
     if (isset($addit) && $addit) echo '<INPUT type=hidden name="addit" value="true">';
     echo '

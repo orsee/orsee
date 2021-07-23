@@ -56,6 +56,7 @@ if ($proceed) {
 
     echo '<center>';
     echo '<FORM action="lang_lang_edit.php">
+        ' . addCsrfTokenToForm() . '
         <INPUT type=hidden name="elang" value="'.$tlang.'">
 
         <TABLE class="or_formtable">

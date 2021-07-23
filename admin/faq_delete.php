@@ -56,6 +56,7 @@ if ($proceed) {
 
     echo '     <center>
                <FORM action="faq_delete.php">
+               ' . addCsrfTokenToForm() . '
                 <INPUT type=hidden name="faq_id" value="'.$faq_id.'">
 
                 <TABLE class="or_formtable">

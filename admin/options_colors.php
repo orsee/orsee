@@ -105,6 +105,7 @@ if ($proceed) {
 if ($proceed) {
     if (check_allow('settings_edit_colors')) echo '
         <FORM action="options_colors.php" method=post>
+        '.addCsrfTokenToForm().'
         <INPUT type=hidden name="style" value="'.$style.'">';
     echo '<TABLE class="or_formtable" style="width: 80%;">';
     if (check_allow('settings_edit_colors')) echo '

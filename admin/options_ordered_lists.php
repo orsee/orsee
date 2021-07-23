@@ -151,6 +151,7 @@ if ($proceed) {
 
     echo '<center>';
     echo '<form action="" method="POST">';
+    echo addCsrfTokenToForm();
     echo '<TABLE class="or_formtable">
             <TR><TD>
                 <TABLE width="100%" border=0 class="or_panel_title"><TR>
