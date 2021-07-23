@@ -171,6 +171,7 @@ if ($proceed) {
             show_message();
 
     echo '<form action="participant_reset_pw.php" method="POST">';
+    echo addCsrfTokenToForm();
     echo '<table class="or_formtable" style="width: 50%;">
             <tr><td colspan="2">'.lang('reset_pw_please_enter_your_email_address').'</TD></TR>
             <TR><TD>'.lang('email').'</TD><TD>

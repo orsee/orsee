@@ -340,6 +340,7 @@ if ($proceed) {
                 }
                 echo '<strong>'.lang('laboratory').':</strong><br>'.$labs[$s['laboratory_id']]['lab_name'].'<br>'.$labs[$s['laboratory_id']]['lab_address'].'<br>';
                 echo '<form id="form-can'.$s['session_id'].'" method="post" data-ajax="false">
+                            ' . addCsrfTokenToForm() . '
                             <INPUT type=hidden name="s" value="'.$s['session_id'].'">';
                 if ($token_string) echo '<INPUT type=hidden name="p" value="'.$participant['participant_id_crypt'].'">';
                 echo '<INPUT type="hidden" name="cancel" value="true">';

@@ -82,8 +82,12 @@ function log__link() {
         }
     $link='<A HREF="'.thisdoc().'?';
     foreach ($post as $key=>$value) {
-        $link.=$key.'='.urlencode($value).'&';
-        }
+        // $key can contain malicious info
+        $correctedKey = str_replace(array('&','<','>','"',"'",'/'),
+            array('&amp;','&lt;','&gt;','&quot;','&#x27;','&#x2F;'),
+            $key);
+        $link.=  $correctedKey.'='.urlencode( $value ).'&';
+    }
     $link.='">';
     return $link;
 }
@@ -173,7 +177,7 @@ function log__show_log($log) {
 
     if (check_allow('log_file_'.$log.'_delete')) {
         echo '
-            <FORM action="statistics_show_log.php">
+            <FORM action="statistics_show_log.php">' . addCsrfTokenToForm() . '
             <INPUT type=hidden name="log" value="'.$log.'">
             '.lang('delete_log_entries_older_than').'
             <select name="days">
