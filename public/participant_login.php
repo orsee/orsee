@@ -42,7 +42,7 @@ if ($proceed) {
         </TD></TR>
         <TR><TD>
         '.lang('password').':</TD><TD>
-        <input type="password" size="20" maxlength="30" name="password">
+        <input type="password" autocomplete="off" size="20" maxlength="30" name="password">
         </TD></TR>
         <TR><TD colspan="2" align="center">
         <input class="button" type=submit name=login value="'.lang('login').'">

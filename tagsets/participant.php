@@ -915,14 +915,14 @@ function participant__password_form_fields($new=false,$provided=false) {
     if ($new) $out.=lang('new_password'); else $out.=lang('password');
     $out.='<br>';
     if ($provided) $out.='***'.lang('provided').'***';
-    else $out.='<input type="password" name="password" size="20" max-length="40"><br>
+    else $out.='<input type="password" autocomplete="off" name="password" size="20" max-length="40"><br>
                 <font class="small">'.lang('participant_password_note').'</font>';
     $out.='</td></tr>
         <tr><td>';
     if ($new) $out.=lang('repeat_new_password'); else $out.=lang('repeat_password');
     $out.='<br>';
     if ($provided) $out.='***'.lang('provided').'***';
-    else $out.='<input type="password" name="password2" size="20" max-length="40">';
+    else $out.='<input type="password" autocomplete="off" name="password2" size="20" max-length="40">';
     $out.='</td></tr>';
     return $out;
 }

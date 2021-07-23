@@ -59,7 +59,7 @@ if ($proceed) {
     echo addCsrfTokenToForm();
     echo '<table class="or_formtable" style="width: 50%;">
             <tr><td>'.lang('old_password').'<BR>
-                <input type="password" name="passold" size="20" max-length="30">
+                <input type="password" autocomplete="off" name="passold" size="20" max-length="30">
             </td></tr>';
     echo participant__password_form_fields(true,false);
     echo '<tr><td align="center">
