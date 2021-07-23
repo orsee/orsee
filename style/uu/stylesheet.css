@@ -1,0 +1,389 @@
+<style type="text/css">
+
+<!--
+
+/* general body settings */
+body {
+	margin-top: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-bottom: 2px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	color: black;
+}
+
+/* general font (basically, all content is in some table cell */
+td, th {
+	font-family: Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	font-size: 10pt;
+}
+
+/* main title of each page, used in style's html_header.php */
+.page_title {
+	font-family: Helvetica, Arialsans-serif;
+	font-size: 20pt;
+	text-decoration: none;
+	text-transform: uppercase;
+	text-align: left;
+	padding-top: 10px;
+	padding-bottom: 5px;
+	color: #566383;
+}
+
+/* heading (only h3 and h4 are really used) */
+h1,h2,h3 {
+	font-family: Arial, helvetica, sans-serif;
+	font-size: 14pt;
+	text-decoration: none;
+	font-weight: bold;
+	text-transform: uppercase;
+	color: #566383;
+}
+
+h4,h5,h6 {
+	font-family: Arial, helvetica, sans-serif;
+	font-size: 13pt;
+	text-decoration: none;
+	font-weight: bold;
+	margin-bottom: 6px;
+}
+
+/* used whenever a small font is needed */
+.small {
+	font-family: Arial;
+	font-size: 8pt;
+}
+
+/* navigation menu */
+.menu_title {
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+	font-size: 10pt;
+}
+
+.menu_item {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	}
+ 
+/* form elements */
+input[type="text"], input[type="password"], textarea {
+    border: 2px solid #aaa;
+    padding: 2px 5px;
+    outline: 0;
+    -webkit-appearance: none;
+}
+input[type="text"]:focus, textarea:focus {
+	border: 2px solid #6b7da5;
+}
+
+input[type="radio"] {
+}
+input[type="checkbox"] {
+}
+
+select:enabled { /* for some reason "select" alone does not work */
+    border:2px solid #aaa;
+    padding:2px;
+    outline: 0;
+}
+select:focus {
+    border:2px solid #6b7da5;
+}
+
+
+/* general formatting for forms */
+table.or_formtable {
+	max-width: 90%;
+	border: 2px solid #aaa;
+	border-collapse: separate;
+	padding: 15px;
+}
+table.or_formtable>tr:first-child td {
+     padding-top: 10px;
+}
+table.or_formtable>tr:first-child td:first-child {
+
+}
+table.or_formtable>tr:first-child td:last-child {
+
+}
+table.or_formtable>tr:first-child td:only-child {
+	border-radius: 10px 10px 0px 0px;
+}
+table.or_formtable>tr:last-child td:first-child {
+
+}
+table.or_formtable>tr:last-child td:last-child {
+
+}
+table.or_formtable>tr:last-child td:only-child {
+
+}
+
+
+/* general formatting for panels with information */
+table.or_panel {
+	width: 90%;
+	border:2px solid #aaa;
+	border-collapse: separate;
+}
+table.or_panel>tr:first-child>td {
+     padding-top: 0px;
+}
+/* rounded corners for panel */
+table.or_panel>tr:first-child>td:first-child {
+
+}
+table.or_panel>tr:first-child>td:last-child {
+
+}
+table.or_panel>tr:first-child>td:only-child {
+
+}
+table.or_panel>tr:last-child>td:first-child {
+
+}
+table.or_panel>tr:last-child>td:last-child {
+
+}
+table.or_panel>tr:last-child>td:only-child {
+
+}
+
+
+/* panel subtitles */
+table.or_panel_title {
+	border-collapse: collapse;
+}
+table.or_panel_title td {
+	font-family: Arial, helvetica, sans-serif;
+	font-size: 13pt;
+	text-decoration: none;
+	font-weight: bold;
+	padding-left: 10px;
+	vertical-align: middle;
+	height: 30px;
+}
+table.or_panel_title tr td:first-child {
+
+}
+table.or_panel_title tr td:last-child {
+
+}
+table.or_panel_title tr td:only-child {
+
+}
+
+/* page subtitle */
+table.or_page_subtitle {
+	border-collapse: separate;
+	border: 2px solid #aaa;
+	width: 90%;
+}
+table.or_page_subtitle td {
+	font-family: Helvetica, sans-serif;
+	font-size: 13pt;
+	text-decoration: none;
+	font-weight: bold;
+	padding-left: 10px;
+	vertical-align: middle;
+	height: 30px;
+}
+
+
+/* option buttons box */
+table.or_option_buttons_box {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table.or_option_buttons_box td {
+	padding: 2px 5px 2px 5px;
+}
+
+/* formatting for section of options (used in Options & Statistics) */
+table.or_optionssection {
+	width: 100%;
+	border-collapse: separate; 
+	border:2px solid #aaa;
+}
+table.or_optionssection tr td {
+    border: 0px;
+    padding: 0px 0px 0px 40px;
+}
+table.or_optionssection tr.section_title td {
+    padding: 3px 0px 0px 3px;
+	color: #777;
+	font-family: Helvetica, Arialsans-serif;
+	font-size: 12pt;
+}
+
+/* general formatting for lists */
+table.or_listtable {
+	border: 2px solid #aaa;
+	border-collapse: separate;
+	border-spacing: 0px;
+	padding: 2px 2px 2px 2px;
+}
+table.or_listtable>thead>tr{
+	height: 20px;
+	font-weight: bold;
+}
+table.or_listtable>thead>tr>td{
+	padding: 0px 2px 0px 2px;
+	vertical-align: middle;
+}
+table.or_listtable>thead>tr:first-child>td:first-child {
+
+}
+table.or_listtable>thead>tr:first-child>td:last-child {
+
+}
+table.or_listtable>thead>tr:first-child>td:only-child {
+
+}
+table.or_listtable>tbody>tr:hover{
+	background: #bbb;
+}
+table.or_listtable>tbody>td{
+	padding: 0px 2px 0px 2px;
+	vertical-align: top;
+}
+
+/* formatting for ORSEE recruitment report */
+table.or_orr_section_head {
+	border-collapse: separate;
+	border: 2px solid #aaa;
+	width: 100%;
+	background: #6E6E6E;
+	color: #ffffff;
+}
+table.or_orr_section_head td {
+	font-size: 13pt;
+	font-family: Arial, helvetica, sans-serif;
+	text-decoration: none;
+	font-weight: bold;
+}
+table.or_orr_section_content {
+	border: 2px solid #aaa;
+	border-collapse: separate;
+	border-spacing: 0px;
+	padding: 2px;
+	width: 100%;
+}
+table.or_orr_section_content td {
+	padding: 2px;
+}
+table.or_orr_section_content tr.or_orr_list_shade_odd {
+	background: none;
+}
+table.or_orr_section_content tr.or_orr_list_shade_even {
+	background: #EEEEEE;
+}
+table.or_orr_spstatstable {
+	border: 2px solid #aaa;
+	border-collapse: collapse;
+	border-spacing: 0px;
+	padding: 2px 2px 2px 2px;
+}
+table.or_orr_spstatstable td.orr_header_title {
+	background: #6E6E6E;
+	color: #ffffff;
+	font-size: 13pt;
+	font-family: Arial, helvetica, sans-serif;
+	text-decoration: none;
+	font-weight: bold; 
+}
+table.or_orr_spstatstable td.orr_header_poolnames {
+	background: #6E6E6E;
+	color: #ffffff;
+	font-weight: bold; 
+}
+table.or_orr_spstatstable td.orr_header_n {
+	background: #6E6E6E;
+	color: #ffffff;
+	text-decoration: none;
+	font-style: italic; 
+}
+table.or_orr_spstatstable td.orr_header_varnames {
+	background: #cccccc;
+	color: #000000;
+	font-weight: bold; 
+}
+
+table.or_message {
+	width: 400px;
+	border-width: 3px;
+	border-style: solid;
+	border-collapse: separate;
+}
+
+
+
+/* ORSEE buttons style (also allows for icons in buttons)*/
+.button {      
+	display: inline-block;
+	white-space: nowrap;
+	background-color: #ddd;
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#eee), to(#ccc));
+	background-image: -webkit-linear-gradient(top, #eee, #ccc);
+	background-image: -moz-linear-gradient(top, #eee, #ccc);
+	background-image: -ms-linear-gradient(top, #eee, #ccc);
+	background-image: -o-linear-gradient(top, #eee, #ccc);
+	background-image: linear-gradient(top, #eee, #ccc);
+	border: 1px solid #777;
+	padding: 0 1em 0 1em;
+	margin: 0.5em;
+	color: #333;
+	text-shadow: 0 1px 0 rgba(255,255,255,.8);
+	-moz-border-radius: .2em;
+	-webkit-border-radius: .2em;
+	border-radius: .2em;
+	-moz-box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
+	-webkit-box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
+	box-shadow: 0 0 1px 1px rgba(255,255,255,.8) inset, 0 1px 0 rgba(0,0,0,.3);
+	text-decoration: none;
+	font-family:  FontAwesome, Arial, Helvetica, sans-serif;
+	font-size: 10pt;
+	line-height: 15pt;
+	font-weight: bold;
+}
+.button:hover {
+	background-color: #eee;        
+	background-image: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#ddd));
+	background-image: -webkit-linear-gradient(top, #fafafa, #ddd);
+	background-image: -moz-linear-gradient(top, #fafafa, #ddd);
+	background-image: -ms-linear-gradient(top, #fafafa, #ddd);
+	background-image: -o-linear-gradient(top, #fafafa, #ddd);
+	background-image: linear-gradient(top, #fafafa, #ddd);
+}
+.button:active {
+	-moz-box-shadow: 0 0 4px 2px rgba(0,0,0,.3) inset;
+	-webkit-box-shadow: 0 0 4px 2px rgba(0,0,0,.3) inset;
+	box-shadow: 0 0 4px 2px rgba(0,0,0,.3) inset;
+	position: relative;
+	top: 1px;
+}
+.button:focus {
+	outline: 0;
+	background: #fafafa; 
+}    
+.button:before {
+	float: left;        
+	width: 1em;
+	text-align: center;
+	font-size: 1.3em;
+	margin: 0 0.1em 0 -1em;
+	padding: 0 .2em;
+	-moz-border-radius: .15em 0 0 .15em;
+	-webkit-border-radius: .15em 0 0 .15em; 
+	border-radius: .15em 0 0 .15em;     
+	pointer-events: none;
+	font-style: normal;
+	font-weight: normal;
+}
+
+//-->
