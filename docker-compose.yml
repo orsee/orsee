@@ -1,0 +1,32 @@
+version: "3.2"
+services:
+  orsee.docker:
+    user: "1000:1000"
+    container_name: orsee
+    hostname: orsee.docker
+    build:
+      context: .
+      dockerfile: docker/orsee.dockerfile
+    ports:
+      - "9004:9004"
+    volumes:
+      - ./:/var/www
+    networks:
+      - default
+      - hs-appteam-local-dev
+  mariadb:
+    container_name: orsee_mariadb
+    image: "mariadb:latest"
+    volumes:
+      - ./install/:/docker-entrypoint-initdb.d/:ro
+    restart: 'always'
+    ports:
+      - "8004:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "orsee"
+      MYSQL_USER: "orsee"
+      MYSQL_PASSWORD: "secret"
+networks:
+  hs-appteam-local-dev:
+    external: true
