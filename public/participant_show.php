@@ -5,6 +5,10 @@ ob_start();
 $menu__area="my_registrations";
 $title="experiments";
 include("header.php");
+if (!$_SESSION['pauthdata']['user_logged_in']) {
+	redirect("public/participant_login.php");
+	die;
+}	
 if ($proceed) {
     if ($settings['enable_mobile_pages']=='y') {
         $useragent=$_SERVER['HTTP_USER_AGENT'];
