@@ -8,6 +8,8 @@ $lang_icons_prepare=true;
 include("header.php");
 if ($proceed) {
     if (!$_REQUEST['experiment_id']) redirect ("admin/");
+    //app-team security update: redirect away if ID is not a number
+    else if (!is_numeric($_REQUEST['experiment_id']) ) redirect ("admin/");
     else $experiment_id=$_REQUEST['experiment_id'];
 }
 
@@ -47,8 +49,9 @@ if ($proceed) {
 
 if ($proceed) {
     // load sessions if lab experiment
+    // also: check if $experiment_id is actually a number
     $sessions=array();
-    if ($experiment['experiment_type']=="laboratory") {
+    if ($experiment['experiment_type']=="laboratory" && is_numeric($experiment_id) == TRUE) {
         $pars=array(':experiment_id'=>$experiment['experiment_id']);
         $query="SELECT *
                 FROM ".table('sessions')."
@@ -67,7 +70,8 @@ if ($proceed) {
             $sids[]=$s['session_id'];
         }
         // get pstatus counts
-        if (count($sids)>0) {
+        // also: check if $experiment_id is actually a number
+        if (count($sids)>0 && is_numeric($experiment_id) == TRUE) {
             $pars=array(':experiment_id'=>$experiment['experiment_id']);
             $query="SELECT session_id, pstatus_id,
                     COUNT(*) as num
@@ -295,13 +299,17 @@ if ($proceed) {
     echo '</TD></TR>
             <TR><TD>';
 
-    $pars=array(':experiment_id'=>$experiment['experiment_id']);
-    $query="SELECT max(session_start) as max_time, min(session_start) as min_time
-            FROM ".table('sessions')."
-            WHERE experiment_id = :experiment_id";
-    $line=orsee_query($query,$pars);
-    $min_session_time=ortime__sesstime_to_unixtime($line['min_time']);
-    $max_session_time=ortime__sesstime_to_unixtime($line['max_time']);
+	//check if $experiment_id is actually a number
+    if(is_numeric($experiment_id) == TRUE){
+    
+    	$pars=array(':experiment_id'=>$experiment['experiment_id']);
+    	$query="SELECT max(session_start) as max_time, min(session_start) as min_time
+            	FROM ".table('sessions')."
+            	WHERE experiment_id = :experiment_id";
+    	$line=orsee_query($query,$pars);
+    	$min_session_time=ortime__sesstime_to_unixtime($line['min_time']);
+    	$max_session_time=ortime__sesstime_to_unixtime($line['max_time']);    
+    }
 
     $total_data=array();
     // pool

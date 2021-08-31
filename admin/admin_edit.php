@@ -109,7 +109,7 @@ if ($proceed) {
 
     echo '
         <form action="admin_edit.php" method=post>';
-
+    echo addCsrfTokenToForm();
     if ($admin_id) echo '<input type=hidden name="admin_id" value="'.$admin_id.'">';
     else echo '<input type=hidden name="new" value="true">';
 
@@ -338,7 +338,7 @@ if ($proceed) {
                 </td>
                 <td>&nbsp;&nbsp;</td>
                 <td>
-                    <input name="password" type="password" size="10" maxlength="20" value="">
+                    <input name="password" type="password" autocomplete="off" size="10" maxlength="20" value="">
                 </td>
             </tr>
 
@@ -348,7 +348,7 @@ if ($proceed) {
                 </td>
                 <td>&nbsp;&nbsp;</td>
                 <td>
-                    <input name="password2" type="password" size="10" maxlength="20" value="">
+                    <input name="password2" type="password" autocomplete="off" size="10" maxlength="20" value="">
                 </td>
             </tr>';
             }

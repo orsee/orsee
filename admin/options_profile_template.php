@@ -20,7 +20,7 @@ if ($proceed) {
     echo '<center>';
 
     echo '
-        <FORM action="options_profile_template.php" METHOD="GET">
+        <FORM action="options_profile_template.php" METHOD="GET">' . addCsrfTokenToForm() . '
         <TABLE width="90%" border=0 cellspacing="0">
         <TR><TD>
             '.lang('display_preview_for_subjectpool').subpools__select_field('subpool_id',$subpool_id).

@@ -31,6 +31,7 @@ if ($proceed) {
             $continue=false;
 
             echo '<FORM action="'.thisdoc().'" method="POST">';
+            echo addCsrfTokenToForm();
             echo '<TABLE class="or_formtable">';
 
             echo '      <TR><TD>From which ORSEE version do you want to import data?</TD>
@@ -65,6 +66,7 @@ if ($proceed) {
 
 
                 echo '<FORM action="'.thisdoc().'" method="POST">';
+                echo addCsrfTokenToForm();
                 echo '<INPUT type="hidden" name="old_version" value="'.$old_version.'">';
                 echo '<INPUT type="hidden" name="old_database" value="'.$old_database.'">';
                 echo '<TABLE class="or_formtable" style="max-width: 90%;">';

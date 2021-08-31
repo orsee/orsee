@@ -359,6 +359,7 @@ if ($proceed) {
     // form
     echo '
         <FORM name="part_list" method=post action="'.thisdoc().'">
+        ' . addCsrfTokenToForm() . '
 
         <BR>
         <table class="or_listtable" style="width: 95%"><thead>

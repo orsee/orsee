@@ -30,6 +30,7 @@ if ($proceed) {
         echo '<center>
 
             <FORM action="participant_delete.php">
+            ' . addCsrfTokenToForm() . '
             <INPUT type=hidden name="p" value="'.$participant['participant_id_crypt'].'">
             <TABLE class="or_formtable">
             <TR>

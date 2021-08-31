@@ -69,6 +69,7 @@ if ($proceed) {
             } else {
                 echo '<center><BR><BR>
                       <FORM action='.thisdoc().'>
+                      ' . addCsrfTokenToForm() . '
                       <TABLE class="or_panel" style="width: 80%">';
                 if ($settings['registration__require_rules_acceptance']=='y') {
                     echo '<TR><TD>

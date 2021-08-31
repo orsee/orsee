@@ -35,13 +35,14 @@ if ($proceed) {
     show_message();
 
     echo '<BR><BR><form name="login" action="participant_login.php" method=post>
+        ' . addCsrfTokenToForm() . '
         <table class="or_formtable">
         <TR><TD>'.lang('email').':</TD><TD>
         <input type="text" size="30" maxlength="100" name="email">
         </TD></TR>
         <TR><TD>
         '.lang('password').':</TD><TD>
-        <input type="password" size="20" maxlength="30" name="password">
+        <input type="password" autocomplete="off" size="20" maxlength="30" name="password">
         </TD></TR>
         <TR><TD colspan="2" align="center">
         <input class="button" type=submit name=login value="'.lang('login').'">

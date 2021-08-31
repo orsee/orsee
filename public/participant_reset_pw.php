@@ -93,6 +93,7 @@ if ($proceed) {
             $email=$_SESSION['reset_email_address'];
         else $email='';
         echo '<form action="participant_reset_pw.php" method="POST">';
+        echo addCsrfTokenToForm();
         echo '<table class="or_formtable" style="width: 50%;">';
         echo '<tr><td colspan="2">'.lang('reset_pw_please_enter_email_and_new_password').'</TD></TR>';
         echo '<TR><TD>'.lang('email').'<BR>
@@ -170,6 +171,7 @@ if ($proceed) {
             show_message();
 
     echo '<form action="participant_reset_pw.php" method="POST">';
+    echo addCsrfTokenToForm();
     echo '<table class="or_formtable" style="width: 50%;">
             <tr><td colspan="2">'.lang('reset_pw_please_enter_your_email_address').'</TD></TR>
             <TR><TD>'.lang('email').'</TD><TD>

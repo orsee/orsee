@@ -88,6 +88,7 @@ if ($proceed) {
 
         echo '  <CENTER>
                 <FORM action="participation_status_delete.php">
+                ' . addCsrfTokenToForm() . '
                 <INPUT type="hidden" name="pstatus_id" value="'.$pstatus_id.'">
 
                 <TABLE class="or_formtable">

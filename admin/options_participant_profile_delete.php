@@ -63,6 +63,7 @@ if ($proceed) {
 
     echo '  <CENTER>
             <FORM action="options_participant_profile_delete.php">
+            ' . addCsrfTokenToForm() . '
             <INPUT type="hidden" name="mysql_column_name" value="'.$field_name.'">
             <TABLE class="or_formtable">
                 <TR><TD colspan="2">

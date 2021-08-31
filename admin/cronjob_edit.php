@@ -53,7 +53,7 @@ if ($proceed) {
 
     echo '
             <FORM action="cronjob_edit.php">
-
+        ' . addCsrfTokenToForm() . '
         <TABLE class="or_formtable">
             <TR>
                 <TD>

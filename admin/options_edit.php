@@ -84,7 +84,8 @@ if ($proceed) {
 
 if ($proceed) {
     if (check_allow('settings_edit')) echo '
-        <FORM action="options_edit.php" method=post>
+        <FORM action="options_edit.php" method=post>' .
+            addCsrfTokenToForm(). '
         <INPUT type=hidden name="otype" value="'.$otype.'">';
 
     echo '  <TABLE class="or_formtable" style="width: 80%;">';

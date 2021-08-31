@@ -50,6 +50,7 @@ if ($proceed) {
         <div data-role="content">';
     if ($message_text) echo '<div data-role="content"><font color="red">'.lang('message').': '.$message_text.'</font></div>';
     echo '<form id="login_form" action="participant_login_mob.php" method="post" data-ajax="false">';
+    echo addCsrfTokenToForm();
     echo '<fieldset>
             <div data-role="fieldcontain">
                 <label for="email" class="ui-hidden-accessible">'.lang('email').'</label>
@@ -57,7 +58,7 @@ if ($proceed) {
             </div>
             <div data-role="fieldcontain">
                 <label for="password" class="ui-hidden-accessible">'.lang('password').'</label>
-                <input type="password" value="" name="password" id="password" placeholder="'.lang('password').'"/>
+                <input type="password" autocomplete="off" value="" name="password" id="password" placeholder="'.lang('password').'"/>
             </div>
             <input type="submit" data-theme="b" name="login" id="login" value="'.lang('login').'">
         </fieldset>

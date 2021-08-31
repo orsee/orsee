@@ -109,6 +109,7 @@ if ($proceed) {
 
         echo  '<FORM name="part_list" method="POST" action="'.thisdoc().'">
                 <INPUT type=hidden name=experiment_id value="'.$experiment_id.'">';
+        echo addCsrfTokenToForm();
 
         // show list of results
         $assign_ids=query_show_query_result($query,"deassign");

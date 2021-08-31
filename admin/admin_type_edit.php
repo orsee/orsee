@@ -98,6 +98,7 @@ if ($proceed) {
     if (!isset($type['type_name'])) $type['type_name']="";
     // form
     echo '<FORM action="admin_type_edit.php" method="post">
+        ' . addCsrfTokenToForm() . '
         <INPUT type=hidden name="type_id" value="'.$type_id.'">
         ';
 

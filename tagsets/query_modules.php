@@ -490,7 +490,8 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 if (isset($f['mysql_column_name'])) {
                     $clause.=$f['mysql_column_name'].' ';
                     if ($type=='numberselect')  {
-                        if (in_array($params['sign'],$allowed_signs)) $clause.=$params['sign'];
+                        $sign = html_entity_decode($params['sign']);
+                        if (in_array($sign,$allowed_signs)) $clause.=$sign;
                         else $clause.=$allowed_signs[0];
                         $clause.=' :number';
                         $pars=array(':number'=>$params['fieldvalue']);
@@ -510,7 +511,8 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 $ctype='part';
                 if($params['count']==0) $params['count']=0;
                 $clause='number_noshowup ';
-                if (in_array($params['sign'],$allowed_signs)) $clause.=$params['sign'];
+                $sign = html_entity_decode($params['sign']);
+                if (in_array($sign,$allowed_signs)) $clause.=$sign;
                 else $clause.=$allowed_signs[0];
                 $clause.=' :noshowcount';
                 $pars=array(':noshowcount'=>$params['count']);
@@ -519,7 +521,8 @@ function query__get_query_array($posted_array,$experiment_id="") {
                 $ctype='part';
                 if($params['count']==0) $params['count']=0;
                 $clause='number_reg ';
-                if (in_array($params['sign'],$allowed_signs)) $clause.=$params['sign'];
+                $sign = html_entity_decode($params['sign']);
+                if (in_array($sign,$allowed_signs)) $clause.=$sign;
                 else $clause.=$allowed_signs[0];
                 $clause.=' :partcount';
                 $pars=array(':partcount'=>$params['count']);
@@ -673,7 +676,7 @@ function query__get_pseudo_query_array($posted_array) {
                 foreach ($formfields as $p) { if($p['mysql_column_name']==$pform_formfield) $f=$p; }
                 if (isset($f['mysql_column_name'])) {
                     $text=lang('where').' '.lang($f['name_lang']).' ';
-                    if ($type=='numberselect')  $text.=$params['sign'].$params['fieldvalue'];
+                    if ($type=='numberselect')  $text.=($params['sign'] == "" ? "&lt;=" : $params['sign']).' '.$params['fieldvalue'];
                     elseif ($type=='simpleselect') $text.=query__pseudo_query_not_not($params).'= "'.$params['fieldvalue'].'"';
                     else $text.=query__pseudo_query_not_not($params).lang('in').': '.participant__select_lang_idlist_to_names($f['mysql_column_name'],$params['ms_'.$pform_formfield]);
 
@@ -681,11 +684,11 @@ function query__get_pseudo_query_array($posted_array) {
                 break;
             case "noshows":
                 $text=lang('where_nr_noshowups_is').' ';
-                $text.=$params['sign'].' '.$params['count'];
+                $text.=($params['sign'] == "" ? "&lt;=" : $params['sign']).' '.$params['count'];
                 break;
             case "participations":
                 $text=lang('where_nr_participations_is').' ';
-                $text.=$params['sign'].' '.$params['count'];
+                $text.=($params['sign'] == "" ? "&lt;=" : $params['sign']).' '.$params['count'];
                 break;
             case "updaterequest":
                 $text=lang('where_profile_update_request_is').' ';

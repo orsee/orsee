@@ -101,7 +101,7 @@ if ($proceed) {
     show_message();
 
     echo '  <form method="post" enctype="multipart/form-data" action="download_upload.php">
-                <input type="hidden" name="experiment_id" value="'.$experiment_id.'">
+                ' . addCsrfTokenToForm() . '<input type="hidden" name="experiment_id" value="'.$experiment_id.'">
             <table class="or_formtable">
             <TR><TD colspan="2">
                 <TABLE width="100%" border=0 class="or_panel_title"><TR>

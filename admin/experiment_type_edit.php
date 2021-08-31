@@ -106,6 +106,7 @@ if ($proceed) {
 
     echo '
             <FORM action="experiment_type_edit.php">
+                ' . addCsrfTokenToForm() . '
                 <INPUT type=hidden name="exptype_id" value="'.$exptype_id.'">
 
         <TABLE class="or_formtable">

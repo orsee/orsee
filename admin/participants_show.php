@@ -244,7 +244,6 @@ if ($proceed) {
         echo '</TD></TR></TABLE>';
         echo '<BR><BR>';
         $query_array=query__get_query_array($posted_query['query']);
-        //dump_array($query_array);
 
         if ($active) {
             $active_clause=array('query'=>participant_status__get_pquery_snippet("eligible_for_experiments"),'pars'=>array());
@@ -261,6 +260,7 @@ if ($proceed) {
         // show list of results
 
         echo '<form id="bulkactionform" action="participants_show.php" method="POST">';
+        echo addCsrfTokenToForm();
         if (isset($_REQUEST['search_sort'])) echo '<input type="hidden" name="search_sort" value="'.$_REQUEST['search_sort'].'">';
         if (isset($_REQUEST['active'])) echo '<input type="hidden" name="active" value="'.$_REQUEST['active'].'">';
 

@@ -130,6 +130,7 @@ if ($proceed) {
         //dump_array($query['pars'],"Parameters");
 
         echo  '<FORM name="part_list" method="POST" action="'.thisdoc().'">
+        		' . addCsrfTokenToForm() . '
                 <INPUT type=hidden name=experiment_id value="'.$experiment_id.'">';
 
         // show list of results

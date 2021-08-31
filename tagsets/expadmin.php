@@ -5,6 +5,7 @@
 function admin__login_form() {
     global $lang, $settings;
     echo '<form name="login" action="admin_login.php" method=post>
+        ' . addCsrfTokenToForm() . '
         '.lang('username').':
         <input type=text size=20 maxlength=20 name=adminname';
     if (!(isset($settings['disable_admin_login_js']) && $settings['disable_admin_login_js']=='y')) {
@@ -12,7 +13,7 @@ function admin__login_form() {
     }
     echo '><BR>
         '.lang('password').':
-        <input type=password size=20 maxlength=20 name=password';
+        <input type="password" autocomplete="off" size=20 maxlength=20 name=password';
     if (!(isset($settings['disable_admin_login_js']) && $settings['disable_admin_login_js']=='y')) {
         echo ' onChange="sendForm()"';
     }

@@ -70,13 +70,14 @@ if ($proceed) {
 
     echo '
         <form action="admin_pw.php" method="POST">
+        ' . addCsrfTokenToForm() . '
         <table class="or_formtable" style="max-width: 50%">
         <tr>
             <td>
                 '.lang('old_password').':
             </td>
             <td>
-                <input type="password" name="passold" size="20" max-length="40">
+                <input type="password" autocomplete="off" name="passold" size="20" max-length="40">
             </td>
         </tr>
         <tr>
@@ -89,7 +90,7 @@ if ($proceed) {
                 '.lang('new_password').':
             </td>
             <td>
-                <input type="password" name="password" size="20" max-length="40">
+                <input type="password" name="password" autocomplete="off" size="20" max-length="40">
             </td>
         </tr>
         <tr>
@@ -97,7 +98,7 @@ if ($proceed) {
                 '.lang('repeat_new_password').':
             </td>
             <td>
-                <input type="password" name="password2" size="20" max-length="40">
+                <input type="password" name="password2" autocomplete="off" size="20" max-length="40">
             </td>
         </tr>
         <tr>

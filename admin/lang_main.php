@@ -104,6 +104,7 @@ if ($proceed) {
         // show languages
 
     echo '<FORM action="'.thisdoc().'">';
+    echo addCsrfTokenToForm();
     echo '<TABLE class="or_listtable" style="width: 80%;"><thead>
             <TR style="background: '.$color['list_header_background'].'; color: '.$color['list_header_textcolor'].';">
                 <TD colspan=2>'.lang('installed_languages').'</TD>

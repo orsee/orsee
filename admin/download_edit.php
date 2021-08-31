@@ -82,6 +82,7 @@ if ($proceed) {
 
     echo '  <form method="post" action="download_edit.php">
                 <input type="hidden" name="file" value="'.$upload_id.'">
+                ' . addCsrfTokenToForm() . '
 
             <table class="or_formtable">';
     if ($experiment_id) {

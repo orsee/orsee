@@ -56,9 +56,10 @@ if ($proceed) {
 
     echo '<TABLE border=0><TR><TD align="center">';
     echo '<form action="participant_change_pw.php" method="POST">';
+    echo addCsrfTokenToForm();
     echo '<table class="or_formtable" style="width: 50%;">
             <tr><td>'.lang('old_password').'<BR>
-                <input type="password" name="passold" size="20" max-length="30">
+                <input type="password" autocomplete="off" name="passold" size="20" max-length="30">
             </td></tr>';
     echo participant__password_form_fields(true,false);
     echo '<tr><td align="center">

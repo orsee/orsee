@@ -55,6 +55,7 @@ if ($proceed) {
     if (count($redundant)>0) {
         $m=lang('pfields_redundant_configurations_message').'<BR><B>'.implode(", ",$redundant).'</B>';
         $m.='<BR><FORM action="'.thisdoc().'" method="POST">
+                ' . addCsrfTokenToForm() . '
                 <INPUT class="button" type="submit" name="delete_redundant" value="'.lang('yes').'">
                 </FORM>
             </p>';

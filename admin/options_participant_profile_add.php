@@ -78,6 +78,7 @@ if ($proceed) {
     javascript__tooltip_prepare();
 
     echo '<FORM id="columnform" action="'.thisdoc().'" method="POST">';
+    echo addCsrfTokenToForm();
     echo '<TABLE class="or_formtable">';
 
     echo '<TR class="tooltip" title="Name of the new MySQL column. Name must start and end with a lowercase letter, and can only contain lower case letters and underscore (_).">

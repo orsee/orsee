@@ -1,6 +1,50 @@
 <?php
 // part of orsee. see orsee.org
 
+function stripTagsRequestArray($var,$exempt=array()) {
+    if (is_array($var)) {
+        foreach($var as $k=>$v) {
+            if (!in_array($k, $exempt)) {
+                $var[$k] = stripTagsRequestArray($v);
+            }
+        }
+    } else {
+        $var = strip_tags($var);
+        $var=str_replace(array('&','<','>','"',"'",'/'),
+            array('&amp;','&lt;','&gt;','&quot;','&#x27;','&#x2F;'),
+            strip_tags($var));
+    }
+    return $var;
+}
+
+
+
+function addCsrfTokenToForm() {
+    return '<input type="hidden" name="csrf_token" value="' . $_SESSION['csrf_token'] . '"><input type="hidden" name="random_string" value="' . $_SESSION['csrf_token'] . '">';
+}
+
+function getRefererFileName()
+{
+    $ar = pathinfo($_SERVER['HTTP_REFERER']);
+    return $ar['filename'];
+}
+
+// Added Csrf security security
+if(!function_exists('hash_equals')) {
+    function hash_equals($str1, $str2) {
+        if(strlen($str1) != strlen($str2)) {
+            return false;
+        } else {
+            $res = $str1 ^ $str2;
+            $ret = 0;
+            for($i = strlen($res) - 1; $i >= 0; $i--) $ret |= ord($res[$i]);
+            return !$ret;
+        }
+    }
+}
+
+// End of HdR additions
+
 // messages
 function message($new_message,$icon="") {
     $message_text=$_SESSION['message_text'];
