@@ -8,7 +8,7 @@ services:
       context: .
       dockerfile: docker/orsee.dockerfile
     ports:
-      - "9004:9004"
+      - "9018:9018"
     volumes:
       - ./:/var/www
     networks:
@@ -21,7 +21,7 @@ services:
       - ./install/:/docker-entrypoint-initdb.d/:ro
     restart: 'always'
     ports:
-      - "8004:3306"
+      - "8018:3306"
     environment:
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_DATABASE: "orsee"

@@ -15,7 +15,7 @@ $settings__root_directory="";
 // url to web server document root (IP or domain name)
 // without trailing slash and the http://!
 //$settings__server_url="www.orsee.org";
-$settings__server_url="orsee.docker:9004";
+$settings__server_url="orsee.docker:9018";
 
 // servr protocol (either "http://" or "https://"
 $settings__server_protocol="https://";
