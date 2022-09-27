@@ -4,7 +4,8 @@
 // creates databae connection
 function site__database_config() {
     global $db, $site__database_host, $site__database_admin_username,
-        $site__database_admin_password, $site__database_database, $site__database_port;
+        $site__database_admin_password, $site__database_database, $site__database_port,
+        $site__database_use_ssl, $site__database_ssl_key, $site__database_ssl_cert, $site__database_ssl_ca;
 
     if (preg_match("/^([^:]+):([0-9]+)$/",trim($site__database_host),$matches)) {
         $host='host='.$matches[1].';'; $port='port='.$matches[2].';';
