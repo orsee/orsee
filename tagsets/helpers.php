@@ -283,7 +283,9 @@ return $padnumber;
 function id_array_to_db_string($id_array) {
     $db_string="";
     if (is_array($id_array)) {
-        foreach ($id_array as $k=>$v) $id_array[$k]='|'.trim($v).'|';
+        foreach ($id_array as $k=>$v) {
+            $id_array[$k]='|'.trim($v).'|';
+        }
         $db_string=implode(",",$id_array);
     }
     return $db_string;
