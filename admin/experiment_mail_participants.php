@@ -123,7 +123,10 @@ if ($proceed) {
         }
 
         if (!$body) {
-            $body=load_mail('default_invitation_'.$experiment['experiment_type'],$inv_lang);
+            $body=load_mail('default_invitation_'.$experiment['experiment_type'].'_'.$experiment['experiment_ext_type'],$inv_lang);
+            if (!$body) {
+                $body=load_mail('default_invitation_'.$experiment['experiment_type'],$inv_lang);
+            }
         }
 
         if (count($inv_langs) > 1) {
