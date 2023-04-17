@@ -572,7 +572,7 @@ function stats__stats_display_table($table,$browsable=false,$restrict=array()) {
         $out.= '<TR';
         if ($shade) { $out.= ' bgcolor="'.$color['list_shade1'].'"'; $shade=false; }
         else { $out.= ' bgcolor="'.$color['list_shade2'].'"'; $shade=true; }
-        if ($browsable && isset($restrict[$table['name']][$k])) {
+        if ($browsable && isset($table['name']) && isset($restrict[$table['name']][$k])) {
             $tr=true;
             $style_sn=' style="background: #8B8B8B; font-style: italic;"';
         } else {
@@ -580,7 +580,7 @@ function stats__stats_display_table($table,$browsable=false,$restrict=array()) {
              $style_sn='';
         }
         $out.='>';
-        if ($browsable) {
+        if ($browsable && isset($table['name'])) {
             $out.='<TD '.$style_sn.'>'.lang('n').
                     '<INPUT type="radio" name="restrict['.$table['name'].']['.$k.']" value="n"';
             if (!$tr) $out.=' CHECKED';
@@ -591,7 +591,7 @@ function stats__stats_display_table($table,$browsable=false,$restrict=array()) {
         foreach ($r as $c) $out.= '<TD '.$style_sn.'>'.$c.'</TD>';
         $out.= '</TR>';
     }
-    if (isset($restrict[$table['name']]) && $browsable) {
+    if (isset($table['name']) && isset($restrict[$table['name']]) && $browsable) {
         foreach ($restrict[$table['name']] as $k=>$v) {
             $out.= '<TR style="background: '.$color['list_header_highlighted_background'].'; color: '.$color['list_header_highlighted_textcolor'].'; font-style: italic;">';
             $out.='<TD '.$style_sn.'>'.lang('n').

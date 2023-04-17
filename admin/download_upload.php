@@ -39,7 +39,7 @@ if ($proceed) {
     if (isset($_REQUEST['upload']) && $_REQUEST['upload']) {
         $redirect_target="admin/download_upload.php?experiment_id=".urlencode($experiment_id)
                 .'&upload_name='.urlencode($_REQUEST['upload_name'])
-                .'&upload_category='.urlencode($_REQUEST['upload_category']);
+                .'&upload_type='.urlencode($_REQUEST['upload_type']);
 
         $file=$_FILES['contents'];
         if ($file['size']>$settings['upload_max_size'] || $file['error']>0) {

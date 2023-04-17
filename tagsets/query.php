@@ -629,7 +629,12 @@ function query__get_bulkactions() {
                 <TR>
                     <TD>'.lang('fields_will_be_anonymized_as_follows').':<br>';
         foreach ($anon_fields as $field_name=>$anon_field) {
-            $html.=$anon_field['display_text'].'=&gt;'.$anon_field['item_details']['field_value'].'<br>';
+            if (isset($anon_field['item_details']['field_value'])) {
+                $fvalue=$anon_field['item_details']['field_value'];
+            } else {
+                $fvalue='';
+            }
+            $html.=$anon_field['display_text'].'=&gt;'.$fvalue.'<br>';
         } 
         $html.='<br>'.lang('disclaimer_anonymize_profiles').'</TD>
                 </TR>
