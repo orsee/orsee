@@ -117,13 +117,14 @@ if ($proceed) {
                             redirect("public/participant_reset_pw.php");
                     }
                 } else {
-                // and if we only allow username/passsword, send to login page
+                // send to login page if no token is present
                     if (isset($mobile) && $mobile) redirect("public/participant_login_mob.php");
                     else redirect("public/participant_login.php");
                 }
             } else {
-
-
+                // and if we only allow username/passsword, send to login page
+                if (isset($mobile) && $mobile) redirect("public/participant_login_mob.php");
+                else redirect("public/participant_login.php");
             }
         }
         if ($proceed) {

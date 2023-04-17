@@ -1,7 +1,7 @@
 <?php
 // part of orsee. see orsee.org
 // THIS FILE WILL CHANGE FROM VERSION TO VERSION. BETTER NOT EDIT.
-$system__version="3.1.0";
+$system__version="3.2.0";
 $system__database_version=2020022800;
 
 // implemented experiment types
@@ -118,7 +118,7 @@ $system__admin_rights=array(
 "log_file_regular_tasks_delete:delete log file of regular system tasks:log_file_regular_tasks_show",
 "log_file_regular_tasks_show:view log file of regular tasks",
 "login:login into administration area",
-"mail_add:add new default email text - dev!:mail_edit",
+"mail_add:add new default email text:mail_edit",
 "mail_delete:delete default email text - dev!:mail_edit",
 "mail_edit:edit default email texts",
 "mailqueue_edit_all:delete emails from overall mail queue:mailqueue_show_all",
@@ -449,7 +449,12 @@ $system__options_general[]=array(
 'default_value'=>'n'
 );
 
-
+$system__options_general[]=array(
+'option_name'=>'payments_in_part_history',
+'option_text'=>'If payment module enabled: Include payments in participant\'s history?',
+'type'=>'select_yesno_switchy',
+'default_value'=>'n'
+);
 
 $system__options_general[]=array(
 'option_name'=>'enable_rules_signed_tracking',
@@ -1696,6 +1701,6 @@ $system__colors[]=array(
 
 // DATABASE UPGRADE DEFINITIONS //
 $system__database_upgrades=array();
-include ("../config/dbupdates.php");
+include ("dbupdates.php");
 
 ?>

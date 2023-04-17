@@ -68,7 +68,7 @@ function participants__get_statistics($participant_id) {
 }
 
 function participants__stat_laboratory($participant_id) {
-    global $lang, $color;
+    global $settings, $lang, $color;
 
     $exptypes=load_external_experiment_types();
 
@@ -98,12 +98,20 @@ function participants__stat_laboratory($participant_id) {
     echo '<TD>'.lang('date_and_time').'</TD>
         <TD>'.lang('registered').'</TD>
         <TD>'.lang('location').'</TD>
-        <TD>'.lang('participation_status').'</TD>
+        <TD>'.lang('participation_status').'</TD>';
+    if ($settings['enable_payment_module']=='y' && (check_allow('payments_view') || check_allow('payments_edit'))) {
+        echo '
+                <TD>'.lang('payment_type_abbr').'</TD>
+                <TD>'.lang('payment_amount_abbr').'</TD>
+            ';
+    }
+    echo '
         </TR></thead>
         <tbody>';
 
     $pstatuses=expregister__get_participation_statuses();
     $laboratories=laboratories__get_laboratories();
+    $payment_types=payments__load_paytypes();
     while ($p=pdo_fetch_assoc($result)) {
         $last_reg_time=0;
         //if ($p['sess_id']=='0') $last_reg_time=sessions__get_registration_end("","",$p['exp_id']);
@@ -151,8 +159,23 @@ function participants__stat_laboratory($participant_id) {
             if ($p['pstatus_id']>0) {
                 echo '</FONT>';
             }
-            echo '  </TD>
-                  </TR>';
+            echo '  </TD>';
+            if ($settings['enable_payment_module']=='y' && (check_allow('payments_view') || check_allow('payments_edit'))) {
+                echo '<TD>';
+                if (isset($payment_types[$p['payment_type']])) {
+                    echo $payment_types[$p['payment_type']]; 
+                } else {
+                    echo '-';
+                }
+                echo '</TD><TD>';
+                if ($p['payment_amt']!='') {
+                    echo $p['payment_amt'];
+                } else {
+                    echo '-';
+                }
+                echo '</TD>';
+            }
+            echo '</TR>';
             if ($shade) $shade=false; else $shade=true;
         }
     }
@@ -672,7 +695,7 @@ function participant__select_existing($ptablevarname,$formfieldvarname,$prevalue
 
 
 // the outer participant form
-function participant__show_form($edit,$button_title="",$errors,$admin=false,$extra="") {
+function participant__show_form($edit,$button_title="",$errors=array(),$admin=false,$extra="") {
     global $lang, $settings, $color;
     $out=array(); $tout=array();
 
@@ -693,7 +716,7 @@ function participant__show_form($edit,$button_title="",$errors,$admin=false,$ext
 }
 
 // the inner participant form
-function participant__show_inner_form($edit,$errors,$admin=false,$template='current_template') {
+function participant__show_inner_form($edit,$errors=array(),$admin=false,$template='current_template') {
     global $lang, $settings, $color;
     $out=array(); $tout=array();
 
@@ -797,7 +820,7 @@ function participant__get_inner_admin_form($edit,$errors,$template='current_temp
 
 
 // the participant form for admins
-function participant__show_admin_form($edit,$button_title="",$errors,$extra="") {
+function participant__show_admin_form($edit,$button_title="",$errors=array(),$extra="") {
     global $lang, $settings, $color;
     $out=array();
 

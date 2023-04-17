@@ -283,7 +283,9 @@ return $padnumber;
 function id_array_to_db_string($id_array) {
     $db_string="";
     if (is_array($id_array)) {
-        foreach ($id_array as $k=>$v) $id_array[$k]='|'.trim($v).'|';
+        foreach ($id_array as $k=>$v) {
+            $id_array[$k]='|'.trim($v).'|';
+        }
         $db_string=implode(",",$id_array);
     }
     return $db_string;
@@ -346,5 +348,19 @@ function or_array_delete_values($array,$values) {
     }
     return $array;
 }
+
+function fix_utf8($mixed) {
+    if (is_array($mixed)) {
+        foreach ($mixed as $key => $value) {
+            $mixed[$key] = fix_utf8($value);
+	}
+	return $mixed;
+    } elseif (is_string($mixed)) {
+        return mb_convert_encoding($mixed,'UTF-8','UTF-8');
+    } else { 
+    	return $mixed;
+    }    
+}
+
 
 ?>

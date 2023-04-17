@@ -87,7 +87,7 @@
 				case ('image'):
 					open();
 					$('<img />')
-						.load(function() {
+						.on("load", function() {
 						    triggerCall(o.loadCallback);
 							recenter($(this));
 					    }).attr('src', o.loadUrl).hide().appendTo(o.contentContainer);

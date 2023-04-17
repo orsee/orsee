@@ -229,7 +229,7 @@ function javascript__edit_popup() {
                     });
             }
             $(document).ready(function(){
-                $("#popupIframe").load(function(){
+                $("#popupIframe").on("load", function(){
                     $("#popupIframe").fadeIn(100);
                     $("#popupLoadAnimation").fadeOut(300);
                     if($("#popupIframe").contents().find("[data-edited-item]").length > 0){
@@ -274,7 +274,7 @@ function javascript__email_popup() {
                     });
             }
             $(document).ready(function(){
-                $("#popupIframe").load(function(){
+                $("#popupIframe").on("load", function(){
                     $("#popupIframe").fadeIn(100);
                     $("#popupLoadAnimation").fadeOut(300);
                 });
