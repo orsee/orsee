@@ -118,7 +118,7 @@ $system__admin_rights=array(
 "log_file_regular_tasks_delete:delete log file of regular system tasks:log_file_regular_tasks_show",
 "log_file_regular_tasks_show:view log file of regular tasks",
 "login:login into administration area",
-"mail_add:add new default email text - dev!:mail_edit",
+"mail_add:add new default email text:mail_edit",
 "mail_delete:delete default email text - dev!:mail_edit",
 "mail_edit:edit default email texts",
 "mailqueue_edit_all:delete emails from overall mail queue:mailqueue_show_all",
@@ -1701,6 +1701,6 @@ $system__colors[]=array(
 
 // DATABASE UPGRADE DEFINITIONS //
 $system__database_upgrades=array();
-include ("../config/dbupdates.php");
+include ("dbupdates.php");
 
 ?>

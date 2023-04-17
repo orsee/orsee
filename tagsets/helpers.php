@@ -349,4 +349,18 @@ function or_array_delete_values($array,$values) {
     return $array;
 }
 
+function fix_utf8($mixed) {
+    if (is_array($mixed)) {
+        foreach ($mixed as $key => $value) {
+            $mixed[$key] = fix_utf8($value);
+	}
+	return $mixed;
+    } elseif (is_string($mixed)) {
+        return mb_convert_encoding($mixed,'UTF-8','UTF-8');
+    } else { 
+    	return $mixed;
+    }    
+}
+
+
 ?>
