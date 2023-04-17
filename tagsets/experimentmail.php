@@ -111,7 +111,7 @@ function experimentmail__load_bulk_mail($bulk_id,$tlang="") {
         $query="SELECT * from ".table('bulk_mail_texts')."
                 WHERE bulk_id= :bulk_id
                 AND lang= :tlang";
-        $bulk_mail=orsee_query($query);
+        $bulk_mail=orsee_query($query,$pars);
     }
     return $bulk_mail;
 }
