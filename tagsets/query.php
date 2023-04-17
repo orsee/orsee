@@ -147,11 +147,11 @@ function query__echo_form_javascript($prototypes,$load_query="") {
             );
         }
         echo "<script type='text/javascript'>var Ptypes = ";
-        echo json_encode($tmp);
+        echo json_encode(fix_utf8($tmp));
         echo ";
             buildDropdown();
             ";
-        echo "</script>";
+	echo "</script>";
 
 }
 
