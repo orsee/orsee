@@ -336,7 +336,7 @@ function experiment__experiments_format_alist($alist) {
         <TD class="small" align="center">';
             if ($experiment_type=="laboratory") {
                 echo lang('sessions').': <span style="font-weight: bold;" title="number of sessions">'.$num_sessions.'</span>';
-                echo '&nbsp&nbsp&nbsp<span title="number of subjects assigned / enroled / participated"><i class="fa fa-users" style="font-size: 7pt; padding-right: 2px;"></i>'.
+                echo '&nbsp&nbsp&nbsp<span title="number of subjects assigned / enrolled / participated"><i class="fa fa-users" style="font-size: 7pt; padding-right: 2px;"></i>'.
                 $num_assigned.'/'.$num_registered.'/'.$num_participated.'</span>';
             }
         echo '</TD>
@@ -782,7 +782,7 @@ function experiment__preload_experiments() {
         $result=or_query($query);
         while ($line=pdo_fetch_assoc($result)) { $experiments[$line['experiment_id']]['participated']='y'; }
 
-        $sort_order="time,experiment_name";
+        $sort_order=["time", "experiment_name"];
         multi_array_sort($experiments,$sort_order);
         $preloaded_experiments=$experiments;
         return $experiments;
