@@ -184,7 +184,7 @@ if ($proceed) {
     }
 
     if (trim($experiment['experiment_link_to_paper'])) {
-            $conditional_fields[]='<TD colspan=2><A target="_blank" HREF="'.trim($edit['experiment_link_to_paper']).'">'.lang('Link to paper').'</A></TD>';
+            $conditional_fields[]='<TD colspan=2><A target="_blank" HREF="'.trim($experiment['experiment_link_to_paper']).'">'.lang('Link to paper').'</A></TD>';
     }
 
     $i=0;
