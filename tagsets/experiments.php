@@ -782,7 +782,7 @@ function experiment__preload_experiments() {
         $result=or_query($query);
         while ($line=pdo_fetch_assoc($result)) { $experiments[$line['experiment_id']]['participated']='y'; }
 
-        $sort_order="time,experiment_name";
+        $sort_order = array("time", "experiment_name");
         multi_array_sort($experiments,$sort_order);
         $preloaded_experiments=$experiments;
         return $experiments;
