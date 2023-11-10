@@ -861,7 +861,8 @@ function query__apply_permanent_queries() {
         $query_assigned=array();
         foreach ($ppart as $p) {
             $num_p++;
-            foreach ($pqu as $q) {
+	    foreach ($pqu as $q) {
+		$continue=true;
                 $experiment=orsee_db_load_array("experiments",$q['experiment_id'],"experiment_id");
                 if (!isset($experiment['experiment_id'])) $continue=false;
                 if ($continue) {
@@ -876,9 +877,9 @@ function query__apply_permanent_queries() {
                     $additional_clauses=array($active_clause,$exptype_clause,$notyetassigned_clause);
                     $query=query__get_query($query_array,time(),$additional_clauses,'');
                     $result=or_query($query['query'],$query['pars']);
-                    $p_is_eligibe=false;
-                    while ($pc=pdo_fetch_assoc($result)) if ($pc['participant_id']=$p['participant_id']) $p_is_eligibe=true;
-                    if (!$p_is_eligibe) $continue=false;
+                    $p_is_eligible=false;
+                    while ($pc=pdo_fetch_assoc($result)) if ($pc['participant_id']==$p['participant_id']) $p_is_eligible=true;
+                    if (!$p_is_eligible) $continue=false;
                 }
                 if ($continue) {
                     // assign participant
