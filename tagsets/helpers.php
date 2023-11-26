@@ -24,12 +24,32 @@ function multi_array_sort(&$data, $sortby) {
         $sorting_var1 = $sortby;
     } 
     uasort($data,function ($a,$b) use ($sorting_var1, $sorting_var2, $sorting_var3) {
-        if ($a[$sorting_var1]!=$b[$sorting_var1] || (!$sorting_var2)) {
-            return $a[$sorting_var1]>$b[$sorting_var1];
-        } elseif ($a[$sorting_var2]!=$b[$sorting_var2] || (!$sorting_var3)) {
-            return $a[$sorting_var2]>$b[$sorting_var2];
+        if ($a[$sorting_var1]>$b[$sorting_var1]) {
+            return 1;
+        } elseif ($a[$sorting_var1]<$b[$sorting_var1]) {
+            return -1;
         } else {
-            return $a[$sorting_var3]>$b[$sorting_var3];
+            if (!$sorting_var2) {
+                return 0;
+            } else {
+                if ($a[$sorting_var2]>$b[$sorting_var2]) {
+                    return 1;
+                } elseif ($a[$sorting_var2]<$b[$sorting_var2]) {
+                    return -1;
+                } else {
+                    if (!$sorting_var3) {
+                        return 0;
+                    } else {
+                        if ($a[$sorting_var3]>$b[$sorting_var3]) {
+                            return 1;
+                        } elseif ($a[$sorting_var3]<$b[$sorting_var3]) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                }
+            }
         }
     });
 }
