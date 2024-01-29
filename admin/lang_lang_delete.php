@@ -54,7 +54,7 @@ if ($proceed) {
             foreach ($tables as $table) {
                 $pars=array(':slang'=>$slang,':tlang'=>$tlang);
                 $query="UPDATE ".table($table)." SET language= :slang WHERE language= :tlang";
-                $done=or_query($query,pars);
+                $done=or_query($query,$pars);
             }
             message(lang('updated_language_settings'));
 
