@@ -40,7 +40,7 @@ function html__mobile_header() {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>'.$pagetitle.'</title>
         <link rel="stylesheet" href="../tagsets/jquery/jquery.mobile.css" />
-        <script src="../tagsets/jquery/jquery.js"></script>
+        <script src="../tagsets/jquery/jquery.jqueryold.min.js"></script>
         <script>
             $(document).bind("mobileinit", function(){
                 $.mobile.loadingMessageTheme = "b";
