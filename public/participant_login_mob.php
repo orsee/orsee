@@ -32,43 +32,45 @@ if ($proceed) {
 
 
 if ($proceed) {
-    // render the page
-    $footer='<div data-role="footer" data-theme="a"><h1>'.$settings['default_area'].'</h1></div></div>';
-    //$footer='</div>';
-
     html__mobile_header();
 
     if (isset($_SESSION['message_text'])) $message_text=$_SESSION['message_text']; else $message_text="";
     $_SESSION['message_text']="";
 
-    echo '
-    <!-- index -->
-    <div data-role="page" id="indexPage">
-        <div data-role="header" data-theme="a">
-            <h1>'.lang('profile_login').'</h1>
-        </div>
-        <div data-role="content">';
-    if ($message_text) echo '<div data-role="content"><font color="red">'.lang('message').': '.$message_text.'</font></div>';
-    echo '<form id="login_form" action="participant_login_mob.php" method="post" data-ajax="false">';
-    echo '<fieldset>
-            <div data-role="fieldcontain">
-                <label for="email" class="ui-hidden-accessible">'.lang('email').'</label>
-                <input type="text" value="" name="email" id="email" placeholder="'.lang('email').'"/>
-            </div>
-            <div data-role="fieldcontain">
-                <label for="password" class="ui-hidden-accessible">'.lang('password').'</label>
-                <input type="password" value="" name="password" id="password" placeholder="'.lang('password').'"/>
-            </div>
-            <input type="submit" data-theme="b" name="login" id="login" value="'.lang('login').'">
-        </fieldset>
-        </form>';
+    echo '<ons-page id="login-page">';
+    echo '      <ons-toolbar style="background-color: '.$color['html_header_menu_background'].';">
+                  <div class="center" style="color: '.$color['menu_item'].';">'.$settings['default_area'].'</div>
+                </ons-toolbar>';
 
-    echo '<br/><br/><center><A HREF="participant_reset_pw.php" data-ajax="false">'.lang('forgot_your_password?').'</A></center>';
+    echo '  <ons-list>    
+                <ons-list-item>
+                  <div style="text-align: center; width: 100%; font-weight: bold;">'.lang('profile_login').'</div>
+                </ons-list-item>
+            </ons-list>';
 
-    echo '
-        </div>';
+    if ($message_text) {
+        echo '<ons-card style="border: 2px solid red;">';
+        echo '    <div class="content" style="color: red;">'.lang('message').': '.$message_text.'</div>';
+        echo '</ons-card>';
+    }
+        echo '<ons-list modifier="inset">';
 
-    echo $footer;
+        echo '<form action="'.thisdoc().'" method="post" id="login_form">';
+        echo '<INPUT name="login" type="submit" id="login_submit" style="display: none;">';
+
+        echo '<ons-list-item>
+                <ons-input name="email" modifier="underbar" placeholder="'.lang('email').'" type="email" float required></ons-input>
+              </ons-list-item>';
+        echo '<ons-list-item>
+                <ons-input name="password" modifier="underbar" placeholder="'.lang('password').'" type="password" float required></ons-input>
+            </ons-list-item>';
+        echo '<ons-list-item>';
+        echo '<ons-button type="submit" ripple modifier="large" onclick="document.getElementById(\'login_submit\').click();">'.lang('login').'</ons-button>';
+        echo '</ons-list-item>';
+        echo '</form>';
+        echo '</ons-list>';
+        echo '<br/><br/><center><A HREF="participant_reset_pw.php">'.lang('forgot_your_password?').'</A></center>';
+        echo '</ons-page>';
 
     html__mobile_footer();
 }

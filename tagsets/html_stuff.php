@@ -39,17 +39,11 @@ function html__mobile_header() {
         <meta http-equiv="expires" content="0">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>'.$pagetitle.'</title>
-        <link rel="stylesheet" href="../tagsets/jquery/jquery.mobile.css" />
-        <script src="../tagsets/jquery/jquery.jqueryold.min.js"></script>
-        <script>
-            $(document).bind("mobileinit", function(){
-                $.mobile.loadingMessageTheme = "b";
-                $.mobile.loadingMessageTextVisible = true;
-                $.mobile.loadingMessage = "";
-            });
-        </script>
-        <script src="../tagsets/jquery/jquery.mobile.js"></script>
-
+        <link rel="stylesheet" href="../tagsets/mobile/onsenui-core.min.css">
+        <link rel="stylesheet" href="../tagsets/mobile/onsen-css-components.min.css">
+        <script src="../tagsets/mobile/onsenui.min.js"></script>
+        <link rel="stylesheet" href="../tagsets/icons.fa.css">
+        <script src="../tagsets/jquery/jquery.min.js"></script>
     </head>
     <body>';
 
