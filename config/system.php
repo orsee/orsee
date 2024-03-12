@@ -2,7 +2,7 @@
 // part of orsee. see orsee.org
 // THIS FILE WILL CHANGE FROM VERSION TO VERSION. BETTER NOT EDIT.
 $system__version="3.2.0";
-$system__database_version=2020022800;
+$system__database_version=2024031100;
 
 // implemented experiment types
 $system__experiment_types=array('laboratory','online-survey','internet');

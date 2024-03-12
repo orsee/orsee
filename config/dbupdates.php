@@ -259,4 +259,135 @@ $system__database_upgrades[]=array(
     )
 );
 
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_invitations',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Invitations','de'=>'Einladungen')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_enrolments',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Enrollments','de'=>'Anmeldungen')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_history',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'History','de'=>'Teilnahmen')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_session_details',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Experiment details','de'=>'Experiment-Details')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_you_can_enroll_for',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'You can enroll for:','de'=>'Sie können sich anmelden für:')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_you_are_enrolled_for',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'You are enrolled for:','de'=>'Sie sind angemeldet für:')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_sign_up',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Sign up','de'=>'Anmelden')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_cancel_signup',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Cancel signup','de'=>'Abmelden')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_confirmation',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Confirmation','de'=>'Bestätigung')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_do_you_really_want_to_signup',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Do you really want to sign up?','de'=>'Wollen Sie sich wirklich anmelden?')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_do_you_really_want_to_cancel_signup',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Do you really want to cancel your signup?','de'=>'Wollen Sie sich wirklich abmelden?')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_sorry_no',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Sorry, no.','de'=>'Sorry, nein.')
+    )
+);
+
+$system__database_upgrades[]=array(
+'version'=>'2024031100',
+'type'=>'new_lang_item',
+'specs'=> array(
+    'content_name'=>'mobile_yes_please',
+    'content_type'=>'lang',
+    'content'=>array('en'=>'Yes, please!','de'=>'Ja bitte!')
+    )
+);
+
+
 ?>

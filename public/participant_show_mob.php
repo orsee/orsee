@@ -122,7 +122,7 @@ if ($proceed) {
                         "experiment_id:".$session['experiment_id']."\nsession_id:".$session_id);
             message(lang('successfully_canceled_enrolment_xxx')." ".
                     experiment__get_public_name($session['experiment_id']).", ".
-                    session__build_name($session_id).". ".
+                    session__build_name($session).". ".
                     lang('this_will_be_confirmed_by_an_email'));
             redirect("public/participant_show_mob.php".$token_string);
         }
@@ -148,243 +148,287 @@ if ($proceed) {
     if (isset($_SESSION['message_text'])) $message_text=$_SESSION['message_text']; else $message_text="";
     $_SESSION['message_text']="";
 
-    // render the page
-    $footer='<div data-role="footer" data-theme="a"><h1>'.$settings['default_area'].'</h1></div></div>';
-    //$footer='</div>';
-
     html__mobile_header();
 
-
+    // GENERAL NAVIGATION SPLIT IN TOOLBAR AND TABBAR
     echo '
-    <!-- index -->
-    <div data-role="page" id="indexPage">
-        <div data-role="header" data-theme="a">
-            <h1>'.lang('mobile_experiment_registrations').'</h1>';
-    if ($settings['subject_authentication']!='token') {
-        echo '<a href="participant_logout.php?mobile=true" class="ui-btn-right" data-theme="b" data-ajax="false">'.lang('logout').'</a>';
-    }
+    <ons-navigator id="appNavigator" swipeable swipe-target-width="80px">
+      <ons-page>
+        <ons-splitter id="appSplitter">
+          <ons-splitter-content page="tabbar.html"></ons-splitter-content>
+        </ons-splitter>
+      </ons-page>
+    </ons-navigator>';
+    
+    // TOP AND BOTTOM NAVIGATION
     echo '
-        </div>
-        <div data-role="content">';
+    <template id="tabbar.html">
+      <ons-page id="tabbar-page">
+        <ons-toolbar>
+          <div class="center">'.lang('mobile_invitations').'</div>
+          <div class="right">
+          <ons-toolbar-button>
+                <ons-icon icon="fa-sign-out"></ons-icon>
+                <span onclick="fn.loadLink(\'participant_logout.php?mobile=true\')">'.lang('logout').'</a>
+            </ons-toolbar-button>
+          </div>
+        </ons-toolbar>
+        <ons-tabbar swipeable id="appTabbar" position="auto">
+          <ons-tab class="tab-with-badge1" label="'.lang('mobile_invitations').'" icon="fa-inbox" page="invitations.html" active></ons-tab>
+          <ons-tab class="tab-with-badge2" label="'.lang('mobile_enrolments').'" icon="fa-calendar" page="registered.html"></ons-tab>
+          <ons-tab class="tab-with-badge3" label="'.lang('mobile_history').'" icon="fa-list-alt" page="participated.html"></ons-tab>
+        </ons-tabbar>
+        
+        ';
 
-        if ($message_text) echo '<div data-role="content"><font color="red">'.lang('message').': '.$message_text.'</font></div>';
+    // SCRIPT TO HANDLE PAGE NAMES FROM TABBAR NAVIGATION
+echo '<script>
+            ons.getScriptPage().addEventListener("prechange", function(event) {
+                if (event.target.matches("#appTabbar")) {
+                    event.currentTarget.querySelector("ons-toolbar .center").innerHTML = event.tabItem.getAttribute("label");
+                }
+            });
+    </script>';
 
-        echo '
-            <ul data-role="listview">
-                <li>
-                <a href="#invited" class="ui-btn ui-btn-icon-left ui-icon-mail">'.lang('mobile_new_invitations').' <span class="ui-li-count">'.count($inv_experiments).'</span></a>
-                </li>
-                <li>
-               <a href="#registered" class="ui-btn ui-btn-icon-left ui-icon-calendar">'.lang('mobile_current_enrolments').' <span class="ui-li-count">'.count($registered).'</span></a>
-                </li>
-                <li>
-               <a href="#participated" class="ui-btn ui-btn-icon-left ui-icon-bullets">'.lang('mobile_past_enrolments').' <span class="ui-li-count">'.count($history).'</span></a>
-                </li>
-            </ul>
+echo '        
+      </ons-page>
+    </template>
+ ';
 
-
-        </div>';
-
-    echo $footer;
-
+    
+    // INVITATIONS PAGE (MAIN PAGE)
+    echo '<template id="invitations.html">';
+    echo '<ons-page id="invitations-page">';
     echo '
-    <!-- invited -->
-    <div data-role="page" id="invited">
-        <div data-role="header" data-theme="a">
-            <h1>'.lang('mobile_new_invitations').'</h1>
-            <a href="#indexPage" class="ui-btn-left">'.lang('back').'</a>
-        </div>
-
-        <div data-role="content">
-                '.lang('please_check_availability_before_register').'
-           ';
-
+    <p class="intro">
+      '.lang('please_check_availability_before_register').'
+    </p>';
+   
     $first=true; $now=time();
     foreach ($invited as $s) {
         if ($s['new_experiment']) {
-            if (!$first) echo '</ul>';
+            if (!$first) echo '</ons-list>';
             else $first=false;
-            echo '<h3 class="ui-bar ui-bar-a">'.$s['experiment_public_name'].'</h3>';
+            echo '<ons-list modifier="inset"><ons-list-header>'.$s['experiment_public_name'].'</ons-list-header>';
             if (or_setting('allow_public_experiment_note') && isset($s['public_experiment_note']) && trim($s['public_experiment_note'])) {
-                echo '<i>'.lang('note').': '.trim($s['public_experiment_note']).'</i>';
+                echo '<ons-list-item>'.lang('note').': '.trim($s['public_experiment_note']).'</ons-list-item>';
             }
-            echo '<ul data-role="listview" data-theme="a" data-inset="true">';
         }
         if ((!$s['session_full']) && ($s['registration_unixtime'] >= $now)) {
-            echo '<li><a href="#s'.$s['session_id'].'" class="ui-mini">'.$s['session_name'].'<br><font color="grey">'.$labs[$s['laboratory_id']]['lab_name'].'';
+            echo '<ons-list-item tappable modifier="inset chevron" '
+                    .'onclick="fn.pushPage({\'id\': \'session_'.$s['session_id'].'.html\'})">'
+                    .'<span class="list-item__title">'.$s['session_name'].'</span>'
+                    .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_name'].'</span>';
             if (or_setting('allow_public_session_note') && isset($s['public_session_note']) && trim($s['public_session_note'])) {
-                echo '<BR><i>'.lang('note').': '.trim($s['public_session_note']).'</i>';
+                echo '<span class="list-item__subtitle">'.lang('note').': '.trim($s['public_session_note']).'</span>';
             }
-            echo '</font></a></li>';
+            echo '</ons-list-item>';
         } elseif ($s['registration_unixtime'] < $now) {
-            echo '<li class="ui-mini">'.$s['session_name'].'<br><font color="grey">'.$labs[$s['laboratory_id']]['lab_name'].'</font><br><FONT color="'.$color['session_public_expired'].'">'.lang('expired').'</FONT></li>';
+            echo '<ons-list-item>
+                    <span class="list-item__title">'.$s['session_name'].'</span>'
+                    .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_name'].'</span>'
+                    .'<span class="list-item__subtitle" style="color: '.$color['session_public_expired'].';">'.lang('expired').'</span>'
+                    .'</ons-list-item>';
         } else {
-            echo '<li class="ui-mini">'.$s['session_name'].'<br><font color="grey">'.$labs[$s['laboratory_id']]['lab_name'].'</font><br><FONT color="'.$color['session_public_complete'].'">'.lang('complete').'</FONT></li>';
+            echo '<ons-list-item>
+                    <span class="list-item__title">'.$s['session_name'].'</span>'
+                    .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_name'].'</span>'
+                    .'<span class="list-item__subtitle" style="color: '.$color['session_public_complete'].';">'.lang('complete').'</span>'
+                    .'</ons-list-item>';
         }
     }
+    
+    if (count($invited)>0) {
+        echo '</ons-list>';
+    } else {
+        echo '<ons-card>';
+        echo '    <div class="content">'.lang('mobile_no_current_invitations').'</div>';
+        echo '      </ons-card>';
+    }
+    
+echo '
+      </ons-page>
+    </template>
+';
 
-    if (count($invited)>0) echo '</ul>';
-    else echo '<h4 class="ui-bar ui-bar-a">'.lang('mobile_no_current_invitations').'</h4>';
-
-    echo '</div>';
-
-    echo $footer;
-
-
+    // INDIVIDUAL ENROLMENT PAGES
     foreach ($invited as $s) {
-        echo '<div data-role="page" id="s'.$s['session_id'].'" data-dialog="true">';
-        echo '<div data-role="header" data-theme="a">
-            <h1>'.lang('experiment_registration').'</h1>
-            <a href="#invited" class="ui-btn-left">'.lang('back').'</a>
-            </div>';
-        echo '<div data-role="content">';
-        show_message();
-        echo '<h3 class="ui-bar ui-bar-a">'.lang('do_you_really_want_to_register_for_experiment').'</h3>';
-        echo '<strong>'.lang('experiment').':</strong><br>'.$s['experiment_public_name'].'<br>';
-        if (or_setting('allow_public_experiment_note') && isset($s['public_experiment_note']) && trim($s['public_experiment_note'])) {
-            echo '<i>'.lang('note').': '.trim($s['public_experiment_note']).'</i><br>';
-        }
-        echo '<strong>'.lang('date_and_time').':</strong><br>'.$s['session_name'].'<br>';
-        if (or_setting('allow_public_session_note') && isset($s['public_session_note']) && trim($s['public_session_note'])) {
-            echo '<i>'.lang('note').': '.trim($s['public_session_note']).'</i><br>';
-        }
-        echo '<strong>'.lang('laboratory').':</strong><br>'.$labs[$s['laboratory_id']]['lab_name'].'<br>'.$labs[$s['laboratory_id']]['lab_address'].'<br>';
-        echo '<form id="form-'.$s['session_id'].'" method="post" data-ajax="false">
-                    <INPUT type=hidden name="s" value="'.$s['session_id'].'">';
+        echo '
+        <template id="session_'.$s['session_id'].'.html">
+            <ons-page id="session_'.$s['session_id'].'-page">
+                <ons-toolbar>
+                  <div class="left">
+                    <ons-back-button>'.lang('back').'</ons-back-button>
+                  </div>
+                  <div class="center">'.lang('mobile_session_details').'</div>
+                </ons-toolbar>';
+
+        echo '<form action="'.thisdoc().'" method="get" id="form-'.$s['session_id'].'">';
+        echo '<INPUT type=hidden name="s" value="'.$s['session_id'].'">';
         if ($token_string) echo '<INPUT type=hidden name="p" value="'.$participant['participant_id_crypt'].'">';
-        echo '<INPUT type=hidden name="register" value="true">';
-        echo '<input data-icon="check" type="submit" id="submit-s'.$s['session_id'].'" value="'.lang('yes_i_want').'">';
-        echo '<a href="#invited" class="ui-btn ui-icon-delete ui-btn-icon-left">'.lang('no_sorry').'</a>';
-        echo '</form>';
-        echo '</div>';
-        echo $footer;
-    }
+        echo '<INPUT type="hidden" name="register" value="true">';
+        echo '<INPUT type="submit" id="regsubmit-'.$s['session_id'].'" style="display: none;">';
 
-
-
-    echo '
-    <!-- registered -->
-    <div data-role="page" id="registered">
-        <div data-role="header" data-theme="a">
-            <h1>'.lang('mobile_current_enrolments').'</h1>
-            <a href="#indexPage" class="ui-btn-left">'.lang('back').'</a>
-        </div>
-        <div data-role="content">';
-
-        if (count($registered)>0) echo '<ul data-role="listview" data-theme="a" data-inset="true">';
-
-        foreach ($registered as $s) {
-            echo '<li><a href="#reg'.$s['session_id'].'" class="ui-mini">
-            <font color="black">'.$s['session_name'].'</font><br>
-            <font color="grey">'.lang('experiment').': '.$s['experiment_public_name'].'<br>
-            '.$labs[$s['laboratory_id']]['lab_name'].'</font></a></li>
-            ';
-        }
-        if (count($registered)>0) echo '</ul>';
-        else echo '<h4 class="ui-bar ui-bar-a">'.lang('mobile_no_current_registrations').'</h4>';
-
-    echo '</div>';
-
-    echo $footer;
-
-
-    foreach ($registered as $s) {
-        echo '<div data-role="page" id="reg'.$s['session_id'].'">';
-        echo '<div data-role="header" data-theme="a">
-            <h1>'.lang('mobile_current_enrolments').'</h1>
-            <a href="#registered" class="ui-btn-left">'.lang('back').'</a>
-            </div>';
-        echo '<div data-role="content">';
-        echo '<strong>'.lang('experiment').':</strong><br>'.$s['experiment_public_name'].'<br>';
+        echo '<ons-list modifier="inset">';
+        echo '<ons-list-header>'.lang('mobile_you_can_enroll_for').'</ons-list-header>';
+        echo '<ons-list-item>
+                <span class="list-item__title">'.lang('experiment').':</span>
+                <span class="list-item__subtitle">'.$s['experiment_public_name'].'</span>
+              </ons-list-item>';
         if (or_setting('allow_public_experiment_note') && isset($s['public_experiment_note']) && trim($s['public_experiment_note'])) {
-            echo '<i>'.lang('note').': '.trim($s['public_experiment_note']).'</i><br>';
+            echo '  <ons-list-item>
+                    <span class="list-item__subtitle">'.lang('note').': '.trim($s['public_experiment_note']).'</span>
+                    </ons-list-item>';
         }
-        echo '<strong>'.lang('date_and_time').':</strong><br>'.$s['session_name'].'<br>';
+        echo '<ons-list-item>
+                <span class="list-item__title">'.lang('date_and_time').':</span>
+                <span class="list-item__subtitle">'.$s['session_name'].'</span>
+            </ons-list-item>';
         if (or_setting('allow_public_session_note') && isset($s['public_session_note']) && trim($s['public_session_note'])) {
-            echo '<i>'.lang('note').': '.trim($s['public_session_note']).'</i><br>';
+            echo '  <ons-list-item>
+                        <span class="list-item__subtitle">'.lang('note').': '.trim($s['public_session_note']).'</span>
+                    </ons-list-item>';
         }
-        echo '<strong>'.lang('laboratory').':</strong><br>'.$labs[$s['laboratory_id']]['lab_name'].'<br>'.$labs[$s['laboratory_id']]['lab_address'].'<br><br>';
-        if (isset($settings['allow_subject_cancellation']) && $settings['allow_subject_cancellation']=='y') {
-            $s['cancellation_deadline']=sessions__get_cancellation_deadline($s);
-            if ($s['cancellation_deadline']>time()) {
-                echo '<a href="#can'.$s['session_id'].'" class="ui-btn ui-icon-delete ui-btn-icon-left">'.lang('cancel_enrolment').'</a>';
-            } else {
-                echo '';
-            }
-        }
-
-        echo '</div>';
-        echo $footer;
+        echo '<ons-list-item>
+                <span class="list-item__title">'.lang('laboratory').':</span>'
+                .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_name'].'</span>'
+                .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_address'].'</span>
+                </ons-list-item>';
+        echo '<ons-list-item>';
+        echo '<ons-button type="submit" ripple onclick="fn.submitRegForm(\'regsubmit-'.$s['session_id'].'\');">'.lang('mobile_sign_up').'</ons-button>';
+        echo '</ons-list-item>';
+        echo '</ons-list>';
+                
+        echo '</form>';
+        echo '</ons-page>';
+        echo '</template>';
     }
 
-    if (isset($settings['allow_subject_cancellation']) && $settings['allow_subject_cancellation']=='y') {
+// CURRENT ENROLMENTS PAGE
+    echo '
+    <template id="registered.html">
+      <ons-page id="registered-page">';
+
+    
+        if (count($registered)>0) {
+            echo '<ons-list modifier="inset">';
+        }
         foreach ($registered as $s) {
+            echo '<ons-list-item tappable modifier="chevron" '
+                    .'onclick="fn.pushPage({\'id\': \'reg_'.$s['session_id'].'.html\'})">'
+                    .'<span class="list-item__title">'.$s['session_name'].'</span>'
+                    .'<span class="list-item__subtitle">'.lang('experiment').': '.$s['experiment_public_name'].'</span>'
+                    .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_name'].'</span>';
+            echo '</ons-list-item>';
+        }
+        if (count($registered)>0) {
+            echo '</ons-list>';
+        } else {
+            echo '<ons-card>';
+            echo '<div class="content">'.lang('mobile_no_current_registrations').'</div>';
+            echo '</ons-card>';
+        }
+        echo '</ons-page>';
+        echo '</template>';
+
+// REGISTRATION DETAILS AND CANCELLATION PAGES
+
+     foreach ($registered as $s) {
+        echo '
+        <template id="reg_'.$s['session_id'].'.html">
+            <ons-page id="reg_'.$s['session_id'].'-page">
+                <ons-toolbar>
+                  <div class="left">
+                    <ons-back-button>'.lang('back').'</ons-back-button>
+                  </div>
+                  <div class="center">'.lang('mobile_session_details').'</div>
+                </ons-toolbar>';
+        
+        echo '<ons-list modifier="inset">';
+        echo '<ons-list-header>'.lang('mobile_you_are_enrolled_for').'</ons-list-header>';
+        echo '<ons-list-item>
+                <span class="list-item__title">'.lang('experiment').':</span>
+                <span class="list-item__subtitle">'.$s['experiment_public_name'].'</span>
+              </ons-list-item>';
+        if (or_setting('allow_public_experiment_note') && isset($s['public_experiment_note']) && trim($s['public_experiment_note'])) {
+            echo '  <ons-list-item>
+                    <span class="list-item__subtitle">'.lang('note').': '.trim($s['public_experiment_note']).'</span>
+                    </ons-list-item>';
+        }
+        echo '<ons-list-item>
+                <span class="list-item__title">'.lang('date_and_time').':</span>
+                <span class="list-item__subtitle">'.$s['session_name'].'</span>
+            </ons-list-item>';
+        if (or_setting('allow_public_session_note') && isset($s['public_session_note']) && trim($s['public_session_note'])) {
+            echo '  <ons-list-item>
+                        <span class="list-item__subtitle">'.lang('note').': '.trim($s['public_session_note']).'</span>
+                    </ons-list-item>';
+        }
+        echo '<ons-list-item>
+                <span class="list-item__title">'.lang('laboratory').':</span>'
+                .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_name'].'</span>'
+                .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_address'].'</span>
+                </ons-list-item>';
+
+      if (isset($settings['allow_subject_cancellation']) && $settings['allow_subject_cancellation']=='y') {
             $s['cancellation_deadline']=sessions__get_cancellation_deadline($s);
             if ($s['cancellation_deadline']>time()) {
-                echo '<div data-role="page" id="can'.$s['session_id'].'" data-dialog="true">';
-                echo '<div data-role="header" data-theme="a">
-                    <h1>'.lang('session_enrolment_cancellation').'</h1>
-                    <a href="#reg'.$s['session_id'].'" class="ui-btn-left">'.lang('back').'</a>
-                    </div>';
-                echo '<div data-role="content">';
-                show_message();
-                echo '<h3 class="ui-bar ui-bar-a">'.lang('do_you_really_want_to_cancel_session_enrolment').'</h3>';
-                echo '<strong>'.lang('experiment').':</strong><br>'.$s['experiment_public_name'].'<br>';
-                if (or_setting('allow_public_experiment_note') && isset($s['public_experiment_note']) && trim($s['public_experiment_note'])) {
-                    echo '<i>'.lang('note').': '.trim($s['public_experiment_note']).'</i><br>';
-                }
-                echo '<strong>'.lang('date_and_time').':</strong><br>'.$s['session_name'].'<br>';
-                if (or_setting('allow_public_session_note') && isset($s['public_session_note']) && trim($s['public_session_note'])) {
-                    echo '<i>'.lang('note').': '.trim($s['public_session_note']).'</i><br>';
-                }
-                echo '<strong>'.lang('laboratory').':</strong><br>'.$labs[$s['laboratory_id']]['lab_name'].'<br>'.$labs[$s['laboratory_id']]['lab_address'].'<br>';
-                echo '<form id="form-can'.$s['session_id'].'" method="post" data-ajax="false">
-                            <INPUT type=hidden name="s" value="'.$s['session_id'].'">';
+                echo '<form action="'.thisdoc().'" method="get" id="cancel-'.$s['session_id'].'">';
+                echo '<INPUT type=hidden name="s" value="'.$s['session_id'].'">';
                 if ($token_string) echo '<INPUT type=hidden name="p" value="'.$participant['participant_id_crypt'].'">';
                 echo '<INPUT type="hidden" name="cancel" value="true">';
-                echo '<input data-icon="check" type="submit" id="submit-can'.$s['session_id'].'" value="'.lang('yes_i_want').'">';
-                echo '<a href="#reg'.$s['session_id'].'" class="ui-btn ui-icon-back ui-btn-icon-left">'.lang('no_sorry').'</a>';
+                echo '<INPUT type="submit" id="cancelsubmit-'.$s['session_id'].'" style="display: none;">';
+        
+                echo '<ons-list-item>';
+                echo '<ons-button style="background-color: #AA0000; color: white;" type="submit" ripple onclick="fn.submitCancelForm(\'cancelsubmit-'.$s['session_id'].'\');">'.lang('mobile_cancel_signup').'</ons-button>';
+                echo '</ons-list-item>';
                 echo '</form>';
-                echo '</div>';
-                echo $footer;
             }
         }
+
+        echo '</ons-list>';
+        echo '</ons-page>';
+        echo '</template>';
     }
 
-
+// HISTORY PAGE
     echo '
-    <!-- participated -->
-    <div data-role="page" id="participated">
-        <div data-role="header">
-            <h1>'.lang('mobile_past_enrolments').'</h1>
-            <a href="#indexPage" class="ui-btn-left">'.lang('back').'</a>
-        </div>
-        <div data-role="content">
-            '.lang('registered_for').' '.$participant['number_reg'].'<BR>
-            '.lang('not_shown_up').' '.$participant['number_noshowup'].' ';
-
-        if (count($history)>0) echo '<ul data-role="listview" data-theme="a" data-inset="true">';
+    <template id="participated.html">
+      <ons-page id="participated-page">';
 
         $pstatuses=expregister__get_participation_statuses();
         $payment_types=payments__load_paytypes();
+
+        echo '<ons-card>';
+        echo '<div class="content">'.lang('registered_for').' '.$participant['number_reg'].'</div>';
+        echo '<div class="content">'.lang('not_shown_up').' '.$participant['number_noshowup'].'</div>';
+        echo '</ons-card>';
+              
+        if (count($history)>0) {
+            echo '<ons-list modifier="inset">';
+        }
+
         foreach ($history as $s) {
-            echo '<li><strong>'.$s['session_name'].'</strong><br>
-            '.lang('experiment').': '.$s['experiment_public_name'].'<br>
-            '.$labs[$s['laboratory_id']]['lab_name'].'<br>
-            '.lang('showup?').' ';
+            echo '<ons-list-item>'
+                    .'<span class="list-item__title">'.$s['session_name'].'</span>'
+                    .'<span class="list-item__subtitle">'.lang('experiment').': '.$s['experiment_public_name'].'</span>'
+                    .'<span class="list-item__subtitle">'.$labs[$s['laboratory_id']]['lab_name'].'</span>';
+            echo '<span class="list-item__subtitle">'.lang('showup?').' ';
             if ($s['session_status']=="completed" || $s['session_status']=="balanced") {
                 if ($pstatuses[$s['pstatus_id']]['noshow']) {
                     $tcolor=$color['shownup_no'];
-                    //$ttext=lang('no');
                 } else {
                     $tcolor=$color['shownup_yes'];
-                    //$ttext=lang('yes');
                 }
                 $ttext=$pstatuses[$s['pstatus_id']]['display_name'];
-                echo '<FONT color="'.$tcolor.'"><strong>'.$ttext.'</strong></FONT>';
-            } else echo '<FONT color="grey"><strong>'.lang('three_questionmarks').'</strong></FONT>';
-            if ($settings['enable_payment_module']=='y' && $settings['payments_in_part_history']=='y') {
-                echo '<br>'.lang('payment_type_abbr').': ';
+                echo '<span style="color: '.$tcolor.'; font-weight: bold;">'.$ttext.'</span>';
+            } else {
+                echo '<span style="color: grey; font-weight: bold;">'.lang('three_questionmarks').'</span>';
+            }
+            echo '</span>';
+            if ($settings['enable_payment_module']=='y' && $settings['payments_in_part_history']=='y' &&
+                $s['session_status']=="balanced") {
+                echo '<span class="list-item__subtitle">'.lang('payment_type_abbr').': ';
                 if (isset($payment_types[$s['payment_type']])) {
                     echo $payment_types[$s['payment_type']]; 
                 } else {
@@ -396,15 +440,172 @@ if ($proceed) {
                 } else {
                     echo '-';
                 }
+                echo '</span>';
             }
-            echo '</li>';
+            echo '</ons-list-item>';
         }
-        if (count($history)>0) echo '</ul>';
-        else echo '<h4 class="ui-bar ui-bar-a">'.lang('mobile_no_past_enrolments').'</h4>';
+        if (count($history)>0) {
+            echo '</ons-list>';
+        } else {
+            echo '<ons-card>';
+            echo '<div class="content">'.lang('mobile_no_past_enrolments').'</div>';
+            echo '</ons-card>';
+        }
 
-    echo '</div>';
+        echo '</ons-page>';
+        echo '</template>';
 
-    //echo $footer;
+    // CSS FOR badges on tabbar icons        
+    echo '<style>';
+    if (count($invited)>0) {
+        echo '
+            .tab-with-badge1 ons-icon::after {
+                content: "'.count($invited).'"; /* Badge number */
+                position: relative;
+                top: -27px;
+                right: -25px;
+                font-size: 12px;
+                background: red;
+                color: white;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            ';
+        }
+    if (count($registered)>0) {
+        echo '
+            .tab-with-badge2 ons-icon::after {
+                content: "'.count($registered).'"; /* Badge number */
+                position: relative;
+                top: -27px;
+                right: -25px;
+                font-size: 12px;
+                background: #0076ff;
+                color: white;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            ';
+        }
+
+    if (count($history)>0) {
+        echo '
+            .tab-with-badge3 ons-icon::after {
+                content: "'.count($history).'"; /* Badge number */
+                position: relative;
+                top: -27px;
+                right: -25px;
+                font-size: 12px;
+                background: #999;
+                color: white;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            ';
+        }
+        
+echo '</style>';
+
+    // SOME STYLING FOR ALL LISTS
+    echo '
+    <style>
+      .intro {
+        text-align: center;
+        padding: 0 20px;
+        margin-top: 20px;
+      }
+
+      ons-list-item {
+        cursor: pointer;
+        color: #333;
+      }
+
+      .list-item__title {
+        font-size: 17px;
+      }
+      
+      .list-header {
+            font-size: 18px;
+            line-height: 25px;
+        }
+    </style>';
+
+
+echo '<script>
+
+window.fn = {};
+
+window.fn.loadLink = function (url) {
+  window.location.assign(url);
+};
+
+window.fn.pushPage = function (page, anim) {
+  if (anim) {
+    document.getElementById("appNavigator").pushPage(page.id, {animation: anim });
+  } else {
+    document.getElementById("appNavigator").pushPage(page.id);
+  }
+};
+
+window.fn.submitRegForm = function (submit_id) {
+    ons.notification.confirm({
+        message: "'.lang('mobile_do_you_really_want_to_signup').'",
+        title: "'.lang('mobile_confirmation').'",
+        buttonLabels: ["'.lang('mobile_sorry_no').'", "'.lang('mobile_yes_please').'"],
+        callback: function(index) {
+            if (index === 1) { // OK button
+                document.getElementById(submit_id).click();
+            }
+        }
+    });
+};
+
+window.fn.submitCancelForm = function (submit_id) {
+    ons.notification.confirm({
+        message: "'.lang('mobile_do_you_really_want_to_cancel_signup').'",
+        title: "Confirmation",
+        buttonLabels: ["'.lang('mobile_sorry_no').'", "'.lang('mobile_yes_please').'"],
+        callback: function(index) {
+            if (index === 1) { // OK button
+                document.getElementById(submit_id).click();
+            }
+        }
+    });
+};
+
+';
+
+if (isset($message_text) && $message_text) {
+
+    echo '
+            document.addEventListener("DOMContentLoaded", function() {
+                setTimeout(function() {
+                    ons.notification.toast(\''.$message_text.'\', {
+                        timeout: 2000, // The toast stays for 2000ms
+                        animation: "fall" // Optional: Animation style
+                    });
+                }, 500); // 500ms delay
+            });
+';
+
+}
+
+echo '
+</script>';
+
+
 
     html__mobile_footer();
 
