@@ -3077,10 +3077,10 @@
     {
         // important condition to allow char "0" (zero) being converted to decimal
         if(strlen($c) <= 0) return false;
-        $ord0 = ord($c{0}); if ($ord0>=0   && $ord0<=127) return $ord0;
-        $ord1 = ord($c{1}); if ($ord0>=192 && $ord0<=223) return ($ord0-192)*64 + ($ord1-128);
-        $ord2 = ord($c{2}); if ($ord0>=224 && $ord0<=239) return ($ord0-224)*4096 + ($ord1-128)*64 + ($ord2-128);
-        $ord3 = ord($c{3}); if ($ord0>=240 && $ord0<=247) return ($ord0-240)*262144 + ($ord1-128)*4096 + ($ord2-128)*64 + ($ord3-128);
+        $ord0 = ord($c[0]); if ($ord0>=0   && $ord0<=127) return $ord0;
+        $ord1 = ord($c[1]); if ($ord0>=192 && $ord0<=223) return ($ord0-192)*64 + ($ord1-128);
+        $ord2 = ord($c[2]); if ($ord0>=224 && $ord0<=239) return ($ord0-224)*4096 + ($ord1-128)*64 + ($ord2-128);
+        $ord3 = ord($c[3]); if ($ord0>=240 && $ord0<=247) return ($ord0-240)*262144 + ($ord1-128)*4096 + ($ord2-128)*64 + ($ord3-128);
         return false;
     }
 
@@ -3758,7 +3758,7 @@
     /**
      * common code used by the two JPEG adding functions
      */
-    private function addJpegImage_common(&$data,$x,$y,$w=0,$h=0,$imageWidth,$imageHeight,$channels=3){
+    private function addJpegImage_common(&$data,$x,$y,$w=0,$h=0,$imageWidth=0,$imageHeight=0,$channels=3){
         // note that this function is not to be called externally
         // it is just the common code between the GD and the file options
         if($this->hashed){
