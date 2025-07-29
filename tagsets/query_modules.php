@@ -271,7 +271,7 @@ function query__get_query_form_prototypes($hide_modules=array(),$experiment_id="
                         <OPTION value="" SELECTED></OPTION>
                         <OPTION value="NOT">'.lang('not').'</OPTION>
                     </SELECT> ';
-        $content.=lang__select_lang('interface_language',$options['public_standard_language'],'public');
+        $content.=lang__select_lang('interface_language',$settings['public_standard_language'],'public');
         $prototype['content']=$content; $prototypes[]=$prototype;
         break;
 

@@ -1,3 +1,10 @@
+
+ORSEE 3.2.0
+        Minor and major bugfixes
+        Upgrade to PHP8
+	New feature: Allows different invitation email templates for 
+                     different external experiment types
+
 ORSEE 3.1.0
         Many minor and major bugfixes -> compatible with PHP7
         New feature: Bulk-anonymize participant profiles with default values

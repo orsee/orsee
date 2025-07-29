@@ -880,11 +880,10 @@ function experimentmail__get_mail_footer($participant)
     return $footer;
 }
 
-function experimentmail__get_admin_footer($maillang = '', $admin = array())
-{
-    if (!$maillang) $maillang = experimentmail__get_admin_language($admin['language']);
-    $mailtext = load_mail("admin_mail_footer", $maillang);
-    $footer = process_mail_template($mailtext, $admin);
+function experimentmail__get_admin_footer($maillang,$admin) {
+    if (!$maillang) $maillang=experimentmail__get_admin_language($admin['language']);
+    $mailtext=load_mail("admin_mail_footer",$maillang);
+    $footer=process_mail_template($mailtext,$admin);
     return $footer;
 }
 

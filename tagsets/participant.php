@@ -783,8 +783,7 @@ function participant__select_existing($ptablevarname, $formfieldvarname, $preval
 
 
 // the outer participant form
-function participant__show_form($edit, $button_title = "", $errors = array(), $admin = false, $extra = "")
-{
+function participant__show_form($edit,$button_title="",$errors=array(),$admin=false,$extra="") {
     global $lang, $settings, $color;
     $out = array();
     $tout = array();
@@ -807,8 +806,7 @@ function participant__show_form($edit, $button_title = "", $errors = array(), $a
 }
 
 // the inner participant form
-function participant__show_inner_form($edit, $errors = array(), $admin = false, $template = 'current_template')
-{
+function participant__show_inner_form($edit,$errors=array(),$admin=false,$template='current_template') {
     global $lang, $settings, $color;
     $out = array();
     $tout = array();
@@ -924,8 +922,7 @@ function participant__get_inner_admin_form($edit, $errors, $template = 'current_
 
 
 // the participant form for admins
-function participant__show_admin_form($edit, $button_title = "", $errors = array(), $extra = "")
-{
+function participant__show_admin_form($edit,$button_title="",$errors=array(),$extra="") {
     global $lang, $settings, $color;
     $out = array();
 
