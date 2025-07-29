@@ -44,6 +44,7 @@ if ($proceed) {
                     FROM ".table('participants')."
                     WHERE status_id='0' ".$in_clause;
             $result=or_query($query,$pars);
+            $del_emails=array();
             while ($line=pdo_fetch_assoc($result)) $del_emails[$line['participant_id']]=$line['email'];
 
             $query="DELETE FROM ".table('participants')."

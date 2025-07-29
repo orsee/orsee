@@ -805,7 +805,7 @@ function experiment__load_experiments_for_ids($ids=array()) {
     return $experiments;
 }
 
-function experiment__other_experiments_select_field($postvarname,$type="assigned",$experiment_id="",$selected,$multi=true,$mpoptions=array()) {
+function experiment__other_experiments_select_field($postvarname,$type="assigned",$experiment_id="",$selected='',$multi=true,$mpoptions=array()) {
     // $postvarname - name of form field
     // selected - array of pre-selected experimenter usernames
     global $lang, $preloaded_experiments, $settings;

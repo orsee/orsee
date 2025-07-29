@@ -4,11 +4,6 @@ Online Recruitment System for Economic Experiments (ORSEE)
 ORSEE is a web-based Online Recruitment System, specifically designed for
 organizing economic experiments.
 
-This repository contains the copy of ORSEE source code retrieved from
-[sourceforge](http://sourceforge.net/projects/orsee) website. Having it in git
-version control, simplifies the process of upgrade and deployment as well as
-maintaining custom changes in the code that your organisation might have.
-
 For installation and usage manual see [wiki documentation](http://www.orsee.org/wiki/doku.php).
 
 Please use the [ORSEE bug tracker](http://www.orsee.org/web/tracker.php) for reporting issues.
@@ -32,4 +27,4 @@ Useful links
 
 * [ORSEE website](http://www.orsee.org/)
 * [ORSEE Wiki](http://www.orsee.org/wiki)
-* [Sourceforge project](http://sourceforge.net/projects/orsee)
+* [Legacy Sourceforge project (not active anymore)](http://sourceforge.net/projects/orsee)
