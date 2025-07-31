@@ -5,6 +5,14 @@ if [ ! -f "/var/www/conifg.settings.php" ]; then
     # copy .env file
     echo "⭐️ Copy settings.php file";
     cp /var/www/install/settings-docker.php /var/www/config/settings.php
+
+    # move to webroot directory
+    cd /var/www
+
+    # run composer
+    echo "⭐️ Run composer install";
+    composer install
+
 fi
 
 # run apache in foreground
