@@ -20,7 +20,11 @@ if ($proceed) {
             // save and log job
             $ready=cron__save_and_log_job($cronjob,$now,$done);
             log__admin("cronjob_run",$cronjob);
-            message(lang('ran_cronjob_xxx').' '.$cronjob);
+            if ($cronjob=="retrieve_emails" && strpos((string)$done,'email_errors:')===0) {
+                message($done,'error');
+            } else {
+                message(lang('ran_cronjob_xxx').' '.$cronjob);
+            }
             redirect('admin/'.thisdoc());
         }
     }

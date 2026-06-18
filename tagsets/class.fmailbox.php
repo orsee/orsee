@@ -1,7 +1,7 @@
 <?php
 
 function fMailboxException($error_msg,$error_type=E_USER_ERROR) {
-    return trigger_error ($error_msg, $error_type);
+    throw new Exception($error_msg);
 }
 
 function fmailbox_detectUTF8($string)
@@ -252,8 +252,13 @@ class fMailbox
 
         foreach ($part_with_encoding as $part) {
             if (!fmailbox_detectUTF8($part['string'])) {
-                //$output .= self::iconv($part['encoding'], 'UTF-8', $part['string']);
-                $output .= mb_convert_encoding($part['string'], 'UTF-8', 'ISO-8859-1');
+                try {
+                    $output .= mb_convert_encoding($part['string'], 'UTF-8', $part['encoding']);
+                } catch (Throwable $e) {
+                    $output .= mb_convert_encoding($part['string'], 'UTF-8', 'ISO-8859-1');
+                }
+            } else {
+                $output .= $part['string'];
             }
         }
 
@@ -328,8 +333,11 @@ class fMailbox
                     break;
                 }
             }
-            //$content = self::iconv($charset, 'UTF-8', $content);
-            $content = mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
+            try {
+                $content = mb_convert_encoding($content, 'UTF-8', $charset);
+            } catch (Throwable $e) {
+                $content = mb_convert_encoding($content, 'UTF-8', 'ISO-8859-1');
+            }
             if ($structure['subtype'] == 'html') {
                 $content = preg_replace('#(content=(["\'])text/html\s*;\s*charset=(["\']?))' . preg_quote($charset, '#') . '(\3\2)#i', '\1utf-8\4', $content);
             }
@@ -345,7 +353,9 @@ class fMailbox
                 'mimetype' => $structure['type'] . '/' . $structure['subtype'],
                 'data'     => $content
             );
-            return $info;
+            if ($structure['type'] != 'text') {
+                return $info;
+            }
         }
 
 
@@ -610,7 +620,7 @@ class fMailbox
      */
     static private function parseHeaders($headers, $filter=NULL)
     {
-        $header_lines = preg_split("#\r\n(?!\s)#", trim($headers));
+        $header_lines = preg_split("#\r?\n(?!\s)#", trim($headers));
 
         $single_email_fields    = array('from', 'sender', 'reply-to');
         $multi_email_fields     = array('to', 'cc');
@@ -618,12 +628,16 @@ class fMailbox
 
         $headers = array();
         foreach ($header_lines as $header_line) {
-            $header_line = preg_replace("#\r\n\s+#", '', $header_line);
+            $header_line = preg_replace("#\r?\n\s+#", '', $header_line);
 
-            list ($header, $value) = preg_split('#:\s*#', $header_line, 2);
-            $header = strtolower($header);
+            $parts = preg_split('#:\s*#', $header_line, 2);
+            if (count($parts) < 2) {
+                continue;
+            }
+            $header = strtolower($parts[0]);
+            $value = $parts[1];
 
-            if (strpos($header, $filter) !== FALSE) {
+            if ($filter !== NULL && strpos($header, $filter) !== FALSE) {
                 continue;
             }
 
@@ -734,7 +748,13 @@ class fMailbox
     static public function parseMessage($message, $convert_newlines=FALSE)
     {
         $info = array();
-        list ($headers, $body)   = explode("\r\n\r\n", $message, 2);
+        $message_parts=preg_split("/\r?\n\r?\n/", $message, 2);
+        if (count($message_parts)<2) {
+            $headers=$message;
+            $body='';
+        } else {
+            list ($headers, $body)=$message_parts;
+        }
         $parsed_headers          = self::parseHeaders($headers);
         if(isset($parsed_headers['received'])){
             $info['received'] = self::cleanDate(preg_replace('#^.*;\s*([^;]+)$#', '\1', $parsed_headers['received'][0]));
@@ -827,7 +847,13 @@ class fMailbox
     static private function parseStructure($data, $headers=NULL)
     {
         if (!$headers) {
-            list ($headers, $data) = explode("\r\n\r\n", $data, 2);
+            $header_data_parts=preg_split("/\r?\n\r?\n/", $data, 2);
+            if (count($header_data_parts)<2) {
+                $headers=$data;
+                $data='';
+            } else {
+                list ($headers, $data)=$header_data_parts;
+            }
             $headers = self::parseHeaders($headers);
         }
 
@@ -1084,6 +1110,14 @@ class fMailbox
             $this->timeout
         );
 
+        if ($this->connection === FALSE) {
+            fMailboxException(
+                'Unable to connect to '.strtoupper($this->type).' server '.$this->host.' on port '.$this->port.
+                ' ('.$error_number.': '.$error_string.')'
+            );
+            return;
+        }
+
         stream_set_timeout($this->connection, $this->timeout);
 
 
@@ -1094,14 +1128,16 @@ class fMailbox
                     $this->write('STARTTLS');
                     do {
                         if (isset($res)) {
-                            sleep(0.1);
+                            usleep(100000);
                         }
                         $res = stream_socket_enable_crypto($this->connection, TRUE, STREAM_CRYPTO_METHOD_TLS_CLIENT);
                     } while ($res === 0);
                 }
             }
 
-            $response = $this->write('LOGIN ' . $this->username . ' ' . $this->password);
+            $login_username=str_replace(array('\\','"'),array('\\\\','\\"'),(string)$this->username);
+            $login_password=str_replace(array('\\','"'),array('\\\\','\\"'),(string)$this->password);
+            $response = $this->write('LOGIN "' . $login_username . '" "' . $login_password . '"');
             if (!$response || !preg_match('#^[^ ]+\s+OK#', $response[count($response)-1])) {
                 fMailboxException(
                     'The username and password provided were not accepted for the '.strtoupper($this->type).' server '.$this->host.' on port '.$this->port
@@ -1125,7 +1161,7 @@ class fMailbox
                 if ($response[0][0] == '+') {
                     do {
                         if (isset($res)) {
-                            sleep(0.1);
+                            usleep(100000);
                         }
                         $res = stream_socket_enable_crypto($this->connection, TRUE, STREAM_CRYPTO_METHOD_TLS_CLIENT);
                     } while ($res === 0);
@@ -1486,7 +1522,7 @@ class fMailbox
                     break;
                 }
 
-                $line = rtrim($line); // ben fixed. previously: $line = substr($line, 0, -2); Probably assumed always /r/n?
+                $line = rtrim($line, "\r\n");
                 // When we fake select, we have to handle what we've retrieved
                 if ($broken_select && $broken_select_buffer !== NULL) {
                     $line = $broken_select_buffer . $line;

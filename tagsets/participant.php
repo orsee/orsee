@@ -717,7 +717,7 @@ function participant__profile_field_editor_specs() {
                         'select_lang'=>'A select list with a number of answer options. Answer options can be configured in "Options/Items for profile fields of type *_lang".',
                         'radioline_lang'=>'A list of radio buttons. Answer options can be configured in "Options/Items for profile fields of type *_lang".',
                         'checkboxlist_lang'=>'A list of checkboxes. Answer options can be configured in "Options/Items for profile fields of type *_lang".',
-                        'select_numbers'=>'A select list with numbers. You can use code within the options, e.g., for a year of birth that allows all years from current-17 to current-100 you could use as Start value <span style="background: white; white-space:nowrap;">func:(int) date("Y")-100</span> and as End value <span style="background: white; white-space:nowrap;">func:(int) date("Y")-17</span>.',
+                        'select_numbers'=>'A select list with numbers. For year-dependent values you can use <span style="background: white; white-space:nowrap;">func:current_year-100</span> as Start value and <span style="background: white; white-space:nowrap;">func:current_year-17</span> as End value.',
                         'textline'=>'Asks for a line of text.',
                         'email'=>'Asks for an email address. Input is validated as email address format.',
                         'phone'=>'A phone number field with country picker.',
@@ -2854,10 +2854,53 @@ function load_form_template($tpl_name,$out,$template='current_template') {
 
 
 function form__replace_funcs_in_field($f) {
-    global $lang, $settings;
     foreach ($f as $o=>$v) {
-        if (is_string($f[$o]) && substr($f[$o],0,5)=='func:') {
-            eval('$f[$o]='.substr($f[$o],5).';');
+        if (!is_string($v) || substr($v,0,5)!=='func:') {
+            continue;
+        }
+
+        $expr=trim(substr($v,5));
+
+        // Resolving current year
+        // Backward compatibility for legacy expressions like "func:date('Y')+1"
+        if (preg_match('/^\(?\s*(?:\(\s*int\s*\)\s*)?date\s*\(\s*["\']Y["\']\s*\)\s*\)?\s*(?:([+-])\s*(\d+))?\s*$/i',$expr,$matches)) {
+            $expr='current_year';
+            if (isset($matches[1]) && isset($matches[2]) && $matches[2]!=='') {
+                $expr.=$matches[1].$matches[2];
+            }
+        }
+        // replace expressions using "current_year" with the actual year, optionally with an offset
+        if (preg_match('/^current_year\s*(?:([+-])\s*(\d+))?$/i',$expr,$matches)) {
+            $current_year=(int)date('Y');
+            $resolved=$current_year;
+            if (isset($matches[1]) && isset($matches[2]) && $matches[2]!=='') {
+                $offset=(int)$matches[2];
+                if ($matches[1]==='-') {
+                    $resolved-=$offset;
+                } else {
+                    $resolved+=$offset;
+                }
+            }
+            $f[$o]=(string)$resolved;
+            continue;
+        }
+
+        // Other expressions will be added in the future
+
+
+        // Any other func: expression is invalid.
+        if (isset($f['type']) && $f['type']==='select_numbers') {
+            if ($o==='value_begin') {
+                $f[$o]='0';
+            } elseif ($o==='value_end') {
+                $f[$o]='1';
+            } elseif ($o==='value_step') {
+                $f[$o]='1';
+            } else {
+                $f[$o]='';
+            }
+        } else {
+            $f[$o]='';
         }
     }
     return $f;

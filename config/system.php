@@ -782,7 +782,7 @@ $system__options_general[]=array(
 
 $system__options_general[]=array(
 'option_name'=>'email_module_delete_emails_from_server',
-'option_text'=>'Email module: Delete emails from server after retrieval (strong recommendaion: yes)?',
+'option_text'=>'Email module: Delete emails from server after retrieval (strong recommendation: yes)?',
 'type'=>'select_yesno_switchy',
 'default_value'=>'y'
 );

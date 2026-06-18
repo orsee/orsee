@@ -53,11 +53,22 @@ function orsee_session_close() {
 }
 
 function orsee_session_read($aKey) {
-    $query = "SELECT DataValue FROM ".table('http_sessions')." WHERE SessionID=:aKey";
+    global $settings;
+    $query = "SELECT DataValue, UNIX_TIMESTAMP(LastUpdated) as LastUpdatedTs FROM ".table('http_sessions')." WHERE SessionID=:aKey";
     $pars=array(':aKey'=>$aKey);
     $result = or_query($query,$pars);
     if (pdo_num_rows($result) == 1) {
         $r = pdo_fetch_assoc($result);
+        $orsee_timeout_minutes=(isset($settings['session_timeout_minutes']) ? (int)$settings['session_timeout_minutes'] : 0);
+        if ($orsee_timeout_minutes >= 15 && $orsee_timeout_minutes <= 43200) {
+            $effective_lifetime=$orsee_timeout_minutes*60;
+        } else {
+            $effective_lifetime=max(min((int)ini_get('session.gc_maxlifetime'),43200*60),15*60);
+        }
+        if ((time() - (int)$r['LastUpdatedTs']) > $effective_lifetime) {
+            orsee_session_gc($effective_lifetime);
+            return "";
+        }
         return $r['DataValue'];
     } else {
         $query = "INSERT INTO ".table('http_sessions')." (SessionID, LastUpdated, DataValue)
