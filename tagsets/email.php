@@ -1521,7 +1521,7 @@ function email__is_allowed($email,$experiment,$priv='read') {
             }
         }
         if ($continue && $settings['email_module_allow_assign_emails']=='y' && check_allow('emails_'.$priv.'_assigned')) {
-            $assigned_to=db_string_to_id_array($experiment['assigned_to']);
+            $assigned_to=db_string_to_id_array($email['assigned_to']);
             if (in_array($expadmindata['admin_id'],$assigned_to)) {
                 $return=true;
                 $continue=false;
