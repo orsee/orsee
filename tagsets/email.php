@@ -1146,7 +1146,7 @@ function email__participant_select($email,$participant=array(),$guess_parts=arra
             }
         }
     }
-    if (count($guess_parts)>0 && $email['session_id']) {
+    if ($email['session_id']) {
         $sort=query__load_default_sort('email_participant_guesses_list');
         $pars=array(':session_id'=>$email['session_id']);
         $query="SELECT * from ".table('participants')."
