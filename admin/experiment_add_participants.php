@@ -89,6 +89,7 @@ if ($proceed) {
             $query_id=$_SESSION['lastqueryid_assign_'.$experiment_id];
             $posted_query=json_decode($posted_query_json,true);
             $sort=query__get_sort('assign',$_REQUEST['search_sort']);  // sanitize sort
+            $_REQUEST['search_sort']=$sort;
         } else {
             // store new query in session
             $query_id=time();
@@ -121,8 +122,8 @@ if ($proceed) {
         if ($settings['allow_permanent_queries']=='y' && check_allow('experiment_assign_query_permanent_activate')) {
             $cgivars=array();
             $cgivars[]="make_permanent=true";
-            if (isset($_REQUEST['search_sort'])) {
-                $cgivars[]='search_sort='.urlencode($_REQUEST['search_sort']);
+            if ($sort) {
+                $cgivars[]='search_sort='.urlencode($sort);
             }
             $cgivars[]='experiment_id='.$experiment_id;
             $cgivars[]='csrf_token='.urlencode(csrf__get_token());
