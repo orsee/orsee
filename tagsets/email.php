@@ -1146,7 +1146,7 @@ function email__participant_select($email,$participant=array(),$guess_parts=arra
             }
         }
     }
-    if (count($guess_parts)>0 && $email['session_id']) {
+    if ($email['session_id']) {
         $sort=query__load_default_sort('email_participant_guesses_list');
         $pars=array(':session_id'=>$email['session_id']);
         $query="SELECT * from ".table('participants')."
@@ -1156,6 +1156,10 @@ function email__participant_select($email,$participant=array(),$guess_parts=arra
                 ORDER BY ".$sort;
         $result=or_query($query,$pars);
         while ($p=pdo_fetch_assoc($result)) {
+            if (isset($participant['participant_id'])
+                && $p['participant_id']==$participant['participant_id']) {
+                continue;
+            }
             echo '<OPTION value="'.$p['participant_id'].'">';
             $items=array();
             foreach ($cols as $k=>$c) {
@@ -1521,7 +1525,7 @@ function email__is_allowed($email,$experiment,$priv='read') {
             }
         }
         if ($continue && $settings['email_module_allow_assign_emails']=='y' && check_allow('emails_'.$priv.'_assigned')) {
-            $assigned_to=db_string_to_id_array($experiment['assigned_to']);
+            $assigned_to=db_string_to_id_array($email['assigned_to']);
             if (in_array($expadmindata['admin_id'],$assigned_to)) {
                 $return=true;
                 $continue=false;

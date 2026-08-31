@@ -240,7 +240,14 @@ function cron__process_mail_queue() {
 function cron__retrieve_emails() {
     global $settings;
     if ($settings['enable_email_module']=='y') {
-        $result=email__retrieve_incoming();
+        try {
+            $result=email__retrieve_incoming();
+        } catch (Throwable $e) {
+            if (php_sapi_name()=="cli") {
+                throw $e;
+            }
+            return "email_errors: ".$e->getMessage();
+        }
         $target="mails_retrieved:".$result['count'];
         if (isset($result['errors']) && count($result['errors'])>0) {
             $target.=", email_errors: ".implode(", ",$result['errors']);

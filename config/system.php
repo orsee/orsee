@@ -1,7 +1,7 @@
 <?php
 // part of orsee. see orsee.org
 // THIS FILE WILL CHANGE FROM VERSION TO VERSION. BETTER NOT EDIT.
-$system__version="3.4.0";
+$system__version="3.4.1";
 $system__database_version=2026042603;
 
 // implemented experiment types
@@ -782,7 +782,7 @@ $system__options_general[]=array(
 
 $system__options_general[]=array(
 'option_name'=>'email_module_delete_emails_from_server',
-'option_text'=>'Email module: Delete emails from server after retrieval (strong recommendaion: yes)?',
+'option_text'=>'Email module: Delete emails from server after retrieval (strong recommendation: yes)?',
 'type'=>'select_yesno_switchy',
 'default_value'=>'y'
 );

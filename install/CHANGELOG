@@ -1,3 +1,24 @@
+ORSEE 3.4.1
+
+Security:       Prevent reflected XSS in participant-search sorting and
+                upload-name output.
+Security:       Remove eval() for "func:" expressions in participant
+                profile-field configuration.
+Bugfix:         Correctly extract and store incoming email headers and
+                message bodies, including non-ASCII content.
+Bugfix:         Improve error handling for failed incoming-email retrieval.
+Bugfix:         Make the configurable HTTP session timeout authoritative
+                during session garbage collection.
+Bugfix:         Fix anonymized participant data in participant-list PDFs
+                attached to session emails.
+Bugfix:         Correct email reply permissions for emails assigned to an
+                experiment or session.
+Bugfix:         Restore session-participant suggestions when assigning an
+                incoming email to a participant, without duplicate entries.
+Bugfix:         Avoid some undefined-variable warnings.
+Bugfix:         Correct a typo in the email-retrieval setting description.
+
+
 ORSEE 3.4.0
 
 New feature:    UI migration from legacy table-based layout to responsive

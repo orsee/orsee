@@ -75,7 +75,7 @@ function downloads__list_files_general($showsize=false,$showtype=false,$showdate
                             '/'.rawurlencode($upload['upload_name'].'.'.$upload['upload_suffix']).
                             '?t=d&i='.$upload['upload_id'].'">';
                 }
-                $out.= $upload['upload_name'];
+                $out.= htmlspecialchars($upload['upload_name'],ENT_QUOTES,'UTF-8');
                 if ($allow_dl) {
                     $out.= '</A>';
                 }
@@ -84,7 +84,7 @@ function downloads__list_files_general($showsize=false,$showtype=false,$showdate
                     $out.= '<div class="orsee-table-cell" data-label="'.lang('size').'">'.number_format(round($upload['upload_filesize']/1024),0).' KB</div>';
                 }
                 if ($showtype) {
-                    $out.= '<div class="orsee-table-cell" data-label="'.lang('type').'">'.$upload['upload_suffix'].'</div>';
+                    $out.= '<div class="orsee-table-cell" data-label="'.lang('type').'">'.htmlspecialchars($upload['upload_suffix'],ENT_QUOTES,'UTF-8').'</div>';
                 }
                 if ($showdate) {
                     $out.= '<div class="orsee-table-cell" data-label="'.lang('date').'">'.ortime__format($upload['upload_id'],'',lang('lang')).'</div>';
@@ -239,7 +239,7 @@ function downloads__list_files_experiment($experiment_id,$showsize=false,$showty
                                 '/'.rawurlencode($upload['upload_name'].'.'.$upload['upload_suffix']).
                                 '?t=d&i='.$upload['upload_id'].'">';
                 }
-                $out.= $upload['upload_name'];
+                $out.= htmlspecialchars($upload['upload_name'],ENT_QUOTES,'UTF-8');
                 if ($allow_dl) {
                     $out.= '</A>';
                 }
@@ -248,7 +248,7 @@ function downloads__list_files_experiment($experiment_id,$showsize=false,$showty
                     $out.= '<div class="orsee-table-cell" data-label="'.lang('size').'">'.number_format(round($upload['upload_filesize']/1024),0).' KB</div>';
                 }
                 if ($showtype) {
-                    $out.= '<div class="orsee-table-cell" data-label="'.lang('type').'">'.$upload['upload_suffix'].'</div>';
+                    $out.= '<div class="orsee-table-cell" data-label="'.lang('type').'">'.htmlspecialchars($upload['upload_suffix'],ENT_QUOTES,'UTF-8').'</div>';
                 }
                 if ($showdate) {
                     $out.= '<div class="orsee-table-cell" data-label="'.lang('date').'">'.ortime__format($upload['upload_id'],'',lang('lang')).'</div>';

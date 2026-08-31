@@ -30,7 +30,7 @@ if ($proceed) {
     }
 
     if (isset($_REQUEST['search_sort']) && $_REQUEST['search_sort']) {
-        $sort=$_REQUEST['search_sort'];
+        $sort=query__get_sort('session_participants_list_pdf',$_REQUEST['search_sort']);
     } else {
         $sort='';
     }

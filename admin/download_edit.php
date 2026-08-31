@@ -120,7 +120,7 @@ if ($proceed) {
                     <div class="field">
                         <label class="label" for="upload_name">'.lang('upload_name').':</label>
                         <div class="control">
-                            <input id="upload_name" class="input is-primary orsee-input orsee-input-text" type="text" name="upload_name" maxlength="40" value="'.$upload['upload_name'].'">
+                            <input id="upload_name" class="input is-primary orsee-input orsee-input-text" type="text" name="upload_name" maxlength="40" value="'.htmlspecialchars($upload['upload_name'],ENT_QUOTES,'UTF-8').'">
                         </div>
                     </div>
                     <div class="field orsee-form-row-grid orsee-form-row-grid--2 orsee-form-actions">

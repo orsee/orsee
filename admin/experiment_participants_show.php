@@ -33,23 +33,24 @@ if ($proceed) {
     }
 
     if (isset($_REQUEST['search_sort']) && $_REQUEST['search_sort']) {
-        $sort=$_REQUEST['search_sort'];
+        $sort=query__get_sort('session_participants_list',$_REQUEST['search_sort']);
+        $_REQUEST['search_sort']=$sort;
     } else {
         $sort='';
     }
 
-    $thiscgis='?experiment_id='.$experiment_id;
+    $thiscgis='?experiment_id='.urlencode((string)$experiment_id);
     if ($session_id) {
-        $thiscgis.='&session_id='.$session_id;
+        $thiscgis.='&session_id='.urlencode((string)$session_id);
     }
     if ($pstatus!='') {
-        $thiscgis.='&pstatus='.$pstatus;
+        $thiscgis.='&pstatus='.urlencode((string)$pstatus);
     }
     if ($focus) {
-        $thiscgis.='&focus='.$focus;
+        $thiscgis.='&focus='.urlencode($focus);
     }
     if ($sort) {
-        $thiscgis.='&search_sort='.$sort;
+        $thiscgis.='&search_sort='.urlencode($sort);
     }
 
     $allow=check_allow('experiment_show_participants','experiment_show.php?experiment_id='.$experiment_id);

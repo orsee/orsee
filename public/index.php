@@ -20,10 +20,11 @@ if ($proceed) {
     $content_name=(isset($menu_item['content_name']) && trim((string)$menu_item['content_name'])!=='' ? (string)$menu_item['content_name'] : 'mainpage_welcome');
     echo '<div class="orsee-richtext">'.content__get_content($content_name).'</div>';
     if ($show_mainpage) {
-        if (isset($addp) && $addp) {
+        $addp='';
+        $sign='?';
+        if (in_array($settings['subject_authentication'],array('token','migration'),true) && isset($_REQUEST['p']) && trim((string)$_REQUEST['p'])!=='') {
+            $addp='?p='.urlencode((string)$_REQUEST['p']);
             $sign="&";
-        } else {
-            $sign="?";
         }
         $langarray=lang__get_public_langs();
         $lang_names=lang__get_language_names();

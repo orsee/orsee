@@ -81,6 +81,7 @@ if ($proceed) {
             $query_id=$_SESSION['lastqueryid_deassign_'.$experiment_id];
             $posted_query=json_decode($posted_query_json,true);
             $sort=query__get_sort('assign',$_REQUEST['search_sort']);  // sanitize sort
+            $_REQUEST['search_sort']=$sort;
         } else {
             // store new query in session
             $query_id=time();

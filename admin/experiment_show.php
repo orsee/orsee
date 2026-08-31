@@ -20,6 +20,9 @@ if ($proceed) {
 if ($proceed) {
     // load experiment data into array experiment
     $experiment=orsee_db_load_array("experiments",$experiment_id,"experiment_id");
+    if (!is_array($experiment) || !isset($experiment['experiment_id'])) {
+        redirect("admin/experiment_main.php");
+    }
     if (!check_allow('experiment_restriction_override')) {
         check_experiment_allowed($experiment,"admin/experiment_main.php");
     }
