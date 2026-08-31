@@ -1,7 +1,7 @@
 <?php
 // part of orsee. see orsee.org
 // THIS FILE WILL CHANGE FROM VERSION TO VERSION. BETTER NOT EDIT.
-$system__version="3.4.0";
+$system__version="3.4.1";
 $system__database_version=2026042603;
 
 // implemented experiment types
