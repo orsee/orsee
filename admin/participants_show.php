@@ -323,8 +323,8 @@ if ($proceed) {
         if ($search_sort) {
             echo '<input type="hidden" name="search_sort" value="'.htmlspecialchars($search_sort,ENT_QUOTES,'UTF-8').'">';
         }
-        if (isset($_REQUEST['active'])) {
-            echo '<input type="hidden" name="active" value="'.$_REQUEST['active'].'">';
+        if ($active) {
+            echo '<input type="hidden" name="active" value="true">';
         }
 
         if ($active) {

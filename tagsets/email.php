@@ -1156,6 +1156,10 @@ function email__participant_select($email,$participant=array(),$guess_parts=arra
                 ORDER BY ".$sort;
         $result=or_query($query,$pars);
         while ($p=pdo_fetch_assoc($result)) {
+            if (isset($participant['participant_id'])
+                && $p['participant_id']==$participant['participant_id']) {
+                continue;
+            }
             echo '<OPTION value="'.$p['participant_id'].'">';
             $items=array();
             foreach ($cols as $k=>$c) {
