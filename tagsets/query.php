@@ -444,16 +444,16 @@ function query__headcell($name,$sort="",$allow_sort=true) {
     if ($allow_sort && $sort) {
         $out.= '<A class="orsee-sort-link" HREF="'.thisdoc().'?search_sort='.urlencode($sort);
         if ($_REQUEST['experiment_id']) {
-            $out.= '&experiment_id='.$_REQUEST['experiment_id'];
+            $out.= '&experiment_id='.urlencode((string)$_REQUEST['experiment_id']);
         }
         if ($_REQUEST['session_id']) {
-            $out.= '&session_id='.$_REQUEST['session_id'];
+            $out.= '&session_id='.urlencode((string)$_REQUEST['session_id']);
         }
         if ($_REQUEST['focus']) {
-            $out.= '&focus='.$_REQUEST['focus'];
+            $out.= '&focus='.urlencode((string)$_REQUEST['focus']);
         }
         if ($_REQUEST['active']) {
-            $out.= '&active='.$_REQUEST['active'];
+            $out.= '&active='.urlencode((string)$_REQUEST['active']);
         }
         $out.= '">';
     }

@@ -1967,7 +1967,7 @@ namespace {
 
 
     function experimentmail__send_registration_notice($line) {
-        global $settings;
+        global $settings, $expadmindata;
         $reg=experiment__count_participate_at($line['experiment_id'],$line['session_id']);
         $experimenters=db_string_to_id_array($line['experimenter_mail']);
 
@@ -1991,7 +1991,11 @@ namespace {
                 $now=time();
                 $list_name=lang('participant_list_filename').' '.date("Y-m-d",$now);
                 $list_filename=str_replace(" ","_",$list_name).".pdf";
+                $old_expadmindata=(isset($expadmindata) ? $expadmindata : array());
+                $expadmindata=$admin;
+                $expadmindata['rights']=admin__load_admin_rights($expadmindata['admin_type']);
                 $list_file=pdfoutput__make_part_list($line['experiment_id'],$line['session_id'],'registered','lname,fname',true,$tlang);
+                $expadmindata=$old_expadmindata;
                 $done=experimentmail__mail_attach($recipient,$settings['support_mail'],$subject,$message,$list_filename,$list_file);
             }
         }

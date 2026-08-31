@@ -18,6 +18,17 @@ if ($proceed) {
         $active=false;
     }
 
+    if (isset($_REQUEST['search_sort']) && $_REQUEST['search_sort']) {
+        if ($active) {
+            $search_sort=query__get_sort('participants_search_active',$_REQUEST['search_sort']);
+        } else {
+            $search_sort=query__get_sort('participants_search_all',$_REQUEST['search_sort']);
+        }
+        $_REQUEST['search_sort']=$search_sort;
+    } else {
+        $search_sort='';
+    }
+
     // to encode: json_encode($_REQUEST['form']).'<BR>';
     // do decode: json_decode($_SESSION['lastquery'],true);
 
@@ -50,8 +61,8 @@ if ($proceed) {
             $done=query__save_query($posted_query_json,'participants_search_all');
         }
         $cgivars=array();
-        if (isset($_REQUEST['search_sort'])) {
-            $cgivars[]='search_sort='.urlencode($_REQUEST['search_sort']);
+        if ($search_sort) {
+            $cgivars[]='search_sort='.urlencode($search_sort);
         }
         if ($active) {
             $cgivars[]='active=true';
@@ -75,12 +86,6 @@ if ($proceed) {
 
 if ($proceed) {
     if (isset($_REQUEST['action']) && $_REQUEST['action']) {
-        if (isset($_REQUEST['search_sort'])) {
-            $search_sort=$_REQUEST['search_sort'];
-        } else {
-            $search_sort='';
-        }
-
         $plist_ids=array();
         if (isset($_REQUEST['sel'])) {
             foreach ($_REQUEST['sel'] as $k=>$v) {
@@ -124,7 +129,7 @@ if ($proceed) {
                     $done=experimentmail__send_bulk_mail_to_queue($bulk_id,$plist_ids);
                     message($num_participants.' '.lang('xxx_bulk_mails_sent_to_mail_queue'));
                     log__admin("bulk_mail","recipients: ".$num_participants);
-                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
+                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.urlencode($search_sort));
                 } else {
                     $_REQUEST['search_sort']=$search_sort;
                 }
@@ -148,7 +153,7 @@ if ($proceed) {
                             WHERE participant_id = :participant_id";
                     $done=or_query($query,$pars);
                     message($num_participants.' '.lang('xxx_participants_moved_to_new_status'));
-                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
+                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.urlencode($search_sort));
                 }
             } elseif ($_REQUEST['action']=='profile_update') {
                 // new_profile_update_status do_pool_transfer new_pool
@@ -186,7 +191,7 @@ if ($proceed) {
                                 WHERE participant_id = :participant_id";
                     $done=or_query($query,$pars);
                     message($num_participants.' '.lang('xxx_participants_were_assigned_a_new_profile_update_status'));
-                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
+                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.urlencode($search_sort));
                 }
             } elseif ($_REQUEST['action']=='bulk_anonymization') {
                 // do_status_change new_status
@@ -237,11 +242,11 @@ if ($proceed) {
                     $query.=" WHERE participant_id = :participant_id ";
                     $done=or_query($query,$pars);
                     message($num_participants.' '.lang('xxx_participant_profiles_were_anonymized'));
-                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
+                    redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.urlencode($search_sort));
                 }
             } else {
                 // redirect to same page
-                redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.$search_sort);
+                redirect('admin/'.thisdoc().'?active='.$active.'&search_sort='.urlencode($search_sort));
             }
         } else {
             message(lang('no_participants_selected'),'warning');
@@ -259,17 +264,16 @@ if ($proceed) {
 
 if ($proceed) {
     if (isset($_REQUEST['search_submit']) || isset($_REQUEST['search_sort'])) {
-        if (isset($_REQUEST['search_sort'])) {
+        if ($search_sort) {
             // use old query
             if ($active) {
                 $posted_query_json=$_SESSION['lastquery_participants_search_active'];
                 $query_id=$_SESSION['lastqueryid_participants_search_active'];
-                $sort=query__get_sort('participants_search_active',$_REQUEST['search_sort']); // sanitize sort
             } else {
                 $posted_query_json=$_SESSION['lastquery_participants_search_all'];
                 $query_id=$_SESSION['lastqueryid_participants_search_all'];
-                $sort=query__get_sort('participants_search_all',$_REQUEST['search_sort']); // sanitize sort
             }
+            $sort=$search_sort;
             $posted_query=json_decode($posted_query_json,true);
         } else {
             // store new query in session
@@ -316,11 +320,11 @@ if ($proceed) {
 
         echo '<form id="bulkactionform" action="participants_show.php" method="POST">';
         echo csrf__field();
-        if (isset($_REQUEST['search_sort'])) {
-            echo '<input type="hidden" name="search_sort" value="'.$_REQUEST['search_sort'].'">';
+        if ($search_sort) {
+            echo '<input type="hidden" name="search_sort" value="'.htmlspecialchars($search_sort,ENT_QUOTES,'UTF-8').'">';
         }
-        if (isset($_REQUEST['active'])) {
-            echo '<input type="hidden" name="active" value="'.$_REQUEST['active'].'">';
+        if ($active) {
+            echo '<input type="hidden" name="active" value="true">';
         }
 
         if ($active) {
