@@ -213,7 +213,7 @@ if ($proceed) {
         if ($allow_change_pw) {
             echo '      <div id="orsee-public-edit-change_pw" class="orsee-public-tabpage">
                             <div class="orsee-public-profile-formwrap">
-                                <form action="'.$edit_url.'" method="POST" class="orsee-public-profile-form">
+                                <form id="orsee-public-change-pw-form" action="'.$edit_url.'" method="POST" class="orsee-public-profile-form">
                                     '.csrf__field().'
                                     <div class="orsee-form-shell orsee-public-profile-shell">
                                         <div class="field">
@@ -246,8 +246,7 @@ if ($proceed) {
 
         echo '          <div id="orsee-public-edit-unsubscribe" class="orsee-public-tabpage">
                             <div class="orsee-public-profile-formwrap">
-                                <form action="'.$edit_url.'" method="POST" class="orsee-public-profile-form">
-                                    '.csrf__field().'
+                                <form id="orsee-public-unsubscribe-form" action="'.$edit_url.'" method="POST" class="orsee-public-profile-form">                                    '.csrf__field().'
                                     <div class="orsee-form-shell orsee-public-profile-shell">
                                         <div class="field">
                                             <div class="control">'.lang('do_you_really_want_to_unsubscribe').'</div>

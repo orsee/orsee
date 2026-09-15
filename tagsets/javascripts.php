@@ -101,22 +101,33 @@ function javascript__confirm_modal_script() {
 
             confirmNo.addEventListener("click", closeConfirm);
             confirmYes.addEventListener("click", function () {
-                if (pendingForm) {
-                    if (pendingSubmitter && typeof pendingForm.requestSubmit==="function") {
-                        pendingForm.requestSubmit(pendingSubmitter);
-                    } else if (pendingSubmitter && pendingSubmitter.name) {
-                        var hidden = document.createElement("input");
-                        hidden.type = "hidden";
-                        hidden.name = pendingSubmitter.name;
-                        hidden.value = pendingSubmitter.value;
-                        pendingForm.appendChild(hidden);
-                        pendingForm.submit();
-                    } else {
-                        pendingForm.submit();
-                    }
-                }
-                closeConfirm();
-            });
+    if (pendingForm) {
+        if (pendingSubmitter && typeof pendingForm.requestSubmit==="function") {
+            if (pendingSubmitter.form === pendingForm) {
+                pendingForm.requestSubmit(pendingSubmitter);
+            } else if (pendingSubmitter.name) {
+                var hidden = document.createElement("input");
+                hidden.type = "hidden";
+                hidden.name = pendingSubmitter.name;
+                hidden.value = pendingSubmitter.value;
+                pendingForm.appendChild(hidden);
+                pendingForm.requestSubmit();
+            } else {
+                pendingForm.requestSubmit();
+            }
+        } else if (pendingSubmitter && pendingSubmitter.name) {
+            var hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = pendingSubmitter.name;
+            hidden.value = pendingSubmitter.value;
+            pendingForm.appendChild(hidden);
+            pendingForm.submit();
+        } else {
+            pendingForm.submit();
+        }
+    }
+    closeConfirm();
+});
 
             confirmBox.addEventListener("click", function (ev) {
                 if (ev.target === confirmBox) closeConfirm();
