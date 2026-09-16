@@ -101,7 +101,7 @@ function javascript__confirm_modal_script() {
 
             confirmNo.addEventListener("click", closeConfirm);
             confirmYes.addEventListener("click", function () {
-    if (pendingForm) {
+                if (pendingForm) {
                     if (pendingSubmitter && typeof pendingForm.requestSubmit==="function") {
                         pendingForm.requestSubmit(pendingSubmitter);
                     } else if (pendingSubmitter && pendingSubmitter.name) {
