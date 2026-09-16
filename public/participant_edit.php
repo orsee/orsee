@@ -198,7 +198,7 @@ if ($proceed) {
                     <div id="orsee-public-edit-tabtrack" class="orsee-public-tabtrack">
                         <div id="orsee-public-edit-profile" class="orsee-public-tabpage">
                             <div class="orsee-public-profile-formwrap">
-                                <form id="orsee-public-unsubscribe-form" action="'.$edit_url.'" method="POST" class="orsee-public-profile-form">
+                                <form action="'.$edit_url.'" method="POST" class="orsee-public-profile-form">
                                     '.csrf__field().'
                                     <div class="orsee-form-shell orsee-public-profile-shell">';
         participant__show_inner_form($form_input,$errors__dataform,'profile_form_public_edit');
@@ -213,7 +213,7 @@ if ($proceed) {
         if ($allow_change_pw) {
             echo '      <div id="orsee-public-edit-change_pw" class="orsee-public-tabpage">
                             <div class="orsee-public-profile-formwrap">
-                                <form id="orsee-public-change-pw-form" action="'.$edit_url.'" method="POST" class="orsee-public-profile-form">
+                                <form action="'.$edit_url.'" method="POST" class="orsee-public-profile-form">
                                     '.csrf__field().'
                                     <div class="orsee-form-shell orsee-public-profile-shell">
                                         <div class="field">
